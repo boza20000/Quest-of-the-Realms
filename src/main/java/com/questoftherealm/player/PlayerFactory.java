@@ -10,7 +10,7 @@ public class PlayerFactory {
             case Warrior -> new Warrior(45, 5, 6, 8, 25, 5, 3, 4);
             case Mage -> new Mage(28, 30, 3, 2, 8, 6, 10, 10);
             case Orc -> new Orc(50, 3, 9, 6, 20, 2, 1, 2);
-            case Rouge -> new Rogue(35, 10, 7, 4, 13, 9, 3, 7);
+            case Rogue -> new Rogue(35, 10, 7, 4, 13, 9, 3, 7);
             default -> throw new InvalidPlayerType("player type doesn't exist");
         };
     }
