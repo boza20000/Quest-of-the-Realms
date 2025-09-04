@@ -60,4 +60,5 @@ public class Warrior extends Characters implements Trader, Explorer, InventoryHa
     public void takeDamage(int damage) {
 
     }
+
 }

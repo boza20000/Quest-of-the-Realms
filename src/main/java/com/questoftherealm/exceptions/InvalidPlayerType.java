@@ -1,4 +1,4 @@
-package com.questoftherealm.Exceptions;
+package com.questoftherealm.exceptions;
 
 public class InvalidPlayerType extends RuntimeException {
     public InvalidPlayerType(String message) {

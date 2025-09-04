@@ -1,4 +1,11 @@
 package com.questoftherealm.spells;
 
-public class Spell {
+public abstract class Spell {
+    String spellName;
+
+    public Spell() {
+
+    }
+
+
 }
