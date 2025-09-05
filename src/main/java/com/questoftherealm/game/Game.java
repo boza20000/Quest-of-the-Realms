@@ -7,6 +7,8 @@ import com.questoftherealm.player.PlayerTypes;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static com.questoftherealm.game.GameLoop.startGame;
+
 
 public class Game {
     private Player player;
@@ -44,7 +46,8 @@ public class Game {
         }
         try {
             System.in.read();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     private void giveOptions() {
@@ -84,10 +87,10 @@ public class Game {
         String name = scanner.nextLine();
 
         System.out.println("Choose your character:");
-        System.out.println("1. Warrior");
-        System.out.println("2. Mage");
-        System.out.println("3. Orc");
-        System.out.println("4. Rogue");
+        System.out.println("1. Warrior — A strong fighter with high health and defense.");
+        System.out.println("2. Mage — A master of spells, fragile but devastating.");
+        System.out.println("3. Orc — Brutal and tough, with raw strength and resilience.");
+        System.out.println("4. Rogue — Quick and cunning, excels at stealth and critical strikes.");
 
         int typeChoice = Integer.parseInt(scanner.nextLine());
         PlayerTypes type = PlayerTypes.fromInt(typeChoice);
@@ -100,8 +103,8 @@ public class Game {
         console.prepare();//to do
         console.displayTitle();
         giveOptions();
-        console.clear();
         System.out.println("Game starts...");
+        startGame();
     }
 
 

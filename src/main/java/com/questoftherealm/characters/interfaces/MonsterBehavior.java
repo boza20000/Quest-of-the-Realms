@@ -1,6 +1,7 @@
 package com.questoftherealm.characters.interfaces;
 
-import javax.xml.stream.events.Characters;
+
+import com.questoftherealm.characters.playerCharacters.Characters;
 
 public interface MonsterBehavior {
     void callHorde();

@@ -1,29 +1,55 @@
 package com.questoftherealm.player;
 
-import com.questoftherealm.characters.Characters;
+import com.questoftherealm.characters.playerCharacters.Characters;
 
 public class Player {
-    private String name;
-    private Characters playerCharacter;
+    private final String name;
+    private final Characters playerCharacter;
+    private final Inventory inventory;
+
+    private int level;
+    private int experience;
+    private int gold;
+
+    private int x, y;
+    private String currentZone;
 
     public Player(String name, PlayerTypes playerCharacter) {
-        setName(name);
-        setPlayerCharacter(PlayerFactory.createPlayer(playerCharacter));
+        this.name = name;
+        this.playerCharacter = (PlayerFactory.createPlayer(playerCharacter));
+        this.inventory = new Inventory(20);
+        this.level = 1;
+        this.gold = 0;
+        this.experience = 0;
+        this.currentZone = "Castle of the Avions";
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Characters getPlayerCharacter() {
         return playerCharacter;
     }
 
-    public void setPlayerCharacter(Characters playerCharacter) {
-        this.playerCharacter = playerCharacter;
+    public void addExp(int exp) {
+        experience += exp;
+        if (experience >= level * 100) {
+            level++;
+            experience -= 100;
+            System.out.println("Congratulations you just leveled up to level " + level + "!");
+        }
+    }
+
+    public void addMoney(int amount) {
+        gold += amount;
+        if(gold>=100){
+            System.out.println("You have reached max gold!!!");
+            gold = 100;
+        }
+    }
+
+    public void move(int x,int y){
+         playerCharacter.move(x,y);
     }
 }

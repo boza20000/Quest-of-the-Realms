@@ -1,16 +1,23 @@
-package com.questoftherealm.characters;
+package com.questoftherealm.characters.playerCharacters;
 
-public abstract class Characters {
+import com.questoftherealm.characters.interfaces.Combatant;
+import com.questoftherealm.characters.interfaces.Explorer;
+import com.questoftherealm.characters.interfaces.InventoryHandler;
+import com.questoftherealm.items.ItemDrop;
+
+import static com.questoftherealm.items.Chest.generateRandomItem;
+
+public abstract class Characters implements Explorer, InventoryHandler, Combatant {
     private int health;//0-50
     private int mana;//0-30
     private int attack;//0-10
-    private int defence;//0-10
-    private int armor;//0-30
+    private int defence;//0-5
+    private int armor;//0-20
     private int charisma;//0-10
     private int spells;//0-10
     private int intelligence;//0-10
 
-    public Characters(Characters characters){
+    public Characters(Characters characters) {
         setHealth(characters.getHealth());
         setMana(characters.getMana());
         setAttack(characters.getAttack());
@@ -30,6 +37,29 @@ public abstract class Characters {
         setCharisma(charisma);
         setIntelligence(intelligence);
         setSpells(spells);
+    }
+
+    public void attack(Characters target) {
+        target.takeDamage(this.getAttack());
+    }
+
+    public void takeDamage(int damage) {
+        int mitigation = defence * 5 + armor;
+        int reducedDamage = damage * 100 / (100 + mitigation);
+        health -= reducedDamage;
+        if(health<0)this.health = 0;
+        System.out.println(reducedDamage + " damage taken! Health now: \"" + this.health + "HP");
+    }
+
+
+    public void move(int x, int y) {
+        System.out.println("Move to (x,y)");
+    }
+
+    public void openChest() {
+        ItemDrop drop =  generateRandomItem();
+        System.out.println("Chest opened");
+        System.out.println("Random item drop: " + drop.item() + "x" + drop.quantity());
     }
 
     public int getHealth() {
@@ -77,7 +107,7 @@ public abstract class Characters {
     }
 
     public void setArmor(int armor) {
-        if (armor > 0 && armor <= 30) {
+        if (armor > 0 && armor <= 20) {
             this.armor = armor;
         }
     }
@@ -87,7 +117,7 @@ public abstract class Characters {
     }
 
     public void setDefence(int defence) {
-        if (defence > 0 && defence <= 10) {
+        if (defence > 0 && defence <= 5) {
             this.defence = defence;
         }
     }
@@ -112,6 +142,7 @@ public abstract class Characters {
             this.attack = attack;
         }
     }
+
     @Override
     public String toString() {
         return "===== " + this.getClass().getSimpleName() + " Stats =====\n" +
