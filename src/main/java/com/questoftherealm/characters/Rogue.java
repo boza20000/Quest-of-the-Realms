@@ -50,4 +50,5 @@ public class Rogue extends Characters implements Combatant, Trader, Deceiver, Ex
     public void sellItem(Item item) {
 
     }
+
 }

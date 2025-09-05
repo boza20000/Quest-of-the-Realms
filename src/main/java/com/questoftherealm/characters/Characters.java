@@ -1,6 +1,6 @@
 package com.questoftherealm.characters;
 
-abstract class Characters {
+public abstract class Characters {
     private int health;//0-50
     private int mana;//0-30
     private int attack;//0-10
@@ -9,6 +9,17 @@ abstract class Characters {
     private int charisma;//0-10
     private int spells;//0-10
     private int intelligence;//0-10
+
+    public Characters(Characters characters){
+        setHealth(characters.getHealth());
+        setMana(characters.getMana());
+        setAttack(characters.getAttack());
+        setDefence(characters.getDefence());
+        setArmor(characters.getArmor());
+        setCharisma(characters.getCharisma());
+        setIntelligence(characters.getIntelligence());
+        setSpells(characters.getSpells());
+    }
 
     public Characters(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
         setHealth(health);
@@ -36,7 +47,7 @@ abstract class Characters {
     }
 
     public void setIntelligence(int intelligence) {
-        if (health > 0 && health <= 10) {
+        if (intelligence > 0 && intelligence <= 10) {
             this.intelligence = intelligence;
         }
     }
@@ -46,7 +57,7 @@ abstract class Characters {
     }
 
     public void setSpells(int spells) {
-        if (health > 0 && health <= 10) {
+        if (spells > 0 && spells <= 10) {
             this.spells = spells;
         }
     }
@@ -56,7 +67,7 @@ abstract class Characters {
     }
 
     public void setCharisma(int charisma) {
-        if (health > 0 && health <= 10) {
+        if (charisma > 0 && charisma <= 10) {
             this.charisma = charisma;
         }
     }
@@ -66,7 +77,7 @@ abstract class Characters {
     }
 
     public void setArmor(int armor) {
-        if (health > 0 && health <= 30) {
+        if (armor > 0 && armor <= 30) {
             this.armor = armor;
         }
     }
@@ -76,7 +87,7 @@ abstract class Characters {
     }
 
     public void setDefence(int defence) {
-        if (health > 0 && health <= 10) {
+        if (defence > 0 && defence <= 10) {
             this.defence = defence;
         }
     }
@@ -86,7 +97,7 @@ abstract class Characters {
     }
 
     public void setMana(int mana) {
-        if (health > 0 && health <= 30) {
+        if (mana > 0 && mana <= 30) {
             this.mana = mana;
         }
         this.mana = mana;
@@ -97,8 +108,21 @@ abstract class Characters {
     }
 
     public void setAttack(int attack) {
-        if (health > 0 && health <= 10) {
+        if (attack > 0 && attack <= 10) {
             this.attack = attack;
         }
+    }
+    @Override
+    public String toString() {
+        return "===== " + this.getClass().getSimpleName() + " Stats =====\n" +
+                "Health      : " + getHealth() + "\n" +
+                "Mana        : " + getMana() + "\n" +
+                "Attack      : " + getAttack() + "\n" +
+                "Defence     : " + getDefence() + "\n" +
+                "Armor       : " + getArmor() + "\n" +
+                "Charisma    : " + getCharisma() + "\n" +
+                "Spells      : " + getSpells() + "\n" +
+                "Intelligence: " + getIntelligence() + "\n" +
+                "=================================";
     }
 }

@@ -1,4 +1,6 @@
 package com.questoftherealm.items;
 
-public class Item {
+public abstract class Item {
+    String name;
+    ItemType type;
 }

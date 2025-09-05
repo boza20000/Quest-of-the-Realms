@@ -62,4 +62,5 @@ public class Mage extends Characters implements SpellCaster, Explorer, Inventory
     public void takeDamage(int damage) {
 
     }
+
 }

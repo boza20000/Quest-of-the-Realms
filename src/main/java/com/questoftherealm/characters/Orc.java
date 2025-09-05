@@ -7,7 +7,7 @@ import com.questoftherealm.characters.interfaces.MonsterBehavior;
 import com.questoftherealm.items.Item;
 
 public class Orc extends Characters implements MonsterBehavior, Explorer, InventoryHandler, Combatant {
-    int attackIncrease;
+    private int attackIncrease;
     //spell weakness
 
     public Orc(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
@@ -68,4 +68,5 @@ public class Orc extends Characters implements MonsterBehavior, Explorer, Invent
     public void blockDamage(javax.xml.stream.events.Characters target) {
 
     }
+
 }

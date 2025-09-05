@@ -1,12 +1,15 @@
 package com.questoftherealm;
 
+import com.questoftherealm.game.Console;
+import com.questoftherealm.game.Game;
+import com.questoftherealm.player.Player;
+import com.questoftherealm.player.PlayerTypes;
+
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Welcome to Quest of the Realms!\n" +
-                "1. New Game\n" +
-                "2. Load Game\n" +
-                "Choose an option: ");
-
-
+       Game game = new Game();
+       game.start();
     }
 }
