@@ -1,5 +1,6 @@
-package com.questoftherealm.player;
+package com.questoftherealm.characters.player;
 
+import com.questoftherealm.characters.Characters;
 import com.questoftherealm.characters.playerCharacters.*;
 import com.questoftherealm.exceptions.InvalidPlayerType;
 

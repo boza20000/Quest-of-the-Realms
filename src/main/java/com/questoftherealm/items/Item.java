@@ -8,8 +8,9 @@ public class Item {
     private final int price;
     private final int mana;
     private final Rarity rarity;
+    private final ItemEffect effect;
 
-    public Item(String name, ItemType type, boolean stackable, int power, int price, int mana, Rarity rarity) {
+    public Item(String name, ItemType type, boolean stackable, int power, int price, int mana, Rarity rarity, ItemEffect effect) {
         this.name = name;
         this.type = type;
         this.stackable = stackable;
@@ -17,6 +18,7 @@ public class Item {
         this.price = price;
         this.mana = mana;
         this.rarity = rarity;
+        this.effect = effect;
     }
 
     public String getName() {
@@ -47,8 +49,13 @@ public class Item {
         return rarity;
     }
 
+    public ItemEffect getEffect() {
+        return effect;
+    }
+
     @Override
     public String toString() {
         return name;
     }
+
 }

@@ -1,10 +1,14 @@
-package com.questoftherealm.characters.playerCharacters;
+package com.questoftherealm.characters;
 
 import com.questoftherealm.characters.interfaces.Combatant;
 import com.questoftherealm.characters.interfaces.Explorer;
 import com.questoftherealm.characters.interfaces.InventoryHandler;
+import com.questoftherealm.game.Game;
+import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.maps.Map;
 
+import static com.questoftherealm.characters.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
 public abstract class Characters implements Explorer, InventoryHandler, Combatant {
@@ -47,20 +51,67 @@ public abstract class Characters implements Explorer, InventoryHandler, Combatan
         int mitigation = defence * 5 + armor;
         int reducedDamage = damage * 100 / (100 + mitigation);
         health -= reducedDamage;
-        if(health<0)this.health = 0;
+        if (health < 0) this.health = 0;
         System.out.println(reducedDamage + " damage taken! Health now: \"" + this.health + "HP");
     }
 
 
     public void move(int x, int y) {
-        System.out.println("Move to (x,y)");
+        Map map = Map.getInstance();
+        map.movePlayer(Game.getPlayer(), x, y);
     }
 
     public void openChest() {
-        ItemDrop drop =  generateRandomItem();
+        ItemDrop drop = generateRandomItem();
         System.out.println("Chest opened");
         System.out.println("Random item drop: " + drop.item() + "x" + drop.quantity());
+        Game.getPlayer().getInventory().addItem(drop.item(), drop.quantity());
     }
+
+    public void addItem(Item item, int quantity) {
+        Game.getPlayer().getInventory().addItem(item, quantity);
+    }
+
+    public void openInventory() {
+        Game.getPlayer().getInventory().listItems();
+    }
+
+    public void useItem(Item item) {
+        Characters curCharacter = Game.getPlayer().getPlayerCharacter();
+
+        switch (item.getEffect()) {
+            case RESTORE_MANA -> curCharacter.setMana(Math.min(item.getPower() + curCharacter.getMana(), MAX_MANA));
+            case BUFF_STRENGTH ->
+                    curCharacter.setAttack(Math.min(curCharacter.getAttack() + item.getPower(), MAX_ATTACK));
+            case SWORD, AXE, DAGGER, STAFF, BOW, DEFENCE -> curCharacter.equipItem(item);
+//                case SPELL_FIRE -> curCharacter.castSpell("fireball", item.getPower());
+//                case SPELL_ICE -> curCharacter.castSpell("iceSpike", item.getPower());
+//                case SPELL_HEAL -> curCharacter.castSpell("heal", item.getPower());
+//                case SPELL_SHIELD -> curCharacter.castSpell("shield", item.getPower());
+//                case SPELL_LIGHTNING -> curCharacter.castSpell("lightning", item.getPower());
+            case RESTORE_HP -> curCharacter.setHealth(Math.min(curCharacter.getHealth() + item.getPower(), MAX_HEALTH));
+//                case BUFF_CHARISMA -> curCharacter.addBuff("charisma", item.getPower());
+//              case BUFF_INTELLIGENCE -> curCharacter.addBuff("intelligence", item.getPower());
+//                case QUEST_ITEM -> Game.getQuestManager().collectItem(item);
+//                case FRAGMENT -> Game.getFragmentManager().collectFragment(item);
+        }
+
+
+    }
+
+    public void equipItem(Item item) {
+        Characters curCharacter = Game.getPlayer().getPlayerCharacter();
+        switch (item.getType()) {
+            case ARMOR -> {
+                curCharacter.setArmor(Math.min(MAX_ARMOR, curCharacter.getArmor() + item.getPower()));
+                //Game.getPlayer().addArmorPiece(item);
+            }
+
+            case WEAPON -> curCharacter.setAttack(Math.min(MAX_ATTACK, curCharacter.getAttack() + item.getPower()));
+            //Game.getPlayer().addWeapon(item);
+        }
+    }
+
 
     public int getHealth() {
         return health;

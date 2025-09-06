@@ -1,4 +1,4 @@
-package com.questoftherealm.player;
+package com.questoftherealm.characters.player;
 
 import com.questoftherealm.items.Item;
 

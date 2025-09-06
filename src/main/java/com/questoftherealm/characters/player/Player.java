@@ -1,6 +1,6 @@
-package com.questoftherealm.player;
+package com.questoftherealm.characters.player;
 
-import com.questoftherealm.characters.playerCharacters.Characters;
+import com.questoftherealm.characters.Characters;
 
 public class Player {
     private final String name;
@@ -51,5 +51,33 @@ public class Player {
 
     public void move(int x,int y){
          playerCharacter.move(x,y);
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public String getCurrentZone() {
+        return currentZone;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 }

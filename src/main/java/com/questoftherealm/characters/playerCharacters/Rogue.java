@@ -1,5 +1,6 @@
 package com.questoftherealm.characters.playerCharacters;
 
+import com.questoftherealm.characters.Characters;
 import com.questoftherealm.characters.interfaces.Deceiver;
 import com.questoftherealm.characters.interfaces.Trader;
 import com.questoftherealm.items.Item;
@@ -36,21 +37,6 @@ public class Rogue extends Characters implements Trader, Deceiver {
 
     @Override
     public void attack(Characters target) {
-
-    }
-
-    @Override
-    public void openInventory() {
-
-    }
-
-    @Override
-    public void addItem(Item item) {
-
-    }
-
-    @Override
-    public void useItem(Item item) {
 
     }
 

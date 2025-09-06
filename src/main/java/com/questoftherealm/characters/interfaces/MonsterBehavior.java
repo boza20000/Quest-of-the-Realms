@@ -1,7 +1,7 @@
 package com.questoftherealm.characters.interfaces;
 
 
-import com.questoftherealm.characters.playerCharacters.Characters;
+import com.questoftherealm.characters.Characters;
 
 public interface MonsterBehavior {
     void callHorde();

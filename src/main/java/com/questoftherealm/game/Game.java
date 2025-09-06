@@ -1,22 +1,26 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.maps.Map;
-import com.questoftherealm.player.Player;
-import com.questoftherealm.player.PlayerTypes;
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.characters.player.PlayerTypes;
 
 import java.io.IOException;
 import java.util.Scanner;
 
-import static com.questoftherealm.game.GameLoop.startGame;
+import static com.questoftherealm.game.GameLoop.startLoop;
 
 
 public class Game {
-    private Player player;
+    private static Player player;
     private Map gameMap;
     private final Scanner scanner = new Scanner(System.in);
-    private boolean gameOver = false;
+    public static boolean gameOver = false;
     private final Console console = new Console();
     private final Story story = new Story();
+
+    public static Player getPlayer() {
+        return player;
+    }
 
 
     private void showIntro() throws IOException {
@@ -94,18 +98,17 @@ public class Game {
 
         int typeChoice = Integer.parseInt(scanner.nextLine());
         PlayerTypes type = PlayerTypes.fromInt(typeChoice);
-        Player newPlayer = new Player(name, type);
+        player = new Player(name, type);
         System.out.println("You have chosen " + type);
-        System.out.println(newPlayer.getPlayerCharacter());
+        System.out.println(player.getPlayerCharacter());
     }
 
     public void start() {
         console.prepare();//to do
         console.displayTitle();
         giveOptions();
+        gameMap.getGameMap();
         System.out.println("Game starts...");
-        startGame();
+        startLoop();
     }
-
-
 }

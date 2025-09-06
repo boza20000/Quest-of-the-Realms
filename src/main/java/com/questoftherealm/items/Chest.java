@@ -47,7 +47,7 @@ public class Chest {
     }
 
     private static ItemDrop randomItemFrom(ItemType type, Rarity rarity) {
-        List<Item> possibleItems = ItemRegistry.allItems.stream()
+        List<Item> possibleItems = ItemRegistry.getAllItems().stream()
                 .filter(i -> i.getRarity() == rarity && i.getType() == type)
                 .toList();
 
@@ -58,7 +58,7 @@ public class Chest {
                 case RARE -> Rarity.UNCOMMON;
                 default -> Rarity.COMMON;
             };
-            possibleItems = ItemRegistry.allItems.stream()
+            possibleItems = ItemRegistry.getAllItems().stream()
                     .filter(i -> i.getType() == type && i.getRarity() == fallback)
                     .toList();
         }

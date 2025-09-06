@@ -1,5 +1,6 @@
 package com.questoftherealm.characters.playerCharacters;
 
+import com.questoftherealm.characters.Characters;
 import com.questoftherealm.characters.interfaces.MonsterBehavior;
 import com.questoftherealm.items.Item;
 
@@ -30,21 +31,6 @@ public class Orc extends Characters implements MonsterBehavior {
 
     @Override
     public void attack(Characters target) {
-
-    }
-
-    @Override
-    public void openInventory() {
-
-    }
-
-    @Override
-    public void addItem(Item item) {
-
-    }
-
-    @Override
-    public void useItem(Item item) {
 
     }
 
