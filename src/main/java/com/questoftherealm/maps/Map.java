@@ -25,7 +25,7 @@ public class Map {
     private void loadMap() {
         try (InputStream is = Map.class.getResourceAsStream("/map.json")) {
             ObjectMapper mapper = new ObjectMapper();
-            gameMap = mapper.readValue(is, new TypeReference<Tile[][]>() {
+            gameMap = mapper.readValue(is, new TypeReference<>() {
             });
         } catch (Exception e) {
             e.printStackTrace();

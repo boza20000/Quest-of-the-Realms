@@ -6,11 +6,9 @@ public class Player {
     private final String name;
     private final Characters playerCharacter;
     private final Inventory inventory;
-
     private int level;
     private int experience;
     private int gold;
-
     private int x, y;
     private String currentZone;
 
@@ -21,7 +19,7 @@ public class Player {
         this.level = 1;
         this.gold = 0;
         this.experience = 0;
-        this.currentZone = "Castle of the Avions";
+        this.currentZone = "Spawn";
     }
 
     public String getName() {

@@ -7,12 +7,9 @@ import com.questoftherealm.characters.player.PlayerTypes;
 import java.io.IOException;
 import java.util.Scanner;
 
-import static com.questoftherealm.game.GameLoop.startLoop;
-
-
 public class Game {
     private static Player player;
-    private Map gameMap;
+    private static Map gameMap;
     private final Scanner scanner = new Scanner(System.in);
     public static boolean gameOver = false;
     private final Console console = new Console();
@@ -20,6 +17,10 @@ public class Game {
 
     public static Player getPlayer() {
         return player;
+    }
+
+    public static Map getGameMap(){
+        return gameMap;
     }
 
 
@@ -83,7 +84,6 @@ public class Game {
                 }
             }
         }
-        sc.close();
     }
 
     public void buildPlayerCharacter() {
@@ -107,8 +107,9 @@ public class Game {
         console.prepare();//to do
         console.displayTitle();
         giveOptions();
-        gameMap.getGameMap();
+      //  gameMap = Map.getInstance();
         System.out.println("Game starts...");
-        startLoop();
+        GameLoop loop = new GameLoop();
+        loop.startLoop();
     }
 }

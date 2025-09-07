@@ -1,6 +1,7 @@
 package com.questoftherealm.game;
 
-import java.io.IOException;
+import com.questoftherealm.game.Commands.Command;
+
 
 public class Console {
 
@@ -20,6 +21,10 @@ public class Console {
         System.out.println("║         Adventure Awaits You!         ║");
         System.out.println("╚═══════════════════════════════════════╝");
         System.out.println();
+    }
+
+    public static void printErrorInline(Command command) {
+        System.out.print("\r" + " ".repeat(command.getName().length() + 2) + "\r");
     }
 
 
