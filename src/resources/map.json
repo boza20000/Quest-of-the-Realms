@@ -1,7 +1,5 @@
-{
-  "width": 8,
-  "height": 8,
-  "tiles": [
+
+[
     [
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
@@ -25,7 +23,7 @@
     [
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
-      { "type": "GLADE", "description": "A misty glade, serene and quiet", "walkable": true },
+      { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "FOREST", "description": "Dense forest, hard to pass", "walkable": true },
@@ -39,7 +37,7 @@
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
-      { "type": "LAKE", "description": "A deep lake, cannot walk", "walkable": false },
+      { "type": "WATER", "description": "A mass of water, cannot walk", "walkable": false },
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true }
     ],
     [
@@ -82,5 +80,5 @@
       { "type": "GRASS", "description": "A peaceful grassy field", "walkable": true },
       { "type": "CASTLE", "description": "A majestic castle", "walkable": true }
     ]
-  ]
-}
+]
+

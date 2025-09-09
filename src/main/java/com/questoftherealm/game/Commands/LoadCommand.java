@@ -1,5 +1,7 @@
 package com.questoftherealm.game.Commands;
 
+import com.questoftherealm.game.LoadGame;
+
 public class LoadCommand extends Command {
 
     public LoadCommand() {
@@ -13,6 +15,6 @@ public class LoadCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-
+        LoadGame.loadGameSave(args[1]);
     }
 }

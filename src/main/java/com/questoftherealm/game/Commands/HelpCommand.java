@@ -1,7 +1,5 @@
 package com.questoftherealm.game.Commands;
 
-import com.questoftherealm.game.CommandFactory;
-
 public class HelpCommand extends Command {
     private final CommandFactory factory;
 
@@ -19,7 +17,7 @@ public class HelpCommand extends Command {
     public void execute(String[] args) {
         System.out.println("Available commands:");
         factory.getAllCommands().forEach((name, cmd) ->
-                System.out.println("- " + name + " " + cmd.getDescription())
+                System.out.println("- " + name + "->" + cmd.getDescription())
         );
     }
 }

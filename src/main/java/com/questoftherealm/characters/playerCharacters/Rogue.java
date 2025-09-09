@@ -1,9 +1,9 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.Characters;
 import com.questoftherealm.characters.interfaces.Deceiver;
 import com.questoftherealm.characters.interfaces.Trader;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemRegistry;
 
 public class Rogue extends Characters implements Trader, Deceiver {
 
@@ -26,22 +26,17 @@ public class Rogue extends Characters implements Trader, Deceiver {
     }
 
     @Override
-    public void buyItem(Item item) {
+    public Item getDefaultWeapon() {
+        return ItemRegistry.getItem("Iron Dagger");
+    }
+
+    @Override
+    public void buyItem(Item item, int quantity) {
 
     }
 
     @Override
-    public void sellItem(Item item) {
-
-    }
-
-    @Override
-    public void attack(Characters target) {
-
-    }
-
-    @Override
-    public void equipItem(Item item) {
+    public void sellItem(Item item, int quantity) {
 
     }
 }

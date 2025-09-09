@@ -1,5 +1,7 @@
 package com.questoftherealm.items;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Item {
     private final String name;
     private final ItemType type;
@@ -10,7 +12,14 @@ public class Item {
     private final Rarity rarity;
     private final ItemEffect effect;
 
-    public Item(String name, ItemType type, boolean stackable, int power, int price, int mana, Rarity rarity, ItemEffect effect) {
+    public Item( @JsonProperty("name") String name,
+                 @JsonProperty("type") ItemType type,
+                 @JsonProperty("stackable") boolean stackable,
+                 @JsonProperty("power") int power,
+                 @JsonProperty("cost") int price,
+                 @JsonProperty("manaCost") int mana,
+                 @JsonProperty("rarity") Rarity rarity,
+                 @JsonProperty("effect") ItemEffect effect) {
         this.name = name;
         this.type = type;
         this.stackable = stackable;

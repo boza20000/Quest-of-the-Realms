@@ -1,4 +1,4 @@
-package com.questoftherealm.characters;
+package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.interfaces.Combatant;
 import com.questoftherealm.characters.interfaces.Explorer;
@@ -55,12 +55,6 @@ public abstract class Characters implements Explorer, InventoryHandler, Combatan
         System.out.println(reducedDamage + " damage taken! Health now: \"" + this.health + "HP");
     }
 
-
-    public void move(int x, int y) {
-        Map map = Map.getInstance();
-        map.movePlayer(Game.getPlayer(), x, y);
-    }
-
     public void openChest() {
         ItemDrop drop = generateRandomItem();
         System.out.println("Chest opened");
@@ -83,7 +77,7 @@ public abstract class Characters implements Explorer, InventoryHandler, Combatan
             case RESTORE_MANA -> curCharacter.setMana(Math.min(item.getPower() + curCharacter.getMana(), MAX_MANA));
             case BUFF_STRENGTH ->
                     curCharacter.setAttack(Math.min(curCharacter.getAttack() + item.getPower(), MAX_ATTACK));
-            case SWORD, AXE, DAGGER, STAFF, BOW, DEFENCE -> curCharacter.equipItem(item);
+            case SWORD, AXE, DAGGER, STAFF, BOW, HELMET, BOOTS, CHESTPLATE -> curCharacter.equipItem(item);
 //                case SPELL_FIRE -> curCharacter.castSpell("fireball", item.getPower());
 //                case SPELL_ICE -> curCharacter.castSpell("iceSpike", item.getPower());
 //                case SPELL_HEAL -> curCharacter.castSpell("heal", item.getPower());
@@ -95,8 +89,6 @@ public abstract class Characters implements Explorer, InventoryHandler, Combatan
 //                case QUEST_ITEM -> Game.getQuestManager().collectItem(item);
 //                case FRAGMENT -> Game.getFragmentManager().collectFragment(item);
         }
-
-
     }
 
     public void equipItem(Item item) {
@@ -104,7 +96,7 @@ public abstract class Characters implements Explorer, InventoryHandler, Combatan
         switch (item.getType()) {
             case ARMOR -> {
                 curCharacter.setArmor(Math.min(MAX_ARMOR, curCharacter.getArmor() + item.getPower()));
-                //Game.getPlayer().addArmorPiece(item);
+                Game.getPlayer().addArmorPiece(item);
             }
 
             case WEAPON -> curCharacter.setAttack(Math.min(MAX_ATTACK, curCharacter.getAttack() + item.getPower()));
@@ -112,6 +104,7 @@ public abstract class Characters implements Explorer, InventoryHandler, Combatan
         }
     }
 
+    public abstract Item getDefaultWeapon();
 
     public int getHealth() {
         return health;

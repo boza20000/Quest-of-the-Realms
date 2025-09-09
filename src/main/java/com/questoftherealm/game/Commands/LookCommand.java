@@ -13,6 +13,10 @@ public class LookCommand extends Command {
 
     @Override
     public void execute(String[] args) {
+        //lookForRandomEncounter()
+        //lookForItems
+        //look for Enemies
+
 
     }
 }

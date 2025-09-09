@@ -1,7 +1,10 @@
 package com.questoftherealm.game;
 
 public class LoadGame {
-    void loadGameSave(){
+    public static void loadGameSave(String filename) {
 
+    }
+
+    public static void printSaves() {
     }
 }

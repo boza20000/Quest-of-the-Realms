@@ -1,6 +1,7 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.game.Commands.Command;
+import com.questoftherealm.game.Commands.CommandFactory;
 
 import java.util.Scanner;
 

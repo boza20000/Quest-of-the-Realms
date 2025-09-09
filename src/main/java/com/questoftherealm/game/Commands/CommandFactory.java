@@ -1,6 +1,4 @@
-package com.questoftherealm.game;
-
-import com.questoftherealm.game.Commands.*;
+package com.questoftherealm.game.Commands;
 
 
 import java.util.HashMap;
@@ -22,6 +20,7 @@ public class CommandFactory {
         register("save", new SaveCommand());
         register("load", new LoadCommand());
         register("exit", new ExitCommand());
+        register("map",new MapCommand());
     }
 
     private void register(String name, Command command) {

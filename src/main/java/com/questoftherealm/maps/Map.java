@@ -1,10 +1,14 @@
 package com.questoftherealm.maps;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.questoftherealm.characters.*;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.Game;
 
 import java.io.InputStream;
+
+import static com.questoftherealm.maps.TileTypes.*;
+
 
 public class Map {
 
@@ -25,8 +29,7 @@ public class Map {
     private void loadMap() {
         try (InputStream is = Map.class.getResourceAsStream("/map.json")) {
             ObjectMapper mapper = new ObjectMapper();
-            gameMap = mapper.readValue(is, new TypeReference<>() {
-            });
+            gameMap = mapper.readValue(is, Tile[][].class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,13 +40,40 @@ public class Map {
     }
 
     public void movePlayer(Player player, int x, int y) {
-        int newX = player.getX() + x;
-        int newY = player.getY() + y;
-
-        if (newX < 0 || newX >= gameMap.length || newY < 0 || newY >= gameMap[0].length) {
-            System.out.println("Cannot move there! Out of bounds.");
-            return;
-        }
-        player.move(newX, newY);
+        player.setCurrentZone(gameMap[x][y].getDescription());
     }
+
+    public void print() {
+        for (int i = 0; i < gameMap.length; i++) {
+            System.out.print("      ");
+            System.out.print("║");
+            for (int j = 0; j < gameMap[i].length; j++) {
+                boolean isPlayerHere = (i == Game.getPlayer().getX() && j == Game.getPlayer().getY());
+                Tile tile = gameMap[i][j];
+                String symbol = getTileSymbol(tile);
+
+                if (isPlayerHere) {
+                    symbol = GameConstants.RED + "🧙" + GameConstants.RESET; // overlay
+                }
+                System.out.print(symbol);
+            }
+            System.out.print("║");
+            System.out.println();
+        }
+    }
+
+    private String getTileSymbol(Tile curTile) {
+        return switch (curTile.getType()) {
+            case GRASS -> GameConstants.GREEN + "\uD83D\uDFE9" + GameConstants.RESET;
+            case FOREST -> GameConstants.DARK_GREEN + "\uD83C\uDF32" + GameConstants.RESET;
+            case MOUNTAIN -> GameConstants.GRAY + "\uD83D\uDDFB" + GameConstants.RESET;
+            case VILLAGE -> GameConstants.YELLOW + "\uD83C\uDFD8\uFE0F" + GameConstants.RESET;
+            case CASTLE -> GameConstants.CYAN + "\uD83C\uDFF0" + GameConstants.RESET;
+            case SWAMP -> GameConstants.MAGENTA + "\uD83D\uDFEB" + GameConstants.RESET;
+            case WATER -> GameConstants.BLUE + "\uD83D\uDFE6" + GameConstants.RESET;
+            case QUEST_LOCATION -> GameConstants.RED + "❓" + GameConstants.RESET;
+            default -> " ";
+        };
+    }
+
 }

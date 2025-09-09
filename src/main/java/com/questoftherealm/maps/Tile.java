@@ -1,11 +1,15 @@
 package com.questoftherealm.maps;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Tile {
     private final TileTypes type;
     private final String description;
     private final boolean walkable;
 
-    public Tile(TileTypes type, String description, boolean walkable) {
+    @JsonCreator
+    public Tile( @JsonProperty("type")TileTypes type,@JsonProperty("description") String description,@JsonProperty("walkable") boolean walkable){
         this.type = type;
         this.description = description;
         this.walkable = walkable;

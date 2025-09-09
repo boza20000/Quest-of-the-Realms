@@ -10,6 +10,15 @@ public final class GameConstants {
     public static final int MAX_CHARISMA = 10;
     public static final int MAX_SPELLS = 10;
     public static final int MAX_INTELLIGENCE = 10;
+    public static final String RESET = "\u001B[0m";
+    public static final String GREEN = "\u001B[32m";   // Grass
+    public static final String DARK_GREEN = "\u001B[32;1m"; // Forest
+    public static final String GRAY = "\u001B[37m";    // Mountain
+    public static final String YELLOW = "\u001B[33m";  // Village
+    public static final String CYAN = "\u001B[36m";    // Castle
+    public static final String MAGENTA = "\u001B[35m"; // Swamp
+    public static final String BLUE = "\u001B[34m";    // Water/Lake
+    public static final String RED = "\u001B[31m";     // Quest
 
 }
 

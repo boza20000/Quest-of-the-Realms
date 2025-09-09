@@ -1,8 +1,8 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.Characters;
 import com.questoftherealm.characters.interfaces.MonsterBehavior;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemRegistry;
 
 public class Orc extends Characters implements MonsterBehavior {
 
@@ -30,12 +30,7 @@ public class Orc extends Characters implements MonsterBehavior {
     }
 
     @Override
-    public void attack(Characters target) {
-
-    }
-
-    @Override
-    public void equipItem(Item item) {
-
+    public Item getDefaultWeapon() {
+        return ItemRegistry.getItem("Iron Axe");
     }
 }

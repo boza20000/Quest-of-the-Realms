@@ -1,7 +1,7 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.Characters;
 import com.questoftherealm.characters.interfaces.SpellCaster;
+import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.spells.Spell;
 import com.questoftherealm.items.Item;
 
@@ -28,5 +28,10 @@ public class Mage extends Characters implements SpellCaster {
     @Override
     public void equipItem(Item item) {
 
+    }
+
+    @Override
+    public Item getDefaultWeapon() {
+        return ItemRegistry.getItem("Bronze Sword");
     }
 }

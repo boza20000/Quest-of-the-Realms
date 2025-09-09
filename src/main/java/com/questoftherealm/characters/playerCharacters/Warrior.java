@@ -1,10 +1,11 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.Characters;
 import com.questoftherealm.characters.interfaces.Trader;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemRegistry;
 
-public class Warrior extends Characters implements Trader{
+public class Warrior extends Characters implements Trader {
 
     public Warrior() {
         super(45, 5, 6, 4, 12, 5, 3, 4);
@@ -15,22 +16,20 @@ public class Warrior extends Characters implements Trader{
     }
 
     @Override
-    public void buyItem(Item item) {
+    public void buyItem(Item item, int quantity) {
 
     }
 
     @Override
-    public void sellItem(Item item) {
-
+    public void sellItem(Item item, int quantity) {
+        int money = item.getPrice();
+        Game.getPlayer().addMoney(money);
+        Game.getPlayer().getInventory().removeItem(item, quantity);
     }
 
     @Override
-    public void attack(Characters target) {
-
+    public Item getDefaultWeapon() {
+        return ItemRegistry.getItem("Wooden Staff");
     }
 
-    @Override
-    public void equipItem(Item item) {
-
-    }
 }
