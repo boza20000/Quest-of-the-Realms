@@ -29,7 +29,4 @@ public class Story {
         return story;
     }
 
-    public void setStory(String story) {
-        this.story = story;
-    }
 }

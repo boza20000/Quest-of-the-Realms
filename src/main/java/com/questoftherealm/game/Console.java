@@ -1,18 +1,14 @@
 package com.questoftherealm.game;
 
-import java.io.IOException;
+import com.questoftherealm.game.Commands.Command;
+
 
 public class Console {
 
     public void clear() {
-        int rows = 50; // approximate number of visible rows
-        for (int i = 0; i < rows; i++) System.out.println(" ");
-        // Move cursor back to top
-        System.out.print("\033[H");
-    }
-
-    public  void prepare() {
-        //console handle row,col amount
+        System.out.println();
+        System.out.println();
+        System.out.println();
     }
 
     public void displayTitle() {
@@ -21,6 +17,10 @@ public class Console {
         System.out.println("║         Adventure Awaits You!         ║");
         System.out.println("╚═══════════════════════════════════════╝");
         System.out.println();
+    }
+
+    public static void printErrorInline(String command) {
+        System.out.print("\r" + " ".repeat(command.length() + 2) + "\r");
     }
 
 

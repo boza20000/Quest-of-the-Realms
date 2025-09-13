@@ -1,4 +1,85 @@
 package com.questoftherealm.maps;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameConstants;
+
+import java.io.InputStream;
+
+
 public class Map {
+
+    private static Map instance;       // Singleton instance
+    private Tile[][] gameMap;          // The map grid
+
+    private Map() {
+        loadMap();
+    }
+
+    public static Map getInstance() {
+        if (instance == null) {
+            instance = new Map();
+        }
+        return instance;
+    }
+
+    private void loadMap() {
+        try (InputStream is = Map.class.getResourceAsStream("/map.json")) {
+            if (is == null) {
+                System.out.println("map.json not found. Generating random map instead.");
+                return;
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            gameMap = mapper.readValue(is, Tile[][].class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Tile[][] getGameMap() {
+        return gameMap;
+    }
+
+    public void movePlayer(Player player, int x, int y) {
+        player.setCurrentZone(gameMap[y][x].getDescription());
+        gameMap[y][x].onEnter(player);
+    }
+
+    public void print() {
+        for (int i = 0; i < gameMap.length; i++) {
+            System.out.print("      ");
+            System.out.print("║");
+            for (int j = 0; j < gameMap[i].length; j++) {
+                boolean isPlayerHere = (i == Game.getPlayer().getX() && j == Game.getPlayer().getY());
+                Tile tile = gameMap[i][j];
+                String symbol = getTileSymbol(tile);
+
+                if (isPlayerHere) {
+                    symbol = GameConstants.RED + "🧙" + GameConstants.RESET; // overlay
+                }
+                System.out.print(symbol);
+            }
+            System.out.print("║");
+            System.out.println();
+        }
+    }
+
+    private String getTileSymbol(Tile curTile) {
+        return switch (curTile.getType()) {
+            case GRASS -> GameConstants.GREEN + "\uD83D\uDFE9" + GameConstants.RESET;
+            case FOREST -> GameConstants.DARK_GREEN + "\uD83C\uDF32" + GameConstants.RESET;
+            case MOUNTAIN -> GameConstants.GRAY + "\uD83D\uDDFB" + GameConstants.RESET;
+            case VILLAGE -> GameConstants.YELLOW + "\uD83C\uDFD8\uFE0F" + GameConstants.RESET;
+            case CASTLE -> GameConstants.CYAN + "\uD83C\uDFF0" + GameConstants.RESET;
+            case SWAMP -> GameConstants.MAGENTA + "\uD83D\uDFEB" + GameConstants.RESET;
+            case WATER -> GameConstants.BLUE + "\uD83D\uDFE6" + GameConstants.RESET;
+            case QUEST_LOCATION -> GameConstants.RED + "❓" + GameConstants.RESET;
+            default -> " ";
+        };
+    }
+
+    public Tile curZone(int x, int y) {
+        return gameMap[y][x];
+    }
 }
