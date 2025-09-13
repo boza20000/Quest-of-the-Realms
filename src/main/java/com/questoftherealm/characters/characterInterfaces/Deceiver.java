@@ -1,4 +1,4 @@
-package com.questoftherealm.characters.interfaces;
+package com.questoftherealm.characters.characterInterfaces;
 
 public interface Deceiver {
     void lie();

@@ -62,6 +62,11 @@ public class GameUI {
        return name;
     }
 
+    public void handleLine(){
+        System.out.print("\033[1A\033[2K\r" + " (No such command exists)");
+    }
+
+
     public Scanner getScanner() {
         return scanner;
     }

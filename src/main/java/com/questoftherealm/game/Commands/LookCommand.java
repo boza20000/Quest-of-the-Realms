@@ -1,5 +1,7 @@
 package com.questoftherealm.game.Commands;
 
+import com.questoftherealm.game.Game;
+
 public class LookCommand extends Command {
 
     public LookCommand() {
@@ -13,10 +15,6 @@ public class LookCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        //lookForRandomEncounter()
-        //lookForItems
-        //look for Enemies
-
-
+        Game.getPlayer().look();
     }
 }

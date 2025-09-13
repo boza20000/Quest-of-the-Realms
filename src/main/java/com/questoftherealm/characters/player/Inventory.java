@@ -53,4 +53,8 @@ public class Inventory {
     public int getQuantity(Item item) {
         return items.getOrDefault(item, 0);
     }
+
+    public boolean containsItem(Item item) {
+        return getItems().containsKey(item);
+    }
 }

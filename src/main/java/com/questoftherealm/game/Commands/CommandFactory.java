@@ -1,6 +1,8 @@
 package com.questoftherealm.game.Commands;
 
 
+import com.questoftherealm.exceptions.InvalidCommand;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +23,8 @@ public class CommandFactory {
         register("load", new LoadCommand());
         register("exit", new ExitCommand());
         register("map",new MapCommand());
+        register("take",new TakeCommand());
+        register("explore",new ExploreCommand());
     }
 
     private void register(String name, Command command) {
@@ -28,6 +32,9 @@ public class CommandFactory {
     }
 
     public Command getCommand(String name) {
+        if(commands.get(name)==null){
+            throw new InvalidCommand("Command not recognised");
+        }
         return commands.get(name);
     }
 

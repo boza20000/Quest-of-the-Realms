@@ -8,6 +8,7 @@ public class CompleteQuestCommand extends Command {
     @Override
     public void execute(String[] args) {
     //print the quest list with to do tasks
+
     }
 
     @Override

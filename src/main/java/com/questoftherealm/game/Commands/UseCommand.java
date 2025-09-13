@@ -2,6 +2,10 @@ package com.questoftherealm.game.Commands;
 
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.items.Item;
+
+import static com.questoftherealm.items.ItemRegistry.getItem;
+
 
 public class UseCommand extends Command {
 
@@ -11,14 +15,16 @@ public class UseCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "use [item]";
+        return "use [itemName]";
     }
 
     @Override
     public void execute(String[] args) {
-        Characters curCharacter = Game.getPlayer().getPlayerCharacter();
-        //curCharacter.useItem();
-        //food->eat;
-        //potions->drink
+        String nameItem = args[1];
+        Item item = getItem(nameItem);
+        if(Game.getPlayer().getInventory().containsItem(item)) {
+            Game.getPlayer().useItem(item);
+            Game.getPlayer().getInventory().removeItem(item,1);
+        }
     }
 }

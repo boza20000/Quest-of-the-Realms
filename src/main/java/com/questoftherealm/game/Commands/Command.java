@@ -15,15 +15,3 @@ public abstract class Command {
 
     public abstract String getDescription();
 }
-//Available commands:
-//        - move [north|south|east|west]
-//        - look
-//- attack [enemy]
-//        - use [item]
-//        - inventory
-//- equip [item]
-//        - quests
-//- complete quest
-//- save
-//- load
-//- exit

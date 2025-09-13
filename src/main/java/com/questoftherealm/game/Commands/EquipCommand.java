@@ -12,18 +12,18 @@ public class EquipCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "equip [item]";
+        return "equip [itemName]";
     }
 
     @Override
     public void execute(String[] args) {
         String itemName = args[1];
-        Item item  = getItem(itemName);
-        switch (item.getType()){
-            case ARMOR ->  Game.getPlayer().addArmorPiece(item);
-            case WEAPON -> Game.getPlayer().equipWeapon(item);
+        Item item = getItem(itemName);
+        if(Game.getPlayer().getInventory().containsItem(item)) {
+            Game.getPlayer().equipItem(item);
         }
-
-
+        else{
+            System.out.println("Item not in inventory");
+        }
     }
 }

@@ -5,9 +5,8 @@ import com.questoftherealm.items.ItemDrop;
 
 import java.util.List;
 
-public class Goblin extends Enemy implements Talkable {
-    public Goblin(){
-
+public class GoblinGeneral extends Enemy implements Talkable {
+    public GoblinGeneral() {
     }
 
     @Override

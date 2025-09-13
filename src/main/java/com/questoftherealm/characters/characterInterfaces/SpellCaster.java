@@ -1,8 +1,9 @@
-package com.questoftherealm.characters.interfaces;
+package com.questoftherealm.characters.characterInterfaces;
 
+import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.spells.Spell;
 
-import javax.xml.stream.events.Characters;
+
 
 public interface SpellCaster {
     void castSpell(Spell spell, Characters target);

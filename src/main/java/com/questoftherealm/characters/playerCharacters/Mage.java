@@ -1,14 +1,23 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.interfaces.SpellCaster;
+import com.questoftherealm.characters.characterInterfaces.SpellCaster;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.spells.Spell;
 import com.questoftherealm.items.Item;
 
+import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
+
 public class Mage extends Characters implements SpellCaster {
 
     public Mage() {
-        super(28, 30, 3, 1, 4, 6, 10, 10);
+        super(MAGE_HEALTH,
+                MAGE_MANA,
+                MAGE_ATTACK,
+                MAGE_DEFENCE,
+                MAGE_ARMOR,
+                MAGE_CHARISMA,
+                MAGE_SPELLS,
+                MAGE_INTELLIGENCE);
     }
 
     public Mage(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
@@ -16,22 +25,22 @@ public class Mage extends Characters implements SpellCaster {
     }
 
     @Override
-    public void castSpell(Spell spell, javax.xml.stream.events.Characters target) {
-
-    }
-
-    @Override
-    public void attack(Characters target) {
-
-    }
-
-    @Override
-    public void equipItem(Item item) {
+    public void castSpell(Spell spell, Characters target) {
 
     }
 
     @Override
     public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Bronze Sword");
+        return ItemRegistry.getItem("Wooden Staff");
+    }
+
+    @Override
+    public int getBaseAttack() {
+        return MAGE_ATTACK;
+    }
+
+    @Override
+    public int getBaseDefence() {
+        return MAGE_DEFENCE;
     }
 }

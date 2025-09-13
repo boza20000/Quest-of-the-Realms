@@ -15,6 +15,5 @@ public class SaveCommand extends Command {
     @Override
     public void execute(String[] args) {
         SaveGame.saveGame();
-
     }
 }

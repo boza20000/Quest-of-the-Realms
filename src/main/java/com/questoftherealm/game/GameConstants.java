@@ -1,6 +1,7 @@
-package com.questoftherealm.characters;
+package com.questoftherealm.game;
 
 public final class GameConstants {
+    private GameConstants(){}
 
     public static final int MAX_HEALTH = 50;
     public static final int MAX_MANA = 30;
@@ -19,6 +20,10 @@ public final class GameConstants {
     public static final String MAGENTA = "\u001B[35m"; // Swamp
     public static final String BLUE = "\u001B[34m";    // Water/Lake
     public static final String RED = "\u001B[31m";     // Quest
-
+    public static final int ONE_ENEMY_CHANCE = 65;
+    public static final int TWO_ENEMY_CHANCE = 35;
+    public static final int THREE_ENEMY_CHANCE = 15;
+    public static final int MAX_ENEMIES = 3;
+    public static final int MAX_ITEM_DROPS = 4;
 }
 

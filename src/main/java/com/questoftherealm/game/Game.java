@@ -45,7 +45,18 @@ public class Game {
 
     public void buildPlayerCharacter() {
         String name = gameUI.characterCreationScreen();
-        int typeChoice = Integer.parseInt(gameUI.getScanner().nextLine());
+        int typeChoice;
+        while (true) {
+            try {
+                typeChoice = Integer.parseInt(gameUI.getScanner().nextLine());
+                if (typeChoice == 1 || typeChoice == 2 || typeChoice == 3 || typeChoice == 4) break;
+                else {
+                    System.out.println("Please enter a number between 1 and 4.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 4.");
+            }
+        }
         PlayerTypes type = PlayerTypes.fromInt(typeChoice);
         player = new Player(name, type);
         System.out.println("You have chosen " + type);
@@ -53,16 +64,26 @@ public class Game {
     }
 
     public void start() {
-        gameUI.getConsole().prepare();//to do
         gameUI.getConsole().displayTitle();
-
-        int gameType = gameUI.showMainMenu();
+        int gameType;
+        while (true) {
+            try {
+                gameType = gameUI.showMainMenu();
+                if (gameType == 1 || gameType == 2) break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
         switch (gameType) {
             case 1 -> newGame();
             case 2 -> loadGame();
-            default -> System.out.println("Invalid choice");
         }
-        gameMap = Map.getInstance();
+        try {
+            gameMap = Map.getInstance();
+        }
+        catch (Exception e){
+            System.out.println("Map unavailable");
+        }
         System.out.println("Game starts...");
         GameLoop loop = new GameLoop();
         loop.startLoop();

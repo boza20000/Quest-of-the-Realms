@@ -11,10 +11,6 @@ public class Console {
         System.out.println();
     }
 
-    public  void prepare() {
-        //console handle row,col amount
-    }
-
     public void displayTitle() {
         System.out.println("╔═══════════════════════════════════════╗");
         System.out.println("║          Quest of the Realms          ║");
@@ -23,8 +19,8 @@ public class Console {
         System.out.println();
     }
 
-    public static void printErrorInline(Command command) {
-        System.out.print("\r" + " ".repeat(command.getName().length() + 2) + "\r");
+    public static void printErrorInline(String command) {
+        System.out.print("\r" + " ".repeat(command.length() + 2) + "\r");
     }
 
 

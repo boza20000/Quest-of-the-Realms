@@ -1,5 +1,7 @@
 package com.questoftherealm.items;
 
+import com.questoftherealm.exceptions.RandomItemNotGenarated;
+
 import java.util.List;
 import java.util.Random;
 
@@ -8,9 +10,13 @@ public class Chest {
     private final static Random random = new Random();
 
     public static ItemDrop generateRandomItem() {
-        ItemType type = randomType();
-        Rarity rarity = randomRarity();
-        return randomItemFrom(type, rarity);
+        try {
+            ItemType type = randomType();
+            Rarity rarity = randomRarity();
+            return randomItemFrom(type, rarity);
+        } catch (Exception e) {
+            throw new RandomItemNotGenarated("Generated Item not found");
+        }
     }
 
     private static ItemType randomType() {

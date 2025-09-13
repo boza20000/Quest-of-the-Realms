@@ -2,6 +2,8 @@ package com.questoftherealm.game.Commands;
 
 import com.questoftherealm.game.Game;
 
+import static com.questoftherealm.game.Game.getPlayer;
+
 public class InventoryCommand extends Command {
     public InventoryCommand() {
         super("inventory");
@@ -14,6 +16,6 @@ public class InventoryCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        Game.getPlayer().getInventory().listItems();
+       getPlayer().openInventory();
     }
 }

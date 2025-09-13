@@ -1,13 +1,11 @@
 package com.questoftherealm.maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.questoftherealm.characters.*;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameConstants;
 
 import java.io.InputStream;
-
-import static com.questoftherealm.maps.TileTypes.*;
 
 
 public class Map {
@@ -28,6 +26,10 @@ public class Map {
 
     private void loadMap() {
         try (InputStream is = Map.class.getResourceAsStream("/map.json")) {
+            if (is == null) {
+                System.out.println("map.json not found. Generating random map instead.");
+                return;
+            }
             ObjectMapper mapper = new ObjectMapper();
             gameMap = mapper.readValue(is, Tile[][].class);
         } catch (Exception e) {
@@ -40,7 +42,8 @@ public class Map {
     }
 
     public void movePlayer(Player player, int x, int y) {
-        player.setCurrentZone(gameMap[x][y].getDescription());
+        player.setCurrentZone(gameMap[y][x].getDescription());
+        gameMap[y][x].onEnter(player);
     }
 
     public void print() {
@@ -76,4 +79,7 @@ public class Map {
         };
     }
 
+    public Tile curZone(int x, int y) {
+        return gameMap[y][x];
+    }
 }

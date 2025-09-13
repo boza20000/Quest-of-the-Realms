@@ -1,11 +1,11 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.exceptions.InvalidCommand;
 import com.questoftherealm.game.Commands.Command;
 import com.questoftherealm.game.Commands.CommandFactory;
 
 import java.util.Scanner;
 
-import static com.questoftherealm.game.Console.printErrorInline;
 import static com.questoftherealm.game.Game.gameOver;
 
 public class GameLoop {
@@ -16,24 +16,35 @@ public class GameLoop {
         while (!gameOver) {
             System.out.print(">");
             String command = scanner.nextLine().trim();
-            if(command.isEmpty()){
+            if (command.isEmpty()) {
+                System.out.print("\033[1A\033[2K\r");
                 continue;
             }
-            String[] parts = command.split("\\\\s+");
+            String[] parts = command.trim().split("\\s+");
             String commandName = parts[0];
-            Command cmd = factory.getCommand(commandName);
-            if(cmd==null){
-                System.out.println("No such command exists");
+            Command cmd = null;
+            try {
+                 cmd = factory.getCommand(commandName);
+            }
+            catch (InvalidCommand e){
+                System.out.println(e.getMessage());
+            }
+            if (cmd == null) {
                 try {
-                    Thread.sleep(1500);
-                }
-                catch (InterruptedException e){
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                printErrorInline(cmd);
-            }
-            else{
-                cmd.execute(parts);
+                System.out.print("\033[1A\033[2K\r");
+            } else {
+                try {
+                    cmd.execute(parts);
+                    System.out.println("Command went trough");
+                }
+                catch (Exception e){
+                    System.out.println("Command syntax: ");
+                    System.out.print(cmd.getDescription());
+                }
             }
         }
     }

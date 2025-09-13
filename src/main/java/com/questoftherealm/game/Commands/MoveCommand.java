@@ -10,7 +10,7 @@ public class MoveCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "- move [north|south|east|west](direction)";
+        return "move [north|south|east|west](direction)";
     }
 
     @Override
@@ -21,8 +21,8 @@ public class MoveCommand extends Command {
         switch (direction) {
             case "north" -> x -= 1;
             case "south" -> x += 1;
-            case "east" -> y += 1;
-            case "west" -> y -= 1;
+            case "east" -> y -= 1;
+            case "west" -> y += 1;
         }
         Game.getPlayer().move(x, y);
     }
