@@ -47,7 +47,7 @@ public class GameUI {
             System.out.println(
                     "1. New Game\n" +
                             "2. Load Game\n" +
-                            "Choose an option: ");
+                            "Type 1 for new game or 2 to load one: ");
             System.out.print(">");
         }
         else{

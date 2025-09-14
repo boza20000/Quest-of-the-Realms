@@ -21,6 +21,7 @@ public class EquipCommand extends Command {
         Item item = getItem(itemName);
         if(Game.getPlayer().getInventory().containsItem(item)) {
             Game.getPlayer().equipItem(item);
+            System.out.print(item.getName() + " equipped successfully! ");
         }
         else{
             System.out.println("Item not in inventory");

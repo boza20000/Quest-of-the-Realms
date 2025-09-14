@@ -76,8 +76,8 @@ public class Game {
                 gameType = gameUI.showMainMenu(count);
                 if (gameType == 1 || gameType == 2) break;
             } catch (NumberFormatException e) {
-                count++;
                 if(count<=1)System.out.println("Invalid input. Please enter a number.");
+                count++;
             }
         }
         switch (gameType) {
@@ -89,6 +89,8 @@ public class Game {
         }
         catch (Exception e){
             System.out.println("Map unavailable");
+            System.out.println("restart game");
+            System.exit(0);
         }
         System.out.println("Game starts...");
         GameLoop loop = new GameLoop();
