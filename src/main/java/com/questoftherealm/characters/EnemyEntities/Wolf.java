@@ -6,6 +6,10 @@ import com.questoftherealm.items.ItemDrop;
 import java.util.List;
 
 public class Wolf extends Enemy  {
+    public Wolf(){
+        super(EnemyConstants.WOLF);
+    }
+
 
     @Override
     public List<ItemDrop> dropLoot() {

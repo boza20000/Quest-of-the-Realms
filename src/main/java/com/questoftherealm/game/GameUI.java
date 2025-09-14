@@ -1,8 +1,5 @@
 package com.questoftherealm.game;
 
-import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.characters.player.PlayerTypes;
-
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -14,6 +11,7 @@ public class GameUI {
     public void showIntro() throws IOException {
         final int delay = 30; // smaller = faster typing
         boolean skip = false;
+        System.out.println("Press Enter to skip the story");
 
         for (char c : story.getStory().toCharArray()) {
             // Check if user pressed Enter to skip
@@ -34,7 +32,9 @@ public class GameUI {
             }
         }
         if (skip) {
-            System.out.println(story.getStory());
+            //System.out.println(story.getStory());
+            System.out.print(GameConstants.RESET);
+            return;
         }
         try {
             System.in.read();
@@ -42,15 +42,21 @@ public class GameUI {
         }
     }
 
-    public int showMainMenu() {
-        System.out.println("Welcome to Quest of the Realms!\n" +
-                "1. New Game\n" +
-                "2. Load Game\n" +
-                "Choose an option: ");
+    public int showMainMenu(int count) {
+        if (count <= 1) {
+            System.out.println(
+                    "1. New Game\n" +
+                            "2. Load Game\n" +
+                            "Type 1 for new game or 2 to load one: ");
+            System.out.print(">");
+        }
+        else{
+            System.out.print(">");
+        }
         return Integer.parseInt(scanner.nextLine());
     }
 
-    public String characterCreationScreen(){
+    public String characterCreationScreen() {
         System.out.println("Choose your name:");
         String name = getScanner().nextLine();
 
@@ -59,10 +65,10 @@ public class GameUI {
         System.out.println("2. Mage — A master of spells, fragile but devastating.");
         System.out.println("3. Orc — Brutal and tough, with raw strength and resilience.");
         System.out.println("4. Rogue — Quick and cunning, excels at stealth and critical strikes.");
-       return name;
+        return name;
     }
 
-    public void handleLine(){
+    public void handleLine() {
         System.out.print("\033[1A\033[2K\r" + " (No such command exists)");
     }
 

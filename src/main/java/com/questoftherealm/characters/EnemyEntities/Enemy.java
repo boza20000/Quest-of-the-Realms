@@ -5,31 +5,31 @@ import com.questoftherealm.characters.EnemiesInterfaces.Lootable;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemType;
 import com.questoftherealm.maps.TileTypes;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.questoftherealm.characters.EnemyEntities.EnemyFactory.createEnemy;
+
 public abstract class Enemy implements Fightable, Lootable {
-    private  String Description;
+    private String description;
     private EnemyType type;
     private int health;
     private List<Item> armor;
     private Item weapon;
-    boolean isDead ;
+    private boolean isDead ;
 
     public Enemy(){}
 
 
-    public Enemy(String description, EnemyType type, int health, List<Item> armor, Item weapon) {
-        this.Description = description;
-        this.type = type;
-        this.health = health;
-        this.armor = armor;
-        this.weapon = weapon;
-        this.isDead = false;
+    public Enemy(EnemyData data) {
+        this.description = data.description();
+        this.type = data.type();
+        this.health = data.health();
+        this.armor = data.armor();
+        this.weapon = data.weapon();
+        this.isDead = data.isDead();
     }
 
     @Override
@@ -41,15 +41,14 @@ public abstract class Enemy implements Fightable, Lootable {
 
     @Override
     public void takeDamage(int damage) {
-        if (getHealth() - damage > 0) {
-            setHealth(health - damage);
-        }
-        isDead = true;
+        int newHealth = Math.max(0, getHealth() - damage);
+        setHealth(newHealth);
+        isDead = newHealth == 0;
     }
 
     @Override
     public boolean isAlive() {
-        return false;
+        return !isDead;
     }
 
     public static List<Enemy> generateEnemies(TileTypes type) {
@@ -82,18 +81,7 @@ public abstract class Enemy implements Fightable, Lootable {
     private static List<Enemy> toEnemyObj(List<EnemyType> enemies) {
         List<Enemy> result = new ArrayList<>();
         for (EnemyType type : enemies) {
-            switch (type) {
-                case GOBLIN -> result.add(new Goblin());
-                case BANDIT -> result.add(new Bandit());
-                case SKELETON -> result.add(new Skeleton());
-                case WOLF -> result.add(new Wolf());
-                case GOBLIN_HORDE -> result.add(new GoblinHorde());
-                case DARK_MAGE -> result.add(new DarkMage());
-                case GOBLIN_GENERAL -> result.add(new GoblinGeneral());
-                case GIANT_SPIDER -> result.add(new GiantSpider());
-                case LOST_SPIRIT -> result.add(new Spirit());
-                case TRAVELING_TRADER -> result.add(new TraderNPC());
-            }
+          result.add(createEnemy(type));
         }
         return result;
     }

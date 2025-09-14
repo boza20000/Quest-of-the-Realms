@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Goblin extends Enemy implements Talkable {
     public Goblin(){
-
+        super(EnemyConstants.GOBLIN);
     }
 
     @Override

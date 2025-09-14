@@ -11,7 +11,7 @@ public class InventoryCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "lists all inventort items";
+        return "lists all inventory items";
     }
 
     @Override

@@ -7,8 +7,6 @@ public class Console {
 
     public void clear() {
         System.out.println();
-        System.out.println();
-        System.out.println();
     }
 
     public void displayTitle() {

@@ -73,5 +73,9 @@ public class Chest {
         int quantity = randomQuantity(selectedItem);
         return new ItemDrop(selectedItem, quantity);
     }
+
+    public static Item generateRandomWeapon(){
+ return null;
+    }
 }
 

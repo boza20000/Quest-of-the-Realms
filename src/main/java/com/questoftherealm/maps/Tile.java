@@ -6,6 +6,7 @@ import com.questoftherealm.characters.EnemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenarated;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class Tile {
             return;
         }
         for (Enemy e: enemies){
-            System.out.println("You spot in the distance a camp of " + e.getClass().getSimpleName() + e.getDescription());
+            System.out.println("You spot in the distance " + e.getClass().getSimpleName() + e.getDescription());
         }
     }
 
@@ -114,7 +115,11 @@ public class Tile {
         for (ItemDrop item : drops) {
             System.out.println("-" + item.quantity() + "x" + item.item().getName());
         }
-
     }
+
+    public void removeDrop(Item drop, int quantity){
+        //drops.remove(drop);
+    }
+
 
 }

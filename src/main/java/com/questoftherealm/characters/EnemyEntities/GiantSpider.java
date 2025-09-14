@@ -6,6 +6,7 @@ import java.util.List;
 
 public class GiantSpider extends Enemy {
     public GiantSpider() {
+        super(EnemyConstants.GIANT_SPIDER);
     }
 
     @Override

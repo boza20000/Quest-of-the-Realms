@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Bandit extends Enemy implements Talkable {
     public Bandit(){
-
+        super(EnemyConstants.BANDIT);
     }
 
     @Override
