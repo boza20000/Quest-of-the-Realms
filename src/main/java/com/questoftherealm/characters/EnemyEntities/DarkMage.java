@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DarkMage extends  Enemy implements Talkable {
     public DarkMage(){
-
+        super(EnemyConstants.DARK_MAGE);
     }
 
     @Override

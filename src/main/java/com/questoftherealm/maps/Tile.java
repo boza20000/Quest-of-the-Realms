@@ -96,7 +96,7 @@ public class Tile {
             return;
         }
         for (Enemy e: enemies){
-            System.out.println("You spot in the distance a camp of " + e.getClass().getSimpleName() + e.getDescription());
+            System.out.println("You spot in the distance " + e.getClass().getSimpleName() + e.getDescription());
         }
     }
 

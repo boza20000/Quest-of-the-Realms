@@ -4,9 +4,9 @@ import com.questoftherealm.items.ItemDrop;
 
 import java.util.List;
 
-public class Skeleton extends Enemy{
-    public Skeleton(){
-
+public class Skeleton extends Enemy {
+    public Skeleton() {
+        super(EnemyConstants.SKELETON);
     }
 
     @Override

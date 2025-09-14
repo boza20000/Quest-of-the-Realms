@@ -7,3 +7,4 @@ public interface Fightable {
     void takeDamage(int damage);     // can receive damage
     boolean isAlive();               // quick status check
 }
+

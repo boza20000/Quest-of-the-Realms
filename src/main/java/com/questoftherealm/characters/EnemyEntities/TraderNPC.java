@@ -9,6 +9,11 @@ import com.questoftherealm.items.ItemDrop;
 import java.util.List;
 
 public class TraderNPC extends Enemy implements Tradeable, Talkable {
+    public TraderNPC(){
+        super(EnemyConstants.TRAVELING_TRADER);
+    }
+
+
     @Override
     public void trade(Player player, Item item, int amount) {
 

@@ -45,16 +45,19 @@ public class Game {
 
     public void buildPlayerCharacter() {
         String name = gameUI.characterCreationScreen();
+        int count = 0;
         int typeChoice;
         while (true) {
             try {
                 typeChoice = Integer.parseInt(gameUI.getScanner().nextLine());
                 if (typeChoice == 1 || typeChoice == 2 || typeChoice == 3 || typeChoice == 4) break;
                 else {
-                    System.out.println("Please enter a number between 1 and 4.");
+                    count++;
+                    if(count<=1) System.out.println("Please enter a number between 1 and 4.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 4.");
+                count++;
+                if(count<=1) System.out.println("Invalid input. Please enter a number between 1 and 4.");
             }
         }
         PlayerTypes type = PlayerTypes.fromInt(typeChoice);
@@ -66,12 +69,15 @@ public class Game {
     public void start() {
         gameUI.getConsole().displayTitle();
         int gameType;
+        int count = 0;
         while (true) {
             try {
-                gameType = gameUI.showMainMenu();
+                count++;
+                gameType = gameUI.showMainMenu(count);
                 if (gameType == 1 || gameType == 2) break;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                count++;
+                if(count<=1)System.out.println("Invalid input. Please enter a number.");
             }
         }
         switch (gameType) {

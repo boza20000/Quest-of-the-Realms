@@ -65,7 +65,7 @@ public class Player implements InventoryHandler, Explorer {
         this.y = y;
         Map map = Game.getGameMap();
         map.movePlayer(this, this.x, this.y);
-        map.print();
+        //map.print();
     }
 
     public String getName() {
@@ -135,6 +135,7 @@ public class Player implements InventoryHandler, Explorer {
 //explore structure
     }
 
+    @Override
     public void openChest() {
         try {
             ItemDrop drop = generateRandomItem();
