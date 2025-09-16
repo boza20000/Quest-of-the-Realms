@@ -3,7 +3,7 @@ package com.questoftherealm.characters.player;
 import com.questoftherealm.characters.characterInterfaces.Explorer;
 import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
-import com.questoftherealm.exceptions.RandomItemNotGenarated;
+import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -142,7 +142,7 @@ public class Player implements InventoryHandler, Explorer {
             System.out.println("Chest opened");
             System.out.println("Random item drop: " + drop.item() + "x" + drop.quantity());
             this.inventory.addItem(drop.item(), drop.quantity());
-        } catch (RandomItemNotGenarated e) {
+        } catch (RandomItemNotGenerated e) {
             System.out.println(e.getMessage());
         }
     }

@@ -1,5 +1,7 @@
 package com.questoftherealm.characters.EnemyEntities;
 
+import com.questoftherealm.characters.EnemyEntities.entities.*;
+
 public class EnemyFactory {
     public static Enemy createEnemy(EnemyType type) {
        return switch (type) {

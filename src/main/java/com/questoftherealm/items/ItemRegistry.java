@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.questoftherealm.exceptions.ItemNotFound;
 
 
 public class ItemRegistry {
@@ -36,6 +37,9 @@ public class ItemRegistry {
             if(i.getName().equals(name)){
                 search=i;
             }
+        }
+        if(search==null){
+            throw new ItemNotFound("Item " + name + " not found");
         }
         return search;
     }
