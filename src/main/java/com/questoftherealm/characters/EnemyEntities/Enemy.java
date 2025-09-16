@@ -3,8 +3,10 @@ package com.questoftherealm.characters.EnemyEntities;
 import com.questoftherealm.characters.EnemiesInterfaces.Fightable;
 import com.questoftherealm.characters.EnemiesInterfaces.Lootable;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.PlayerNotFound;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.maps.TileTypes;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,24 +15,28 @@ import java.util.concurrent.ThreadLocalRandom;
 import static com.questoftherealm.characters.EnemyEntities.EnemyFactory.createEnemy;
 
 public abstract class Enemy implements Fightable, Lootable {
-    private String description;
-    private EnemyType type;
+    private final String description;
+    private final EnemyType type;
     private int health;
+    private final int baseAttack;
+    private final int baseDefense;
     private List<Item> armor;
     private Item weapon;
-    private boolean isDead ;
-
-    public Enemy(){}
-
+    private boolean isDead;
+    private List<Loot> loot;
 
     public Enemy(EnemyData data) {
         this.description = data.description();
         this.type = data.type();
         this.health = data.health();
-        this.armor = data.armor();
+        this.baseAttack = data.baseAttack();
+        this.baseDefense = data.baseDefense();
+        this.armor = new ArrayList<>(data.armor());
         this.weapon = data.weapon();
+        this.loot = new ArrayList<>(data.loot());
         this.isDead = data.isDead();
     }
+
 
     @Override
     public void attack(Player player) {
@@ -137,10 +143,6 @@ public abstract class Enemy implements Fightable, Lootable {
         return " ";
     }
 
-    public void setType(EnemyType type) {
-        this.type = type;
-    }
-
     public void setArmor(List<Item> armor) {
         this.armor = armor;
     }
@@ -156,4 +158,9 @@ public abstract class Enemy implements Fightable, Lootable {
     public boolean isDead() {
         return isDead;
     }
+
+    public static Item getDefaultWeapon() {
+        return null;
+    }
+
 }

@@ -1,7 +1,9 @@
-package com.questoftherealm.characters.EnemyEntities;
+package com.questoftherealm.characters.EnemyEntities.entities;
 
 import com.questoftherealm.characters.EnemiesInterfaces.Talkable;
 import com.questoftherealm.characters.EnemiesInterfaces.Tradeable;
+import com.questoftherealm.characters.EnemyEntities.Enemy;
+import com.questoftherealm.characters.EnemyEntities.EnemyConstants;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;

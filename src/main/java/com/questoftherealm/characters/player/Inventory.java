@@ -1,5 +1,6 @@
 package com.questoftherealm.characters.player;
 
+import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
 
 import java.util.HashMap;
@@ -14,11 +15,22 @@ public class Inventory {
     }
 
     public void addItem(Item item, int quantity) {
-        if (capacity > items.size() && items.containsKey(item)) {
-            items.put(item, items.getOrDefault(item, 0) + quantity);
-            System.out.println(quantity + " x " + item + " added.");
+        if (item.isStackable()) {
+            int curItemQuantity = items.getOrDefault(item, 0);
+            int sum = curItemQuantity + quantity;
+            if (sum <= GameConstants.MAX_ITEMS_IN_STACK) {
+                items.put(item, sum);
+                System.out.println(quantity + " x " + item + " added (now " + sum + ").");
+            } else {
+                System.out.println("Cannot carry more than " + GameConstants.MAX_ITEMS_IN_STACK + " of " + item.getName() + ".");
+            }
         } else {
-            System.out.println("Inventory full!");
+            if (items.size() < capacity) {
+                items.put(item, items.getOrDefault(item, 0) + 1);
+                System.out.println(item + " added.");
+            } else {
+                System.out.println("Inventory full! Cannot add " + item.getName());
+            }
         }
     }
 

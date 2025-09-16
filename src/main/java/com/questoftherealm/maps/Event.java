@@ -2,6 +2,7 @@ package com.questoftherealm.maps;
 
 
 import com.questoftherealm.characters.EnemyEntities.*;
+import com.questoftherealm.characters.EnemyEntities.entities.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 

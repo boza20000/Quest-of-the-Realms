@@ -42,12 +42,12 @@ public class Warrior extends Characters implements Trader {
 
     @Override
     public int getBaseAttack() {
-        return ROGUE_ATTACK;
+        return WARRIOR_ATTACK;
     }
 
     @Override
     public int getBaseDefence() {
-        return ROGUE_DEFENCE;
+        return WARRIOR_DEFENCE;
     }
 
 }

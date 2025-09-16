@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.characters.EnemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.exceptions.RandomItemNotGenarated;
+import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -61,7 +61,7 @@ public class Tile {
         try {
             generateItems();
         }
-        catch (RandomItemNotGenarated e){
+        catch (RandomItemNotGenerated e){
             System.out.println(e.getMessage());
         }
         contentGenerated = true;
