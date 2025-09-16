@@ -32,16 +32,15 @@ public class ItemRegistry {
 
     //Null pointer except
     public static Item getItem(String name) {
-        Item search = null;//here
-        for (Item i:getAllItems()){
-            if(i.getName().equals(name)){
-                search=i;
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Item name cannot be null or blank");
+        }
+        for (Item i : getAllItems()) {
+            if (i != null && name.equals(i.getName())) {
+                return i;
             }
         }
-        if(search==null){
-            throw new ItemNotFound("Item " + name + " not found");
-        }
-        return search;
+        throw new ItemNotFound("Item '" + name + "' not found");
     }
 
 
