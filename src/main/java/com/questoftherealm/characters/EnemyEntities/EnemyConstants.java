@@ -6,21 +6,21 @@ import java.util.List;
 
 public final class EnemyConstants {
 
-    private EnemyConstants() {}
+    private EnemyConstants() {
+    }
 
     public static final EnemyData GOBLIN = new EnemyData(
             "A sneaky goblin that lurks in the shadows",
             EnemyType.GOBLIN,
             30,
-            5, // base attack (dagger stab or punch)
-
-
-            2, // base defense
+            5,
+            2,
             List.of(ItemRegistry.getItem("Torn Leather Armor")),
             ItemRegistry.getItem("Iron Dagger"),
             List.of(
-                    new Loot(ItemRegistry.getItem("Gold Coin"), 0.8, 1, 5),
-                    new Loot(ItemRegistry.getItem("Health Potion"), 0.2, 1, 1)
+                    new Loot(ItemRegistry.getItem("Health Potion"), 0.3, 1, 1),   // small chance to carry potions
+                    new Loot(ItemRegistry.getItem("Iron Dagger"), 0.15, 1, 1)    // might drop weapon
+
             ),
             false
     );
@@ -29,13 +29,13 @@ public final class EnemyConstants {
             "A rogue bandit",
             EnemyType.BANDIT,
             50,
-            6, // stronger than goblin
+            6,
             3,
             List.of(ItemRegistry.getItem("Torn Leather Vest"), ItemRegistry.getItem("Ragged Boots")),
             ItemRegistry.getItem("Iron Dagger"),
             List.of(
-                    new Loot(ItemRegistry.getItem("Gold Coin"), 0.9, 2, 8),
-                    new Loot(ItemRegistry.getItem("Iron Dagger"), 0.15, 1, 1)
+                    new Loot(ItemRegistry.getItem("Health Potion"), 0.25, 1, 1),
+                    new Loot(ItemRegistry.getItem("Iron Dagger"), 0.2, 1, 1)
             ),
             false
     );
@@ -49,7 +49,7 @@ public final class EnemyConstants {
             List.of(ItemRegistry.getItem("Rusty Helmet")),
             ItemRegistry.getItem("Bronze Sword"),
             List.of(
-                    new Loot(ItemRegistry.getItem("Bone Fragment"), 0.7, 1, 3),
+                    //new Loot(ItemRegistry.getItem(""), 0.7, 1, 3),
                     new Loot(ItemRegistry.getItem("Bronze Sword"), 0.1, 1, 1)
             ),
             false
@@ -59,13 +59,14 @@ public final class EnemyConstants {
             "A feral wolf",
             EnemyType.WOLF,
             35,
-            6, // bite
-            2, // natural defense
+            6,
+            2,
             List.of(),
             null,
             List.of(
-                    new Loot(ItemRegistry.getItem("Wolf Pelt"), 0.6, 1, 1),
-                    new Loot(ItemRegistry.getItem("Wolf Fang"), 0.3, 1, 1)
+                    new Loot(ItemRegistry.getItem("Bronze Sword"), 0.1, 1, 1)
+                   //new Loot(ItemRegistry.getItem("Wolf Pelt"), 0.6, 1, 1),
+                   // new Loot(ItemRegistry.getItem("Wolf Fang"), 0.3, 1, 1)
             ),
             false
     );
@@ -79,8 +80,8 @@ public final class EnemyConstants {
             List.of(ItemRegistry.getItem("Torn Leather Armor")),
             ItemRegistry.getItem("Iron Sword"),
             List.of(
-                    new Loot(ItemRegistry.getItem("Gold Coin"), 1.0, 5, 15),
-                    new Loot(ItemRegistry.getItem("Health Potion"), 0.25, 1, 2)
+                    new Loot(ItemRegistry.getItem("Health Potion"), 0.35, 1, 2),
+                    new Loot(ItemRegistry.getItem("Iron Sword"), 0.15, 1, 1)
             ),
             false
     );
@@ -89,13 +90,13 @@ public final class EnemyConstants {
             "A dark mage with sinister powers",
             EnemyType.DARK_MAGE,
             60,
-            12, // powerful spells
+            12,
             3,
             List.of(ItemRegistry.getItem("Enchanted Robe"), ItemRegistry.getItem("Cloth Hood")),
             ItemRegistry.getItem("Mage’s Staff"),
             List.of(
                     new Loot(ItemRegistry.getItem("Mana Potion"), 0.4, 1, 2),
-                    new Loot(ItemRegistry.getItem("Dark Tome"), 0.1, 1, 1)
+                    new Loot(ItemRegistry.getItem("Bronze Sword"), 0.1, 1, 1)
             ),
             false
     );
@@ -109,8 +110,8 @@ public final class EnemyConstants {
             List.of(ItemRegistry.getItem("Iron Helmet"), ItemRegistry.getItem("Iron Chestplate")),
             ItemRegistry.getItem("Orcish Axe"),
             List.of(
-                    new Loot(ItemRegistry.getItem("Gold Coin"), 1.0, 10, 25),
-                    new Loot(ItemRegistry.getItem("Orcish Axe"), 0.15, 1, 1)
+                    new Loot(ItemRegistry.getItem("Orcish Axe"), 0.15, 1, 1),
+                    new Loot(ItemRegistry.getItem("Health Potion"), 0.4, 1, 2)
             ),
             false
     );
@@ -119,13 +120,12 @@ public final class EnemyConstants {
             "A terrifying giant spider",
             EnemyType.GIANT_SPIDER,
             70,
-            10, // venomous bite
-            5,  // hard chitin armor
+            10,
+            5,
             List.of(),
             null,
             List.of(
-                    new Loot(ItemRegistry.getItem("Spider Silk"), 0.5, 1, 3),
-                    new Loot(ItemRegistry.getItem("Venom Sac"), 0.25, 1, 1)
+                    new Loot(ItemRegistry.getItem("Bronze Sword"), 0.1, 1, 1)
             ),
             false
     );
@@ -134,13 +134,12 @@ public final class EnemyConstants {
             "A wandering lost spirit",
             EnemyType.LOST_SPIRIT,
             45,
-            8,  // ethereal damage
-            4,  // hard to hit
+            8,
+            4,
             List.of(),
             null,
             List.of(
-                    new Loot(ItemRegistry.getItem("Ectoplasm"), 0.6, 1, 2),
-                    new Loot(ItemRegistry.getItem("Cursed Relic"), 0.05, 1, 1)
+                    new Loot(ItemRegistry.getItem("Bronze Sword"), 0.1, 1, 1)
             ),
             false
     );
@@ -149,13 +148,13 @@ public final class EnemyConstants {
             "A traveling trader offering goods",
             EnemyType.TRAVELING_TRADER,
             40,
-            2, // very weak, non-combat
+            2,
             1,
             List.of(),
             null,
             List.of(
-                    new Loot(ItemRegistry.getItem("Gold Coin"), 1.0, 17, 30), // drops a lot of money if killed
-                    new Loot(ItemRegistry.getItem("Random Trade Goods"), 0.3, 1, 3)
+                    new Loot(ItemRegistry.getItem("Health Potion"), 0.5, 1, 2),   // carries potions
+                    new Loot(ItemRegistry.getItem("Mana Potion"), 0.4, 1, 2)     // and mana
             ),
             false
     );

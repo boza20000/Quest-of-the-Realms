@@ -60,14 +60,13 @@ public class Tile {
         this.event = Event.generateEvent(type);
         try {
             generateItems();
-        }
-        catch (RandomItemNotGenerated e){
+        } catch (RandomItemNotGenerated e) {
             System.out.println(e.getMessage());
         }
         contentGenerated = true;
     }
 
-    public void onEnter(Player player){
+    public void onEnter(Player player) {
         generateContent();
         listContent();
     }
@@ -78,25 +77,25 @@ public class Tile {
         displayEnemies();
     }
 
-    private void displayLocation(){
+    private void displayLocation() {
         System.out.println("You have entered: " + structure.getName());
         System.out.println(structure.getDescription());
 
     }
 
-    private void displayItems(){
+    private void displayItems() {
         if (!drops.isEmpty()) {
             System.out.println("You see some items here:");
             printAvailableItems();
         }
     }
 
-    private void displayEnemies(){
-        if(enemies.isEmpty()){
+    private void displayEnemies() {
+        if (enemies.isEmpty()) {
             System.out.println("No enemies spotted");
             return;
         }
-        for (Enemy e: enemies){
+        for (Enemy e : enemies) {
             System.out.println("You spot in the distance " + e.getClass().getSimpleName() + e.getDescription());
         }
     }
@@ -109,7 +108,7 @@ public class Tile {
     }
 
     public void printAvailableItems() {
-        if(drops.isEmpty()){
+        if (drops.isEmpty()) {
             System.out.println("No items found");
         }
         for (ItemDrop item : drops) {
@@ -117,8 +116,23 @@ public class Tile {
         }
     }
 
-    public void removeDrop(Item drop, int quantity){
-        //drops.remove(drop);
+    public void removeDrop(Item drop, int quantity) {
+        if (drop == null || quantity <= 0) {
+            throw new IllegalArgumentException("Invalid item or quantity");
+        }
+        for (int i = 0; i < drops.size(); i++) {
+            ItemDrop tileItem = drops.get(i);
+            if (tileItem.item().getName().equals(drop.getName())) {
+                int newQty = tileItem.quantity() - quantity;
+                if (newQty <= 0) {
+                    drops.remove(i);
+                } else {
+                    drops.set(i, new ItemDrop(drop, newQty));
+                }
+                return;
+            }
+        }
+        System.out.println("No such item in this zone");
     }
 
 

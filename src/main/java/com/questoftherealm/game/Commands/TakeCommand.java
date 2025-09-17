@@ -33,10 +33,6 @@ public class TakeCommand extends Command {
             return;
         }
         Item newItem = getItem(itemName);
-        if (newItem == null) {
-            System.out.println("No such item exists.");
-            return;
-        }
         Player player = Game.getPlayer();
         Map map = Game.getGameMap();
         Tile curZone = map.curZone(player.getX(), player.getY());

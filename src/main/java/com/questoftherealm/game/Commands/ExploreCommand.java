@@ -11,8 +11,6 @@ public class ExploreCommand extends Command {
     public void execute(String[] args) {
         String structure = args[1];
         Game.getPlayer().exploreStructure(structure);
-
-
     }
 
     @Override
