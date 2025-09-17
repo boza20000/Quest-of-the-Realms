@@ -49,6 +49,7 @@ public class Game {
         int typeChoice;
         while (true) {
             try {
+                System.out.print(">");
                 typeChoice = Integer.parseInt(gameUI.getScanner().nextLine());
                 if (typeChoice == 1 || typeChoice == 2 || typeChoice == 3 || typeChoice == 4) break;
                 else {

@@ -1,5 +1,6 @@
 package com.questoftherealm.characters.player;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questoftherealm.characters.characterInterfaces.Explorer;
 import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
@@ -9,6 +10,7 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.maps.Map;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -17,6 +19,7 @@ import static com.questoftherealm.items.Chest.generateRandomItem;
 
 public class Player implements InventoryHandler, Explorer {
     private final String name;
+    private final PlayerTypes playerType;
     private final Characters playerCharacter;
     private final Inventory inventory;
     private int level;
@@ -27,9 +30,10 @@ public class Player implements InventoryHandler, Explorer {
     private HashMap<ItemEffect, Item> armor;
     private Item weapon;
 
-    public Player(String name, PlayerTypes playerCharacter) {
+    public Player(String name, PlayerTypes type) {
         this.name = name;
-        this.playerCharacter = (PlayerFactory.createPlayer(playerCharacter));
+        this.playerType = type;
+        this.playerCharacter = (PlayerFactory.createPlayer(type));
         this.inventory = new Inventory(20);
         this.level = 1;
         this.gold = 0;
@@ -72,8 +76,13 @@ public class Player implements InventoryHandler, Explorer {
         return name;
     }
 
+    @JsonIgnore
     public Characters getPlayerCharacter() {
         return playerCharacter;
+    }
+
+    public PlayerTypes getPlayerType() {
+        return playerType;
     }
 
     public int getX() {

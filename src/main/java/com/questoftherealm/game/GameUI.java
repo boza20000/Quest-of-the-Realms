@@ -49,17 +49,25 @@ public class GameUI {
                             "2. Load Game\n" +
                             "Type 1 for new game or 2 to load one: ");
             System.out.print(">");
-        }
-        else{
+        } else {
             System.out.print(">");
         }
         return Integer.parseInt(scanner.nextLine());
     }
 
     public String characterCreationScreen() {
-        System.out.println("Choose your name:");
+        System.out.println("Choose your name: ");
+        System.out.print(">");
         String name = getScanner().nextLine();
-
+        int count = 0;
+        while (name.isBlank()) {
+            if (count < 1) {
+                System.out.println("Name can't be empty");
+            }
+            System.out.print(">");
+            name = getScanner().nextLine();
+            count++;
+        }
         System.out.println("Choose your character:");
         System.out.println("1. Warrior — A strong fighter with high health and defense.");
         System.out.println("2. Mage — A master of spells, fragile but devastating.");
