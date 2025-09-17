@@ -90,11 +90,12 @@
     { "name": "Crown of Eldoria", "type": "QUEST", "stackable": false, "power": 0, "cost": 60, "manaCost": 0, "rarity": "EPIC", "effect": "QUEST_ITEM" },
 
 
-    { "name": "Fragment of Dawn", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 25, "manaCost": 0, "rarity": "UNCOMMON", "effect": "FRAGMENT" },
-    { "name": "Fragment of Twilight", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 25, "manaCost": 0, "rarity": "UNCOMMON", "effect": "FRAGMENT" },
-    { "name": "Fragment of the Arcane", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 30, "manaCost": 0, "rarity": "RARE", "effect": "FRAGMENT" },
-    { "name": "Shard of Valor", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 28, "manaCost": 0, "rarity": "RARE", "effect": "FRAGMENT" },
-    { "name": "Shard of Shadows", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 28, "manaCost": 0, "rarity": "RARE", "effect": "FRAGMENT" }
+  { "name": "Fragment of Dawn", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 25, "manaCost": 0, "rarity": "UNCOMMON", "effect": "FRAGMENT" },
+  { "name": "Fragment of Twilight", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 25, "manaCost": 0, "rarity": "UNCOMMON", "effect": "FRAGMENT" },
+  { "name": "Fragment of the Arcane", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 30, "manaCost": 0, "rarity": "RARE", "effect": "FRAGMENT" },
+  { "name": "Shard of Valor", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 28, "manaCost": 0, "rarity": "RARE", "effect": "FRAGMENT" },
+  { "name": "Shard of Shadows", "type": "FRAGMENT", "stackable": true, "power": 0, "cost": 28, "manaCost": 0, "rarity": "RARE", "effect": "FRAGMENT" }
+
 
 ]
 
