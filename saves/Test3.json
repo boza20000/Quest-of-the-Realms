@@ -1,0 +1,31 @@
+{
+  "name" : "Doss",
+  "playerType" : "Rogue",
+  "inventory" : {
+    "items" : {
+      "Traveler’s Boots" : 1,
+      "Greater Mana Potion" : 2
+    }
+  },
+  "level" : 1,
+  "experience" : 0,
+  "gold" : 0,
+  "x" : 2,
+  "y" : 4,
+  "currentZone" : "A peaceful grassy field",
+  "armor" : {
+    "CHESTPLATE" : null,
+    "HELMET" : null,
+    "BOOTS" : null
+  },
+  "weapon" : {
+    "name" : "Iron Dagger",
+    "type" : "WEAPON",
+    "stackable" : false,
+    "power" : 8,
+    "rarity" : "COMMON",
+    "effect" : "DAGGER",
+    "price" : 17,
+    "mana" : 2
+  }
+}

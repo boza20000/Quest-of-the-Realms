@@ -1,6 +1,8 @@
 package com.questoftherealm.characters.player;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.characters.characterInterfaces.Explorer;
 import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
@@ -46,6 +48,36 @@ public class Player implements InventoryHandler, Explorer {
         this.weapon = this.playerCharacter.getDefaultWeapon();
         this.x = 2;
         this.y = 3;
+    }
+
+    @JsonCreator
+    public Player(@JsonProperty("name") String name,
+                  @JsonProperty("playerType") PlayerTypes playerType,
+                  @JsonProperty("level") int level,
+                  @JsonProperty("experience") int experience,
+                  @JsonProperty("gold") int gold,
+                  @JsonProperty("x") int x,
+                  @JsonProperty("y") int y,
+                  @JsonProperty("currentZone") String currentZone,
+                  @JsonProperty("armor") HashMap<ItemEffect, Item> armor,
+                  @JsonProperty("weapon") Item weapon,
+                  @JsonProperty("inventory") Inventory inventory) {
+        this.name = name;
+        this.playerType = playerType;
+        this.playerCharacter = PlayerFactory.createPlayer(playerType);
+        this.level = level;
+        this.experience = experience;
+        this.gold = gold;
+        this.x = x;
+        this.y = y;
+        this.currentZone = currentZone;
+        this.weapon = weapon != null ? weapon : playerCharacter.getDefaultWeapon();
+        this.armor = armor != null ? armor : new HashMap<>();
+        if (!this.armor.containsKey(ItemEffect.HELMET)) this.armor.put(ItemEffect.HELMET, null);
+        if (!this.armor.containsKey(ItemEffect.CHESTPLATE)) this.armor.put(ItemEffect.CHESTPLATE, null);
+        if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
+        this.inventory = inventory != null ? inventory : new Inventory(20);
+        recalculateStats();
     }
 
     public void addExp(int exp) {

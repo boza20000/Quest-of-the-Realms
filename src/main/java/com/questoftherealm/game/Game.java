@@ -17,6 +17,10 @@ public class Game {
         return player;
     }
 
+    public static void setPlayer(Player player) {
+        Game.player = player;
+    }
+
     public static Map getGameMap() {
         return gameMap;
     }
@@ -38,7 +42,7 @@ public class Game {
         System.out.println("Loading...");
         try {
             LoadGame.loadGameSave(save);
-        } catch (Exception e) {//make exception for loading files not found
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

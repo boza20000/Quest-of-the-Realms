@@ -1,0 +1,28 @@
+{
+  "name" : "Test1",
+  "playerType" : "Warrior",
+  "inventory" : {
+    "items" : { }
+  },
+  "level" : 1,
+  "experience" : 0,
+  "gold" : 0,
+  "x" : 2,
+  "y" : 3,
+  "currentZone" : "Spawn",
+  "armor" : {
+    "BOOTS" : null,
+    "HELMET" : null,
+    "CHESTPLATE" : null
+  },
+  "weapon" : {
+    "name" : "Bronze Sword",
+    "type" : "WEAPON",
+    "stackable" : false,
+    "power" : 6,
+    "rarity" : "COMMON",
+    "effect" : "SWORD",
+    "price" : 13,
+    "mana" : 1
+  }
+}
