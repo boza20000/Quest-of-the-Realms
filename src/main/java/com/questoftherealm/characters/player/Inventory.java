@@ -1,14 +1,24 @@
 package com.questoftherealm.characters.player;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemKeyDeserializer;
+import com.questoftherealm.items.ItemKeySerializer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Inventory {
+    @JsonSerialize(keyUsing = ItemKeySerializer.class)
+    @JsonDeserialize(keyUsing = ItemKeyDeserializer.class)
     private final Map<Item, Integer> items = new HashMap<>();
     private final int capacity;
+
+    public Inventory() {
+        this.capacity = 20;
+    }
 
     public Inventory(int capacity) {
         this.capacity = capacity;
