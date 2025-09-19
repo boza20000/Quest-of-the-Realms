@@ -22,9 +22,10 @@ public class CommandFactory {
         register("save", new SaveCommand());
         register("load", new LoadCommand());
         register("exit", new ExitCommand());
-        register("map",new MapCommand());
-        register("take",new TakeCommand());
-        register("explore",new ExploreCommand());
+        register("map", new MapCommand());
+        register("take", new TakeCommand());
+        register("explore", new ExploreCommand());
+        register("stats", new StatsCommand());
     }
 
     private void register(String name, Command command) {
@@ -32,7 +33,7 @@ public class CommandFactory {
     }
 
     public Command getCommand(String name) {
-        if(commands.get(name)==null){
+        if (commands.get(name) == null) {
             throw new InvalidCommand("Command not recognised");
         }
         return commands.get(name);

@@ -32,6 +32,9 @@ public class Tile {
         this.walkable = walkable;
     }
 
+    public boolean isContentGenerated() {
+        return contentGenerated;
+    }
 
     public TileTypes getType() {
         return type;

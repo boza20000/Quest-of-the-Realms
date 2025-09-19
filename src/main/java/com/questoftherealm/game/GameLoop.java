@@ -13,6 +13,7 @@ public class GameLoop {
     private final CommandFactory factory = new CommandFactory();
 
     public void startLoop() {
+        worldIntro();
         while (!gameOver) {
             System.out.print(">");
             String command = scanner.nextLine().trim();
@@ -48,5 +49,16 @@ public class GameLoop {
             }
         }
     }
+
+    private void worldIntro() {
+        System.out.println("\n🌍 And so, your journey begins...");
+        System.out.println("You stand at the gates of the king’s castle, the weight of destiny upon your shoulders.");
+        System.out.println("The banners of the four kingdoms ripple in the wind, their fate resting in your hands.");
+        System.out.println("Whispers of a shadowy enemy spread across the land—an unknown force threatening to consume all.");
+        System.out.println("⚔️ The king has entrusted you with a sacred mission:");
+        System.out.println("Unite the realms. Face the darkness. Become the hero this world desperately needs.");
+        System.out.println("\nYour legend starts now...");
+    }
+
 
 }

@@ -43,7 +43,7 @@ public class Map {
 
     public void movePlayer(Player player, int x, int y) {
         player.setCurrentZone(gameMap[y][x].getDescription());
-        gameMap[y][x].onEnter(player);
+
     }
 
     public void print() {

@@ -12,10 +12,9 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.maps.Map;
-
+import com.questoftherealm.maps.Tile;
 import java.util.HashMap;
 import java.util.Objects;
-
 import static com.questoftherealm.game.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
@@ -168,7 +167,14 @@ public class Player implements InventoryHandler, Explorer {
 
     @Override
     public void look() {
-        //looking
+        Tile curTile = Game.getGameMap().curZone(getX(), getY());
+        if(!curTile.isContentGenerated()) {
+            System.out.println("You have spotted: ");
+            curTile.onEnter(this);
+        }
+        else{
+            System.out.println("There seems to be nothing else...");
+        }
     }
 
     @Override

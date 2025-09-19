@@ -15,6 +15,15 @@ public class LookCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        Game.getPlayer().look();
+        try {
+            System.out.print("Looking");
+            for (int i = 0; i < 3; i++) {
+                Thread.sleep(1000);
+                System.out.print(".");
+            }
+            Game.getPlayer().look();
+        } catch (Exception e) {
+            System.out.println("Looking failed");
+        }
     }
 }
