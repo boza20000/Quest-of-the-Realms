@@ -145,6 +145,6 @@ public class Tile {
                 return;
             }
         }
-        System.out.println("No such item in this zone");
+        //System.out.println("No such item in this zone");
     }
 }

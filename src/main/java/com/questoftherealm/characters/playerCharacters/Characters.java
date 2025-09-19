@@ -155,6 +155,6 @@ public abstract class Characters implements Combatant {
                 "Charisma    : " + getCharisma() + "\n" +
                 "Spells      : " + getSpells() + "\n" +
                 "Intelligence: " + getIntelligence() + "\n" +
-                "=================================";
+                "==========================";
     }
 }

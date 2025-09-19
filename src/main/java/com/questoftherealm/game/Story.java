@@ -20,7 +20,6 @@ public class Story {
             
             Your task is clear: travel north, visit the villages, explore the area,
             report back, and uncover the truth behind these disturbances.
-            
             The kingdom trusts your skill and judgment to report back with any findings.
             
             Your journey begins now. Pack your gear, steel your courage, and take your

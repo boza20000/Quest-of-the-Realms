@@ -25,9 +25,8 @@ public class GameLoop {
             String commandName = parts[0];
             Command cmd = null;
             try {
-                 cmd = factory.getCommand(commandName);
-            }
-            catch (InvalidCommand e){
+                cmd = factory.getCommand(commandName);
+            } catch (InvalidCommand e) {
                 System.out.println(e.getMessage());
             }
             if (cmd == null) {
@@ -41,8 +40,7 @@ public class GameLoop {
                 try {
                     cmd.execute(parts);
                     System.out.println("Command went trough");
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("Command syntax: ");
                     System.out.print(cmd.getDescription());
                 }
@@ -51,13 +49,15 @@ public class GameLoop {
     }
 
     private void worldIntro() {
-        System.out.println("\n🌍 And so, your journey begins...");
+        System.out.println("🌍 And so, your journey begins...");
         System.out.println("You stand at the gates of the king’s castle, the weight of destiny upon your shoulders.");
         System.out.println("The banners of the four kingdoms ripple in the wind, their fate resting in your hands.");
         System.out.println("Whispers of a shadowy enemy spread across the land—an unknown force threatening to consume all.");
+        System.out.println("\n(Press ENTER to continue...)");
+        scanner.nextLine();
         System.out.println("⚔️ The king has entrusted you with a sacred mission:");
         System.out.println("Unite the realms. Face the darkness. Become the hero this world desperately needs.");
-        System.out.println("\nYour legend starts now...");
+        System.out.println("Your legend starts now...");
     }
 
 

@@ -1,8 +1,12 @@
 package com.questoftherealm.expeditions;
 
-public class Quests {
-    public static void listAllCurQuests(){
+import java.util.List;
 
-    }
+public class Quests {
+    private List<Mission> missions;
+    private String description;
+
+
+
 
 }

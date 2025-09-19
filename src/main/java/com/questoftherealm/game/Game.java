@@ -69,6 +69,11 @@ public class Game {
         player = new Player(name, type);
         System.out.println("You have chosen " + type);
         System.out.println(player.getPlayerCharacter());
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void start() {
@@ -97,7 +102,6 @@ public class Game {
             System.out.println("restart game");
             System.exit(0);
         }
-        System.out.println("Game starts...");
         GameLoop loop = new GameLoop();
         loop.startLoop();
     }

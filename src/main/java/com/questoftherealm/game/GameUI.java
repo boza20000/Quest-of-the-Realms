@@ -11,9 +11,10 @@ public class GameUI {
     public void showIntro() throws IOException {
         final int delay = 30; // smaller = faster typing
         boolean skip = false;
+        int count = 0;
         System.out.println("Press Enter to skip the story");
-
         for (char c : story.getStory().toCharArray()) {
+            count++;
             // Check if user pressed Enter to skip
             if (System.in.available() > 0) {
                 skip = true;
@@ -32,7 +33,7 @@ public class GameUI {
             }
         }
         if (skip) {
-            //System.out.println(story.getStory());
+            System.out.print(story.getStory().substring(count - 1, story.getStory().length() - 1));
             System.out.print(GameConstants.RESET);
             return;
         }
@@ -56,6 +57,7 @@ public class GameUI {
     }
 
     public String characterCreationScreen() {
+        System.out.println();
         System.out.println("Choose your name: ");
         System.out.print(">");
         String name = getScanner().nextLine();
@@ -79,7 +81,6 @@ public class GameUI {
     public void handleLine() {
         System.out.print("\033[1A\033[2K\r" + " (No such command exists)");
     }
-
 
     public Scanner getScanner() {
         return scanner;
