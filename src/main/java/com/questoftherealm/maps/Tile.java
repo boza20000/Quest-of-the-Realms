@@ -32,6 +32,7 @@ public class Tile {
         this.walkable = walkable;
     }
 
+
     public TileTypes getType() {
         return type;
     }
@@ -42,6 +43,15 @@ public class Tile {
 
     public boolean isWalkable() {
         return walkable;
+    }
+
+    public Enemy getEnemy(String name) {
+        for (Enemy e : enemies) {
+            if (e.getType().toString().equals(name.toUpperCase())) {
+                return e;
+            }
+        }
+        return null;
     }
 
     public ItemDrop pickItem(String name) {
@@ -134,6 +144,4 @@ public class Tile {
         }
         System.out.println("No such item in this zone");
     }
-
-
 }

@@ -40,9 +40,13 @@ public abstract class Enemy implements Fightable, Lootable {
 
     @Override
     public void attack(Player player) {
-        int damage = player.getPlayerCharacter().getAttack();
+        int damage = this.getBaseAttack() + getWeapon().getPower();
         player.getPlayerCharacter().takeDamage(damage);
+        System.out.println(this.getClass().getSimpleName() + " has dealt " + damage +"HP to the player");
+    }
 
+    public int getBaseAttack() {
+        return baseAttack;
     }
 
     @Override
@@ -163,4 +167,8 @@ public abstract class Enemy implements Fightable, Lootable {
         return null;
     }
 
+    public void interact(Player player) {
+       Battle newBattle =  BattleFactory.createBattle(player,this);
+       newBattle.simulate();
+    }
 }
