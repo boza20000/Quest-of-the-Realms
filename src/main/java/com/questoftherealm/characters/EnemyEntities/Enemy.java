@@ -40,7 +40,7 @@ public abstract class Enemy implements Fightable, Lootable {
 
     @Override
     public void attack(Player player) {
-        int damage = this.getBaseAttack() + getWeapon().getPower();
+        int damage = this.getBaseAttack() + (getWeapon()!=null ? getWeapon().getPower() : 0);
         player.getPlayerCharacter().takeDamage(damage);
         System.out.println(this.getClass().getSimpleName() + " has dealt " + damage +"HP to the player");
     }

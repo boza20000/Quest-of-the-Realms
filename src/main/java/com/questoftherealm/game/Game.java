@@ -1,17 +1,20 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.maps.Map;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Game {
     private static Player player;
     private static Map gameMap;
     private final GameUI gameUI = new GameUI();
     public static boolean gameOver = false;
-
+    public Queue<Quest> gameQuests = new LinkedList<>();
 
     public static Player getPlayer() {
         return player;

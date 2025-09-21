@@ -1,7 +1,6 @@
 package com.questoftherealm.game.Commands;
 
 import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.expeditions.Quests;
 
 public class QuestsCommand extends Command {
 
@@ -16,7 +15,7 @@ public class QuestsCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        QuestFactory.listAllCurQuests();
+        QuestFactory.listAllQuests();
     }
 
 }

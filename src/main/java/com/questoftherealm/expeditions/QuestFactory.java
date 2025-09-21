@@ -1,23 +1,33 @@
 package com.questoftherealm.expeditions;
 
+import com.questoftherealm.expeditions.quests.*;
+
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class QuestFactory {
-    HashMap<String, Quests> quests = new HashMap<>();
+    private static final Queue<Quest> quests = new LinkedList<>();
 
     public QuestFactory() {
-        register("Start Journey", new StartQuest());
-        register("Explore the North", new NorthExploration());
-        //..
+        register(new StartQuest());
+        register(new NorthExploration());
+        register(new GoblinAmbush());
+        register(new RiseOfTheGoblinThreat());
+        register(new FinalBattle());
     }
 
-
-    void register(String name, Quests quest) {
-        quests.put(name, quest);
+    public Quest getNextQuest() {
+        return quests.poll();
     }
 
-    public static void listAllCurQuests() {
+    void register(Quest quest) {
+        quests.offer(quest);
+    }
 
+    public static void listAllQuests() {
+        System.out.println("All quests:");
+        quests.forEach((Quest quest) -> System.out.println("Quest:" + quest.getName()));
     }
 
 }
