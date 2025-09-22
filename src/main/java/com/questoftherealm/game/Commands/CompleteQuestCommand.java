@@ -1,5 +1,8 @@
 package com.questoftherealm.game.Commands;
 
+import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.game.Game;
+
 public class CompleteQuestCommand extends Command {
     public CompleteQuestCommand() {
         super("complete Quest");
@@ -7,7 +10,9 @@ public class CompleteQuestCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-    //print the quest list with to do tasks
+        Quest curQuest = Game.getQuests().peek();
+        System.out.println("Your current quest: " + curQuest.getName());
+        curQuest.listMissions();
 
     }
 

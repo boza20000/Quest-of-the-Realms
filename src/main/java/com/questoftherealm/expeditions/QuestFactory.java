@@ -16,9 +16,8 @@ public class QuestFactory {
         register(new RiseOfTheGoblinThreat());
         register(new FinalBattle());
     }
-
-    public Quest getNextQuest() {
-        return quests.poll();
+    public static Queue<Quest> getQuests(){
+        return quests;
     }
 
     void register(Quest quest) {

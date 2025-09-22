@@ -1,6 +1,7 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.expeditions.QuestFactory;
 import com.questoftherealm.maps.Map;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
@@ -14,7 +15,7 @@ public class Game {
     private static Map gameMap;
     private final GameUI gameUI = new GameUI();
     public static boolean gameOver = false;
-    public Queue<Quest> gameQuests = new LinkedList<>();
+    public static Queue<Quest> gameQuests;
 
     public static Player getPlayer() {
         return player;
@@ -24,9 +25,9 @@ public class Game {
         Game.player = player;
     }
 
-    public static Map getGameMap() {
-        return gameMap;
-    }
+    public static Map getGameMap() {return gameMap;}
+
+    public static Queue<Quest> getQuests() {return gameQuests;}
 
     public void newGame() {
         try {
@@ -61,11 +62,11 @@ public class Game {
                 if (typeChoice == 1 || typeChoice == 2 || typeChoice == 3 || typeChoice == 4) break;
                 else {
                     count++;
-                    if(count<=1) System.out.println("Please enter a number between 1 and 4.");
+                    if (count <= 1) System.out.println("Please enter a number between 1 and 4.");
                 }
             } catch (NumberFormatException e) {
                 count++;
-                if(count<=1) System.out.println("Invalid input. Please enter a number between 1 and 4.");
+                if (count <= 1) System.out.println("Invalid input. Please enter a number between 1 and 4.");
             }
         }
         PlayerTypes type = PlayerTypes.fromInt(typeChoice);
@@ -89,7 +90,7 @@ public class Game {
                 gameType = gameUI.showMainMenu(count);
                 if (gameType == 1 || gameType == 2) break;
             } catch (NumberFormatException e) {
-                if(count<=1)System.out.println("Invalid input. Please enter a number.");
+                if (count <= 1) System.out.println("Invalid input. Please enter a number.");
                 count++;
             }
         }
@@ -99,12 +100,18 @@ public class Game {
         }
         try {
             gameMap = Map.getInstance();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Map unavailable");
             System.out.println("restart game");
             System.exit(0);
         }
+        try {
+            new QuestFactory();
+            gameQuests = QuestFactory.getQuests();
+        } catch (Exception e) {
+            System.out.println("Story Quests unavailable");
+        }
+
         GameLoop loop = new GameLoop();
         loop.startLoop();
     }
