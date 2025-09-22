@@ -2,6 +2,9 @@ package com.questoftherealm.expeditions.quests;
 
 import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.expeditions.missions.Explore_the_Village;
+import com.questoftherealm.expeditions.missions.Meet_the_Elder;
+import com.questoftherealm.expeditions.missions.Travel_North;
 
 import java.util.List;
 
@@ -9,9 +12,9 @@ public class NorthExploration extends Quest {
     public NorthExploration() {
         super("Explore the North",
                 List.of(
-                        new Mission("Travel North", "Journey through forests and mountains to reach the northern villages."),
-                        new Mission("Explore the Village", "Search the northern village for signs of disturbance."),
-                        new Mission("Strange Tracks", "You discover goblin tracks leading further north into the wild lands.")
+                        new Travel_North(),
+                        new Explore_the_Village(),
+                        new Meet_the_Elder()
                 ),
                 "Explore the uncharted north and uncover the source of the growing unease."
         );

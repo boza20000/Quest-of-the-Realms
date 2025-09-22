@@ -1,6 +1,6 @@
 package com.questoftherealm.expeditions;
 
-public abstract class Mission {
+public class Mission {
     private String name;
     private String task;
     private boolean completed;

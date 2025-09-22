@@ -17,7 +17,7 @@ public class CommandFactory {
         register("use", new UseCommand());
         register("inventory", new InventoryCommand());
         register("equip", new EquipCommand());
-        register("quests", new QuestsCommand());
+        register("quest", new QuestCommand());
         register("complete", new CompleteQuestCommand());
         register("save", new SaveCommand());
         register("load", new LoadCommand());

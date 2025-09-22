@@ -20,6 +20,11 @@ public class QuestFactory {
         return quests;
     }
 
+    public static Quest getCurrentQuest(){
+        return quests.peek();
+    }
+
+
     void register(Quest quest) {
         quests.offer(quest);
     }
