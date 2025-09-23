@@ -2,11 +2,11 @@ package com.questoftherealm.expeditions;
 
 import java.util.List;
 
-public class Quest {
+public abstract class Quest {
     private List<Mission> missions;
     private String name;
     private String description;
-    private boolean completed;
+    private boolean completed = false;
 
     public Quest(String name, List<Mission> missions, String description) {
         this.missions = missions;
@@ -28,6 +28,17 @@ public class Quest {
 
     public List<Mission> getMissions() {
         return missions;
+    }
+
+    public void updateStatus() {
+        if(this.isCompleted())return;
+        for (Mission m : this.getMissions()) {
+            if (!m.isCompleted()) {
+                return;
+            }
+        }
+        this.setCompleted(true);
+        System.out.println("You have completed this quest successfully");
     }
 
     public void setCompleted(boolean completed) {

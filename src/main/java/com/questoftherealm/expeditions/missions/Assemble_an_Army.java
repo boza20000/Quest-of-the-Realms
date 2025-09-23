@@ -7,7 +7,7 @@ public class Assemble_an_Army extends Mission {
         super("Assemble an Army", "Rally knights, archers, and mages to face the goblins.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

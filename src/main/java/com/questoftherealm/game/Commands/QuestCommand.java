@@ -11,7 +11,7 @@ public class QuestCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "gives a list of all missions needed to complete the current quest";
+        return "gives you the cur quest with all its missions";
     }
 
     @Override

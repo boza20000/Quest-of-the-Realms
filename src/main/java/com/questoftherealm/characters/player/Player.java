@@ -8,13 +8,16 @@ import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.maps.Map;
 import com.questoftherealm.maps.Tile;
+
 import java.util.HashMap;
 import java.util.Objects;
+
 import static com.questoftherealm.game.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
@@ -45,8 +48,8 @@ public class Player implements InventoryHandler, Explorer {
         armor.put(ItemEffect.CHESTPLATE, null);
         armor.put(ItemEffect.BOOTS, null);
         this.weapon = this.playerCharacter.getDefaultWeapon();
-        this.x = 1;
-        this.y = 6;
+        this.x = PLAYER_START_X;
+        this.y = PLAYER_START_Y;
     }
 
     @JsonCreator
@@ -168,11 +171,10 @@ public class Player implements InventoryHandler, Explorer {
     @Override
     public void look() {
         Tile curTile = Game.getGameMap().curZone(getX(), getY());
-        if(!curTile.isContentGenerated()) {
+        if (!curTile.isContentGenerated()) {
             System.out.println("You have spotted: ");
             curTile.onEnter(this);
-        }
-        else{
+        } else {
             System.out.println("There seems to be nothing else...");
         }
     }

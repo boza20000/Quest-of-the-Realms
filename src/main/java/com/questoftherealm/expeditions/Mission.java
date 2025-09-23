@@ -22,6 +22,16 @@ public abstract class Mission {
     public boolean isCompleted() {
         return completed;
     }
-    public abstract void checkCompletion();
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    protected void complete() {
+        setCompleted(true);
+        System.out.println("✅ Mission completed: " + name);
+    }
+
+    public abstract boolean checkCompletion();
 
 }

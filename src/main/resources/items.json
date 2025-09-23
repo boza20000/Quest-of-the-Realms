@@ -15,7 +15,7 @@
     { "name": "Orcish Axe", "type": "WEAPON", "stackable": false, "power": 18, "cost": 40, "manaCost": 4, "rarity": "RARE", "effect": "AXE" },
     { "name": "Dagger of Shadows", "type": "WEAPON", "stackable": false, "power": 12, "cost": 30, "manaCost": 2, "rarity": "UNCOMMON", "effect": "DAGGER" },
     { "name": "Mage’s Staff", "type": "WEAPON", "stackable": false, "power": 12, "cost": 25, "manaCost": 3, "rarity": "UNCOMMON", "effect": "STAFF" },
-    { "name": "Elari Bow", "type": "WEAPON", "stackable": false, "power": 14, "cost": 32, "manaCost": 3, "rarity": "UNCOMMON", "effect": "BOW" },
+    { "name": "Elari Sword", "type": "WEAPON", "stackable": false, "power": 14, "cost": 32, "manaCost": 3, "rarity": "UNCOMMON", "effect": "SWORD" },
     { "name": "Flaming Sword", "type": "WEAPON", "stackable": false, "power": 20, "cost": 50, "manaCost": 5, "rarity": "RARE", "effect": "SWORD" },
     { "name": "Ice Dagger", "type": "WEAPON", "stackable": false, "power": 15, "cost": 40, "manaCost": 4, "rarity": "RARE", "effect": "DAGGER" },
     { "name": "Silver Sword", "type": "WEAPON", "stackable": false, "power": 18, "cost": 45, "manaCost": 4, "rarity": "RARE", "effect": "SWORD" },

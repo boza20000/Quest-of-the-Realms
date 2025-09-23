@@ -1,7 +1,10 @@
 package com.questoftherealm.game.Commands;
 
+import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.game.Game;
+
+import java.util.List;
 
 public class CompleteQuestCommand extends Command {
     public CompleteQuestCommand() {
@@ -10,10 +13,12 @@ public class CompleteQuestCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        Quest curQuest = Game.getQuests().peek();
-        System.out.println("Your current quest: " + curQuest.getName());
-        curQuest.listMissions();
-
+        List<Mission> missions = Game.getQuests().peek().getMissions();
+        if (!missions.isEmpty()) {
+            for (Mission m : missions) {
+                System.out.println(m.getTask() + " " + ((m.isCompleted()) ? "✔" : "❌"));
+            }
+        }
     }
 
     @Override

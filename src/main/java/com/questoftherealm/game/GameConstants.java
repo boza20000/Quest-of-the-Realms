@@ -26,5 +26,8 @@ public final class GameConstants {
     public static final int MAX_ENEMIES = 3;
     public static final int MAX_ITEM_DROPS = 4;
     public static final int MAX_ITEMS_IN_STACK = 20;
+    public static final int PLAYER_START_X = 1;
+    public static final int PLAYER_START_Y = 6;
+
 }
 

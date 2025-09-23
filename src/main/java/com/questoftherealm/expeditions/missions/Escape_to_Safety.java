@@ -7,7 +7,7 @@ public class Escape_to_Safety extends Mission {
         super("Escape to Safety", "Barely escape alive and return with urgent news.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

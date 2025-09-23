@@ -9,7 +9,7 @@ public class Ambushed extends Mission {
     }
 
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

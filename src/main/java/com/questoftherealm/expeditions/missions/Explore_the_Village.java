@@ -7,7 +7,7 @@ public class Explore_the_Village extends Mission {
         super("Explore the Village", "Search the northern village for signs of disturbance.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

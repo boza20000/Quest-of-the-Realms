@@ -7,7 +7,7 @@ public class Travel_North extends Mission {
         super("Travel North", "Journey through forests and mountains to reach the northern villages.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

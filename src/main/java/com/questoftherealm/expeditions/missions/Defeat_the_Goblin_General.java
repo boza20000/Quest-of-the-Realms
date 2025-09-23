@@ -7,7 +7,7 @@ public class Defeat_the_Goblin_General extends Mission {
         super("Defeat the Goblin General", "Lead your army to victory by slaying the Goblin General in battle.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

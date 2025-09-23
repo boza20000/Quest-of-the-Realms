@@ -7,7 +7,7 @@ public class Breach_the_Stronghold extends Mission {
         super("Breach the Stronghold", "Fight through endless goblin soldiers to reach the throne room.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

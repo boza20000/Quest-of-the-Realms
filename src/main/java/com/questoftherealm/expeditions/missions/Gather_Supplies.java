@@ -7,7 +7,7 @@ public final class Gather_Supplies extends Mission {
         super("Gather Supplies", "Collect weapons and food for the journey ahead.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

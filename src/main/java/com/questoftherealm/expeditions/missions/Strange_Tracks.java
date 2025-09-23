@@ -7,7 +7,7 @@ public class Strange_Tracks extends Mission {
         super("Strange Tracks", "You discover goblin tracks leading further north into the wild lands.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

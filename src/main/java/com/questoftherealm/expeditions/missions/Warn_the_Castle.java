@@ -8,7 +8,7 @@ public class Warn_the_Castle extends Mission {
     }
 
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

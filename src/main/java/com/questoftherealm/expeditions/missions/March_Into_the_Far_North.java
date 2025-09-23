@@ -7,7 +7,7 @@ public class March_Into_the_Far_North extends Mission {
         super("March Into the Far North", "Lead your army into the frozen lands of the secret Fifth Kingdom.");
     }
     @Override
-    public void checkCompletion() {
-
+    public boolean checkCompletion() {
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.exceptions.InvalidCommand;
+import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.game.Commands.Command;
 import com.questoftherealm.game.Commands.CommandFactory;
 
@@ -40,6 +41,12 @@ public class GameLoop {
                 try {
                     cmd.execute(parts);
                     System.out.println("Command went trough");
+                    for (Quest q : Game.getQuests()) {
+                        q.updateStatus();
+                        if(q.isCompleted()){
+                            Game.getQuests().poll();
+                        }
+                    }
                 } catch (Exception e) {
                     System.out.println("Command syntax: ");
                     System.out.print(cmd.getDescription());
