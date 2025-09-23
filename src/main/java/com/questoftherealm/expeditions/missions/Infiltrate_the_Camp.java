@@ -6,4 +6,8 @@ public class Infiltrate_the_Camp extends Mission {
     public Infiltrate_the_Camp() {
         super("Infiltrate the Camp", "Sneak into a goblin camp to learn their plans.");
     }
+    @Override
+    public void checkCompletion() {
+
+    }
 }

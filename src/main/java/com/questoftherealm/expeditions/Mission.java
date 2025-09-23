@@ -1,6 +1,6 @@
 package com.questoftherealm.expeditions;
 
-public class Mission {
+public abstract class Mission {
     private String name;
     private String task;
     private boolean completed;
@@ -22,6 +22,6 @@ public class Mission {
     public boolean isCompleted() {
         return completed;
     }
-    //public abstract void checkCompletion();
+    public abstract void checkCompletion();
 
 }

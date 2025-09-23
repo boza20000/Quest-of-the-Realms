@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.FileNotLoaded;
 import com.questoftherealm.exceptions.SavesNotFound;
+import com.questoftherealm.game.Commands.CommandFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,10 +18,10 @@ public class LoadGame {
     public static void loadGameSave(String filename) {
         try {
             loadGameInformation(filename);
-        } catch (Exception e) {
-            throw new FileNotLoaded("File not loaded");
+        } catch (FileNotLoaded e) {
+            System.out.println("File not found or was corrupted");
+            System.exit(0);
         }
-
     }
 
     public static void loadGameInformation(String filename) {

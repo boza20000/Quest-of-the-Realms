@@ -7,4 +7,9 @@ public class Ambushed extends Mission {
     public Ambushed() {
         super("Ambushed!", "The goblins discover you—fight your way out!");
     }
+
+    @Override
+    public void checkCompletion() {
+
+    }
 }

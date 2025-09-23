@@ -45,8 +45,8 @@ public class Player implements InventoryHandler, Explorer {
         armor.put(ItemEffect.CHESTPLATE, null);
         armor.put(ItemEffect.BOOTS, null);
         this.weapon = this.playerCharacter.getDefaultWeapon();
-        this.x = 2;
-        this.y = 3;
+        this.x = 1;
+        this.y = 6;
     }
 
     @JsonCreator
