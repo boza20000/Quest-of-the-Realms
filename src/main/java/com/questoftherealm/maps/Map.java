@@ -74,7 +74,7 @@ public class Map {
             case CASTLE -> GameConstants.CYAN + "\uD83C\uDFF0" + GameConstants.RESET;
             case SWAMP -> GameConstants.MAGENTA + "\uD83D\uDFEB" + GameConstants.RESET;
             case WATER -> GameConstants.BLUE + "\uD83D\uDFE6" + GameConstants.RESET;
-            case QUEST_LOCATION -> GameConstants.RED + "❓" + GameConstants.RESET;
+            //case QUEST_LOCATION -> GameConstants.RED + "❓" + GameConstants.RESET;
             default -> " ";
         };
     }

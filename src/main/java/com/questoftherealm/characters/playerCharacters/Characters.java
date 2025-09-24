@@ -1,14 +1,9 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.EnemyEntities.Enemy;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.characterInterfaces.Combatant;
-import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.TargetNotFound;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemEffect;
-import com.questoftherealm.items.ItemType;
-
-import java.util.HashMap;
 
 import static com.questoftherealm.game.GameConstants.*;
 

@@ -18,23 +18,14 @@ public class Orc extends Characters implements MonsterBehavior {
                 ORC_SPELLS,
                 ORC_INTELLIGENCE);
     }
+
     public Orc(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
         super(health, mana, attack, defence, armor, charisma, spells, intelligence);
     }
 
     @Override
-    public void callHorde() {
-
-    }
-
-    @Override
     public void resurrect() {
-
-    }
-
-    @Override
-    public void blockDamage(Characters target) {
-
+//50 % chance
     }
 
     @Override

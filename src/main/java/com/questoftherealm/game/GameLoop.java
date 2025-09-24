@@ -2,8 +2,10 @@ package com.questoftherealm.game;
 
 import com.questoftherealm.exceptions.InvalidCommand;
 import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.game.Commands.Command;
-import com.questoftherealm.game.Commands.CommandFactory;
+import com.questoftherealm.commands.Command;
+import com.questoftherealm.commands.CommandFactory;
+import com.questoftherealm.interaction.Console;
+import com.questoftherealm.interaction.Interactions;
 
 import java.util.Scanner;
 
@@ -12,9 +14,11 @@ import static com.questoftherealm.game.Game.gameOver;
 public class GameLoop {
     private final Scanner scanner = new Scanner(System.in);
     private final CommandFactory factory = new CommandFactory();
+    private final Interactions interactions = new Interactions();
 
     public void startLoop() {
-        worldIntro();
+        Console.worldIntro();
+        interactions.worldStart();
         while (!gameOver) {
             System.out.print(">");
             String command = scanner.nextLine().trim();
@@ -43,7 +47,7 @@ public class GameLoop {
                     System.out.println("Command went trough");
                     for (Quest q : Game.getQuests()) {
                         q.updateStatus();
-                        if(q.isCompleted()){
+                        if (q.isCompleted()) {
                             Game.getQuests().poll();
                         }
                     }
@@ -54,18 +58,4 @@ public class GameLoop {
             }
         }
     }
-
-    private void worldIntro() {
-        System.out.println("🌍 And so, your journey begins...");
-        System.out.println("You stand at the gates of the king’s castle, the weight of destiny upon your shoulders.");
-        System.out.println("The banners of the four kingdoms ripple in the wind, their fate resting in your hands.");
-        System.out.println("Whispers of a shadowy enemy spread across the land—an unknown force threatening to consume all.");
-        System.out.println("\n(Press ENTER to continue...)");
-        scanner.nextLine();
-        System.out.println("⚔️ The king has entrusted you with a sacred mission:");
-        System.out.println("Unite the realms. Face the darkness. Become the hero this world desperately needs.");
-        System.out.println("Your legend starts now...");
-    }
-
-
 }

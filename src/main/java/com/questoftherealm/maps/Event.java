@@ -1,8 +1,7 @@
 package com.questoftherealm.maps;
 
-
-import com.questoftherealm.characters.EnemyEntities.*;
-import com.questoftherealm.characters.EnemyEntities.entities.*;
+import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.enemyEntities.entities.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -139,7 +138,7 @@ public enum Event {
                     TRAVELING_TRADER
             );
 
-            case QUEST_LOCATION -> null; // leave empty or special scripted quest logic
+//            case QUEST_LOCATION -> null; // leave empty or special scripted quest logic
         };
     }
 

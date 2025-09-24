@@ -1,7 +1,6 @@
 package com.questoftherealm.characters.characterInterfaces;
 
-import com.questoftherealm.characters.EnemyEntities.Enemy;
-import com.questoftherealm.characters.playerCharacters.Characters;
+import com.questoftherealm.enemyEntities.Enemy;
 
 public interface Combatant {
     void attack(Enemy target);

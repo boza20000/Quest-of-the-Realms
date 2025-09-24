@@ -28,6 +28,7 @@ public final class GameConstants {
     public static final int MAX_ITEMS_IN_STACK = 20;
     public static final int PLAYER_START_X = 1;
     public static final int PLAYER_START_Y = 6;
+    public static final int DELAY_MS = 40;
 
 }
 

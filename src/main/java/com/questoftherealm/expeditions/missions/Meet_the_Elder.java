@@ -1,12 +1,11 @@
 package com.questoftherealm.expeditions.missions;
 
-import com.questoftherealm.characters.FriendlyEntities.Elder;
+import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.expeditions.Mission;
-import com.questoftherealm.game.Game;
 
 public final class Meet_the_Elder extends Mission {
     public Meet_the_Elder() {
-        super("Meet the Elder", "Speak with the village elder about strange rumors from the north.");
+        super("Meet the Elder", "Speak with the castle elder about strange rumors from the north.");
     }
 
     @Override

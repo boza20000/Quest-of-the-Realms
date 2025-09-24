@@ -65,11 +65,11 @@ public enum Locations {
             case WATER -> randomOf(
                     Locations.CRYSTAL_LAKE
             );
-            case QUEST_LOCATION -> randomOf(
-                    Locations.FORGOTTEN_RUINS,
-                    Locations.SHADOW_CAVERN,
-                    Locations.MAGES_TOWER
-            );
+//            case QUEST_LOCATION -> randomOf(
+//                    Locations.FORGOTTEN_RUINS,
+//                    Locations.SHADOW_CAVERN,
+//                    Locations.MAGES_TOWER
+//            );
         };
     }
 

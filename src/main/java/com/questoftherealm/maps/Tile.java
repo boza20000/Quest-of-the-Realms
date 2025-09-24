@@ -2,7 +2,7 @@ package com.questoftherealm.maps;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.questoftherealm.characters.EnemyEntities.Enemy;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.game.GameConstants;
