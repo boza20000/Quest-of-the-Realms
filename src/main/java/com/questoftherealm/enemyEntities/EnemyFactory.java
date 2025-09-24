@@ -1,6 +1,5 @@
 package com.questoftherealm.enemyEntities;
 
-import com.questoftherealm.enemyEntities.EnemyEntities.entities.*;
 import com.questoftherealm.enemyEntities.entities.*;
 
 public class EnemyFactory {
