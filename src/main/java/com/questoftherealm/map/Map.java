@@ -1,4 +1,4 @@
-package com.questoftherealm.maps;
+package com.questoftherealm.map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questoftherealm.characters.player.Player;

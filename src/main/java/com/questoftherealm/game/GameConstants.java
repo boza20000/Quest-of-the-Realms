@@ -1,7 +1,10 @@
 package com.questoftherealm.game;
 
 public final class GameConstants {
-    private GameConstants(){}
+
+
+    private GameConstants() {
+    }
 
     public static final int MAX_HEALTH = 50;
     public static final int MAX_MANA = 30;
@@ -29,6 +32,10 @@ public final class GameConstants {
     public static final int PLAYER_START_X = 1;
     public static final int PLAYER_START_Y = 6;
     public static final int DELAY_MS = 40;
+    public static final int CastleX = 1;
+    public static final int CastleY = 6;
+    public static final int NorthVillageX = 1;
+    public static final int NorthVillageY = 1;
 
 }
 

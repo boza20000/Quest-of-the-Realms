@@ -1,5 +1,6 @@
 package com.questoftherealm.enemyEntities.entities;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.EnemiesInterfaces.Talkable;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.EnemyConstants;
@@ -18,7 +19,7 @@ public class DarkMage extends Enemy implements Talkable {
     }
 
     @Override
-    public void talk() {
+    public void talk(Player player) {
 
     }
 }

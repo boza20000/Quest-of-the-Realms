@@ -4,8 +4,8 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.maps.Map;
-import com.questoftherealm.maps.Tile;
+import com.questoftherealm.map.Map;
+import com.questoftherealm.map.Tile;
 
 import static com.questoftherealm.items.ItemRegistry.getItem;
 

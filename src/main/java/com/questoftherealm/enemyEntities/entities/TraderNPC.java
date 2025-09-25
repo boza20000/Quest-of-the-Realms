@@ -27,7 +27,7 @@ public class TraderNPC extends Enemy implements Tradeable, Talkable {
     }
 
     @Override
-    public void talk() {
+    public void talk(Player player) {
 
     }
 }

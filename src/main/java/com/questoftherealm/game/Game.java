@@ -3,7 +3,7 @@ package com.questoftherealm.game;
 import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.expeditions.QuestFactory;
 import com.questoftherealm.interaction.GameUI;
-import com.questoftherealm.maps.Map;
+import com.questoftherealm.map.Map;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 

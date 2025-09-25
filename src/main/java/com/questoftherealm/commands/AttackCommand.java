@@ -3,7 +3,7 @@ package com.questoftherealm.commands;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
-import com.questoftherealm.maps.Tile;
+import com.questoftherealm.map.Tile;
 
 public class AttackCommand extends Command {
     public AttackCommand() {

@@ -5,7 +5,7 @@ import com.questoftherealm.enemyEntities.EnemiesInterfaces.Lootable;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.maps.TileTypes;
+import com.questoftherealm.map.TileTypes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;

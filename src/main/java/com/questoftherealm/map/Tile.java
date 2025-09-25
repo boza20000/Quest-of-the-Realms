@@ -1,4 +1,4 @@
-package com.questoftherealm.maps;
+package com.questoftherealm.map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,6 +55,10 @@ public class Tile {
             }
         }
         return null;
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
     }
 
     public ItemDrop pickItem(String name) {

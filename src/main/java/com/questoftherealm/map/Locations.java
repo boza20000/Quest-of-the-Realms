@@ -1,6 +1,5 @@
-package com.questoftherealm.maps;
+package com.questoftherealm.map;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public enum Locations {

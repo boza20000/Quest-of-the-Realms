@@ -14,11 +14,10 @@ import static com.questoftherealm.game.Game.gameOver;
 public class GameLoop {
     private final Scanner scanner = new Scanner(System.in);
     private final CommandFactory factory = new CommandFactory();
-    private final Interactions interactions = new Interactions();
 
     public void startLoop() {
         Console.worldIntro();
-        interactions.worldStart();
+        Interactions.worldStart();
         while (!gameOver) {
             System.out.print(">");
             String command = scanner.nextLine().trim();

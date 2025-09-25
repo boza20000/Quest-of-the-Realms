@@ -1,15 +1,45 @@
 package com.questoftherealm.commands;
 
-public class TalkCommand extends Command{
-    public TalkCommand(){
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.enemyEntities.entities.TraderNPC;
+import com.questoftherealm.friendlyEntities.Entities.Elder;
+import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.map.Tile;
+
+public class TalkCommand extends Command {
+    public TalkCommand() {
         super("talk");
     }
 
     @Override
     public void execute(String[] args) {
         String target = args[1];
-
-
+        Player player = Game.getPlayer();
+        switch (target) {
+            case "Elder" -> {
+                if (!Elder.isHasTalked() && player.getX() == GameConstants.CastleX && player.getY() == GameConstants.CastleY) {
+                    Elder elder = new Elder();
+                    elder.talk(player);
+                } else if (!Elder.isHasTalked()) {
+                    System.out.println("In order to talk to the Elder go to the castle.");
+                } else {
+                    System.out.println("You have already done that.");
+                }
+            }
+            case "Trader" -> {
+                TraderNPC trader = new TraderNPC();
+                Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
+                if(curTile.getEnemies().contains(trader)) {
+                    trader.talk(player);
+                }
+                else{
+                    System.out.println("No trader spotted in this zone");
+                }
+            }
+            default -> throw new IllegalArgumentException("No such Target to talk to");
+        }
     }
 
     @Override

@@ -24,9 +24,7 @@ public class Console {
         System.out.println("Whispers of a shadowy enemy spread across the land—an unknown force threatening to consume all.");
         System.out.println("\n(Press ENTER to continue...)");
         scanner.nextLine();
-        System.out.println("⚔️ The king has entrusted you with a sacred mission:");
-        System.out.println("Unite the realms. Face the darkness. Become the hero this world desperately needs.");
-        System.out.println("Your legend starts now...");
+        System.out.println();
     }
 
 }

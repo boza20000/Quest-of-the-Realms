@@ -8,12 +8,11 @@ import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.game.Game;
-import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
-import com.questoftherealm.maps.Map;
-import com.questoftherealm.maps.Tile;
+import com.questoftherealm.map.Map;
+import com.questoftherealm.map.Tile;
 
 import java.util.HashMap;
 import java.util.Objects;
