@@ -34,8 +34,11 @@ public final class GameConstants {
     public static final int DELAY_MS = 40;
     public static final int CastleX = 1;
     public static final int CastleY = 6;
-    public static final int NorthVillageX = 1;
-    public static final int NorthVillageY = 1;
+    public static final int NorthVillage_1_X = 1;
+    public static final int NorthVillage_1_Y = 1;
+    public static final int NorthVillage_2_X = 1;
+    public static final int NorthVillage_2_Y = 1;
+    public static final int North_Y = 2;
 
 }
 

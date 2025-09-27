@@ -6,7 +6,7 @@ public abstract class Quest {
     private List<Mission> missions;
     private String name;
     private String description;
-    private boolean completed = false;
+    private static boolean completed = false;
 
     public Quest(String name, List<Mission> missions, String description) {
         this.missions = missions;
@@ -14,7 +14,7 @@ public abstract class Quest {
         this.name = name;
     }
 
-    public boolean isCompleted() {
+    public static boolean isCompleted() {
         return completed;
     }
 

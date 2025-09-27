@@ -1,5 +1,6 @@
 package com.questoftherealm.interaction;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.map.Event;
@@ -141,4 +142,22 @@ public class Interactions {
         return template.formatted(locationName);
     }
 
+    public static void villagerDialogue(Player player) {
+        String dialogue = """
+                👋 "Greetings, %s... though I wish it were under better circumstances."
+                
+                The villager looks pale and shaken, his clothes torn and stained with ash.
+                
+                "They came from the forests in the north. Tall, twisted shapes, with glowing eyes...
+                 They tore through our homes, stealing what they could not destroy.
+                
+                 Many of us... did not make it. Only a handful managed to escape."
+                
+                He pauses, glancing toward the ruined houses.
+                
+                "Tell the King... this is no ordinary raid. Something darker is behind this."
+                """.formatted(player.getName());
+
+        SlowPrinter.slowPrint(dialogue);
+    }
 }
