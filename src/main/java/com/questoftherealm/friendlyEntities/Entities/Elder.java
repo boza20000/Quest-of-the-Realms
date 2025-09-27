@@ -42,7 +42,6 @@ public class Elder extends Npc implements Friendly {
             player.equipArmorPiece(boots.item());
             Interactions.elderDialogue(name,weapon,helmet,chestplate,boots);
 
-//here ready???
         } else {
             System.out.println("There is nothing else to be said");
         }

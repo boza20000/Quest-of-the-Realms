@@ -16,8 +16,8 @@ public class Interactions {
 
     public static void worldStart() {
         String start = """
-                You enter the kings castle and you have to talk to the castle's
-                Elder so you will be better prepared for the journey that awaits you.
+                You enter the kings castle to talk to the castle's Elder and he wants
+                to help you to be better prepared for the journey that awaits you.
                 """;
         SlowPrinter.slowPrint(start);
     }
@@ -38,6 +38,10 @@ public class Interactions {
                 The king also gathered his best blacksmiths to make strong armor for you.
                 You have received: %s, %s, %s
                 """.formatted(helmet.item().getName(), chestplate.item().getName(), boots.item().getName()));
+        SlowPrinter.slowPrint("""
+                You’ll need rations before your journey.
+                Seek them out in the village and surrounding lands.
+                """);
     }
 
     public static void traderDialogue() {

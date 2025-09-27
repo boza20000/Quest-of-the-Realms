@@ -10,6 +10,7 @@ public final class Meet_the_Elder extends Mission {
 
     @Override
     public boolean checkCompletion() {
+        if(isCompleted())return true;
         if (!isCompleted() && Elder.isHasTalked()) {
             complete();
             return true;
