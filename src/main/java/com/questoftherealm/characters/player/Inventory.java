@@ -37,7 +37,7 @@ public class Inventory {
         } else {
             if (items.size() < capacity) {
                 items.put(item, items.getOrDefault(item, 0) + 1);
-                System.out.println(item + " added.");
+                System.out.println(item + " added in inventory.");
             } else {
                 System.out.println("Inventory full! Cannot add " + item.getName());
             }

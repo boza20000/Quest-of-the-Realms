@@ -5,52 +5,53 @@ import com.questoftherealm.game.GameConstants;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static com.questoftherealm.game.GameConstants.RED;
+import static com.questoftherealm.game.GameConstants.RESET;
+
 public class GameUI {
     private final Story story = new Story();
     private final Scanner scanner = new Scanner(System.in);
     private final Console console = new Console();
 
     public void showIntro() throws IOException {
-        final int delay = 30; // smaller = faster typing
-        boolean skip = false;
+        final int delay = 30;
         int count = 0;
-        System.out.println("Press Enter to skip the story");
+        System.out.println();
+        System.out.println("(Press " + RED + "Enter" + RESET + " to skip the story)");
+
         for (char c : story.getStory().toCharArray()) {
-            count++;
-            // Check if user pressed Enter to skip
-            if (System.in.available() > 0) {
-                skip = true;
-                // Clear input buffer
-                while (System.in.available() > 0) {
-                    System.in.read();
-                }
-                break;
-            }
             System.out.print(c);
+            count++;
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return;
             }
+
+            if (System.in.available() > 0) {
+                while (System.in.available() > 0) {
+                    System.in.read();
+                }
+                System.out.print(story.getStory().substring(count));
+                break;
+            }
         }
-        if (skip) {
-            System.out.print(story.getStory().substring(count - 1, story.getStory().length() - 1));
-            System.out.print(GameConstants.RESET);
-            return;
-        }
-        try {
-            System.in.read();
-        } catch (Exception ignored) {
-        }
+        System.in.read();
     }
 
     public int showMainMenu(int count) {
         if (count <= 1) {
             System.out.println(
-                    "1. New Game\n" +
-                            "2. Load Game\n" +
-                            "Type 1 for new game or 2 to load one: ");
+                    """
+                            ╺┓     ┏┓╻┏━╸╻ ╻   ┏━╸┏━┓┏┳┓┏━╸  \s
+                             ┃     ┃┗┫┣╸ ┃╻┃   ┃╺┓┣━┫┃┃┃┣╸   \s
+                            ╺┻╸╹   ╹ ╹┗━╸┗┻┛   ┗━┛╹ ╹╹ ╹┗━╸  \s
+                            ┏━┓    ╻  ┏━┓┏━┓╺┳┓   ┏━╸┏━┓┏┳┓┏━╸
+                            ┏━┛    ┃  ┃ ┃┣━┫ ┃┃   ┃╺┓┣━┫┃┃┃┣╸\s
+                            ┗━╸╹   ┗━╸┗━┛╹ ╹╺┻┛   ┗━┛╹ ╹╹ ╹┗━╸
+                                                             \s
+                            """);
             System.out.print(">");
         } else {
             System.out.print(">");
@@ -80,9 +81,6 @@ public class GameUI {
         return name;
     }
 
-    public void handleLine() {
-        System.out.print("\033[1A\033[2K\r" + " (No such command exists)");
-    }
 
     public Scanner getScanner() {
         return scanner;

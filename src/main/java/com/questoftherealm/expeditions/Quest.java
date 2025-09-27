@@ -31,14 +31,18 @@ public abstract class Quest {
     }
 
     public void updateStatus() {
-        if(this.isCompleted())return;
+        boolean isAllReady = true;
+        if (this.isCompleted()) return;
         for (Mission m : this.getMissions()) {
             if (!m.isCompleted()) {
-                return;
+                m.checkCompletion();
+                isAllReady = false;
             }
         }
-        this.setCompleted(true);
-        System.out.println("You have completed this quest successfully");
+        if (isAllReady) {
+            this.setCompleted(true);
+            System.out.println("You have completed this quest successfully");
+        }
     }
 
     public void setCompleted(boolean completed) {

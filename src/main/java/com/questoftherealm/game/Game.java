@@ -31,9 +31,9 @@ public class Game {
 
     public void newGame() {
         try {
+            buildPlayerCharacter();
             gameUI.showIntro();
             gameUI.getConsole().clear();
-            buildPlayerCharacter();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

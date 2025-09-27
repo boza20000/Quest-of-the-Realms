@@ -64,7 +64,7 @@ public abstract class Enemy implements Fightable, Lootable {
 
         // Chance of enemies appearing at all
         int spawnChance = rand.nextInt(100); // 0–99
-        if (spawnChance < 40) { // 40% chance no enemies
+        if (spawnChance < 60) { // 60% chance no enemies
             return toEnemyObj(chosenEnemies); // empty list
         }
         int countRoll = ThreadLocalRandom.current().nextInt(100);

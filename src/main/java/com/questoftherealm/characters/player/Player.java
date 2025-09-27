@@ -100,9 +100,7 @@ public class Player implements InventoryHandler, Explorer {
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
-        Map map = Game.getGameMap();
-        map.movePlayer(this, this.x, this.y);
-        //map.print();
+        Game.getGameMap().movePlayer(this, this.x, this.y);
     }
 
     public String getName() {
@@ -171,7 +169,6 @@ public class Player implements InventoryHandler, Explorer {
     public void look() {
         Tile curTile = Game.getGameMap().curZone(getX(), getY());
         if (!curTile.isContentGenerated()) {
-            System.out.println("You have spotted: ");
             curTile.onEnter(this);
         } else {
             System.out.println("There seems to be nothing else...");

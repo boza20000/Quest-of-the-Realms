@@ -51,7 +51,7 @@ public class Map {
             System.out.print("      ");
             System.out.print("║");
             for (int j = 0; j < gameMap[i].length; j++) {
-                boolean isPlayerHere = (i == Game.getPlayer().getX() && j == Game.getPlayer().getY());
+                boolean isPlayerHere = (j == Game.getPlayer().getX() && i == Game.getPlayer().getY());
                 Tile tile = gameMap[i][j];
                 String symbol = getTileSymbol(tile);
 

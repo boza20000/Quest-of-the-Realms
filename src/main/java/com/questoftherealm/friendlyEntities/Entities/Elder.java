@@ -1,8 +1,12 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
+import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.expeditions.missions.Meet_the_Elder;
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.friendlyEntities.Npc;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.interaction.Interactions;
 import com.questoftherealm.interaction.SlowPrinter;
@@ -36,9 +40,9 @@ public class Elder extends Npc implements Friendly {
             player.equipArmorPiece(helmet.item());
             player.equipArmorPiece(chestplate.item());
             player.equipArmorPiece(boots.item());
-
             Interactions.elderDialogue(name,weapon,helmet,chestplate,boots);
 
+//here ready???
         } else {
             System.out.println("There is nothing else to be said");
         }

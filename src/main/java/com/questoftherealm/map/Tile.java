@@ -6,6 +6,7 @@ import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.interaction.Interactions;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 
@@ -74,7 +75,6 @@ public class Tile {
     void generateContent() {
         this.structure = Locations.generateLocation(type);
         this.enemies = Enemy.generateEnemies(type);
-        this.event = Event.generateEvent(type);
         try {
             generateItems();
         } catch (RandomItemNotGenerated e) {
@@ -95,9 +95,12 @@ public class Tile {
     }
 
     private void displayLocation() {
-        System.out.println("You have entered: " + structure.getName());
-        System.out.println(structure.getDescription());
-
+        if(structure == null){
+            return;
+        }
+        System.out.println();
+        System.out.println(Interactions.getRandomSpotting(structure.getName()) + structure.getName());
+        System.out.print(structure.getDescription());
     }
 
     private void displayItems() {
