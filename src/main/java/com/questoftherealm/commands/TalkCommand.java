@@ -4,6 +4,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.entities.TraderNPC;
 import com.questoftherealm.friendlyEntities.Entities.Elder;
+import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.map.Tile;
@@ -37,6 +38,10 @@ public class TalkCommand extends Command {
                 else{
                     System.out.println("No trader spotted in this zone");
                 }
+            }
+            case "Villager" -> {
+                Villager villager = new Villager();
+                villager.talk(player);
             }
             default -> throw new IllegalArgumentException("No such Target to talk to");
         }

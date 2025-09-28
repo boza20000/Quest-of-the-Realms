@@ -4,6 +4,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.expeditions.QuestFactory;
+import com.questoftherealm.expeditions.quests.NorthExploration;
 import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
@@ -15,9 +16,11 @@ public class Travel_North extends Mission {
 
     @Override
     public boolean checkCompletion() {
+        Quest curQuest = Game.getQuests().peek();
+        if(curQuest instanceof StartQuest)return false;
         Player player = Game.getPlayer();
         int y = player.getY();
-        if (y <= GameConstants.North_Y && StartQuest.isCompleted()) {
+        if (y <= GameConstants.North_Y) {
             complete();
             return true;
         }

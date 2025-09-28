@@ -142,22 +142,23 @@ public class Interactions {
         return template.formatted(locationName);
     }
 
-    public static void villagerDialogue(Player player) {
-        String dialogue = """
-                👋 "Greetings, %s... though I wish it were under better circumstances."
-                
-                The villager looks pale and shaken, his clothes torn and stained with ash.
-                
-                "They came from the forests in the north. Tall, twisted shapes, with glowing eyes...
-                 They tore through our homes, stealing what they could not destroy.
-                
-                 Many of us... did not make it. Only a handful managed to escape."
-                
-                He pauses, glancing toward the ruined houses.
-                
-                "Tell the King... this is no ordinary raid. Something darker is behind this."
-                """.formatted(player.getName());
-
+    public static void villagerDialogue(Player player, int villageId) {
+        String dialogue;
+        if (villageId == 1) {
+            dialogue = """
+                    The villager grips your arm, trembling.
+                    "You’re too late %s... the monsters came at night. Shadows with glowing eyes.
+                     They burned our homes. We barely escaped with our lives..."
+                    """.formatted(player.getName());
+        } else {
+            dialogue = """
+                    A wounded survivor speaks weakly:
+                    "They came from the woods... not bandits, not men.
+                     Creatures I’ve never seen before. They took our kids.
+                     Beware the forests, traveler..."
+                    """;
+        }
         SlowPrinter.slowPrint(dialogue);
     }
 }
+

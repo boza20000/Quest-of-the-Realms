@@ -7,6 +7,7 @@ import com.questoftherealm.characters.characterInterfaces.Explorer;
 import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
+import com.questoftherealm.expeditions.missions.Explore_the_Village;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -167,6 +168,13 @@ public class Player implements InventoryHandler, Explorer {
 
     @Override
     public void look() {
+        if(getX()==NorthVillage_1_X && getY()==NorthVillage_1_Y){
+            Explore_the_Village.villageIntro_1();
+            Explore_the_Village.setSearched_1(true);
+        }
+        if(getX()==NorthVillage_2_X && getY()==NorthVillage_2_Y){
+            Explore_the_Village.setSearched_2(true);
+        }
         Tile curTile = Game.getGameMap().curZone(getX(), getY());
         if (!curTile.isContentGenerated()) {
             curTile.onEnter(this);

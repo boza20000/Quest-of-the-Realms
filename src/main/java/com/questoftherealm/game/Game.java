@@ -21,6 +21,10 @@ public class Game {
         return player;
     }
 
+    public static void setGameQuests(Queue<Quest> gameQuests) {
+        Game.gameQuests = gameQuests;
+    }
+
     public static void setPlayer(Player player) {
         Game.player = player;
     }
