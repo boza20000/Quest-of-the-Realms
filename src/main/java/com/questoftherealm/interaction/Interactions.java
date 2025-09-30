@@ -154,8 +154,8 @@ public class Interactions {
             dialogue = """
                     A wounded survivor speaks weakly:
                     "They came from the woods... not bandits, not men.
-                     Creatures I’ve never seen before. They took our kids.
-                     Beware the forests, traveler..."
+                     Creatures I’ve never seen before. They took our kids and butchered the whole village...
+                     Beware the forests traveler.This is where they came from..."
                     """;
         }
         SlowPrinter.slowPrint(dialogue);

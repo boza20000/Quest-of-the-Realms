@@ -27,7 +27,7 @@ public final class Gather_Supplies extends Mission {
                 foodSum += quantity;
             }
         }
-        if (hasPotion && foodSum >= 10) {
+        if (hasPotion && foodSum >= 5) {
             complete();
             return true;
         }

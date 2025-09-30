@@ -1,19 +1,11 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
-import com.questoftherealm.expeditions.Mission;
-import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.expeditions.missions.Meet_the_Elder;
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.friendlyEntities.Npc;
-import com.questoftherealm.game.Game;
-import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.interaction.Interactions;
-import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
-
-import java.util.List;
 
 public class Elder extends Npc implements Friendly {
     private final String name = "Evaery";

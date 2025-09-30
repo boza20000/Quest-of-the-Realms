@@ -5,6 +5,7 @@ import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.expeditions.missions.Ambushed;
 import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_General;
 import com.questoftherealm.expeditions.missions.Escape_to_Safety;
+import com.questoftherealm.expeditions.missions.Explore_Nearby_Forests;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class GoblinAmbush extends Quest {
         super(
                 "Goblin Ambush",
                 List.of(
+                        new Explore_Nearby_Forests(),
                         new Ambushed(),
                         new Defeat_the_Goblin_General(),
                         new Escape_to_Safety()

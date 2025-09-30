@@ -13,9 +13,7 @@ import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TileTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.Queue;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class NorthExplorationTest {
