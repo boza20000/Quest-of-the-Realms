@@ -160,5 +160,40 @@ public class Interactions {
         }
         SlowPrinter.slowPrint(dialogue);
     }
+
+    public static void villageIntro_1(){
+        String dialog = """
+                From distance you see...the village on fire
+                with most houses already burned.
+                A few villager spot you and carefully approach ...
+                You should talk to them
+                to understand the gravity of the situation and report to the castle.
+                """;
+        SlowPrinter.slowPrint(dialog);
+    }
+
+    public static void villageIntro_2() {
+        String dialog = """
+                You spot some smoke in the sky
+                you start worrying..
+                Was this village attacked as well?
+                As you get closer you go pale on the spot
+                You see a lone villager on the ground
+                in front of a house and approach ...
+                """;
+        SlowPrinter.slowPrint(dialog);
+    }
+
+    public static void goblinCampSpotted() {
+        String dialog = """
+                You spot in the distance shadows moving, gathering near a camp in the forest...
+                You found it?...
+                The creatures that caused so much destruction are green and small
+                with some bigger but don't seem that dangerous to burn two villages...
+                How could they do so much harm?
+                You go and investigate closer...
+                """;
+        SlowPrinter.slowPrint(dialog);
+    }
 }
 

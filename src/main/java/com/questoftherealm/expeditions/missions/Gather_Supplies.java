@@ -4,7 +4,6 @@ import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemType;
-
 import java.util.Map;
 
 public final class Gather_Supplies extends Mission {

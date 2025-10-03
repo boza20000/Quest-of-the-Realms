@@ -5,6 +5,7 @@ import com.questoftherealm.expeditions.missions.Explore_the_Village;
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.Position;
 import com.questoftherealm.interaction.Interactions;
 
 public class Villager extends Npc implements Friendly {
@@ -16,7 +17,8 @@ public class Villager extends Npc implements Friendly {
 
     @Override
     public void talk(Player player) {
-        if (player.getX() == GameConstants.NorthVillage_1_X && player.getY() == GameConstants.NorthVillage_1_Y) {
+        Position pos = new Position(player.getX(),player.getY());
+        if (pos.equals(GameConstants.NorthVillage_1)) {
             if (!Explore_the_Village.isHasSearched_1()) {
                 System.out.println("You should search the village before speaking to survivors.");
                 return;
@@ -28,7 +30,7 @@ public class Villager extends Npc implements Friendly {
             } else {
                 System.out.println("The villager looks tired. He has nothing more to say.");
             }
-        } else if (player.getX() == GameConstants.NorthVillage_2_X && player.getY() == GameConstants.NorthVillage_2_Y) {
+        } else if (pos.equals(GameConstants.NorthVillage_2)) {
             if (!Explore_the_Village.isHasSearched_2()) {
                 System.out.println("You should search the village before speaking to survivors.");
                 return;

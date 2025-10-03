@@ -36,16 +36,18 @@ public class TakeCommand extends Command {
         Player player = Game.getPlayer();
         Map map = Game.getGameMap();
         Tile curZone = map.curZone(player.getX(), player.getY());
-        ItemDrop itemTaken = curZone.pickItem(itemName);
-        if (itemTaken != null
-                && itemTaken.item().equals(newItem)
-                && itemTaken.quantity() >= quantity) {
+
+        ItemDrop drop = curZone.getDrops().stream()
+                .filter(d -> d.item().equals(newItem))
+                .findFirst()
+                .orElse(null);
+
+        if (drop != null && drop.quantity() >= quantity) {
             player.getInventory().addItem(newItem, quantity);
             curZone.removeDrop(newItem, quantity);
-
             System.out.println("You picked up " + quantity + "x " + newItem.getName());
         } else {
-            System.out.println("No such item");
+            System.out.println("No such item or not enough quantity.");
         }
     }
 

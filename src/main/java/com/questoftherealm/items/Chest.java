@@ -1,8 +1,6 @@
 package com.questoftherealm.items;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.characters.playerCharacters.Mage;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 
 import java.util.List;

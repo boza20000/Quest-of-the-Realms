@@ -49,6 +49,10 @@ public class Tile {
         return walkable;
     }
 
+    public List<ItemDrop> getDrops() {
+        return drops;
+    }
+
     public Enemy getEnemy(String name) {
         for (Enemy e : enemies) {
             if (e.getType().toString().equals(name.toUpperCase())) {

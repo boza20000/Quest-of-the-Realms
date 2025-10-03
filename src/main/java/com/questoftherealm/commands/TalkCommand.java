@@ -7,6 +7,7 @@ import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.Position;
 import com.questoftherealm.map.Tile;
 
 public class TalkCommand extends Command {
@@ -18,9 +19,10 @@ public class TalkCommand extends Command {
     public void execute(String[] args) {
         String target = args[1];
         Player player = Game.getPlayer();
+        Position curPos = new Position(player.getX(), player.getY());
         switch (target) {
             case "Elder" -> {
-                if (!Elder.isHasTalked() && player.getX() == GameConstants.CastleX && player.getY() == GameConstants.CastleY) {
+                if (!Elder.isHasTalked() && curPos.equals(GameConstants.Castle)) {
                     Elder elder = new Elder();
                     elder.talk(player);
                 } else if (!Elder.isHasTalked()) {
@@ -32,10 +34,9 @@ public class TalkCommand extends Command {
             case "Trader" -> {
                 TraderNPC trader = new TraderNPC();
                 Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
-                if(curTile.getEnemies().contains(trader)) {
+                if (curTile.getEnemies().contains(trader)) {
                     trader.talk(player);
-                }
-                else{
+                } else {
                     System.out.println("No trader spotted in this zone");
                 }
             }

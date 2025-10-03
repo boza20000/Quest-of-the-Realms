@@ -17,7 +17,7 @@ public class Inventory {
     private final int capacity;
 
     public Inventory() {
-        this.capacity = 20;
+        this.capacity = GameConstants.MAX_ITEMS_IN_STACK;
     }
 
     public Inventory(int capacity) {
@@ -35,14 +35,18 @@ public class Inventory {
                 System.out.println("Cannot carry more than " + GameConstants.MAX_ITEMS_IN_STACK + " of " + item.getName() + ".");
             }
         } else {
-            if (items.size() < capacity) {
-                items.put(item, items.getOrDefault(item, 0) + 1);
-                System.out.println(item + " added in inventory.");
+            int curItemQuantity = items.getOrDefault(item, 0);
+            int newTotal = curItemQuantity + quantity;
+
+            if (items.size() < capacity || items.containsKey(item)) {
+                items.put(item, newTotal);
+                System.out.println(quantity + " x " + item + " added (now " + newTotal + ").");
             } else {
                 System.out.println("Inventory full! Cannot add " + item.getName());
             }
         }
     }
+
 
     public void removeItem(Item item, int quantity) {
         if (items.containsKey(item)) {

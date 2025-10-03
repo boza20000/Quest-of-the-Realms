@@ -7,16 +7,23 @@ import com.questoftherealm.characters.characterInterfaces.Explorer;
 import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
+import com.questoftherealm.expeditions.missions.Ambushed;
+import com.questoftherealm.expeditions.missions.Explore_Nearby_Forests;
 import com.questoftherealm.expeditions.missions.Explore_the_Village;
+import com.questoftherealm.expeditions.missions.Infiltrate_the_Camp;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.Position;
+import com.questoftherealm.interaction.Interactions;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
-import com.questoftherealm.map.Map;
+import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Tile;
+import com.questoftherealm.map.TriggerRegister;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static com.questoftherealm.game.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
@@ -29,6 +36,7 @@ public class Player implements InventoryHandler, Explorer {
     private int level;
     private int experience;
     private int gold;
+    //private Position position;
     private int x, y;
     private String currentZone;
     private HashMap<ItemEffect, Item> armor;
@@ -50,6 +58,7 @@ public class Player implements InventoryHandler, Explorer {
         this.weapon = this.playerCharacter.getDefaultWeapon();
         this.x = PLAYER_START_X;
         this.y = PLAYER_START_Y;
+        //this.position = PLAYER_START;
     }
 
     @JsonCreator
@@ -60,6 +69,7 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("gold") int gold,
                   @JsonProperty("x") int x,
                   @JsonProperty("y") int y,
+                  //@JsonProperty("position") Position position,
                   @JsonProperty("currentZone") String currentZone,
                   @JsonProperty("armor") HashMap<ItemEffect, Item> armor,
                   @JsonProperty("weapon") Item weapon,
@@ -70,6 +80,7 @@ public class Player implements InventoryHandler, Explorer {
         this.level = level;
         this.experience = experience;
         this.gold = gold;
+        //this.position = position;
         this.x = x;
         this.y = y;
         this.currentZone = currentZone;
@@ -101,6 +112,7 @@ public class Player implements InventoryHandler, Explorer {
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
+        //this.position = new Position(x,y);
         Game.getGameMap().movePlayer(this, this.x, this.y);
     }
 
@@ -168,19 +180,21 @@ public class Player implements InventoryHandler, Explorer {
 
     @Override
     public void look() {
-        if(getX()==NorthVillage_1_X && getY()==NorthVillage_1_Y){
-            Explore_the_Village.villageIntro_1();
-            Explore_the_Village.setSearched_1(true);
+        Position pos = new Position(getX(), getY());
+        for (LocationTrigger locTrigger : TriggerRegister.triggers) {
+            if (locTrigger.isAtPosition(pos)) {
+                locTrigger.trigger(this);
+                return;
+            }
         }
-        if(getX()==NorthVillage_2_X && getY()==NorthVillage_2_Y){
-            Explore_the_Village.setSearched_2(true);
-        }
+
         Tile curTile = Game.getGameMap().curZone(getX(), getY());
         if (!curTile.isContentGenerated()) {
             curTile.onEnter(this);
         } else {
             System.out.println("There seems to be nothing else...");
         }
+
     }
 
     @Override
