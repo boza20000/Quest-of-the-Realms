@@ -1,15 +1,13 @@
 package com.questoftherealm.map;
 
-import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.missions.Explore_Nearby_Forests;
-import com.questoftherealm.expeditions.missions.Infiltrate_the_Camp;
 import com.questoftherealm.expeditions.missions.Explore_the_Village;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.interaction.Interactions;
-
 import java.util.ArrayList;
 import java.util.List;
+import static com.questoftherealm.expeditions.missions.Ambushed.playerAmbushed;
 
 public final class TriggerRegister {
     public static final List<LocationTrigger> triggers = new ArrayList<>();
@@ -31,6 +29,8 @@ public final class TriggerRegister {
         triggers.add(new LocationTrigger(GameConstants.Goblin_Camp, player -> {
             Interactions.goblinCampSpotted();
             Explore_Nearby_Forests.campFound = true;
+            assert Game.getQuests().peek() != null;
+            Game.getQuests().peek().updateStatus();
             try {
                 Thread.sleep(2000);
             }
@@ -39,6 +39,9 @@ public final class TriggerRegister {
                 e.getSuppressed();//Make custom exception
             }
             Interactions.goblinsTalkingOverheard();
+            playerAmbushed = true;
+            assert Game.getQuests().peek() != null;
+            Game.getQuests().peek().updateStatus();
             Interactions.makeDecision(Game.getPlayer());
         }));
 

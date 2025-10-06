@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Queue;
 
+import static com.questoftherealm.expeditions.missions.Ambushed.playerAmbushed;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GoblinAmbushTest {
@@ -67,6 +68,7 @@ public class GoblinAmbushTest {
 
         // Skip first quest
         quests.poll();
+        quests.poll();
         for (Quest q : quests) {
             if (q instanceof GoblinAmbush) {
                 quest = (GoblinAmbush) q;
@@ -90,38 +92,42 @@ public class GoblinAmbushTest {
         var mission = quest.getMissions().get(1);
         mission.checkCompletion();
         assertFalse(mission.checkCompletion(), "Not there");
-
         player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
-        mission.checkCompletion();
-        assertFalse(mission.checkCompletion(), "Should not work yet");
-
+        Explore_Nearby_Forests.campFound = false;
+        assertFalse(mission.checkCompletion(), "Camp found but not interacted");
         Explore_Nearby_Forests.campFound = true;
-        assertTrue(mission.checkCompletion(), "Camp found and interacted");
+        assertTrue(mission.checkCompletion(),"Trigger is true");
     }
 
     @Test
     void testAmbushed() {
         var mission = quest.getMissions().get(2);
+        var mission1 = quest.getMissions().get(1);
+        var mission0 = quest.getMissions().get(0);
+        mission0.setCompleted(true);
+        mission1.setCompleted(true);
         // Should not trigger until previous missions done
         assertFalse(mission.checkCompletion(), "Ambush not triggered yet");
-
         Explore_Nearby_Forests.campFound = true;
-
         // Simulate entering the goblin camp — this should trigger the ambush
         player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
         mission.checkCompletion();
 
-        assertTrue(mission.isCompleted(), "Ambush triggered successfully");
+        assertFalse(mission.isCompleted(), "After you investigated the camp you were spotted");
+        Ambushed.playerAmbushed = true;
+        mission.checkCompletion();
+        assertTrue(mission.isCompleted(),"Ambush triggered successfully");
     }
 
     @Test
     void testEscapeToSafety() {
         var mission = quest.getMissions().get(3);
-
-        // Precondition: Ambush must have occurred
+        assertFalse(mission.isCompleted(), "camp not found");
         Explore_Nearby_Forests.campFound = true;
-        Ambushed.playerEscapedAmbush = true; // Simulate that you escaped
-
+        assertFalse(mission.isCompleted(), "didn't escape");
+        Escape_to_Safety.playerEscapedAmbush = true;
+        assertFalse(mission.isCompleted(), "Not in the area");
+        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
         mission.checkCompletion();
         assertTrue(mission.isCompleted(), "Successfully escaped the ambush area");
     }

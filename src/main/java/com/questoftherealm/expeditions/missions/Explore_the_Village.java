@@ -29,7 +29,11 @@ public class Explore_the_Village extends Mission {
         if (pos.equals(NorthVillage_2)) {
             isVisited_2 = true;
         }
-        return isVisited_1 && isVisited_2 && isSearched_1 && isSearched_2;
+        if(isVisited_1 && isVisited_2 && isSearched_1 && isSearched_2){
+            complete();
+            return true;
+        }
+        return false;
     }
 
     public static void setSearched_1(boolean searched_1) {

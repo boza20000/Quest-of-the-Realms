@@ -14,7 +14,6 @@ public class GoblinAmbush extends Quest {
                         new Explore_Nearby_Forests(),
                         new Infiltrate_the_Camp(),
                         new Ambushed(),
-                        //new Defeat_the_Goblin_General(),
                         new Escape_to_Safety()
                 ),
                 "You stumble upon a goblin war camp, but your presence does not go unnoticed..."
