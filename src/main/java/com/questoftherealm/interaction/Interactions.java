@@ -1,6 +1,12 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Battle;
+import com.questoftherealm.enemyEntities.BattleFactory;
+import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.enemyEntities.EnemyConstants;
+import com.questoftherealm.enemyEntities.entities.Goblin;
+import com.questoftherealm.expeditions.missions.Ambushed;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.map.Event;
@@ -10,6 +16,8 @@ import com.questoftherealm.map.TileTypes;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+
+import static com.questoftherealm.expeditions.missions.Ambushed.playerEscapedAmbush;
 
 public class Interactions {
     private static final Random random = new Random();
@@ -195,5 +203,135 @@ public class Interactions {
                 """;
         SlowPrinter.slowPrint(dialog);
     }
+
+    public static void goblinsTalkingOverheard() {
+        String dialog = """
+            You crouch behind a thicket, your breath shallow, eyes fixed on the flickering light of the goblin campfire.
+            The guttural sounds of their speech cut through the night air...
+            
+            "South... we strike south next," one goblin snarls, slamming its fist into the dirt.
+            "Big walls. Gold banners. The humans won't see it coming!"
+            
+            Another goblin chuckles, its teeth glinting in the firelight.
+            "The King will be pleased. His reach grows every night..."
+            
+            A taller goblin in dark armor growls, silencing the others.
+            "Do not speak his name so freely. The King has returned, but his eyes are everywhere now."
+            
+            The air feels heavier... unnatural. A strange hum seems to ripple through the ground beneath you.
+            You lean closer, trying to hear more—
+            
+            *Snap!*
+            
+            A twig breaks under your boot.
+            Several heads turn sharply toward your hiding spot.
+            
+            "What was that?" one hisses.
+            "Human! By the trees!" another screeches.
+            
+            Torches flare to life.
+            The goblins snarl and grab their weapons, rushing toward your position.
+            
+            You’ve been spotted.
+            """;
+        SlowPrinter.slowPrint(dialog);
+    }
+
+    public static void makeDecision(Player player) {
+        System.out.println("\nThe goblins close in, snarling and waving their crude blades.");
+        System.out.println("You have only moments to decide what to do...");
+        System.out.println("""
+        1️⃣  Try to escape into the woods.
+        2️⃣  Draw your weapon and fight your way out.
+        3️⃣  Use an item (potion, smoke bomb, etc.).
+        4️⃣  Try to talk your way out.
+        """);
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Your choice: ");
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1 -> resolveEscape(player);
+            case 2 -> resolveFight(player);
+            case 3 -> resolveTalk(player);
+            default -> {
+                System.out.println("You freeze in fear... the goblins rush you!");
+                resolveFight(player);
+            }
+        }
+    }
+    private static void resolveEscape(Player player) {
+        int outcome = random.nextInt(3);
+        switch (outcome) {
+            case 0 -> {
+                System.out.println("""
+                You dash into the forest, branches slapping at your face.
+                Behind you, the goblins’ shouts fade into the distance — you made it!
+                """);
+                playerEscapedAmbush = true;
+            }
+            case 1 -> {
+                System.out.println("""
+                You sprint into the woods, but one goblin’s arrow grazes your arm!
+                You barely escape, wounded but alive...
+                """);
+                player.getPlayerCharacter().takeDamage(10);
+                playerEscapedAmbush = true;
+            }
+            case 2 -> {
+                System.out.println("""
+                You run — but too late. A goblin leaps from the shadows and cuts you off!
+                You’re cornered. There’s no way out now. Fight him...
+                """);
+                BattleFactory.createBattle(player,new Goblin()).simulate();
+
+            }
+        }
+    }
+
+    private static void resolveFight(Player player) {
+        int outcome = random.nextInt(3);
+        switch (outcome) {
+            case 0 ->{
+                System.out.println("You charge forward! The goblins scatter, terrified by your ferocity.");
+                playerEscapedAmbush = true;
+            }
+
+            case 1 -> {
+                System.out.println("You fight fiercely, cutting down two goblins as you escaped — but take a deep wound in your side.");
+                player.getPlayerCharacter().takeDamage(15);
+                playerEscapedAmbush = true;
+            }
+            case 2 -> {
+                System.out.println("You swing your weapon wildly, but they overwhelm you!");
+                BattleFactory.createBattle(player, new Goblin()).simulate();
+            }
+        }
+    }
+
+    private static void resolveTalk(Player player) {
+        int outcome = random.nextInt(3);
+        switch (outcome) {
+            case 0 -> {
+                System.out.println("You bluff about serving their King. Confused, they let you go — for now.");
+                playerEscapedAmbush = true;
+            }
+
+            case 1 -> {
+                System.out.println("They pause, unsure, but still follow you at a distance — you slip away cautiously.");
+                playerEscapedAmbush = true;
+            }
+            case 2 -> {
+                System.out.println("They burst into laughter — then charge you!");
+                BattleFactory.createBattle(player, new Goblin()).simulate();
+            }
+        }
+    }
+
+
+
+
+
 }
 

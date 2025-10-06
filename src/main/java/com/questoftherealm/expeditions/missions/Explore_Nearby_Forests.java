@@ -8,6 +8,8 @@ import com.questoftherealm.game.Position;
 
 public class Explore_Nearby_Forests extends Mission {
 
+    public static boolean campFound = false;
+
     public Explore_Nearby_Forests() {
         super("Find the creatures", "Explore the forest near the village and search for potential camp");
     }

@@ -16,7 +16,7 @@ public class LocationTrigger{
         return this.position.equals(p);
     }
 
-    public void trigger(Player player) {
+    public void trigger(Player player){
         action.execute(player);
     }
 }

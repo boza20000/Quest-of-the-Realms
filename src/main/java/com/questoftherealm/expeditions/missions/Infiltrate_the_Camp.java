@@ -7,8 +7,6 @@ import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
 
 public class Infiltrate_the_Camp extends Mission {
-    public static boolean isExplored = false;
-
     public Infiltrate_the_Camp() {
         super("Infiltrate the Camp", "Sneak into a goblin camp to learn their plans.");
     }
@@ -17,7 +15,7 @@ public class Infiltrate_the_Camp extends Mission {
     public boolean checkCompletion() {
         Player player = Game.getPlayer();
         Position pos = new Position(player.getX(),player.getY());
-        if(pos.equals(GameConstants.Goblin_Camp) && isExplored){
+        if(pos.equals(GameConstants.Goblin_Camp) && Explore_Nearby_Forests.campFound){
             complete();
             return true;
         }

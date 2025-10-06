@@ -106,7 +106,7 @@ public abstract class Enemy implements Fightable, Lootable {
                     EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON
             };
             case MOUNTAIN -> new EnemyType[]{
-                    EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.GOBLIN_GENERAL, EnemyType.WOLF
+                    EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF
             };
             case WATER -> new EnemyType[]{
                     EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN
@@ -115,7 +115,7 @@ public abstract class Enemy implements Fightable, Lootable {
                     EnemyType.BANDIT, EnemyType.WOLF, EnemyType.TRAVELING_TRADER
             };
             case CASTLE -> new EnemyType[]{
-                    EnemyType.DARK_MAGE, EnemyType.GOBLIN_GENERAL, EnemyType.SKELETON
+                    EnemyType.DARK_MAGE, EnemyType.SKELETON
             };
 //            case QUEST_LOCATION -> new EnemyType[]{
 //                    // Empty, quest-specific spawns only

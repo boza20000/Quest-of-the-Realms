@@ -1,15 +1,26 @@
 package com.questoftherealm.expeditions.missions;
 
 import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.expeditions.quests.GoblinAmbush;
+import com.questoftherealm.game.Game;
 
 public class Ambushed extends Mission {
+    public static boolean playerEscapedAmbush = false;
 
     public Ambushed() {
         super("Ambushed!", "The goblins discover you—fight your way out!");
     }
 
+
     @Override
     public boolean checkCompletion() {
+        Quest cur = Game.getQuests().peek();
+        if (cur instanceof GoblinAmbush &&
+                cur.getMissions().get(0).isCompleted() &&
+                cur.getMissions().get(1).isCompleted() && playerEscapedAmbush) {
+            return true;
+        }
         return false;
     }
 }

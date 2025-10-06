@@ -1,4 +1,128 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.characters.player.PlayerTypes;
+import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.expeditions.QuestFactory;
+import com.questoftherealm.expeditions.quests.GoblinAmbush;
+import com.questoftherealm.friendlyEntities.Entities.Villager;
+import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.map.Map;
+import com.questoftherealm.map.Tile;
+import com.questoftherealm.map.TileTypes;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Queue;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class GoblinAmbushTest {
+    private Player player;
+    private GoblinAmbush quest;
+    private Queue<Quest> quests;
+    private Map gameMap;
+
+    @BeforeEach
+    void setup() throws Exception {
+        // Create singleton Map instance with dummy data
+        gameMap = Map.getInstance();
+        Tile[][] dummyTiles = new Tile[8][8];
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                dummyTiles[y][x] = new Tile(TileTypes.GRASS, "Zone " + x + "," + y, true);
+            }
+        }
+
+        // Add Goblin Camp
+        dummyTiles[GameConstants.Goblin_Camp.x()][GameConstants.Goblin_Camp.y()] =
+                new Tile(TileTypes.FOREST, "Secret Goblin Camp", true);
+
+        // Inject into Map singleton
+        var field = Map.class.getDeclaredField("gameMap");
+        field.setAccessible(true);
+        field.set(gameMap, dummyTiles);
+
+        var gameMapField = Game.class.getDeclaredField("gameMap");
+        gameMapField.setAccessible(true);
+        gameMapField.set(null, gameMap);
+
+        // Create Player
+        player = new Player(
+                "TestHero",
+                PlayerTypes.Warrior,
+                1, 0, 0,
+                GameConstants.PLAYER_START_X,
+                GameConstants.PLAYER_START_Y,
+                "Spawn",
+                null, null, null
+        );
+        Game.setPlayer(player);
+
+        // Create quest
+        new QuestFactory();
+        quests = QuestFactory.getQuests();
+        Game.setGameQuests(quests);
+
+        // Skip first quest
+        quests.poll();
+        for (Quest q : quests) {
+            if (q instanceof GoblinAmbush) {
+                quest = (GoblinAmbush) q;
+                break;
+            }
+        }
+
+        player.move(player.getX(), player.getY());
+    }
+
+    @Test
+    void testExploreTheNearbyForestsTest() {
+        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
+        var mission = quest.getMissions().get(0);
+        mission.checkCompletion();
+        assertTrue(mission.isCompleted(), "Camp found");
+    }
+
+    @Test
+    void testInfiltrateCampTest() {
+        var mission = quest.getMissions().get(1);
+        mission.checkCompletion();
+        assertFalse(mission.checkCompletion(), "Not there");
+
+        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
+        mission.checkCompletion();
+        assertFalse(mission.checkCompletion(), "Should not work yet");
+
+        Explore_Nearby_Forests.campFound = true;
+        assertTrue(mission.checkCompletion(), "Camp found and interacted");
+    }
+
+    @Test
+    void testAmbushed() {
+        var mission = quest.getMissions().get(2);
+        // Should not trigger until previous missions done
+        assertFalse(mission.checkCompletion(), "Ambush not triggered yet");
+
+        Explore_Nearby_Forests.campFound = true;
+
+        // Simulate entering the goblin camp — this should trigger the ambush
+        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
+        mission.checkCompletion();
+
+        assertTrue(mission.isCompleted(), "Ambush triggered successfully");
+    }
+
+    @Test
+    void testEscapeToSafety() {
+        var mission = quest.getMissions().get(3);
+
+        // Precondition: Ambush must have occurred
+        Explore_Nearby_Forests.campFound = true;
+        Ambushed.playerEscapedAmbush = true; // Simulate that you escaped
+
+        mission.checkCompletion();
+        assertTrue(mission.isCompleted(), "Successfully escaped the ambush area");
+    }
 }

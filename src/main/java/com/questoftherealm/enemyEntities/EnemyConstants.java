@@ -101,20 +101,20 @@ public final class EnemyConstants {
             false
     );
 
-    public static final EnemyData GOBLIN_GENERAL = new EnemyData(
-            "The commanding goblin general",
-            EnemyType.GOBLIN_GENERAL,
-            100,
-            15,
-            7,
-            List.of(ItemRegistry.getItem("Iron Helmet"), ItemRegistry.getItem("Iron Chestplate")),
-            ItemRegistry.getItem("Orcish Axe"),
-            List.of(
-                    new Loot(ItemRegistry.getItem("Orcish Axe"), 0.15, 1, 1),
-                    new Loot(ItemRegistry.getItem("Health Potion"), 0.4, 1, 2)
-            ),
-            false
-    );
+//    public static final EnemyData GOBLIN_GENERAL = new EnemyData(
+//            "The commanding goblin general",
+//            EnemyType.GOBLIN_GENERAL,
+//            100,
+//            15,
+//            7,
+//            List.of(ItemRegistry.getItem("Iron Helmet"), ItemRegistry.getItem("Iron Chestplate")),
+//            ItemRegistry.getItem("Orcish Axe"),
+//            List.of(
+//                    new Loot(ItemRegistry.getItem("Orcish Axe"), 0.15, 1, 1),
+//                    new Loot(ItemRegistry.getItem("Health Potion"), 0.4, 1, 2)
+//            ),
+//            false
+//    );
 
     public static final EnemyData GIANT_SPIDER = new EnemyData(
             "A terrifying giant spider",

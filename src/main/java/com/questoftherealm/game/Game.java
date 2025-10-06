@@ -15,7 +15,7 @@ public class Game {
     private static Map gameMap;
     private final GameUI gameUI = new GameUI();
     public static boolean gameOver = false;
-    public static Queue<Quest> gameQuests;
+    private static Queue<Quest> gameQuests;
 
     public static Player getPlayer() {
         return player;

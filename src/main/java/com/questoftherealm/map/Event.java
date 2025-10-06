@@ -48,12 +48,12 @@ public enum Event {
             new Wolf()
     ),
 
-    GOBLIN_GENERAL(
-            "Goblin General",
-            "A towering goblin clad in crude armor commands his minions. " +
-                    "Defeating him might scatter the smaller goblins nearby.",
-            new GoblinGeneral()
-    ),
+//    GOBLIN_GENERAL(
+//            "Goblin General",
+//            "A towering goblin clad in crude armor commands his minions. " +
+//                    "Defeating him might scatter the smaller goblins nearby.",
+//            new GoblinGeneral()
+//    ),
 
     TRAVELING_TRADER(
             "Traveling Trader",
@@ -122,8 +122,8 @@ public enum Event {
 
             case CASTLE -> randomOf(
                     DARK_RITUAL,
-                    BANDIT_AMBUSH,
-                    GOBLIN_GENERAL
+                    BANDIT_AMBUSH
+                   // GOBLIN_GENERAL
             );
 
             case MOUNTAIN -> randomOf(
