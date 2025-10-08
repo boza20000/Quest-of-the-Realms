@@ -1,6 +1,7 @@
 package com.questoftherealm.expeditions;
 
 import com.questoftherealm.expeditions.quests.*;
+import com.questoftherealm.interaction.SlowPrinter;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,14 +17,35 @@ public class QuestFactory {
         register(new RiseOfTheGoblinThreat());
         register(new FinalBattle());
     }
-    public static Queue<Quest> getQuests(){
+
+    public static Queue<Quest> getQuests() {
         return quests;
     }
 
-    public static Quest getCurrentQuest(){
+    public static Quest getCurrentQuest() {
         return quests.peek();
     }
 
+    public static void nextQuest() {
+        if(!quests.isEmpty() && quests.peek().isCompleted()){
+            quests.poll();
+        }
+        else if (!quests.isEmpty() && !quests.peek().isCompleted()){
+            SlowPrinter.slowPrint("Quest is not completed");
+        }
+        else {
+            System.out.println("No more quests available");
+        }
+    }
+
+    public static Mission getCurrentMission() {
+        for (Mission m : getCurrentQuest().getMissions()) {
+            if (!m.isCompleted()) {
+              return m;
+            }
+        }
+        return null;
+    }
 
     void register(Quest quest) {
         quests.offer(quest);

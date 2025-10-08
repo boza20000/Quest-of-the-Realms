@@ -1,5 +1,6 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.expeditions.Quest;
@@ -32,9 +33,9 @@ public class AttackCommandTest {
             }
         }
         // Set specific villages so missions can detect them
-        dummyTiles[GameConstants.NorthVillage_1_Y][GameConstants.NorthVillage_1_X] =
+        dummyTiles[GameConstants.NorthVillage_1.y()][GameConstants.NorthVillage_1.x()] =
                 new Tile(TileTypes.VILLAGE, "Village 1", true);
-        dummyTiles[GameConstants.NorthVillage_2_Y][GameConstants.NorthVillage_2_X] =
+        dummyTiles[GameConstants.NorthVillage_2.y()][GameConstants.NorthVillage_2.x()] =
                 new Tile(TileTypes.VILLAGE, "Village 2", true);
 
         // Inject dummyTiles via reflection
@@ -52,11 +53,15 @@ public class AttackCommandTest {
                 "TestHero",
                 PlayerTypes.Warrior,
                 1, 0, 0,
-                GameConstants.PLAYER_START_X,
-                GameConstants.PLAYER_START_Y,
+                GameConstants.PLAYER_START.x(),
+                GameConstants.PLAYER_START.y(),
                 "Spawn",
-                null, null, null
-        );
+                null, // armor
+                null, // weapon
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null, // quest
+                null  // mission
+        );;
         Game.setPlayer(player);
 
         // Reset static flags for villages

@@ -7,16 +7,25 @@ import com.questoftherealm.characters.characterInterfaces.Explorer;
 import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
+import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.expeditions.QuestFactory;
+import com.questoftherealm.expeditions.missions.Meet_the_Elder;
+import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
+import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TriggerRegister;
+
 import java.util.HashMap;
 import java.util.Objects;
+
 import static com.questoftherealm.game.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
@@ -28,17 +37,19 @@ public class Player implements InventoryHandler, Explorer {
     private int level;
     private int experience;
     private int gold;
-    //private Position position;
+    private Position position;
     private int x, y;
     private String currentZone;
     private HashMap<ItemEffect, Item> armor;
     private Item weapon;
+    private Quest curQuest;
+    private Mission curMission;
 
     public Player(String name, PlayerTypes type) {
         this.name = name;
         this.playerType = type;
         this.playerCharacter = (PlayerFactory.createPlayer(type));
-        this.inventory = new Inventory(20);
+        this.inventory = new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY);
         this.level = 1;
         this.gold = 0;
         this.experience = 0;
@@ -48,9 +59,11 @@ public class Player implements InventoryHandler, Explorer {
         armor.put(ItemEffect.CHESTPLATE, null);
         armor.put(ItemEffect.BOOTS, null);
         this.weapon = this.playerCharacter.getDefaultWeapon();
-        this.x = PLAYER_START_X;
-        this.y = PLAYER_START_Y;
-        //this.position = PLAYER_START;
+        this.x = PLAYER_START.x();
+        this.y = PLAYER_START.y();
+        this.position = PLAYER_START;
+        this.curQuest = new StartQuest();
+        this.curMission = new Meet_the_Elder();
     }
 
     @JsonCreator
@@ -61,18 +74,19 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("gold") int gold,
                   @JsonProperty("x") int x,
                   @JsonProperty("y") int y,
-                  //@JsonProperty("position") Position position,
                   @JsonProperty("currentZone") String currentZone,
                   @JsonProperty("armor") HashMap<ItemEffect, Item> armor,
                   @JsonProperty("weapon") Item weapon,
-                  @JsonProperty("inventory") Inventory inventory) {
+                  @JsonProperty("inventory") Inventory inventory,
+                  @JsonProperty("quest") Quest quest,
+                  @JsonProperty("mission") Mission mission) {
         this.name = name;
         this.playerType = playerType;
         this.playerCharacter = PlayerFactory.createPlayer(playerType);
         this.level = level;
         this.experience = experience;
         this.gold = gold;
-        //this.position = position;
+        this.position = new Position(x, y);
         this.x = x;
         this.y = y;
         this.currentZone = currentZone;
@@ -83,28 +97,30 @@ public class Player implements InventoryHandler, Explorer {
         if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
         this.inventory = inventory != null ? inventory : new Inventory(20);
         recalculateStats();
+        this.curQuest = quest;
+        this.curMission = mission;
     }
 
     public void addExp(int exp) {
         experience += exp;
-        if (experience >= level * 100) {
-            experience -= 100;
+        while (experience >= level * MAX_EXP_PER_LEVEL) {
+            experience -= level * MAX_EXP_PER_LEVEL;
             level++;
         }
     }
 
     public void addMoney(int amount) {
         gold += amount;
-        if (gold >= 100) {
+        if (gold >= GameConstants.MAX_GOLD) {
             System.out.println("You have reached max gold!!!");
-            gold = 100;
+            gold = GameConstants.MAX_GOLD;
         }
     }
 
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
-        //this.position = new Position(x,y);
+        this.position = new Position(x, y);
         Game.getGameMap().movePlayer(this, this.x, this.y);
     }
 
@@ -169,6 +185,29 @@ public class Player implements InventoryHandler, Explorer {
         return weapon;
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
+    public Quest getCurQuest() {
+        return curQuest;
+    }
+
+    public void setCurQuest(Quest curQuest) {
+        this.curQuest = curQuest;
+    }
+
+    public Mission getCurMission() {
+        return curMission;
+    }
+
+    public void setCurMission(Mission curMission) {
+        this.curMission = curMission;
+    }
 
     @Override
     public void look() {
@@ -278,5 +317,18 @@ public class Player implements InventoryHandler, Explorer {
                 equipWeapon(item);
             }
         }
+    }
+
+    public void updateQuestStatus() {
+        Quest currentQuest = QuestFactory.getCurrentQuest();
+        if (currentQuest == null) {
+            System.out.println("🏁 All quests completed!");
+            this.curQuest = null;
+            this.curMission = null;
+            return;
+        }
+        currentQuest.updateStatus();
+        this.curQuest = QuestFactory.getCurrentQuest();
+        this.curMission = QuestFactory.getCurrentMission();
     }
 }

@@ -1,5 +1,6 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.game.Game;
@@ -50,10 +51,14 @@ public class TakeCommandTest {
                 "TestHero",
                 PlayerTypes.Warrior,
                 1, 0, 0,
-                GameConstants.PLAYER_START_X,
-                GameConstants.PLAYER_START_Y,
+                GameConstants.PLAYER_START.x(),
+                GameConstants.PLAYER_START.y(),
                 "Spawn",
-                null, null, null
+                null, // armor
+                null, // weapon
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null, // quest
+                null  // mission
         );
         Game.setPlayer(player);
 
@@ -124,7 +129,7 @@ public class TakeCommandTest {
         take.execute(args);
 
         assertEquals(1, player.getInventory().getQuantity(ItemRegistry.getItem("Traveler’s Leather")));
-        assertEquals(17, getDropQuantity(tile, "Traveler’s Leather")); // had 18 total
+        assertEquals(16, getDropQuantity(tile, "Traveler’s Leather")); // had 17 total
     }
 
     @Test

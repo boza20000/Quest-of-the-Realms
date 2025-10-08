@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public final class GameConstants {
+
     private static final Random random = new Random();
 
     private GameConstants() {
@@ -38,8 +39,8 @@ public final class GameConstants {
     public static final int DELAY_MS = 40;
 
 
-    //    public static final Position PLAYER_START = new Position(1,6);
-    public static final Position Castle = new Position(1,6);
+    public static final Position PLAYER_START = new Position(1, 6);
+    public static final Position Castle = new Position(1, 6);
     public static final Position NorthVillage_1 = new Position(1, 1);
     public static final Position NorthVillage_2 = new Position(2, 5);
 
@@ -54,15 +55,11 @@ public final class GameConstants {
     );
     public static final Position Goblin_Camp = North_Forest.get(random.nextInt(North_Forest.size()));
 
-    public static final int PLAYER_START_X = 1;
-    public static final int PLAYER_START_Y = 6;
-    public static final int CastleX = 1;
-    public static final int CastleY = 6;
-    public static final int NorthVillage_1_X = 1;
-    public static final int NorthVillage_1_Y = 1;
-    public static final int NorthVillage_2_X = 2;
-    public static final int NorthVillage_2_Y = 5;
     public static final int North_Y = 2;
-
+    public static final int MAP_HEIGHT = 8;
+    public static final int MAP_START = 0;
+    public static final int MAX_ITEMS_IN_INVENTORY = 15;
+    public static final int MAX_GOLD = 100;
+    public static final int MAX_EXP_PER_LEVEL = 100;
 }
 

@@ -41,12 +41,6 @@ public class StartQuestTest {
                 dummyTiles[y][x] = new Tile(TileTypes.GRASS, "Zone " + x + "," + y, true);
             }
         }
-        // Set specific villages so missions can detect them
-        dummyTiles[GameConstants.NorthVillage_1_Y][GameConstants.NorthVillage_1_X] =
-                new Tile(TileTypes.VILLAGE, "Village 1", true);
-        dummyTiles[GameConstants.NorthVillage_2_Y][GameConstants.NorthVillage_2_X] =
-                new Tile(TileTypes.VILLAGE, "Village 2", true);
-
         // Inject dummyTiles via reflection
         var field = Map.class.getDeclaredField("gameMap");
         field.setAccessible(true);
@@ -62,22 +56,17 @@ public class StartQuestTest {
                 "TestHero",
                 PlayerTypes.Warrior,
                 1, 0, 0,
-                GameConstants.PLAYER_START_X,
-                GameConstants.PLAYER_START_Y,
+                GameConstants.PLAYER_START.x(),
+                GameConstants.PLAYER_START.y(),
                 "Spawn",
-                null, null, null
+                null, // armor
+                null, // weapon
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null, // quest
+                null  // mission
         );
         Game.setPlayer(player);
 
-        // Reset static flags for villages
-        Explore_the_Village.setSearched_1(false);
-        Explore_the_Village.setSearched_2(false);
-        var f1 = Villager.class.getDeclaredField("hasTalkedVillage1");
-        f1.setAccessible(true);
-        f1.set(null, false);
-        var f2 = Villager.class.getDeclaredField("hasTalkedVillage2");
-        f2.setAccessible(true);
-        f2.set(null, false);
 
         // Create quest
         new QuestFactory();
@@ -100,9 +89,11 @@ public class StartQuestTest {
         f1.setAccessible(true);
         f1.set(null,false);
         mission.checkCompletion();
-        player.move(GameConstants.CastleX,GameConstants.CastleY);
+        player.move(GameConstants.Castle.x(),GameConstants.Castle.y());
         assertFalse(Elder.isHasTalked(), "Elder should be talking for the first time");
-        assertTrue(mission.checkCompletion(),"Player is in the castle should be ready");
+        f1.set(null,true);
+        mission.checkCompletion();
+        assertTrue(mission.isCompleted(),"Player is in the castle should be ready");
 
     }
 

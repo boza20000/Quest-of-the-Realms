@@ -1,5 +1,6 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.expeditions.Quest;
@@ -54,10 +55,14 @@ public class GoblinAmbushTest {
                 "TestHero",
                 PlayerTypes.Warrior,
                 1, 0, 0,
-                GameConstants.PLAYER_START_X,
-                GameConstants.PLAYER_START_Y,
+                GameConstants.PLAYER_START.x(),
+                GameConstants.PLAYER_START.y(),
                 "Spawn",
-                null, null, null
+                null, // armor
+                null, // weapon
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null, // quest
+                null  // mission
         );
         Game.setPlayer(player);
 

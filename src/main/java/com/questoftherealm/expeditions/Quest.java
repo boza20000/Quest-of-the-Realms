@@ -41,6 +41,7 @@ public abstract class Quest {
         }
         if (isAllReady) {
             this.setCompleted(true);
+            QuestFactory.nextQuest();
             System.out.println("You have completed this quest successfully");
         }
     }
@@ -54,5 +55,4 @@ public abstract class Quest {
             System.out.println("Missions: " + mission.getName());
         }
     }
-
 }
