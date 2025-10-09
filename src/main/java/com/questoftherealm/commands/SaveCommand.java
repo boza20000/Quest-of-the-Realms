@@ -21,12 +21,7 @@ public class SaveCommand extends Command {
         if(fileName.isEmpty()){
             throw new SaveError("Save name is empty");
         }
-        try{
-            SaveGame.saveGame(fileName);
-        }
-        catch (IOException e){
-            throw new SaveError("Something went wrong game not saved");
-        }
+        SaveGame.saveGame(fileName);
 
     }
 }
