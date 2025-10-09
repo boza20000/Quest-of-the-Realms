@@ -15,7 +15,8 @@ public class Ambushed extends Mission {
 
     @Override
     public boolean checkCompletion() {
-        Quest cur = Game.getQuests().peek();
+        if(isCompleted())return true;
+        Quest cur = Game.getPlayer().getCurQuest();
         if (cur instanceof GoblinAmbush &&
                 cur.getMissions().get(0).isCompleted() &&
                 cur.getMissions().get(1).isCompleted() && playerAmbushed) {

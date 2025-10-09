@@ -1,6 +1,8 @@
 package com.questoftherealm.expeditions.missions;
 
 import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.quests.NorthExploration;
+import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemType;
@@ -26,7 +28,7 @@ public final class Gather_Supplies extends Mission {
                 foodSum += quantity;
             }
         }
-        if (hasPotion && foodSum >= 5) {
+        if (Game.getPlayer().getCurQuest() instanceof StartQuest && hasPotion && foodSum >= 5) {
             complete();
             return true;
         }

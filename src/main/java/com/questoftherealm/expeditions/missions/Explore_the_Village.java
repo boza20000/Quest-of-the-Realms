@@ -2,6 +2,7 @@ package com.questoftherealm.expeditions.missions;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.quests.NorthExploration;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
@@ -21,15 +22,17 @@ public class Explore_the_Village extends Mission {
 
     @Override
     public boolean checkCompletion() {
+        if(isCompleted())return true;
+
         Player player = Game.getPlayer();
         Position pos = new Position(player.getX(),player.getY());
-        if (pos.equals(NorthVillage_1)) {
+        if (Game.getPlayer().getCurQuest() instanceof NorthExploration && pos.equals(NorthVillage_1)) {
             isVisited_1 = true;
         }
-        if (pos.equals(NorthVillage_2)) {
+        if (Game.getPlayer().getCurQuest() instanceof NorthExploration && pos.equals(NorthVillage_2)) {
             isVisited_2 = true;
         }
-        if(isVisited_1 && isVisited_2 && isSearched_1 && isSearched_2){
+        if(Game.getPlayer().getCurQuest() instanceof NorthExploration && isVisited_1 && isVisited_2 && isSearched_1 && isSearched_2){
             complete();
             return true;
         }

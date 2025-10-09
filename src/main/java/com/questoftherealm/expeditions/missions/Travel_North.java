@@ -20,7 +20,7 @@ public class Travel_North extends Mission {
         if(curQuest instanceof StartQuest)return false;
         Player player = Game.getPlayer();
         int y = player.getY();
-        if (y <= GameConstants.North_Y) {
+        if (Game.getPlayer().getCurQuest() instanceof NorthExploration && y <= GameConstants.North_Y) {
             complete();
             return true;
         }

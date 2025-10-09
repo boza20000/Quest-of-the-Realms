@@ -1,7 +1,9 @@
 package com.questoftherealm.expeditions.missions;
 
 import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.quests.NorthExploration;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
+import com.questoftherealm.game.Game;
 
 public class Talk_To_Survivors extends Mission {
 
@@ -11,6 +13,6 @@ public class Talk_To_Survivors extends Mission {
 
     @Override
     public boolean checkCompletion() {
-        return Villager.hasTalkedToAll();
+        return Game.getPlayer().getCurQuest() instanceof NorthExploration && Villager.hasTalkedToAll();
     }
 }

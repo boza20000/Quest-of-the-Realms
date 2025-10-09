@@ -1,7 +1,9 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.game.Game;
 
 public final class Meet_the_Elder extends Mission {
     public Meet_the_Elder() {
@@ -11,7 +13,7 @@ public final class Meet_the_Elder extends Mission {
     @Override
     public boolean checkCompletion() {
         if(isCompleted())return true;
-        if (!isCompleted() && Elder.isHasTalked()) {
+        if (Game.getPlayer().getCurQuest() instanceof StartQuest && !isCompleted() && Elder.isHasTalked()) {
             complete();
             return true;
         }

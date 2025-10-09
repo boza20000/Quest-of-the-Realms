@@ -8,6 +8,7 @@ public class Defeat_the_Goblin_King extends Mission {
     }
     @Override
     public boolean checkCompletion() {
+
         return false;
     }
 }
