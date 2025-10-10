@@ -16,11 +16,10 @@ public class Travel_North extends Mission {
 
     @Override
     public boolean checkCompletion() {
-        Quest curQuest = Game.getQuests().peek();
-        if(curQuest instanceof StartQuest)return false;
+        if(isCompleted())return true;
         Player player = Game.getPlayer();
         int y = player.getY();
-        if (Game.getPlayer().getCurQuest() instanceof NorthExploration && y <= GameConstants.North_Y) {
+        if ((Game.getPlayer().getCurQuest() instanceof NorthExploration) && y <= GameConstants.North_Y) {
             complete();
             return true;
         }

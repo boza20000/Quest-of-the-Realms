@@ -6,7 +6,7 @@ import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.expeditions.QuestFactory;
 import com.questoftherealm.expeditions.quests.GoblinAmbush;
-import com.questoftherealm.friendlyEntities.Entities.Villager;
+import com.questoftherealm.expeditions.quests.NorthExploration;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.map.Map;
@@ -14,10 +14,7 @@ import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TileTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.Queue;
-
-import static com.questoftherealm.expeditions.missions.Ambushed.playerAmbushed;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GoblinAmbushTest {
@@ -66,14 +63,14 @@ public class GoblinAmbushTest {
         );
         Game.setPlayer(player);
 
-        // Create quest
+        quests = null;
+        QuestFactory.getQuests().clear();
         new QuestFactory();
         quests = QuestFactory.getQuests();
         Game.setGameQuests(quests);
-
-        // Skip first quest
-        quests.poll();
-        quests.poll();
+        quests.poll();//remove StartQuest
+        quests.poll();//remove NorthExploration
+        quest = null;
         for (Quest q : quests) {
             if (q instanceof GoblinAmbush) {
                 quest = (GoblinAmbush) q;
@@ -81,13 +78,23 @@ public class GoblinAmbushTest {
             }
         }
 
+        assertNotNull(quest, "GoblinAmbush must be present in QuestFactory");
+        player.setCurQuest(quest);
+        player.setCurMission(quest.getMissions().getFirst());
+        player.getInventory().clear();
         player.move(player.getX(), player.getY());
     }
 
     @Test
     void testExploreTheNearbyForestsTest() {
-        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
         var mission = quest.getMissions().get(0);
+        player.move(GameConstants.Goblin_Camp.x()-1, GameConstants.Goblin_Camp.y());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted(),"Wrong position");
+        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y()-1);
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted(),"Wrong position");
+        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
         mission.checkCompletion();
         assertTrue(mission.isCompleted(), "Camp found");
     }

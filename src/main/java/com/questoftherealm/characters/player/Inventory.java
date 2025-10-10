@@ -13,7 +13,7 @@ import java.util.Map;
 public class Inventory {
     @JsonSerialize(keyUsing = ItemKeySerializer.class)
     @JsonDeserialize(keyUsing = ItemKeyDeserializer.class)
-    private final Map<Item, Integer> items = new HashMap<>();
+    private Map<Item, Integer> items = new HashMap<>();
     private final int capacity;
 
     public Inventory() {
@@ -73,7 +73,7 @@ public class Inventory {
 
     public Map<Item, Integer> getItems() {
         return new HashMap<>(items) {
-        }; // safe copy
+        };
     }
 
     public int getQuantity(Item item) {
@@ -83,4 +83,9 @@ public class Inventory {
     public boolean containsItem(Item item) {
         return getItems().containsKey(item);
     }
+
+    public void clear(){
+        items.clear();
+    }
+
 }
