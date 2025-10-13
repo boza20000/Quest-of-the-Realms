@@ -3,6 +3,7 @@ package com.questoftherealm.expeditions.missions;
 import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameConstants;
 
 public class Warn_the_Castle extends Mission {
     public Warn_the_Castle() {
@@ -11,8 +12,10 @@ public class Warn_the_Castle extends Mission {
 
     @Override
     public boolean checkCompletion() {
-        if(Game.getPlayer().getCurQuest() instanceof RiseOfTheGoblinThreat){
-            return false;
+        if(isCompleted())return true;
+        if(Game.getPlayer().getCurQuest() instanceof RiseOfTheGoblinThreat  && Game.getPlayer().getPosition().equals(GameConstants.Castle)){
+            complete();
+            return true;
         }
         return false;
     }

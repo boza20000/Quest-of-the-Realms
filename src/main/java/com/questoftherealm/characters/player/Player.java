@@ -78,8 +78,8 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("armor") HashMap<ItemEffect, Item> armor,
                   @JsonProperty("weapon") Item weapon,
                   @JsonProperty("inventory") Inventory inventory,
-                  @JsonProperty("quest") Quest quest,
-                  @JsonProperty("mission") Mission mission) {
+                  @JsonProperty("curQuest") Quest quest,
+                  @JsonProperty("curMission") Mission mission) {
         this.name = name;
         this.playerType = playerType;
         this.playerCharacter = PlayerFactory.createPlayer(playerType);
@@ -115,6 +115,15 @@ public class Player implements InventoryHandler, Explorer {
             System.out.println("You have reached max gold!!!");
             gold = GameConstants.MAX_GOLD;
         }
+    }
+
+    public boolean payMoney(int amount) {
+        if (gold - amount >= 0) {
+            gold -= amount;
+            System.out.println("Successful payment made.");
+            return true;
+        }
+        return false;
     }
 
     public void move(int x, int y) {

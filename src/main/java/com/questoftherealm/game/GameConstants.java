@@ -5,16 +5,14 @@ import java.util.List;
 import java.util.Random;
 
 public final class GameConstants {
-
     private static final Random random = new Random();
-
     private GameConstants() {
     }
 
-    public static final int MAX_HEALTH = 50;
-    public static final int MAX_MANA = 30;
+    public static final int MAX_HEALTH = 100;
+    public static final int MAX_MANA = 50;
     public static final int MAX_ATTACK = 10;
-    public static final int MAX_DEFENCE = 5;
+    public static final int MAX_DEFENCE = 10;
     public static final int MAX_ARMOR = 30;
     public static final int MAX_CHARISMA = 10;
     public static final int MAX_SPELLS = 10;
@@ -61,5 +59,9 @@ public final class GameConstants {
     public static final int MAX_ITEMS_IN_INVENTORY = 15;
     public static final int MAX_GOLD = 100;
     public static final int MAX_EXP_PER_LEVEL = 100;
+    public static Position SouthVillage_1 = new Position(5,6);
+    public static Position SouthVillage_2 = new Position(2,5);
+    public static Position MagesOutPost = new Position(2,7);
+
 }
 

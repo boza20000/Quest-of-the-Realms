@@ -1,5 +1,7 @@
 package com.questoftherealm.expeditions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.questoftherealm.expeditions.missions.*;
@@ -26,10 +28,22 @@ public abstract class Mission {
     private final String task;
     private boolean completed;
 
+
     public Mission(String name, String task) {
         this.name = name;
         this.task = task;
-        this.completed = false;
+    }
+
+
+    @JsonCreator
+    public Mission(
+            @JsonProperty("name") String name,
+            @JsonProperty("task") String task,
+            @JsonProperty("completed") boolean completed
+    ) {
+        this.name = name;
+        this.task = task;
+        this.completed = completed;
     }
 
     public String getName() {
