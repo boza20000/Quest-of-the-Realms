@@ -764,9 +764,9 @@ public class Interactions {
             }
 
             // === SPECIAL MOVE ===
-            double bossHpPercent = (double) general.getHealth() /CharacterConstants.GoblinGeneral_HEALTH;
+            double bossHpPercent = (double) general.getHealth() / CharacterConstants.GoblinGeneral_HEALTH;
             if (bossHpPercent <= 0.2 && random.nextInt(100) < 50) {
-               SlowPrinter.slowPrint("\n⚡ Azok lets out a monstrous roar — he’s enraged!");
+                SlowPrinter.slowPrint("\n⚡ Azok lets out a monstrous roar — he’s enraged!");
                 general.superMove();
                 SlowPrinter.slowPrint("\n⚡ Azok drinks some potion... He regains some health!");
             }
@@ -781,9 +781,26 @@ public class Interactions {
         }
     }
 
-    private void playerMove(String input, Characters character, int damageToPlayer, int damageToBoss, GoblinGeneral general) {
-
+    public static void goblinKingdomFound() {
+       SlowPrinter.slowPrint(
+        """
+        🌄 You and your elite strike team reach the Far North Mountains...
+        The wind howls through jagged peaks as twilight fades into blackness.
+        Ahead, faint torches flicker — the entrance to the Goblin Kingdom.
+        🕳️ You slip inside the cavern, the walls glowing faintly with strange fungus.
+        Voices echo deeper within — guttural and harsh. You creep closer...
+        🔥 You peer around a bend and see a massive cavern filled with goblins.
+        Hundreds kneel before a towering goblin with a bone crown — the Goblin King.
+        He snarls in fury: 'Our armies… crushed by humans?! Useless worms!'
+        He grabs one of his generals by the throat and snaps his neck.
+        'Send word to the tribes in the Frozen Wastes! We will rebuild — BIGGER!'
+        The goblins cheer, pounding their weapons on the ground in rage.
+        Your lieutenant whispers: 'If we act now, we can end this war before it begins.'
+        You nod. Half your team moves to intercept the goblin scouts...
+        You lead the others toward the throne chamber.
+        """);
     }
+
 }
 
 

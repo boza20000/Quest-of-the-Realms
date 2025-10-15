@@ -1,14 +1,13 @@
 package com.questoftherealm.map;
 
-import com.questoftherealm.expeditions.missions.Assemble_an_Army;
-import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_General;
-import com.questoftherealm.expeditions.missions.Explore_Nearby_Forests;
-import com.questoftherealm.expeditions.missions.Explore_the_Village;
+import com.questoftherealm.expeditions.missions.*;
+import com.questoftherealm.expeditions.quests.FinalBattle;
 import com.questoftherealm.expeditions.quests.GoblinAmbush;
 import com.questoftherealm.expeditions.quests.NorthExploration;
 import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.Position;
 import com.questoftherealm.interaction.Interactions;
 
 import java.util.ArrayList;
@@ -84,8 +83,13 @@ public final class TriggerRegister {
         }));
         // Army fight
         triggers.add(new LocationTrigger(GameConstants.Battlefield, player -> {
-            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && player.getCurMission().equals(new Defeat_the_Goblin_General())) {
+            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && player.getCurMission() instanceof Defeat_the_Goblin_General) {
                 Interactions.startFinalBattle();
+            }
+        }));
+        triggers.add(new LocationTrigger(GameConstants.FarNorthMountain, player -> {
+            if (player.getCurQuest() instanceof FinalBattle && player.getCurMission() instanceof March_Into_the_Far_North){
+                Interactions.goblinKingdomFound();
             }
         }));
     }

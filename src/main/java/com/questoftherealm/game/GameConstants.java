@@ -64,5 +64,7 @@ public final class GameConstants {
     public static final Position SouthVillage_2 = new Position(2,5);
     public static final Position MagesOutPost = new Position(2,7);
     public static final Position Battlefield = new Position(1,4);
+    public static final Position FarNorthMountain = new Position(2,0);
+
 }
 
