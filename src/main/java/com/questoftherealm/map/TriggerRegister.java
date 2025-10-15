@@ -1,5 +1,7 @@
 package com.questoftherealm.map;
 
+import com.questoftherealm.expeditions.missions.Assemble_an_Army;
+import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_General;
 import com.questoftherealm.expeditions.missions.Explore_Nearby_Forests;
 import com.questoftherealm.expeditions.missions.Explore_the_Village;
 import com.questoftherealm.expeditions.quests.GoblinAmbush;
@@ -59,6 +61,7 @@ public final class TriggerRegister {
         triggers.add(new LocationTrigger(GameConstants.Castle, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && !hasTalkedToTheKing) {
                 Interactions.reportToKing();
+                reportedToKing = true;
             }
         }));
         // Army assembling
@@ -79,6 +82,11 @@ public final class TriggerRegister {
                 Interactions.talkToTheMages();
             }
         }));
-
+        // Army fight
+        triggers.add(new LocationTrigger(GameConstants.Battlefield, player -> {
+            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && player.getCurMission().equals(new Defeat_the_Goblin_General())) {
+                Interactions.startFinalBattle();
+            }
+        }));
     }
 }

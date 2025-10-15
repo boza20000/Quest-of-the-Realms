@@ -30,7 +30,7 @@ public class Assemble_an_Army extends Mission {
         return false;
     }
 
-    private void updateArmyStatus() {
+    public static void updateArmyStatus() {
         if(knightsRecruited){
             armyPower+=15;
         }

@@ -63,6 +63,7 @@ public abstract class Characters implements Combatant {
 
         if (isDead()) {
             System.out.println(this.getClass().getSimpleName() + " has died!");
+            //exit game
         }
     }
 

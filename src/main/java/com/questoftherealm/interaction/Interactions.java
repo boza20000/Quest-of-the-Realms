@@ -665,7 +665,7 @@ public class Interactions {
             duelGoblinGeneral();
         } else {
             System.out.println("\n💀 Your army is overwhelmed... You fall in battle.");
-            Game.getPlayer().getPlayerCharacter().takeDamage(Game.getPlayer().getPlayerCharacter().getHealth());
+            Game.getPlayer().getPlayerCharacter().setHealth(0);
             System.out.println("You were slain defending the realm.");
         }
     }
@@ -679,7 +679,7 @@ public class Interactions {
             System.out.println("🎉 The realm is safe... for now.");
         } else {
             System.out.println("\n💀 The Goblin General strikes you down. Darkness takes you...");
-            player.getPlayerCharacter().takeDamage(player.getPlayerCharacter().getHealth());
+            Game.getPlayer().getPlayerCharacter().setHealth(0);
             System.out.println("Defeated by the Goblin General.");
         }
     }
@@ -704,7 +704,7 @@ public class Interactions {
             }
 
             System.out.println("\nYour action:");
-            System.out.println("1️⃣ Dodge (uses 6 Mana)");
+            System.out.println("1️⃣ Dodge (uses  Mana)");
             System.out.println("2️⃣ Block (reduces damage)");
             System.out.println("3️⃣ Counterattack (risky, high reward)");
             System.out.print("Choose: ");

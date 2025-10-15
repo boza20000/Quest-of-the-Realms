@@ -41,8 +41,8 @@ public class GoblinGeneral extends Boss  {
 
     private static List<ItemDrop> createLoot() {
         return List.of(
-                new ItemDrop(ItemRegistry.getItem("Goblin General’s Helmet"), 1),
-                new ItemDrop(ItemRegistry.getItem("Goblin General’s Axe"), 1)
+                new ItemDrop(ItemRegistry.getItem("Goblin general’s Helmet"), 1),
+                new ItemDrop(ItemRegistry.getItem("Big Battle Axe"), 1)
         );
     }
 
