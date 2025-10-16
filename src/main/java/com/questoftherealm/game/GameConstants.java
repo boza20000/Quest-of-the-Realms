@@ -6,10 +6,8 @@ import java.util.Random;
 
 public final class GameConstants {
     private static final Random random = new Random();
-
     private GameConstants() {
     }
-
     public static final int MAX_HEALTH = 100;
     public static final int MAX_MANA = 50;
     public static final int MAX_ATTACK = 10;
@@ -65,6 +63,7 @@ public final class GameConstants {
     public static final Position MagesOutPost = new Position(2,7);
     public static final Position Battlefield = new Position(1,4);
     public static final Position FarNorthMountain = new Position(2,0);
+    public static int GoblinKing_Percent_INSTAKILL = 23;
 
 }
 

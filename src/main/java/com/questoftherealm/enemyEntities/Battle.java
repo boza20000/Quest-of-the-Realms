@@ -25,7 +25,7 @@ public class Battle {
             System.out.println("Choose action: (1) Attack  (2) Use Item  (3) Flee");
             String choice = scanner.nextLine();
             switch (choice) {
-                case "1" -> player.getPlayerCharacter().attack(enemy);
+                case "1" -> player.getPlayerCharacter().attack(enemy, player);
                 case "2" -> {
                     player.openInventory();
                     System.out.println("Enter item name to use:");

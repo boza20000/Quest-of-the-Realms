@@ -55,4 +55,13 @@ public final class CharacterConstants {
     public static final int GoblinGeneral_SPELLS = 0;
     public static final int GoblinGeneral_INTELLIGENCE = 6;
 
+    public static final int GoblinKing_HEALTH = 100;
+    public static final int GoblinKing_MANA = 50;
+    public static final int GoblinKing_ATTACK = 20;
+    public static final int GoblinKing_DEFENCE = 16;
+    public static final int GoblinKing_ARMOR = 0;
+    public static final int GoblinKing_CHARISMA = 2;
+    public static final int GoblinKing_SPELLS = 0;
+    public static final int GoblinKing_INTELLIGENCE = 9;
+
 }

@@ -14,9 +14,10 @@ import static com.questoftherealm.game.Game.gameOver;
 public class GameLoop {
     private final Scanner scanner = new Scanner(System.in);
     private final CommandFactory factory = new CommandFactory();
+    private final Console console = new Console();
 
     public void startLoop() {
-        Console.worldIntro();
+        console.worldIntro();
         Interactions.worldStart();
         while (!gameOver) {
             System.out.print(">");
@@ -51,5 +52,7 @@ public class GameLoop {
                 }
             }
         }
+        new Console();
+        console.displayEnd();
     }
 }
