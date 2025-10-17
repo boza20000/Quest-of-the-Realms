@@ -1,8 +1,11 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.exceptions.InvalidCommand;
-import com.questoftherealm.game.Commands.Command;
-import com.questoftherealm.game.Commands.CommandFactory;
+import com.questoftherealm.expeditions.Quest;
+import com.questoftherealm.commands.Command;
+import com.questoftherealm.commands.CommandFactory;
+import com.questoftherealm.interaction.Console;
+import com.questoftherealm.interaction.Interactions;
 
 import java.util.Scanner;
 
@@ -11,8 +14,11 @@ import static com.questoftherealm.game.Game.gameOver;
 public class GameLoop {
     private final Scanner scanner = new Scanner(System.in);
     private final CommandFactory factory = new CommandFactory();
+    private final Console console = new Console();
 
     public void startLoop() {
+        console.worldIntro();
+        Interactions.worldStart();
         while (!gameOver) {
             System.out.print(">");
             String command = scanner.nextLine().trim();
@@ -24,9 +30,8 @@ public class GameLoop {
             String commandName = parts[0];
             Command cmd = null;
             try {
-                 cmd = factory.getCommand(commandName);
-            }
-            catch (InvalidCommand e){
+                cmd = factory.getCommand(commandName);
+            } catch (InvalidCommand e) {
                 System.out.println(e.getMessage());
             }
             if (cmd == null) {
@@ -40,13 +45,14 @@ public class GameLoop {
                 try {
                     cmd.execute(parts);
                     System.out.println("Command went trough");
-                }
-                catch (Exception e){
+                    Game.getPlayer().updateQuestStatus();
+                } catch (Exception e) {
                     System.out.println("Command syntax: ");
                     System.out.print(cmd.getDescription());
                 }
             }
         }
+        new Console();
+        console.displayEnd();
     }
-
 }

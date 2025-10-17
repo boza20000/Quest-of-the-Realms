@@ -1,14 +1,10 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.EnemyEntities.Enemy;
-import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.exceptions.TargetNotFound;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemEffect;
-import com.questoftherealm.items.ItemType;
-
-import java.util.HashMap;
 
 import static com.questoftherealm.game.GameConstants.*;
 
@@ -48,12 +44,13 @@ public abstract class Characters implements Combatant {
     }
 
     @Override
-    public void attack(Enemy target) {
+    public void attack(Enemy target, Player player) {
         if (target.isDead()) {
             System.out.println(target.getClass().getSimpleName() + " is already dead!");
             return;
         }
         try {
+            setMana(getMana() - player.getWeapon().getMana());
             target.takeDamage(this.getAttack());
         } catch (TargetNotFound e) {
             System.out.println(e.getMessage());
@@ -68,6 +65,7 @@ public abstract class Characters implements Combatant {
 
         if (isDead()) {
             System.out.println(this.getClass().getSimpleName() + " has died!");
+            //exit game
         }
     }
 
@@ -77,8 +75,11 @@ public abstract class Characters implements Combatant {
 
     // ===== Abstract Weapon =====
     public abstract Item getDefaultWeapon();
+
     public abstract int getBaseAttack();
+
     public abstract int getBaseDefence();
+
     // ===== Getters & Setters =====
     public int getHealth() {
         return health;
@@ -155,6 +156,6 @@ public abstract class Characters implements Combatant {
                 "Charisma    : " + getCharisma() + "\n" +
                 "Spells      : " + getSpells() + "\n" +
                 "Intelligence: " + getIntelligence() + "\n" +
-                "=================================";
+                "==========================";
     }
 }

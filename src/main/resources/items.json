@@ -15,12 +15,15 @@
     { "name": "Orcish Axe", "type": "WEAPON", "stackable": false, "power": 18, "cost": 40, "manaCost": 4, "rarity": "RARE", "effect": "AXE" },
     { "name": "Dagger of Shadows", "type": "WEAPON", "stackable": false, "power": 12, "cost": 30, "manaCost": 2, "rarity": "UNCOMMON", "effect": "DAGGER" },
     { "name": "Mage’s Staff", "type": "WEAPON", "stackable": false, "power": 12, "cost": 25, "manaCost": 3, "rarity": "UNCOMMON", "effect": "STAFF" },
-    { "name": "Elari Bow", "type": "WEAPON", "stackable": false, "power": 14, "cost": 32, "manaCost": 3, "rarity": "UNCOMMON", "effect": "BOW" },
+    { "name": "Elari Sword", "type": "WEAPON", "stackable": false, "power": 14, "cost": 32, "manaCost": 3, "rarity": "UNCOMMON", "effect": "SWORD" },
     { "name": "Flaming Sword", "type": "WEAPON", "stackable": false, "power": 20, "cost": 50, "manaCost": 5, "rarity": "RARE", "effect": "SWORD" },
     { "name": "Ice Dagger", "type": "WEAPON", "stackable": false, "power": 15, "cost": 40, "manaCost": 4, "rarity": "RARE", "effect": "DAGGER" },
     { "name": "Silver Sword", "type": "WEAPON", "stackable": false, "power": 18, "cost": 45, "manaCost": 4, "rarity": "RARE", "effect": "SWORD" },
     { "name": "Crystal Staff", "type": "WEAPON", "stackable": false, "power": 16, "cost": 40, "manaCost": 4, "rarity": "RARE", "effect": "STAFF" },
     { "name": "Battle Axe", "type": "WEAPON", "stackable": false, "power": 17, "cost": 48, "manaCost": 5, "rarity": "RARE", "effect": "AXE" },
+    { "name": "Big Battle Axe", "type": "WEAPON", "stackable": false, "power": 19, "cost": 53, "manaCost": 5, "rarity": "EPIC", "effect": "AXE" },
+    { "name": "Goblin King Sword", "type": "WEAPON", "stackable": false, "power": 25, "cost": 60, "manaCost": 5, "rarity": "EPIC", "effect": "Sword" },
+
 
       { "name": "Rusty Helmet", "type": "ARMOR", "stackable": false, "power": 2, "cost": 5, "rarity": "COMMON", "effect": "HELMET" },
       { "name": "Torn Leather Armor", "type": "ARMOR", "stackable": false, "power": 3, "cost": 8, "rarity": "COMMON", "effect": "CHESTPLATE" },
@@ -58,6 +61,10 @@
       { "name": "Hunter’s Hood", "type": "ARMOR", "stackable": false, "power": 9, "cost": 28, "rarity": "RARE", "effect": "HELMET" },
       { "name": "Hunter’s Armor", "type": "ARMOR", "stackable": false, "power": 14, "cost": 40, "rarity": "RARE", "effect": "CHESTPLATE" },
       { "name": "Hunter’s Boots", "type": "ARMOR", "stackable": false, "power": 7, "cost": 20, "rarity": "RARE", "effect": "BOOTS" },
+      { "name": "Goblin general’s Helmet", "type": "ARMOR", "stackable": false, "power": 8, "cost": 28, "rarity": "EPIC", "effect": "HELMET" },
+      { "name": "Goblin general’s Chestplate", "type": "ARMOR", "stackable": false, "power": 13, "cost": 40, "rarity": "EPIC", "effect": "CHESTPLATE" },
+      { "name": "Goblin king’s Crown", "type": "ARMOR", "stackable": false, "power": 10, "cost": 32, "rarity": "EPIC", "effect": "HELMET" },
+      { "name": "Goblin king’s Steel Chestplate", "type": "ARMOR", "stackable": false, "power": 15, "cost": 44, "rarity": "EPIC", "effect": "CHESTPLATE" },
 
     { "name": "Scroll of Fireball", "type": "SCROLL", "stackable": false, "power": 25, "cost": 20, "manaCost": 5, "rarity": "UNCOMMON", "effect": "SPELL_FIRE" },
     { "name": "Scroll of Ice Spike", "type": "SCROLL", "stackable": false, "power": 20, "cost": 18, "manaCost": 4, "rarity": "UNCOMMON", "effect": "SPELL_ICE" },

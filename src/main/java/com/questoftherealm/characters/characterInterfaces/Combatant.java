@@ -1,10 +1,10 @@
 package com.questoftherealm.characters.characterInterfaces;
 
-import com.questoftherealm.characters.EnemyEntities.Enemy;
-import com.questoftherealm.characters.playerCharacters.Characters;
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
 
 public interface Combatant {
-    void attack(Enemy target);
+    void attack(Enemy target, Player player);
+
     void takeDamage(int damage);
-    //void useMana(Item item);
 }

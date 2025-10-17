@@ -1,6 +1,8 @@
 package com.questoftherealm.characters.playerCharacters;
 
 public final class CharacterConstants {
+
+
     private  CharacterConstants(){}
 
     // === Mage ===
@@ -41,7 +43,25 @@ public final class CharacterConstants {
     public static final int WARRIOR_ARMOR = 0;
     public static final int WARRIOR_CHARISMA = 5;
     public static final int WARRIOR_SPELLS = 3;
-    public static final int WARRIOR_INTELLIGENCE = 4;
+    public static final int WARRIOR_INTELLIGENCE = 5;
 
+    //=== Goblin general ===
+    public static final int GoblinGeneral_HEALTH = 100;
+    public static final int GoblinGeneral_MANA = 40;
+    public static final int GoblinGeneral_ATTACK = 12;
+    public static final int GoblinGeneral_DEFENCE = 11;
+    public static final int GoblinGeneral_ARMOR = 0;
+    public static final int GoblinGeneral_CHARISMA = 0;
+    public static final int GoblinGeneral_SPELLS = 0;
+    public static final int GoblinGeneral_INTELLIGENCE = 6;
+
+    public static final int GoblinKing_HEALTH = 100;
+    public static final int GoblinKing_MANA = 50;
+    public static final int GoblinKing_ATTACK = 20;
+    public static final int GoblinKing_DEFENCE = 16;
+    public static final int GoblinKing_ARMOR = 0;
+    public static final int GoblinKing_CHARISMA = 2;
+    public static final int GoblinKing_SPELLS = 0;
+    public static final int GoblinKing_INTELLIGENCE = 9;
 
 }

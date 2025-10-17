@@ -13,11 +13,11 @@ import java.util.Map;
 public class Inventory {
     @JsonSerialize(keyUsing = ItemKeySerializer.class)
     @JsonDeserialize(keyUsing = ItemKeyDeserializer.class)
-    private final Map<Item, Integer> items = new HashMap<>();
+    private Map<Item, Integer> items = new HashMap<>();
     private final int capacity;
 
     public Inventory() {
-        this.capacity = 20;
+        this.capacity = GameConstants.MAX_ITEMS_IN_STACK;
     }
 
     public Inventory(int capacity) {
@@ -35,14 +35,18 @@ public class Inventory {
                 System.out.println("Cannot carry more than " + GameConstants.MAX_ITEMS_IN_STACK + " of " + item.getName() + ".");
             }
         } else {
-            if (items.size() < capacity) {
-                items.put(item, items.getOrDefault(item, 0) + 1);
-                System.out.println(item + " added.");
+            int curItemQuantity = items.getOrDefault(item, 0);
+            int newTotal = curItemQuantity + quantity;
+
+            if (items.size() < capacity || items.containsKey(item)) {
+                items.put(item, newTotal);
+                System.out.println(quantity + " x " + item + " added (now " + newTotal + ").");
             } else {
                 System.out.println("Inventory full! Cannot add " + item.getName());
             }
         }
     }
+
 
     public void removeItem(Item item, int quantity) {
         if (items.containsKey(item)) {
@@ -69,7 +73,7 @@ public class Inventory {
 
     public Map<Item, Integer> getItems() {
         return new HashMap<>(items) {
-        }; // safe copy
+        };
     }
 
     public int getQuantity(Item item) {
@@ -79,4 +83,9 @@ public class Inventory {
     public boolean containsItem(Item item) {
         return getItems().containsKey(item);
     }
+
+    public void clear(){
+        items.clear();
+    }
+
 }

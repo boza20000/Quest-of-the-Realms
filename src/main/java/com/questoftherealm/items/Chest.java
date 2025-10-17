@@ -1,9 +1,11 @@
 package com.questoftherealm.items;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 
 import java.util.List;
 import java.util.Random;
+
 
 public class Chest {
 
@@ -74,5 +76,80 @@ public class Chest {
         return new ItemDrop(selectedItem, quantity);
     }
 
+    public static ItemDrop generateRandomWeapon(Player player) {
+
+        ItemEffect effect = getWeaponType(player);
+        ItemType type = ItemType.WEAPON;
+        Rarity rarity = Rarity.COMMON;
+        int quantity = 1;
+        List<Item> possibleWeapons = ItemRegistry.getAllItems().stream()
+                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == effect)
+                .toList();
+        if (possibleWeapons.isEmpty()){
+            throw new RandomItemNotGenerated("No weapons available for generation.");
+        }
+        Item weapon = possibleWeapons.get(random.nextInt(possibleWeapons.size()));
+        return new ItemDrop(weapon, quantity);
+    }
+
+    private static ItemEffect getWeaponType(Player player) {
+        return switch (player.getPlayerType()) {
+            case Mage -> ItemEffect.STAFF;
+            case Warrior -> ItemEffect.SWORD;
+            case Rogue -> ItemEffect.DAGGER;
+            case Orc -> ItemEffect.AXE;
+        };
+    }
+
+    public static ItemDrop generateRandomHelmet(Player player) {
+        ItemType type = ItemType.ARMOR;
+        Rarity rarity = Rarity.COMMON;
+        int quantity = 1;
+
+        List<Item> possibleHelmets = ItemRegistry.getAllItems().stream()
+                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.HELMET)
+                .toList();
+
+        if (possibleHelmets.isEmpty()) {
+            throw new RandomItemNotGenerated("No helmets available for generation.");
+        }
+
+        Item helmet = possibleHelmets.get(random.nextInt(possibleHelmets.size()));
+        return new ItemDrop(helmet, quantity);
+    }
+
+    public static ItemDrop generateRandomChestplate(Player player) {
+        ItemType type = ItemType.ARMOR;
+        Rarity rarity = Rarity.COMMON;
+        int quantity = 1;
+
+        List<Item> possibleChestplates = ItemRegistry.getAllItems().stream()
+                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.CHESTPLATE)
+                .toList();
+
+        if (possibleChestplates.isEmpty()) {
+            throw new RandomItemNotGenerated("No chestplates available for generation.");
+        }
+
+        Item chestplate = possibleChestplates.get(random.nextInt(possibleChestplates.size()));
+        return new ItemDrop(chestplate, quantity);
+    }
+
+    public static ItemDrop generateRandomBoots(Player player) {
+        ItemType type = ItemType.ARMOR;
+        Rarity rarity = Rarity.COMMON;
+        int quantity = 1;
+
+        List<Item> possibleBoots = ItemRegistry.getAllItems().stream()
+                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.BOOTS)
+                .toList();
+
+        if (possibleBoots.isEmpty()) {
+            throw new RandomItemNotGenerated("No boots available for generation.");
+        }
+
+        Item boots = possibleBoots.get(random.nextInt(possibleBoots.size()));
+        return new ItemDrop(boots, quantity);
+    }
 }
 

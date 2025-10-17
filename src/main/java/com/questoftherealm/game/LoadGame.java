@@ -17,10 +17,11 @@ public class LoadGame {
     public static void loadGameSave(String filename) {
         try {
             loadGameInformation(filename);
-        } catch (Exception e) {
-            throw new FileNotLoaded("File not loaded");
+           // Game.getPlayer().updateQuestStatus();
+        } catch (FileNotLoaded e) {
+            System.out.println("File not found or was corrupted");
+            System.exit(0);
         }
-
     }
 
     public static void loadGameInformation(String filename) {
