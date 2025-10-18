@@ -6,9 +6,11 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.map.TileTypes;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
 import static com.questoftherealm.enemyEntities.EnemyFactory.createEnemy;
 
 public abstract class Enemy implements Fightable, Lootable {
@@ -37,9 +39,9 @@ public abstract class Enemy implements Fightable, Lootable {
 
     @Override
     public void attack(Player player) {
-        int damage = this.getBaseAttack() + (getWeapon()!=null ? getWeapon().getPower() : 0);
+        int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
+        System.out.println(this.getClass().getSimpleName() + " attacks player back for " + damage + "HP!");
         player.getPlayerCharacter().takeDamage(damage);
-        System.out.println(this.getClass().getSimpleName() + " has dealt " + damage +"HP to the player");
     }
 
     public int getBaseAttack() {
@@ -48,9 +50,13 @@ public abstract class Enemy implements Fightable, Lootable {
 
     @Override
     public void takeDamage(int damage) {
-        int newHealth = Math.max(0, getHealth() - damage);
+        int reducedDamageTaken = getHealth() - damage + getBaseDefense() / 2;
+        int newHealth = Math.max(0, reducedDamageTaken);
         setHealth(newHealth);
         isDead = newHealth == 0;
+        if (!isDead) {
+            System.out.println("Only " + reducedDamageTaken + "HP taken.The " + this.getClass().getSimpleName() + " thick skin reduces some of the damage!");
+        }
     }
 
     @Override
@@ -88,7 +94,7 @@ public abstract class Enemy implements Fightable, Lootable {
     private static List<Enemy> toEnemyObj(List<EnemyType> enemies) {
         List<Enemy> result = new ArrayList<>();
         for (EnemyType type : enemies) {
-          result.add(createEnemy(type));
+            result.add(createEnemy(type));
         }
         return result;
     }
@@ -164,8 +170,16 @@ public abstract class Enemy implements Fightable, Lootable {
         return null;
     }
 
-    public void interact(Player player) {
-       Battle newBattle =  BattleFactory.createBattle(player,this);
-       newBattle.simulate();
+    public List<Loot> getLoot() {
+        return loot;
+    }
+
+    public int getBaseDefense() {
+        return baseDefense;
+    }
+
+    public boolean interact(Player player) {
+        Battle newBattle = BattleFactory.createBattle(player, this);
+        return newBattle.simulate();
     }
 }

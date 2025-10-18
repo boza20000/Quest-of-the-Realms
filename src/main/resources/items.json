@@ -22,7 +22,7 @@
     { "name": "Crystal Staff", "type": "WEAPON", "stackable": false, "power": 16, "cost": 40, "manaCost": 4, "rarity": "RARE", "effect": "STAFF" },
     { "name": "Battle Axe", "type": "WEAPON", "stackable": false, "power": 17, "cost": 48, "manaCost": 5, "rarity": "RARE", "effect": "AXE" },
     { "name": "Big Battle Axe", "type": "WEAPON", "stackable": false, "power": 19, "cost": 53, "manaCost": 5, "rarity": "EPIC", "effect": "AXE" },
-    { "name": "Goblin King Sword", "type": "WEAPON", "stackable": false, "power": 25, "cost": 60, "manaCost": 5, "rarity": "EPIC", "effect": "Sword" },
+    { "name": "Goblin King Sword", "type": "WEAPON", "stackable": false, "power": 25, "cost": 60, "manaCost": 5, "rarity": "EPIC", "effect": "SWORD" },
 
 
       { "name": "Rusty Helmet", "type": "ARMOR", "stackable": false, "power": 2, "cost": 5, "rarity": "COMMON", "effect": "HELMET" },

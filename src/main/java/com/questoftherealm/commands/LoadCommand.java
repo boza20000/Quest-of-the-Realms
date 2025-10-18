@@ -1,5 +1,6 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.LoadGame;
 
 public class LoadCommand extends Command {
@@ -15,6 +16,14 @@ public class LoadCommand extends Command {
 
     @Override
     public void execute(String[] args) {
+        if (args.length > 2) {
+            System.out.println("Usage: load [filename]");
+            return;
+        }
+        if (Game.getPlayer() == null) {
+            System.out.println("Error: No player currently active.");
+            return;
+        }
         LoadGame.loadGameSave(args[1]);
     }
 }

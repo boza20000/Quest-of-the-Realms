@@ -25,7 +25,7 @@ public class Orc extends Characters implements MonsterBehavior {
 
     @Override
     public void resurrect() {
-//50 % chance
+
     }
 
     @Override

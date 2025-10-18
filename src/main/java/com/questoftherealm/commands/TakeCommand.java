@@ -16,6 +16,15 @@ public class TakeCommand extends Command {
 
     @Override
     public void execute(String[] args) {
+        if (args.length < 2) {
+            System.out.println("Usage: " + getDescription());
+            return;
+        }
+        if (Game.getPlayer() == null) {
+            System.out.println("Error: No player loaded.");
+            return;
+        }
+
         String input = String.join(" ", args);
         String command = args[0];
         String rest = input.substring(command.length()).trim();
@@ -32,10 +41,25 @@ public class TakeCommand extends Command {
             System.out.println("Quantity must be a number.");
             return;
         }
-        Item newItem = getItem(itemName);
+        Item newItem;
+        try {
+            newItem = getItem(itemName);
+        } catch (Exception e) {
+            System.out.println("Item unknown");
+            return;
+        }
         Player player = Game.getPlayer();
         Map map = Game.getGameMap();
         Tile curZone = map.curZone(player.getX(), player.getY());
+
+        if (Game.getGameMap() == null) {
+            System.out.println("Map was not loaded");
+            return;
+        }
+        if (curZone == null) {
+            System.out.println("unknown zone");
+            return;
+        }
 
         ItemDrop drop = curZone.getDrops().stream()
                 .filter(d -> d.item().equals(newItem))

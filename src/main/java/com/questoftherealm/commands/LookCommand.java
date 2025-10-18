@@ -15,6 +15,14 @@ public class LookCommand extends Command {
 
     @Override
     public void execute(String[] args) {
+        if (args.length > 1) {
+            System.out.println("Usage: look");
+            return;
+        }
+        if (Game.getPlayer() == null) {
+            System.out.println("Error: No player currently active.");
+            return;
+        }
         try {
             System.out.print("Looking");
             for (int i = 0; i < 3; i++) {

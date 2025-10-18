@@ -11,7 +11,6 @@ public class PlayerFactory {
             case Mage -> new Mage();
             case Orc -> new Orc();
             case Rogue -> new Rogue();
-            default -> throw new InvalidPlayerType("player type doesn't exist");
         };
     }
 

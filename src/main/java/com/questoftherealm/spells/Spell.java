@@ -8,4 +8,8 @@ public abstract class Spell {
     }
 
 
+
+    public int takePower() {
+        return 0;
+    }
 }

@@ -50,10 +50,10 @@ public class Player implements InventoryHandler, Explorer {
         this.playerType = type;
         this.playerCharacter = (PlayerFactory.createPlayer(type));
         this.inventory = new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY);
-        this.level = 1;
+        this.level = GameConstants.START_LEVEL;
         this.gold = 0;
         this.experience = 0;
-        this.currentZone = "Spawn";
+        this.currentZone = GameConstants.PLAYER_SPAWN;
         this.armor = new HashMap<>();
         armor.put(ItemEffect.HELMET, null);
         armor.put(ItemEffect.CHESTPLATE, null);
@@ -95,7 +95,7 @@ public class Player implements InventoryHandler, Explorer {
         if (!this.armor.containsKey(ItemEffect.HELMET)) this.armor.put(ItemEffect.HELMET, null);
         if (!this.armor.containsKey(ItemEffect.CHESTPLATE)) this.armor.put(ItemEffect.CHESTPLATE, null);
         if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
-        this.inventory = inventory != null ? inventory : new Inventory(20);
+        this.inventory = inventory != null ? inventory : new Inventory(MAX_ITEMS_IN_INVENTORY);
         recalculateStats();
         this.curQuest = quest;
         this.curMission = mission;
@@ -239,7 +239,7 @@ public class Player implements InventoryHandler, Explorer {
 
     @Override
     public void exploreStructure(String structure) {
-//explore structure
+        //explore structure
     }
 
     @Override

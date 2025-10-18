@@ -11,9 +11,26 @@ public class MapCommand extends Command {
 
     @Override
     public void execute(String[] args) {
+        if(Game.getGameMap() == null){
+            System.out.println("Game map unavailable");
+            return;
+        }
+        if (args.length > 1) {
+            System.out.println("Usage: map");
+            return;
+        }
+        if (Game.getPlayer() == null) {
+            System.out.println("Error: No player currently active.");
+            return;
+        }
         System.out.print("      ");
         System.out.println("╔════════ MAP ══════╗");
-        Game.getGameMap().print();
+        try {
+            Game.getGameMap().print();
+        }
+        catch (Exception e){
+            System.out.println("Something went wrong while printing the map");
+        }
         System.out.print("      ");
         System.out.println("╚═══════════════════╝");
     }

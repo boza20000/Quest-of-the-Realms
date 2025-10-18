@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public final class GameConstants {
+    public static final String PLAYER_SPAWN = "Castle";
     private static final Random random = new Random();
     private GameConstants() {
     }
@@ -64,6 +65,6 @@ public final class GameConstants {
     public static final Position Battlefield = new Position(1,4);
     public static final Position FarNorthMountain = new Position(2,0);
     public static int GoblinKing_Percent_INSTAKILL = 23;
-
+    public static final int START_LEVEL = 1;
 }
 

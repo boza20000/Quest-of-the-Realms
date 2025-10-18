@@ -1,6 +1,8 @@
 package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.commands.Command;
+import com.questoftherealm.commands.ExitCommand;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.exceptions.TargetNotFound;
@@ -10,7 +12,7 @@ import static com.questoftherealm.game.GameConstants.*;
 
 public abstract class Characters implements Combatant {
 
-    // Stat bounds from GameConstants
+    // Stat from GameConstants
     private int health;        // 0 - MAX_HEALTH
     private int mana;          // 0 - MAX_MANA
     private int attack;        // 0 - MAX_ATTACK
@@ -50,8 +52,11 @@ public abstract class Characters implements Combatant {
             return;
         }
         try {
-            setMana(getMana() - player.getWeapon().getMana());
-            target.takeDamage(this.getAttack());
+            int damageDealt =  player.getWeapon().getPower() + this.getAttack();
+            System.out.println("You attack " + target.getClass().getSimpleName() + " for " + damageDealt + "HP!");
+            target.takeDamage(damageDealt);
+            int newMana = getMana() - player.getWeapon().getMana();
+            setMana(newMana);
         } catch (TargetNotFound e) {
             System.out.println(e.getMessage());
         }
@@ -61,11 +66,12 @@ public abstract class Characters implements Combatant {
         int mitigation = defence * 5 + armor;
         int reducedDamage = damage * 100 / (100 + mitigation);
         setHealth(health - reducedDamage);  // uses setter now
-        System.out.println(reducedDamage + " damage taken! Health now: " + health + "HP");
+        System.out.println("Only " + reducedDamage + "HP taken.Your armor reduces some of the damage! Health now: " + health + "HP");
 
         if (isDead()) {
             System.out.println(this.getClass().getSimpleName() + " has died!");
-            //exit game
+            Command c = new ExitCommand();
+            c.execute(new String[]{});
         }
     }
 

@@ -20,8 +20,16 @@ public class MoveCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if (args.length < 2) {
+        if (args.length > 2) {
             System.out.println("Usage: move <north|south|east|west>");
+            return;
+        }
+        if (Game.getPlayer() == null) {
+            System.out.println("Error: No player currently active.");
+            return;
+        }
+        if(Game.getGameMap().curZone(Game.getPlayer().getX(), Game.getPlayer().getY()) == null){
+            System.out.println("You are in an undefined area.");
             return;
         }
 
@@ -73,6 +81,10 @@ public class MoveCommand extends Command {
         pathToDestination(direction, player);
         player.move(x, y);
         TileTypes end = Game.getGameMap().curZone(player.getX(), player.getY()).getType();
+        if(Game.getGameMap().curZone(Game.getPlayer().getX(), Game.getPlayer().getY()) == null){
+            System.out.println("You going to an undefined area.");
+            return;
+        }
         SlowPrinter.slowPrint(Interactions.getTransition(start, end));
         SlowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toLowerCase()));
     }

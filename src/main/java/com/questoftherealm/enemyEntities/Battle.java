@@ -16,7 +16,7 @@ public class Battle {
         this.enemy = enemy;
     }
 
-    public void simulate() {
+    public boolean simulate() {
         System.out.println("⚔️ A wild " + enemy.getType() + " appears!");
         int escapeCount = 0;
         while (!player.getPlayerCharacter().isDead() && enemy.isAlive()) {
@@ -38,7 +38,7 @@ public class Battle {
                     escapeCount++;
                     if (Math.random() < 0.5 && escapeCount <= 1) {
                         System.out.println("You escaped successfully!");
-                        return;
+                        return false;
                     } else {
                         System.out.println("Escape failed!");
                     }
@@ -51,8 +51,10 @@ public class Battle {
         }
         if (player.getPlayerCharacter().isDead()) {
             System.out.println("💀 You were defeated...");
+            return false;
         } else {
             System.out.println("🏆 You defeated the " + enemy.getType() + "!");
+            return true;
             //player.addMoney();
             // player.addExp();
         }

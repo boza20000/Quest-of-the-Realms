@@ -26,7 +26,7 @@ public class Mage extends Characters implements SpellCaster {
 
     @Override
     public void castSpell(Spell spell, Characters target) {
-
+        target.takeDamage(spell.takePower());
     }
 
     @Override

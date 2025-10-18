@@ -15,6 +15,10 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(String[] args) {
+        if (args.length > 1) {
+            System.out.println("Usage: [help]");
+            return;
+        }
         System.out.println("Available commands:");
         factory.getAllCommands().forEach((name, cmd) ->
                 System.out.println("- " + name + "->" + cmd.getDescription())

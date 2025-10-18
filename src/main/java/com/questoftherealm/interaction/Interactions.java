@@ -289,7 +289,6 @@ public class Interactions {
                         You’re cornered. There’s no way out now. Fight him...
                         """);
                 BattleFactory.createBattle(player, new Goblin()).simulate();
-
             }
         }
     }
