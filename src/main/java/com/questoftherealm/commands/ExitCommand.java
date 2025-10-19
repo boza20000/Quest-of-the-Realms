@@ -1,5 +1,7 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.SaveGame;
 
 import java.util.Scanner;
@@ -13,12 +15,15 @@ public class ExitCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "closes the game and saves it automatically";
+        return "exit — saves and closes the game (prompts before quitting)";
     }
 
     @Override
     public void execute(String[] args) {
-
+        Player player = Game.getPlayer();
+        if(!makeSafe(args, player)){
+            return;
+        }
         System.out.println("Would you like to save your progress? Y/N");
         String response = scanner.nextLine().trim().toUpperCase();
 
@@ -38,9 +43,18 @@ public class ExitCommand extends Command {
             System.exit(0);
 
         } catch (Exception e) {
-            System.err.println("⚠️ Error while saving the game: " + e.getMessage());
-            e.printStackTrace(System.err);
+            System.out.println("⚠️ Error while saving the game: " + e.getMessage());
             System.exit(1);
         }
     }
+
+    @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 1) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
+    }
+
 }

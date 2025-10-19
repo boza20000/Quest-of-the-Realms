@@ -15,13 +15,18 @@ public class TakeCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) {
+    public boolean makeSafe(String[] args, Player player) {
         if (args.length < 2) {
             System.out.println("Usage: " + getDescription());
-            return;
+            return false;
         }
-        if (Game.getPlayer() == null) {
-            System.out.println("Error: No player loaded.");
+        return playerBaseCheck(player);
+    }
+
+    @Override
+    public void execute(String[] args) {
+        Player player = Game.getPlayer();
+        if(!makeSafe(args, player)){
             return;
         }
 
@@ -48,7 +53,6 @@ public class TakeCommand extends Command {
             System.out.println("Item unknown");
             return;
         }
-        Player player = Game.getPlayer();
         Map map = Game.getGameMap();
         Tile curZone = map.curZone(player.getX(), player.getY());
 
@@ -77,6 +81,6 @@ public class TakeCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "the player takes the item from the ground and puts it in his inventory(take [itemName] [quantity])";
+        return "take [item name] [quantity] — picks up the specified number of an item from the ground";
     }
 }

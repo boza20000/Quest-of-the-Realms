@@ -16,12 +16,25 @@ public class TalkCommand extends Command {
     }
 
     @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 2) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
+    }
+
+    @Override
     public void execute(String[] args) {
-        String target = args[1];
         Player player = Game.getPlayer();
+        if (!makeSafe(args, player)) {
+            return;
+        }
+
+        String target = args[1].toLowerCase();
         Position curPos = new Position(player.getX(), player.getY());
         switch (target) {
-            case "Elder" -> {
+            case "elder" -> {
                 if (!Elder.isHasTalked() && curPos.equals(GameConstants.Castle)) {
                     Elder elder = new Elder();
                     elder.talk(player);
@@ -31,7 +44,7 @@ public class TalkCommand extends Command {
                     System.out.println("You have already done that.");
                 }
             }
-            case "Trader" -> {
+            case "trader" -> {
                 TraderNPC trader = new TraderNPC();
                 Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
                 if (curTile.getEnemies().contains(trader)) {
@@ -39,8 +52,9 @@ public class TalkCommand extends Command {
                 } else {
                     System.out.println("No trader spotted in this zone");
                 }
+
             }
-            case "Villager" -> {
+            case "villager" -> {
                 Villager villager = new Villager();
                 villager.talk(player);
             }
@@ -50,6 +64,6 @@ public class TalkCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "you talk with the NPC in order to trade or exchange information";
+        return "you talk with NPC in order to trade or exchange information";
     }
 }

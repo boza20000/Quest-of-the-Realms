@@ -15,29 +15,35 @@ public class QuestCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "gives you the cur quest with all its missions";
+        return "quest — shows your active quest and its list of missions";
+    }
+
+    @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 1) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
     }
 
     @Override
     public void execute(String[] args) {
-        if (args.length > 2) {
-            System.out.println("Usage: quest");
+        Player player = Game.getPlayer();
+        if(!makeSafe(args, player)){
             return;
         }
-        if (Game.getPlayer() == null) {
-            System.out.println("Error: No player loaded.");
-            return;
-        }
-        if (Game.getPlayer().getCurQuest() == null) {
+
+        if (player.getCurQuest() == null) {
             System.out.println("Error: No quest loaded.");
             return;
         }
-        if (Game.getPlayer().getCurMission() == null) {
+        if (player.getCurMission() == null) {
             System.out.println("Error: No mission loaded.");
             return;
         }
 
-        for(Mission m: QuestFactory.getCurrentQuest().getMissions()){
+        for (Mission m : QuestFactory.getCurrentQuest().getMissions()) {
             System.out.println(m.getTask());
         }
     }

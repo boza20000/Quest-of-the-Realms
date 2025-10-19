@@ -1,5 +1,6 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
 
 public class StatsCommand extends Command {
@@ -9,21 +10,26 @@ public class StatsCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) {
-        if (args.length > 2) {
-            System.out.println("Usage: stats");
-            return;
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 1) {
+            System.out.println("Usage: " + getDescription());
+            return false;
         }
-        if (Game.getPlayer() == null) {
-            System.out.println("Error: No player currently active.");
+        return playerBaseCheck(player);
+    }
+
+    @Override
+    public void execute(String[] args) {
+        Player player = Game.getPlayer();
+        if(!makeSafe(args, player)){
             return;
         }
         System.out.println("Player current stats:");
-        System.out.println(Game.getPlayer().getPlayerCharacter().toString());
+        System.out.println(player.getPlayerCharacter().toString());
     }
 
     @Override
     public String getDescription() {
-        return "";
+        return "stats — displays your character’s current stats and attributes";
     }
 }

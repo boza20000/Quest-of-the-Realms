@@ -1,6 +1,5 @@
 package com.questoftherealm.game;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -54,7 +53,7 @@ public final class GameConstants {
     public static final Position Goblin_Camp = North_Forest.get(random.nextInt(North_Forest.size()));
 
     public static final int North_Y = 2;
-    public static final int MAP_HEIGHT = 8;
+    public static final int MAP_END = 8;
     public static final int MAP_START = 0;
     public static final int MAX_ITEMS_IN_INVENTORY = 15;
     public static final int MAX_GOLD = 100;

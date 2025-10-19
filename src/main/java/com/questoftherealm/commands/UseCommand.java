@@ -1,8 +1,11 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
+
+import java.util.Arrays;
 
 import static com.questoftherealm.items.ItemRegistry.getItem;
 
@@ -15,20 +18,25 @@ public class UseCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "use [itemName]";
+        return "use [item name] — uses an item from your inventory (e.g., potion, scroll, etc.)";
+    }
+
+    @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length < 2) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
     }
 
     @Override
     public void execute(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Usage: " + getDescription());
+        Player player = Game.getPlayer();
+        if (!makeSafe(args, player)) {
             return;
         }
-        if (Game.getPlayer() == null) {
-            System.out.println("Error: No player currently active.");
-            return;
-        }
-        String nameItem = args[1];
+        String nameItem = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         Item item;
         try {
             item = getItem(nameItem);
@@ -39,9 +47,9 @@ public class UseCommand extends Command {
             System.out.println("Item not found");
             return;
         }
-        if (Game.getPlayer().getInventory().containsItem(item)) {
-            Game.getPlayer().useItem(item);
-            Game.getPlayer().getInventory().removeItem(item, 1);
+        if (player.getInventory().containsItem(item)) {
+            player.useItem(item);
+            player.getInventory().removeItem(item, 1);
         }
     }
 }

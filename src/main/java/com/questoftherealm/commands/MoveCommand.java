@@ -15,26 +15,30 @@ public class MoveCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "move [north|south|east|west](direction)";
+        return "move [north|south|east|west] — move your character in the specified direction";
+    }
+
+    @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 2) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
     }
 
     @Override
     public void execute(String[] args) {
-        if (args.length > 2) {
-            System.out.println("Usage: move <north|south|east|west>");
+        Player player = Game.getPlayer();
+        if (!makeSafe(args, player)) {
             return;
         }
-        if (Game.getPlayer() == null) {
-            System.out.println("Error: No player currently active.");
-            return;
-        }
-        if(Game.getGameMap().curZone(Game.getPlayer().getX(), Game.getPlayer().getY()) == null){
+        if (Game.getGameMap().curZone(player.getX(), player.getY()) == null) {
             System.out.println("You are in an undefined area.");
             return;
         }
 
         String direction = args[1].toLowerCase();
-        Player player = Game.getPlayer();
         int x = player.getX();
         int y = player.getY();
 
@@ -48,7 +52,7 @@ public class MoveCommand extends Command {
                 }
             }
             case "south" -> {
-                if (y + 1 < GameConstants.MAP_HEIGHT) {
+                if (y + 1 < GameConstants.MAP_END) {
                     y += 1;
                 } else {
                     SlowPrinter.slowPrint("You can't go further south!");
@@ -56,7 +60,7 @@ public class MoveCommand extends Command {
                 }
             }
             case "east" -> {
-                if (x + 1 < GameConstants.MAP_HEIGHT) {
+                if (x + 1 < GameConstants.MAP_END) {
                     x += 1;
                 } else {
                     SlowPrinter.slowPrint("You can't go further east!");
@@ -81,7 +85,7 @@ public class MoveCommand extends Command {
         pathToDestination(direction, player);
         player.move(x, y);
         TileTypes end = Game.getGameMap().curZone(player.getX(), player.getY()).getType();
-        if(Game.getGameMap().curZone(Game.getPlayer().getX(), Game.getPlayer().getY()) == null){
+        if (Game.getGameMap().curZone(Game.getPlayer().getX(), Game.getPlayer().getY()) == null) {
             System.out.println("You going to an undefined area.");
             return;
         }

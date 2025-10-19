@@ -12,14 +12,9 @@ public class AttackCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if (args.length < 2) {
-            System.out.println("Usage: attack [enemy name]");
-            return;
-        }
         String enemyName = args[1];
         Player player = Game.getPlayer();
-        if (player == null) {
-            System.out.println("Error: No player loaded.");
+        if(!makeSafe(args, player)){
             return;
         }
         Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
@@ -48,6 +43,16 @@ public class AttackCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "attack [enemy name]";
+        return "attack [enemy name] — engage an enemy in combat at your current location";
     }
+
+    @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 2) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
+    }
+
 }
