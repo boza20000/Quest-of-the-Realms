@@ -12,11 +12,11 @@ public class AttackCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        String enemyName = args[1];
         Player player = Game.getPlayer();
         if(!makeSafe(args, player)){
             return;
         }
+        String enemyName = args[1];
         Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
             System.out.println("You are in an undefined area.");

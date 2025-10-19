@@ -90,18 +90,13 @@ class StartQuestTest {
     void tearDown() throws Exception {
         // Clear QuestFactory queue to avoid cross-test pollution
         QuestFactory.getQuests().clear();
-
-        // Reset game player
         Game.setPlayer(null);
-
-        // Reset Elder flag
         setElderHasTalked(false);
 
         // Reset player's inventory and other static mission flags that might be used elsewhere
         player = null;
     }
 
-    // Utility to flip the private static Elder.hasTalked via reflection
     private static void setElderHasTalked(boolean value) throws Exception {
         Field f = Elder.class.getDeclaredField("hasTalked");
         f.setAccessible(true);
