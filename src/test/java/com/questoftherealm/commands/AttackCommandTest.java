@@ -95,7 +95,7 @@ public class AttackCommandTest {
         String simulatedInput = "1\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
-        String[] args = {"attack", "Dragon"};
+        String[] args = {"attack", "Wolf"};
         attackCommand.execute(args);
 
         assertEquals(1, currentTile.getEnemies().size(), "Tile should still have the goblin");
