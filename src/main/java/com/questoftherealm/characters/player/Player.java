@@ -200,6 +200,8 @@ public class Player implements InventoryHandler, Explorer {
 
     public void setPosition(Position position) {
         this.position = position;
+        this.x = position.x();
+        this.y = position.y();
     }
 
     public Quest getCurQuest() {
@@ -280,15 +282,18 @@ public class Player implements InventoryHandler, Explorer {
         recalculateStats();
     }
 
-    private void recalculateStats() {
+    public void recalculateStats() {
         int weaponAttack = (getWeapon() != null ? getWeapon().getPower() : 0);
         playerCharacter.setAttack(playerCharacter.getBaseAttack() + weaponAttack);
-        int armorSum = armor.values()
-                .stream()
-                .filter(Objects::nonNull)
-                .mapToInt(Item::getPower)
-                .sum();
-        playerCharacter.setArmor(armorSum);
+        if(armor==null){playerCharacter.setArmor(0);}
+        else {
+            int armorSum = armor.values()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .mapToInt(Item::getPower)
+                    .sum();
+            playerCharacter.setArmor(armorSum);
+        }
     }
 
     //use consumables

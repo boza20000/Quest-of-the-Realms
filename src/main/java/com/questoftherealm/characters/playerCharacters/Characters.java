@@ -86,13 +86,15 @@ public abstract class Characters implements Combatant {
 
     public abstract int getBaseDefence();
 
+    public abstract int getMaxHealth();
+
     // ===== Getters & Setters =====
     public int getHealth() {
         return health;
     }
 
     public void setHealth(int health) {
-        this.health = Math.max(0, Math.min(health, MAX_HEALTH));
+        this.health = Math.max(0, Math.min(health, this.getMaxHealth()));
     }
 
     public int getMana() {

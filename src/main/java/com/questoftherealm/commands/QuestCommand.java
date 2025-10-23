@@ -42,6 +42,9 @@ public class QuestCommand extends Command {
             System.out.println("Error: No mission loaded.");
             return;
         }
+        if(QuestFactory.getCurrentQuest() == null){
+            System.out.println("Error: No quest loaded.");
+        }
 
         for (Mission m : QuestFactory.getCurrentQuest().getMissions()) {
             System.out.println(m.getTask());

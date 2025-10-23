@@ -83,7 +83,6 @@ public class TakeCommandTest {
         drops.set(tile, tileDrops);
 
         take = new TakeCommand();
-
         player.move(1,4);
     }
 

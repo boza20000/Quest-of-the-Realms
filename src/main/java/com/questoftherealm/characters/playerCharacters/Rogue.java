@@ -45,4 +45,9 @@ public class Rogue extends Characters implements Deceiver {
         return ROGUE_DEFENCE;
     }
 
+    @Override
+    public int getMaxHealth() {
+        return ROGUE_HEALTH;
+    }
+
 }

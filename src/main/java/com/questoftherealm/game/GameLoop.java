@@ -17,7 +17,6 @@ public class GameLoop {
     private final Console console = new Console();
 
     public void startLoop() {
-        console.worldIntro();
         Interactions.worldStart();
         while (!gameOver) {
             System.out.print(">");

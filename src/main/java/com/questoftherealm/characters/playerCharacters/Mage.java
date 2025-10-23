@@ -43,4 +43,9 @@ public class Mage extends Characters implements SpellCaster {
     public int getBaseDefence() {
         return MAGE_DEFENCE;
     }
+
+    @Override
+    public int getMaxHealth() {
+        return MAGE_HEALTH;
+    }
 }

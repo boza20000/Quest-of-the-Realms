@@ -67,6 +67,11 @@ public class GoblinGeneral extends Boss  {
         return GoblinGeneral_DEFENCE;
     }
 
+    @Override
+    public int getMaxHealth() {
+        return GoblinGeneral_HEALTH;
+    }
+
     public String getName() {
         return name;
     }

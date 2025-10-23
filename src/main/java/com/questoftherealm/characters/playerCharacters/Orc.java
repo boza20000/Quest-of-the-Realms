@@ -42,4 +42,9 @@ public class Orc extends Characters implements MonsterBehavior {
     public int getBaseDefence() {
         return ORC_DEFENCE;
     }
+
+    @Override
+    public int getMaxHealth() {
+        return ORC_HEALTH;
+    }
 }

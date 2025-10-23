@@ -5,8 +5,6 @@ import com.questoftherealm.exceptions.SaveError;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.SaveGame;
 
-import java.io.IOException;
-
 public class SaveCommand extends Command {
     public SaveCommand() {
         super("save");
@@ -39,7 +37,8 @@ public class SaveCommand extends Command {
         String fileName = args[1];
 
         try {
-            SaveGame.saveGame(fileName);
+            SaveGame saveGame = new SaveGame();
+            saveGame.createSave(fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -50,8 +50,8 @@ public abstract class Quest {
         boolean isAllReady = true;
         if (this.isCompleted()) return;
         for (Mission m : this.getMissions()) {
+            m.checkCompletion();
             if (!m.isCompleted()) {
-                m.checkCompletion();
                 isAllReady = false;
             }
         }

@@ -95,7 +95,7 @@ public class QuestProgressTest {
         player.setCurMission(new Meet_the_Elder());
         Field f = Elder.class.getDeclaredField("hasTalked");
         f.setAccessible(true);
-        f.set(null,true);
+        f.set(null, true);
 
         player.updateQuestStatus();
         questProgressCommand.execute(new String[]{"progress"});
@@ -161,20 +161,20 @@ public class QuestProgressTest {
         player.getInventory().addItem(potion, 1);
         player.getInventory().addItem(food, 5);
 
-        player.updateQuestStatus();
+        //player.updateQuestStatus();
         questProgressCommand.execute(new String[]{"progress"});
 
         String out = output.toString();
         Quest curQuest = player.getCurQuest();
 
-        assertTrue(curQuest.getMissions().get(0).isCompleted(), "Meet_the_Elder should be completed by flag");
-        assertTrue(curQuest.getMissions().get(1).isCompleted(), "Gather_Supplies should be completed by inventory");
+        assertTrue(curQuest.getMissions().get(0).checkCompletion(), "Meet_the_Elder should be completed by flag");
+        assertTrue(curQuest.getMissions().get(1).checkCompletion(), "Gather_Supplies should be completed by inventory");
         assertTrue(curQuest.getMissions().stream().allMatch(Mission::isCompleted));
 
         player.updateQuestStatus();
         Quest next = quests.peek();
         assertNotNull(next, "Next quest should exist after completing StartQuest");
-        assertEquals(true,player.getCurMission().getName().contains("North"));
+        assertTrue(player.getCurMission().getName().contains("North"));
     }
 
     @Test
@@ -187,4 +187,29 @@ public class QuestProgressTest {
 
         assertTrue(out.contains("Error: No quest loaded"), "Should print error for missing quest");
     }
+
+    @Test
+    void allDone() {
+        quests.poll();
+        quests.poll();
+        quests.poll();
+        quests.poll();
+        player.updateQuestStatus();
+
+        var mission = new March_Into_the_Far_North();
+        player.setCurMission(mission);
+        player.move(GameConstants.FarNorthMountain.x(), GameConstants.FarNorthMountain.y());
+        player.updateQuestStatus();
+        Breach_the_Stronghold.isBreached = true;
+        player.updateQuestStatus();
+        Defeat_the_Goblin_King.isDefeated = true;
+        player.updateQuestStatus();
+        assertNull(player.getCurQuest());
+        assertNull(player.getCurMission());
+        questProgressCommand.execute(new String[]{"progress"});
+        String out = output.toString();
+        assertTrue(out.contains("No quest loaded"), "Should print error for missing quest");
+    }
+
+
 }

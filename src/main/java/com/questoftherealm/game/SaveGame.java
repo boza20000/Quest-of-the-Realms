@@ -8,11 +8,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class SaveGame {
-    private SaveGame() {}
+    public SaveGame() {}
 
-    public static void saveGame(String saveName) {
+    public void createSave(String saveName) {
         try {
-            // Ensure saves directory exists
             File saveDir = new File("saves");
             if (!saveDir.exists() && !saveDir.mkdirs()) {
                 System.err.println("❌ Could not create save directory");
@@ -21,11 +20,9 @@ public class SaveGame {
 
             File fileSave = new File(saveDir, saveName + ".json");
 
-            // Jackson mapper with pretty printing and type info support
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            // ✅ Serialize player with type metadata for quests/missions
             Player player = Game.getPlayer();
             mapper.writeValue(fileSave, player);
 

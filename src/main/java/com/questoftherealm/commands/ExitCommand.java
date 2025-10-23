@@ -32,7 +32,8 @@ public class ExitCommand extends Command {
                 System.out.println("Save name: ");
                 String fileName = scanner.nextLine().trim();
                 System.out.println("Saving game...");
-                SaveGame.saveGame(fileName);
+                SaveGame saveGame = new SaveGame();
+                saveGame.createSave(fileName);
                 System.out.println("✅ Game saved successfully.");
             } else {
                 System.out.println("Progress not saved.");

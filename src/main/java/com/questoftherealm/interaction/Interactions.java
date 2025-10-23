@@ -7,10 +7,8 @@ import com.questoftherealm.enemyEntities.BattleFactory;
 import com.questoftherealm.enemyEntities.bosses.GoblinGeneral;
 import com.questoftherealm.enemyEntities.bosses.GoblinKing;
 import com.questoftherealm.enemyEntities.entities.Goblin;
-import com.questoftherealm.expeditions.missions.Assemble_an_Army;
-import com.questoftherealm.expeditions.missions.Breach_the_Stronghold;
-import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_General;
-import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_King;
+import com.questoftherealm.expeditions.missions.*;
+import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.friendlyEntities.Entities.King;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
@@ -31,11 +29,17 @@ public class Interactions {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void worldStart() {
-        String start = """
-                You enter the kings castle to talk to the castle's Elder and he wants
-                to help you to be better prepared for the journey that awaits you.
-                """;
-        SlowPrinter.slowPrint(start);
+        Player player = Game.getPlayer();
+        if(player.getCurMission() instanceof Meet_the_Elder && !player.getCurMission().isCompleted()) {
+            String start = """
+                    You enter the kings castle to talk to the castle's Elder and he wants
+                    to help you to be better prepared for the journey that awaits you.
+                    """;
+            SlowPrinter.slowPrint(start);
+        }
+        else{
+            System.out.println("You find yourself in " + player.getCurrentZone() + ".");
+        }
     }
 
     public static void elderDialogue(String name, ItemDrop weapon, ItemDrop helmet, ItemDrop chestplate, ItemDrop boots) {

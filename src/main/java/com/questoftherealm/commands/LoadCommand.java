@@ -29,6 +29,7 @@ public class LoadCommand extends Command {
         if (!makeSafe(args, player)) {
             return;
         }
-        LoadGame.loadGameSave(args[1]);
+        LoadGame loadGame = new LoadGame();
+        loadGame.loadGameSave(args[1]);
     }
 }

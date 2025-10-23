@@ -52,4 +52,9 @@ public class Warrior extends Characters implements Trader {
         return WARRIOR_DEFENCE;
     }
 
+    @Override
+    public int getMaxHealth() {
+        return WARRIOR_HEALTH;
+    }
+
 }

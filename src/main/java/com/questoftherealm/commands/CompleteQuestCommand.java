@@ -14,7 +14,7 @@ public class CompleteQuestCommand extends Command {
     @Override
     public void execute(String[] args) {
         Player player = Game.getPlayer();
-        if(!makeSafe(args,player)){
+        if (!makeSafe(args, player)) {
             return;
         }
         if (player.getCurQuest() == null) {
@@ -26,7 +26,7 @@ public class CompleteQuestCommand extends Command {
             return;
         }
         List<Mission> missions = List.of();
-        if(player.getCurQuest()!=null) {
+        if (player.getCurQuest() != null) {
             try {
                 missions = Game.getQuests().peek().getMissions();
             } catch (NullPointerException e) {
@@ -38,8 +38,7 @@ public class CompleteQuestCommand extends Command {
             for (Mission m : missions) {
                 System.out.println(m.getTask() + " " + ((m.isCompleted()) ? "✔" : "❌"));
             }
-        }
-        else{
+        } else {
             System.out.println("No available quest");
         }
     }
