@@ -45,7 +45,8 @@ public class MoveCommandTest {
                 1, 0, 0,  GameConstants.PLAYER_START.x(),
                 GameConstants.PLAYER_START.y(),
                 "Spawn", null, null, new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null, null);
+                null, null,  // mission
+                null);
         Game.setPlayer(player);
         moveCommand = new MoveCommand();
     }

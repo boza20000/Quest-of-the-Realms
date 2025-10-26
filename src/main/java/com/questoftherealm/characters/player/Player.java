@@ -15,17 +15,14 @@ import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
-import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TriggerRegister;
-
 import java.util.HashMap;
 import java.util.Objects;
-
 import static com.questoftherealm.game.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
@@ -44,6 +41,8 @@ public class Player implements InventoryHandler, Explorer {
     private Item weapon;
     private Quest curQuest;
     private Mission curMission;
+    private PlayTime playTime;
+    private long startTime;
 
     public Player(String name, PlayerTypes type) {
         this.name = name;
@@ -64,6 +63,8 @@ public class Player implements InventoryHandler, Explorer {
         this.position = PLAYER_START;
         this.curQuest = new StartQuest();
         this.curMission = new Meet_the_Elder();
+        this.playTime = new PlayTime(0, 0);
+        this.startTime = 0;
     }
 
     @JsonCreator
@@ -79,7 +80,8 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("weapon") Item weapon,
                   @JsonProperty("inventory") Inventory inventory,
                   @JsonProperty("curQuest") Quest quest,
-                  @JsonProperty("curMission") Mission mission) {
+                  @JsonProperty("curMission") Mission mission,
+                  @JsonProperty("playTime") PlayTime playTime) {
         this.name = name;
         this.playerType = playerType;
         this.playerCharacter = PlayerFactory.createPlayer(playerType);
@@ -99,6 +101,7 @@ public class Player implements InventoryHandler, Explorer {
         recalculateStats();
         this.curQuest = quest;
         this.curMission = mission;
+        this.playTime = playTime;
     }
 
     public void addExp(int exp) {
@@ -220,6 +223,26 @@ public class Player implements InventoryHandler, Explorer {
         this.curMission = curMission;
     }
 
+    public PlayTime getPlayTime() {
+        return playTime;
+    }
+
+    public void setPlayTime(long playTime) {
+        PlayTime timePlayed = this.getPlayTime();
+        int totalMinutes = (int) (((playTime / 1000) / 60) + timePlayed.minutes() + timePlayed.hours() * 60);
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        this.playTime = new PlayTime(hours, minutes);
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
     @Override
     public void look() {
         Position pos = new Position(getX(), getY());
@@ -285,8 +308,9 @@ public class Player implements InventoryHandler, Explorer {
     public void recalculateStats() {
         int weaponAttack = (getWeapon() != null ? getWeapon().getPower() : 0);
         playerCharacter.setAttack(playerCharacter.getBaseAttack() + weaponAttack);
-        if(armor==null){playerCharacter.setArmor(0);}
-        else {
+        if (armor == null) {
+            playerCharacter.setArmor(0);
+        } else {
             int armorSum = armor.values()
                     .stream()
                     .filter(Objects::nonNull)
@@ -344,5 +368,11 @@ public class Player implements InventoryHandler, Explorer {
         currentQuest.updateStatus();
         this.curQuest = QuestFactory.getCurrentQuest();
         this.curMission = QuestFactory.getCurrentMission();
+    }
+
+    public void trackPlayTime() {
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - getStartTime();
+        setPlayTime(duration);
     }
 }

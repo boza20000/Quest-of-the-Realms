@@ -51,7 +51,8 @@ public class UseCommandTest {
                 1, 0, 0, 0, 0,
                 "Spawn", null, null,
                 new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null, null
+                null, null,  // mission
+                null
         );
         Game.setPlayer(player);
         useCommand = new CommandFactory().getCommand("use");

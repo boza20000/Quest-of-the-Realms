@@ -2,6 +2,7 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameLoop;
 import com.questoftherealm.game.SaveGame;
 
 import java.util.Scanner;
@@ -40,6 +41,7 @@ public class ExitCommand extends Command {
             }
 
             System.out.println("👋 Exiting game. See you next time, adventurer!");
+            player.trackPlayTime();
             Thread.sleep(800);
             System.exit(0);
 

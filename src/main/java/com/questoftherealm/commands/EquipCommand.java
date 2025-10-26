@@ -6,6 +6,8 @@ import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 
+import java.util.Arrays;
+
 import static com.questoftherealm.items.ItemRegistry.getItem;
 
 public class EquipCommand extends Command {
@@ -24,7 +26,7 @@ public class EquipCommand extends Command {
         if(!makeSafe(args,player)){
             return;
         }
-        String itemName = args[1];
+        String itemName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         try {
             Item item = getItem(itemName);
             Inventory inventory = player.getInventory();

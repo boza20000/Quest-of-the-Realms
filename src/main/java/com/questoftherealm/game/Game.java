@@ -131,4 +131,5 @@ public class Game {
         GameLoop loop = new GameLoop();
         loop.startLoop();
     }
+
 }

@@ -58,7 +58,8 @@ class StartQuestTest {
                 null, // weapon
                 new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
                 null, // quest
-                null  // mission
+                null,  // mission
+                null
         );
         Game.setPlayer(player);
 

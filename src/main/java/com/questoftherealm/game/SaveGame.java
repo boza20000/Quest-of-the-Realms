@@ -24,6 +24,7 @@ public class SaveGame {
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
             Player player = Game.getPlayer();
+            player.trackPlayTime();
             mapper.writeValue(fileSave, player);
 
             System.out.println("✅ Game saved successfully → " + fileSave.getAbsolutePath());

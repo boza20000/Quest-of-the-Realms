@@ -70,7 +70,6 @@ public class Chest {
                     .filter(i -> i.getType() == type && i.getRarity() == fallback)
                     .toList();
         }
-
         Item selectedItem = possibleItems.get(random.nextInt(possibleItems.size()));
         int quantity = randomQuantity(selectedItem);
         return new ItemDrop(selectedItem, quantity);

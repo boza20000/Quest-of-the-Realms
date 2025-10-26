@@ -65,7 +65,8 @@ public class AttackCommandTest {
                 "Spawn",
                 null, null,
                 new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null, null
+                null, null,  // mission
+                null
         );
         Game.setPlayer(player);
 

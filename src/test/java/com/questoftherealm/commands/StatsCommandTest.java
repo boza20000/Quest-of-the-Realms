@@ -34,7 +34,8 @@ public class StatsCommandTest {
         player = new Player("TestHero", PlayerTypes.Warrior,
                 1, 0, 0, 0, 0, "Spawn", armor,
                 ItemRegistry.getItem("Bronze Sword"), new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null, null);
+                null, null,  // mission
+                null);
         Game.setPlayer(player);
         statsCommand = new StatsCommand();
     }
