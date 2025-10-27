@@ -90,7 +90,7 @@ public class MoveCommand extends Command {
             return;
         }
         SlowPrinter.slowPrint(Interactions.getTransition(start, end));
-        SlowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toLowerCase()));
+        SlowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toUpperCase()));
     }
 
 

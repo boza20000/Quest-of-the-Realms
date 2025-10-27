@@ -165,4 +165,9 @@ public class Tile {
     public void removeEnemy(Enemy enemy) {
         enemies.remove(enemy);
     }
+
+    public boolean isEmpty() {
+        return drops.isEmpty() && enemies.isEmpty() ;
+        //&& structure.isExplored() soon!!!
+    }
 }

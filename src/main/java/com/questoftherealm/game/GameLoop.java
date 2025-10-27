@@ -56,5 +56,6 @@ public class GameLoop {
             }
         }
         player.trackPlayTime();
+        console.displayEnd(player);
     }
 }

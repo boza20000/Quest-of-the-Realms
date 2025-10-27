@@ -21,8 +21,10 @@ import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TriggerRegister;
+
 import java.util.HashMap;
 import java.util.Objects;
+
 import static com.questoftherealm.game.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
@@ -254,7 +256,7 @@ public class Player implements InventoryHandler, Explorer {
         }
 
         Tile curTile = Game.getGameMap().curZone(getX(), getY());
-        if (!curTile.isContentGenerated()) {
+        if (!curTile.isContentGenerated() && !curTile.isEmpty()) {
             curTile.onEnter(this);
         } else {
             System.out.println("There seems to be nothing else...");

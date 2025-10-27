@@ -110,10 +110,7 @@ public class Game {
                 count++;
             }
         }
-        switch (gameType) {
-            case 1 -> newGame();
-            case 2 -> loadGame();
-        }
+        //map instance
         try {
             gameMap = Map.getInstance();
         } catch (Exception e) {
@@ -121,13 +118,19 @@ public class Game {
             System.out.println("restart game");
             System.exit(0);
         }
+        //quests instance
         try {
             new QuestFactory();
             gameQuests = QuestFactory.getQuests();
         } catch (Exception e) {
             System.out.println("Story Quests unavailable");
         }
-
+        //load game type
+        switch (gameType) {
+            case 1 -> newGame();
+            case 2 -> loadGame();
+        }
+        //game loop
         GameLoop loop = new GameLoop();
         loop.startLoop();
     }

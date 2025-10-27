@@ -65,12 +65,14 @@ public class Interactions {
     }
 
     private static final List<String> MOVE_CONNECTORS = List.of(
-            "➡️ You depart from the %s and begin walking %s.",
-            "🚶 Leaving the %s behind, you head %s.",
-            "🌍 From the %s, your journey continues %s.",
-            "🧭 You leave the %s, setting off %s.",
-            "🏞️ With the %s behind you, the road ahead leads %s.",
-            "🪶 Slowly leaving the %s, you turn %s."
+            "➡️ You leave the %s behind and make your way %s, the road stretching before you.",
+            "🚶 From the %s, your journey takes you %s, with the wind brushing past as you walk.",
+            "🌍 Departing the %s, you follow the worn path leading %s into the unknown.",
+            "🧭 The %s fades behind you as you continue %s, footsteps steady and determined.",
+            "🏞️ Moving away from the %s, the world ahead opens up as you travel %s.",
+            "➡️ Quietly leaving the %s, you tread %s, your thoughts wandering with each step.",
+            "🌅 Turning your back on the %s, you set off %s beneath the changing sky.",
+            "🌾 The %s grows distant as you venture %s, each step taking you further from what you know."
     );
 
     private static void randomTravelText(String direction, TileTypes start) {
@@ -86,7 +88,6 @@ public class Interactions {
         if (investigate) {
             SlowPrinter.slowPrint("👉 You decide to face it head-on!");
             event.getNpc().interact(Game.getPlayer());
-            // TODO: Trigger combat, trade, or special logic based on event
         } else {
             SlowPrinter.slowPrint("➡️ You ignore it and continue your journey...");
         }
@@ -113,29 +114,32 @@ public class Interactions {
     }
 
     public static String getTransition(TileTypes start, TileTypes end) {
-        String from = start.toString().toLowerCase();
+        if (start == end) {
+            return switch (end) {
+                case MOUNTAIN -> "⛰️ You continue winding along the rocky mountain paths, surrounded by towering cliffs and echoing winds.";
+                case FOREST -> "🌲 You press deeper into the forest, where the canopy thickens and shadows play across the mossy ground.";
+                case SWAMP -> "💧 The swamp stretches endlessly, each step sending ripples through murky water and whispering reeds.";
+                case GRASS -> "🌾 The grasslands roll endlessly ahead, waves of green swaying under the open sky.";
+                case VILLAGE -> "🏘️ You wander through the village, passing familiar faces and hearing the soft hum of daily life.";
+                case CASTLE -> "🏰 You roam within the castle’s domain, its walls echoing the weight of stories and power.";
+                case WATER -> "💦 You remain near the water’s edge, where waves lap gently and the air smells of salt and cool mist.";
+            };
+        }
         return switch (end) {
             case MOUNTAIN ->
-                    "⛰️ Leaving the %s behind, the air grows thinner and colder. The path ahead winds upward, becoming steep and treacherous."
-                            .formatted(from);
+                    "⛰️ The air grows thinner and colder. The path ahead winds upward, becoming steep and treacherous.";
             case FOREST ->
-                    "🌲 Moving away from the %s, the trees close in around you. The canopy above blocks out most of the light, and the forest grows quiet."
-                            .formatted(from);
+                    "🌲 The trees close in around you. The canopy above blocks out most of the light, and the forest grows quiet.";
             case SWAMP ->
-                    "💧 As you depart the %s, the ground grows damp and soft. The air becomes heavy with mist, and the smell of stagnant water fills your nose."
-                            .formatted(from);
+                    "💧 The ground grows damp and soft. The air becomes heavy with mist, and the smell of stagnant water fills your nose.";
             case GRASS ->
-                    "🌾 Leaving the %s, the land opens into wide grasslands. The breeze carries the scent of wildflowers and sun-warmed earth."
-                            .formatted(from);
+                    "🌾 The land opens into wide grasslands. The breeze carries the scent of wildflowers and sun-warmed earth.";
             case VILLAGE ->
-                    "🏘️ Stepping away from %s, the chatter of villagers fades. You find yourself on quieter paths leading to the unknown."
-                            .formatted(from);
+                    "🏘️ You arrive at a village — laughter and chatter fill the air, and warm light spills from nearby windows.";
             case CASTLE ->
-                    "🏰 The walls of the %s shrink behind you as you walk further. The world ahead feels less guarded, more uncertain."
-                            .formatted(from);
+                    "🏰 The walls shrink behind you as you walk further. The world ahead feels less guarded, more uncertain.";
             case WATER ->
-                    "💦 After leaving the %s, you hear the sound of waves and trickling streams. The ground softens, and the air carries a cool, refreshing scent."
-                            .formatted(from);
+                    "💦 You hear the sound of waves and trickling streams. The ground softens, and the air carries a cool, refreshing scent.";
         };
     }
 
