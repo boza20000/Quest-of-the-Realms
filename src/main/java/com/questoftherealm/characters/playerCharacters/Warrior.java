@@ -1,9 +1,11 @@
 package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.characterInterfaces.Trader;
+import com.questoftherealm.enemyEntities.entities.TraderNPC;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
+
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Warrior extends Characters implements Trader {
@@ -24,7 +26,7 @@ public class Warrior extends Characters implements Trader {
     }
 
     @Override
-    public void buyItem(Item item, int quantity) {
+    public void buyItem(TraderNPC trader, Item item, int quantity) {
 
     }
 
@@ -48,6 +50,11 @@ public class Warrior extends Characters implements Trader {
     @Override
     public int getBaseDefence() {
         return WARRIOR_DEFENCE;
+    }
+
+    @Override
+    public int getMaxHealth() {
+        return WARRIOR_HEALTH;
     }
 
 }

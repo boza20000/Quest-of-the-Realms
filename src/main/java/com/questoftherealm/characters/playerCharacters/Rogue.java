@@ -2,12 +2,17 @@ package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.characterInterfaces.Deceiver;
 import com.questoftherealm.characters.characterInterfaces.Trader;
+import com.questoftherealm.enemyEntities.entities.TraderNPC;
+import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemRegistry;
+
+import java.util.Random;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
-public class Rogue extends Characters implements Trader, Deceiver {
+public class Rogue extends Characters implements Deceiver {
 
     public Rogue() {
         super(ROGUE_HEALTH,
@@ -25,13 +30,12 @@ public class Rogue extends Characters implements Trader, Deceiver {
     }
 
     @Override
-    public void lie() {
-
-    }
-
-    @Override
     public void pickpocket() {
-
+        int roll = new Random().nextInt(10);
+        if(roll<2){//20%
+           ItemDrop loot =  Chest.generateRandomItem();
+           //do smth
+        }
     }
 
     @Override
@@ -50,12 +54,8 @@ public class Rogue extends Characters implements Trader, Deceiver {
     }
 
     @Override
-    public void buyItem(Item item, int quantity) {
-
+    public int getMaxHealth() {
+        return ROGUE_HEALTH;
     }
 
-    @Override
-    public void sellItem(Item item, int quantity) {
-
-    }
 }

@@ -13,6 +13,11 @@ public class Talk_To_Survivors extends Mission {
 
     @Override
     public boolean checkCompletion() {
-        return Game.getPlayer().getCurQuest() instanceof NorthExploration && Villager.hasTalkedToAll();
+        if(isCompleted())return true;
+        if(Game.getPlayer().getCurQuest() instanceof NorthExploration && Villager.hasTalkedToAll()){
+            complete();
+            return true;
+        }
+        return false;
     }
 }

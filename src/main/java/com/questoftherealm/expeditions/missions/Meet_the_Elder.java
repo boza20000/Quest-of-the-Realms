@@ -17,7 +17,7 @@ public final class Meet_the_Elder extends Mission {
             complete();
             return true;
         }
-        return isCompleted();
+        return false;
     }
 
 }

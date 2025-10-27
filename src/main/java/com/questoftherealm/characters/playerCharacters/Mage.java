@@ -26,7 +26,7 @@ public class Mage extends Characters implements SpellCaster {
 
     @Override
     public void castSpell(Spell spell, Characters target) {
-
+        target.takeDamage(spell.takePower());
     }
 
     @Override
@@ -42,5 +42,10 @@ public class Mage extends Characters implements SpellCaster {
     @Override
     public int getBaseDefence() {
         return MAGE_DEFENCE;
+    }
+
+    @Override
+    public int getMaxHealth() {
+        return MAGE_HEALTH;
     }
 }

@@ -11,20 +11,19 @@ import java.util.List;
 import java.util.Objects;
 
 public class LoadGame {
-    private LoadGame() {
+    public LoadGame() {
     }
 
-    public static void loadGameSave(String filename) {
+    public void loadGameSave(String filename) {
         try {
             loadGameInformation(filename);
-           // Game.getPlayer().updateQuestStatus();
         } catch (FileNotLoaded e) {
             System.out.println("File not found or was corrupted");
             System.exit(0);
         }
     }
 
-    public static void loadGameInformation(String filename) {
+    public void loadGameInformation(String filename) {
         try {
             File directory = new File("saves");
             File savedFile = new File(directory, filename + ".json");
@@ -40,7 +39,7 @@ public class LoadGame {
 
     }
 
-    public static void printSaves() {
+    public void printSaves() {
         try {
             File saveDir = new File("saves");
             if (saveDir.exists() && saveDir.isDirectory()) {

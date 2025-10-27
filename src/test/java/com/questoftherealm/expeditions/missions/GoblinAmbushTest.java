@@ -59,7 +59,8 @@ public class GoblinAmbushTest {
                 null, // weapon
                 new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
                 null, // quest
-                null  // mission
+                null,  // mission
+                null
         );
         Game.setPlayer(player);
 
@@ -88,10 +89,10 @@ public class GoblinAmbushTest {
     @Test
     void testExploreTheNearbyForestsTest() {
         var mission = quest.getMissions().get(0);
-        player.move(GameConstants.Goblin_Camp.x()-1, GameConstants.Goblin_Camp.y());
+        player.move(GameConstants.Goblin_Camp.x()+1, GameConstants.Goblin_Camp.y());
         mission.checkCompletion();
         assertFalse(mission.isCompleted(),"Wrong position");
-        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y()-1);
+        player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y()+1);
         mission.checkCompletion();
         assertFalse(mission.isCompleted(),"Wrong position");
         player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());

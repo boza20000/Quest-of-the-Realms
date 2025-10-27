@@ -12,6 +12,7 @@ public class March_Into_the_Far_North extends Mission {
 
     @Override
     public boolean checkCompletion() {
+        if(isCompleted())return true;
         if (Game.getPlayer().getCurQuest() instanceof FinalBattle && Game.getPlayer().getPosition().equals(GameConstants.FarNorthMountain)) {
             complete();
             return true;

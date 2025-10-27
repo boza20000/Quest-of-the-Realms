@@ -6,7 +6,7 @@ public final class CharacterConstants {
     private  CharacterConstants(){}
 
     // === Mage ===
-    public static final int MAGE_HEALTH = 28;
+    public static final int MAGE_HEALTH = 32;
     public static final int MAGE_MANA = 30;
     public static final int MAGE_ATTACK = 3;
     public static final int MAGE_DEFENCE = 2;
@@ -26,7 +26,7 @@ public final class CharacterConstants {
     public static final int ORC_INTELLIGENCE = 2;
 
     // === Rogue ===
-    public static final int ROGUE_HEALTH = 35;
+    public static final int ROGUE_HEALTH = 38;
     public static final int ROGUE_MANA = 10;
     public static final int ROGUE_ATTACK = 7;
     public static final int ROGUE_DEFENCE = 3;
@@ -46,7 +46,7 @@ public final class CharacterConstants {
     public static final int WARRIOR_INTELLIGENCE = 5;
 
     //=== Goblin general ===
-    public static final int GoblinGeneral_HEALTH = 100;
+    public static final int GoblinGeneral_HEALTH = 80;
     public static final int GoblinGeneral_MANA = 40;
     public static final int GoblinGeneral_ATTACK = 12;
     public static final int GoblinGeneral_DEFENCE = 11;
@@ -55,6 +55,7 @@ public final class CharacterConstants {
     public static final int GoblinGeneral_SPELLS = 0;
     public static final int GoblinGeneral_INTELLIGENCE = 6;
 
+    //=== Goblin king ===
     public static final int GoblinKing_HEALTH = 100;
     public static final int GoblinKing_MANA = 50;
     public static final int GoblinKing_ATTACK = 20;

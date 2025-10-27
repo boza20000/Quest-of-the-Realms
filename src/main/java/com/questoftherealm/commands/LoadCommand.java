@@ -1,5 +1,7 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.LoadGame;
 
 public class LoadCommand extends Command {
@@ -10,11 +12,24 @@ public class LoadCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "gives a list of saved games an a option to load one";
+        return "load [save name] — loads a saved game by its name";
     }
 
     @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 2) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return true;
+    }
+    @Override
     public void execute(String[] args) {
-        LoadGame.loadGameSave(args[1]);
+        Player player = Game.getPlayer();
+        if (!makeSafe(args, player)) {
+            return;
+        }
+        LoadGame loadGame = new LoadGame();
+        loadGame.loadGameSave(args[1]);
     }
 }

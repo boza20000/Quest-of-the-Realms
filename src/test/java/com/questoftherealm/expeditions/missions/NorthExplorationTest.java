@@ -57,6 +57,7 @@ class NorthExplorationTest {
                 null,
                 new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
                 null,
+                null,  // mission
                 null
         );
         Game.setPlayer(player);

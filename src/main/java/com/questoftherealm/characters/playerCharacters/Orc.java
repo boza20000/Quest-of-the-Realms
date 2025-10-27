@@ -25,7 +25,7 @@ public class Orc extends Characters implements MonsterBehavior {
 
     @Override
     public void resurrect() {
-//50 % chance
+
     }
 
     @Override
@@ -41,5 +41,10 @@ public class Orc extends Characters implements MonsterBehavior {
     @Override
     public int getBaseDefence() {
         return ORC_DEFENCE;
+    }
+
+    @Override
+    public int getMaxHealth() {
+        return ORC_HEALTH;
     }
 }

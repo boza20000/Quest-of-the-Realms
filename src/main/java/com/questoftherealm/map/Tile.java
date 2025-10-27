@@ -33,6 +33,9 @@ public class Tile {
         this.walkable = walkable;
     }
 
+    public Locations getStructure() {
+        return structure;
+    }
     public boolean isContentGenerated() {
         return contentGenerated;
     }
@@ -157,5 +160,14 @@ public class Tile {
             }
         }
         //System.out.println("No such item in this zone");
+    }
+
+    public void removeEnemy(Enemy enemy) {
+        enemies.remove(enemy);
+    }
+
+    public boolean isEmpty() {
+        return drops.isEmpty() && enemies.isEmpty() ;
+        //&& structure.isExplored() soon!!!
     }
 }

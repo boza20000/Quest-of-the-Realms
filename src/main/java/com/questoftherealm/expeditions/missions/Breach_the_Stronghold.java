@@ -11,6 +11,7 @@ public class Breach_the_Stronghold extends Mission {
     }
     @Override
     public boolean checkCompletion() {
+        if(isCompleted())return true;
         if(Game.getPlayer().getCurQuest() instanceof FinalBattle && isBreached){
             complete();
             return true;

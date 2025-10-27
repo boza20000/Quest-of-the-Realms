@@ -58,7 +58,8 @@ public class TakeCommandTest {
                 null, // weapon
                 new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
                 null, // quest
-                null  // mission
+                null ,  // mission
+                null
         );
         Game.setPlayer(player);
 
@@ -83,7 +84,6 @@ public class TakeCommandTest {
         drops.set(tile, tileDrops);
 
         take = new TakeCommand();
-
         player.move(1,4);
     }
 

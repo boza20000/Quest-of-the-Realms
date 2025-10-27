@@ -39,6 +39,9 @@ public class QuestFactory {
     }
 
     public static Mission getCurrentMission() {
+        if(getCurrentQuest()==null) {
+            return null;
+        }
         for (Mission m : getCurrentQuest().getMissions()) {
             if (!m.isCompleted()) {
               return m;

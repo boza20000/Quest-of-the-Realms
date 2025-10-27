@@ -17,7 +17,7 @@ public class ItemRegistry {
         if (allItems == null) {
             try (InputStream is = ItemRegistry.class.getResourceAsStream("/items.json")) {
                 if (is == null) {
-                    throw new FileNotFoundException("items.json not found in resources");
+                    throw new FileNotFoundException("items.json not found in a");
                 }
                 ObjectMapper mapper = new ObjectMapper();
                 allItems = mapper.readValue(is, new TypeReference<List<Item>>() {

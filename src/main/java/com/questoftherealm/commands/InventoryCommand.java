@@ -1,5 +1,8 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.Game;
+
 import static com.questoftherealm.game.Game.getPlayer;
 
 public class InventoryCommand extends Command {
@@ -9,11 +12,24 @@ public class InventoryCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "lists all inventory items";
+        return "inventory — displays all items in your inventory";
+    }
+
+    @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length != 1) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
     }
 
     @Override
     public void execute(String[] args) {
-       getPlayer().openInventory();
+        Player player = Game.getPlayer();
+        if (!makeSafe(args, player)) {
+            return;
+        }
+        player.openInventory();
     }
 }

@@ -15,7 +15,21 @@ public class TakeCommand extends Command {
     }
 
     @Override
+    public boolean makeSafe(String[] args, Player player) {
+        if (args.length < 2) {
+            System.out.println("Usage: " + getDescription());
+            return false;
+        }
+        return playerBaseCheck(player);
+    }
+
+    @Override
     public void execute(String[] args) {
+        Player player = Game.getPlayer();
+        if(!makeSafe(args, player)){
+            return;
+        }
+
         String input = String.join(" ", args);
         String command = args[0];
         String rest = input.substring(command.length()).trim();
@@ -32,10 +46,24 @@ public class TakeCommand extends Command {
             System.out.println("Quantity must be a number.");
             return;
         }
-        Item newItem = getItem(itemName);
-        Player player = Game.getPlayer();
+        Item newItem;
+        try {
+            newItem = getItem(itemName);
+        } catch (Exception e) {
+            System.out.println("Item unknown");
+            return;
+        }
         Map map = Game.getGameMap();
         Tile curZone = map.curZone(player.getX(), player.getY());
+
+        if (Game.getGameMap() == null) {
+            System.out.println("Map was not loaded");
+            return;
+        }
+        if (curZone == null) {
+            System.out.println("unknown zone");
+            return;
+        }
 
         ItemDrop drop = curZone.getDrops().stream()
                 .filter(d -> d.item().equals(newItem))
@@ -53,6 +81,6 @@ public class TakeCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "the player takes the item from the ground and puts it in his inventory(take [itemName] [quantity])";
+        return "take [item name] [quantity] — picks up the specified number of an item from the ground";
     }
 }

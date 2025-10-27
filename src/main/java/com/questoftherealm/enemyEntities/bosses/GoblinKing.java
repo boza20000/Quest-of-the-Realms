@@ -53,16 +53,15 @@ public class GoblinKing extends Boss {
 
 
     @Override
-    //23% insta kill
+    //29% instant kill
     public void superMove() {
         Random random = new Random();
         int roll = random.nextInt(100);
-        if(GameConstants.GoblinKing_Percent_INSTAKILL<=roll){
+        if (GameConstants.GoblinKing_Percent_INSTAKILL <= roll) {
             SlowPrinter.slowPrint("The Goblin king swing his sword with a huge strength.");
             SlowPrinter.slowPrint("You try to doge.. but unsuccessful...You get sliced");
             Game.getPlayer().getPlayerCharacter().setHealth(0);
-        }
-        else{
+        } else {
             SlowPrinter.slowPrint("The Goblin king swing his sword with a huge strength.");
             SlowPrinter.slowPrint("You almost get killed but you doge it");
         }
@@ -81,6 +80,11 @@ public class GoblinKing extends Boss {
     @Override
     public int getBaseDefence() {
         return GoblinKing_DEFENCE;
+    }
+
+    @Override
+    public int getMaxHealth() {
+        return GoblinKing_HEALTH;
     }
 
     public String getName() {

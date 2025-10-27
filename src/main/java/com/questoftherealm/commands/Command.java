@@ -1,5 +1,7 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Player;
+
 public abstract class Command {
     private final String name;
 
@@ -14,4 +16,16 @@ public abstract class Command {
     public abstract void execute(String[] args);
 
     public abstract String getDescription();
+
+    public abstract boolean makeSafe(String[] args,Player player);
+
+    public boolean playerBaseCheck(Player player) {
+        if (player == null) {
+            System.out.println("Error: No player loaded.");
+            return false;
+        }
+        return true;
+    }
+
+
 }

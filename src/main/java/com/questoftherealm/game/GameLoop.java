@@ -1,7 +1,7 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.InvalidCommand;
-import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
 import com.questoftherealm.interaction.Console;
@@ -17,8 +17,11 @@ public class GameLoop {
     private final Console console = new Console();
 
     public void startLoop() {
-        console.worldIntro();
         Interactions.worldStart();
+
+        Player player = Game.getPlayer();
+        player.setStartTime(System.currentTimeMillis());
+
         while (!gameOver) {
             System.out.print(">");
             String command = scanner.nextLine().trim();
@@ -52,7 +55,7 @@ public class GameLoop {
                 }
             }
         }
-        new Console();
-        console.displayEnd();
+        player.trackPlayTime();
+        console.displayEnd(player);
     }
 }

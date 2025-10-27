@@ -12,6 +12,10 @@ public class Defeat_the_Goblin_General extends Mission {
     @Override
     public boolean checkCompletion() {
         if(isCompleted())return true;
-        return Game.getPlayer().getCurQuest() instanceof RiseOfTheGoblinThreat && isDefeated;
+        if(Game.getPlayer().getCurQuest() instanceof RiseOfTheGoblinThreat && isDefeated){
+            complete();
+            return true;
+        }
+        return false;
     }
 }
