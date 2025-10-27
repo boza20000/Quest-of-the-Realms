@@ -6,6 +6,8 @@ import com.questoftherealm.game.SaveGame;
 import com.questoftherealm.game.LoadGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
+
 import static org.mockito.Mockito.*;
 
 class SaveLoadCommandTest {
@@ -20,39 +22,45 @@ class SaveLoadCommandTest {
 
     @Test
     void testSaveGameValidInput() {
-        SaveGame saveGame = mock(SaveGame.class);
-        SaveCommand command = new SaveCommand();
-        command.execute(new String[]{"save", "mySave"});
-        verify(saveGame).createSave("mySave");
+        try (MockedConstruction<SaveGame> mocked = mockConstruction(SaveGame.class)) {
+            SaveCommand command = new SaveCommand();
+            command.execute(new String[]{"save", "mySave"});
+
+            // Verify that a SaveGame instance was created and used correctly
+            SaveGame saveGameMock = mocked.constructed().get(0);
+            verify(saveGameMock).createSave("mySave");
+        }
     }
 
     @Test
     void testSaveGameInvalidInput() {
-        SaveGame saveGame = mock(SaveGame.class);
-        SaveCommand command = new SaveCommand();
+        try (MockedConstruction<SaveGame> mocked = mockConstruction(SaveGame.class)) {
+            SaveCommand command = new SaveCommand();
+            command.execute(new String[]{"save"}); // invalid, missing name
 
-        command.execute(new String[]{"save"}); // invalid, missing name
-
-        verifyNoInteractions(saveGame);
+            // No SaveGame should have been created
+            verifyNoInteractions(mocked.constructed().isEmpty() ? mock(SaveGame.class) : mocked.constructed().get(0));
+        }
     }
 
     @Test
     void testLoadGameValidInput() {
-        LoadGame loadGame = mock(LoadGame.class);
-        LoadCommand command = new LoadCommand();
+        try (MockedConstruction<LoadGame> mocked = mockConstruction(LoadGame.class)) {
+            LoadCommand command = new LoadCommand();
+            command.execute(new String[]{"load", "mySave"});
 
-        command.execute(new String[]{"load", "mySave"});
-
-        verify(loadGame).loadGameSave("mySave");
+            LoadGame loadGameMock = mocked.constructed().get(0);
+            verify(loadGameMock).loadGameSave("mySave");
+        }
     }
 
     @Test
     void testLoadGameInvalidInput() {
-        LoadGame loadGame = mock(LoadGame.class);
-        LoadCommand command = new LoadCommand();
+        try (MockedConstruction<LoadGame> mocked = mockConstruction(LoadGame.class)) {
+            LoadCommand command = new LoadCommand();
+            command.execute(new String[]{"load"}); // invalid
 
-        command.execute(new String[]{"load"}); // invalid
-
-        verifyNoInteractions(loadGame);
+            verifyNoInteractions(mocked.constructed().isEmpty() ? mock(LoadGame.class) : mocked.constructed().get(0));
+        }
     }
 }
