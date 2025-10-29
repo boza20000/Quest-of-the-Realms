@@ -131,6 +131,10 @@ public class Player implements InventoryHandler, Explorer {
         return false;
     }
 
+    public void loseMana(int mana) {
+        playerCharacter.useMana(mana);
+    }
+
     public void move(int x, int y) {
         this.x = x;
         this.y = y;

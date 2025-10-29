@@ -27,6 +27,7 @@ public class CommandFactory {
         register("explore", new ExploreCommand());
         register("stats", new StatsCommand());
         register("talk", new TalkCommand());
+        register("super", new AbilityCommand());
     }
 
     private void register(String name, Command command) {

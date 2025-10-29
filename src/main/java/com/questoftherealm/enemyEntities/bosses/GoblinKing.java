@@ -1,5 +1,7 @@
 package com.questoftherealm.enemyEntities.bosses;
 
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameLoop;
@@ -85,6 +87,11 @@ public class GoblinKing extends Boss {
     @Override
     public int getMaxHealth() {
         return GoblinKing_HEALTH;
+    }
+
+    @Override
+    public void activateAbility(Player player, Enemy enemy) {
+        superMove();
     }
 
     public String getName() {

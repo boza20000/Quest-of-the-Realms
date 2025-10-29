@@ -1,4 +1,7 @@
 package com.questoftherealm.enemyEntities.bosses;
+
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
@@ -10,11 +13,11 @@ import java.util.List;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.GoblinGeneral_INTELLIGENCE;
 
-public class GoblinGeneral extends Boss  {
+public class GoblinGeneral extends Boss {
     private static final String name = "Azok";
-    private static final Item weapon  =  ItemRegistry.getItem("Big Battle Axe");
+    private static final Item weapon = ItemRegistry.getItem("Big Battle Axe");
 
-    public GoblinGeneral(){
+    public GoblinGeneral() {
         super(GoblinGeneral_HEALTH,
                 GoblinGeneral_MANA,
                 GoblinGeneral_ATTACK,
@@ -31,10 +34,10 @@ public class GoblinGeneral extends Boss  {
 
     }
 
-    private static HashMap<ItemEffect, Item> createArmor(){
+    private static HashMap<ItemEffect, Item> createArmor() {
         HashMap<ItemEffect, Item> armor = new HashMap<>();
         armor.put(ItemEffect.HELMET, ItemRegistry.getItem("Goblin general’s Helmet"));
-        armor.put(ItemEffect.CHESTPLATE,ItemRegistry.getItem("Goblin general’s Chestplate") );
+        armor.put(ItemEffect.CHESTPLATE, ItemRegistry.getItem("Goblin general’s Chestplate"));
         armor.put(ItemEffect.BOOTS, null);
         return armor;
     }
@@ -54,7 +57,7 @@ public class GoblinGeneral extends Boss  {
 
     @Override
     public Item getDefaultWeapon() {
-        return  ItemRegistry.getItem("Big Battle Axe");
+        return ItemRegistry.getItem("Big Battle Axe");
     }
 
     @Override
@@ -70,6 +73,11 @@ public class GoblinGeneral extends Boss  {
     @Override
     public int getMaxHealth() {
         return GoblinGeneral_HEALTH;
+    }
+
+    @Override
+    public void activateAbility(Player player, Enemy enemy) {
+        superMove();
     }
 
     public String getName() {
