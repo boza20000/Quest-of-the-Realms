@@ -25,8 +25,6 @@ class SaveLoadCommandTest {
         try (MockedConstruction<SaveGame> mocked = mockConstruction(SaveGame.class)) {
             SaveCommand command = new SaveCommand();
             command.execute(new String[]{"save", "mySave"});
-
-            // Verify that a SaveGame instance was created and used correctly
             SaveGame saveGameMock = mocked.constructed().get(0);
             verify(saveGameMock).createSave("mySave");
         }
@@ -36,9 +34,7 @@ class SaveLoadCommandTest {
     void testSaveGameInvalidInput() {
         try (MockedConstruction<SaveGame> mocked = mockConstruction(SaveGame.class)) {
             SaveCommand command = new SaveCommand();
-            command.execute(new String[]{"save"}); // invalid, missing name
-
-            // No SaveGame should have been created
+            command.execute(new String[]{"save"});
             verifyNoInteractions(mocked.constructed().isEmpty() ? mock(SaveGame.class) : mocked.constructed().get(0));
         }
     }
@@ -48,7 +44,6 @@ class SaveLoadCommandTest {
         try (MockedConstruction<LoadGame> mocked = mockConstruction(LoadGame.class)) {
             LoadCommand command = new LoadCommand();
             command.execute(new String[]{"load", "mySave"});
-
             LoadGame loadGameMock = mocked.constructed().get(0);
             verify(loadGameMock).loadGameSave("mySave");
         }
@@ -58,8 +53,7 @@ class SaveLoadCommandTest {
     void testLoadGameInvalidInput() {
         try (MockedConstruction<LoadGame> mocked = mockConstruction(LoadGame.class)) {
             LoadCommand command = new LoadCommand();
-            command.execute(new String[]{"load"}); // invalid
-
+            command.execute(new String[]{"load"});
             verifyNoInteractions(mocked.constructed().isEmpty() ? mock(LoadGame.class) : mocked.constructed().get(0));
         }
     }
