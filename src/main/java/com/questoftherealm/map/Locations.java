@@ -61,6 +61,20 @@ public enum Locations {
         return options[ThreadLocalRandom.current().nextInt(options.length)];//returns random location
     }
 
+    public static Locations getStructure(String structure) {
+        if (structure == null || structure.isBlank()) {
+            return null;
+        }
+        String formatted = structure.trim().toLowerCase();
+
+        for (Locations l : Locations.values()) {
+            if (l.name().equalsIgnoreCase(formatted) || l.getName().equalsIgnoreCase(formatted)) {
+                return l;
+            }
+        }
+        return null;
+    }
+
     public String getName() {
         return name;
     }

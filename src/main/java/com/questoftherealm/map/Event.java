@@ -48,13 +48,6 @@ public enum Event {
             new Wolf()
     ),
 
-//    GOBLIN_GENERAL(
-//            "Goblin General",
-//            "A towering goblin clad in crude armor commands his minions. " +
-//                    "Defeating him might scatter the smaller goblins nearby.",
-//            new GoblinGeneral()
-//    ),
-
     TRAVELING_TRADER(
             "Traveling Trader",
             "A mysterious trader sets up camp on the roadside. " +
