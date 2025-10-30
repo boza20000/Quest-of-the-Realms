@@ -2,6 +2,8 @@ package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.characterInterfaces.Deceiver;
 import com.questoftherealm.characters.characterInterfaces.Trader;
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.entities.TraderNPC;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
@@ -30,11 +32,13 @@ public class Rogue extends Characters implements Deceiver {
     }
 
     @Override
-    public void pickpocket() {
+    public void pickpocket(Player player) {
         int roll = new Random().nextInt(10);
-        if(roll<2){//20%
-           ItemDrop loot =  Chest.generateRandomItem();
-           //do smth
+        if (roll < 6) {//60%
+            ItemDrop loot = Chest.generateRandomItem();
+            player.getInventory().addItem(loot.item(), loot.quantity());
+        } else {
+            System.out.println("You attempt to steal failed! Be careful you might get caught");
         }
     }
 
@@ -56,6 +60,12 @@ public class Rogue extends Characters implements Deceiver {
     @Override
     public int getMaxHealth() {
         return ROGUE_HEALTH;
+    }
+
+    @Override
+    public void activateAbility(Player player, Enemy enemy) {
+        System.out.println("🤫 You attempt to pickpocket an unsuspecting " + enemy.getClass().getSimpleName().toUpperCase() + " ...");
+        pickpocket(player);
     }
 
 }

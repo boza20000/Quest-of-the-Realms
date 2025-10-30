@@ -15,20 +15,24 @@ import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
+import com.questoftherealm.interaction.Interactions;
+import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.map.LocationTrigger;
+import com.questoftherealm.map.Locations;
 import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TriggerRegister;
-
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Scanner;
 
 import static com.questoftherealm.game.GameConstants.*;
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
 public class Player implements InventoryHandler, Explorer {
+    private final Scanner scanner = new Scanner(System.in);
     private final String name;
     private final PlayerTypes playerType;
     private final Characters playerCharacter;
@@ -129,6 +133,10 @@ public class Player implements InventoryHandler, Explorer {
             return true;
         }
         return false;
+    }
+
+    public void loseMana(int mana) {
+        playerCharacter.useMana(mana);
     }
 
     public void move(int x, int y) {
@@ -266,7 +274,31 @@ public class Player implements InventoryHandler, Explorer {
 
     @Override
     public void exploreStructure(String structure) {
-        //explore structure
+
+        Locations location = Locations.getStructure(structure);
+        if(location==null){
+            System.out.println("No such location");
+            return;
+        }
+        System.out.println("You approach " + location.getName() + ".");
+        System.out.println(location.getDescription());
+        System.out.println("Do you want to ENTER or LEAVE?");
+        System.out.print("> ");
+        String line = scanner.nextLine();
+        switch (line.toUpperCase()){
+            case "ENTER" ->{
+                System.out.println("You enter ");
+                Interactions interactions = new Interactions();
+                interactions.exploreStructure(location,this);
+            }
+            case "LEAVE" ->{
+                System.out.println("You decide to leave...");
+            }
+            default -> {
+                System.out.println("Leaving...");
+            }
+        }
+
     }
 
     @Override

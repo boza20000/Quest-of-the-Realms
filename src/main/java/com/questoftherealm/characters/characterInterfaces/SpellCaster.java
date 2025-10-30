@@ -1,8 +1,9 @@
 package com.questoftherealm.characters.characterInterfaces;
 
-import com.questoftherealm.characters.playerCharacters.Characters;
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.spells.Spell;
 
 public interface SpellCaster {
-    void castSpell(Spell spell, Characters target);
+    void castSpell(Player player, Spell spell, Enemy target);
 }

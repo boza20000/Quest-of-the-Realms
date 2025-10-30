@@ -1,6 +1,8 @@
 package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.characterInterfaces.Trader;
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.entities.TraderNPC;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
@@ -55,6 +57,12 @@ public class Warrior extends Characters implements Trader {
     @Override
     public int getMaxHealth() {
         return WARRIOR_HEALTH;
+    }
+
+    @Override
+    public void activateAbility(Player player, Enemy enemy) {
+        System.out.println("🗡️You use your special move and swing you " + player.getWeapon().getName() + " with full force");
+        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2);
     }
 
 }

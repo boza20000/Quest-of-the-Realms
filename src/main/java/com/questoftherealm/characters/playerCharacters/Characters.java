@@ -52,11 +52,10 @@ public abstract class Characters implements Combatant {
             return;
         }
         try {
-            int damageDealt =  player.getWeapon().getPower() + this.getAttack();
+            int damageDealt = player.getWeapon().getPower() + this.getAttack();
             System.out.println("You attack " + target.getClass().getSimpleName() + " for " + damageDealt + "HP!");
             target.takeDamage(damageDealt);
-            int newMana = getMana() - player.getWeapon().getMana();
-            setMana(newMana);
+            useMana(player.getWeapon().getMana());
         } catch (TargetNotFound e) {
             System.out.println(e.getMessage());
         }
@@ -166,4 +165,10 @@ public abstract class Characters implements Combatant {
                 "Intelligence: " + getIntelligence() + "\n" +
                 "==========================";
     }
+
+    public void useMana(int mana) {
+        setMana(Math.max(0, getMana() - mana));
+    }
+
+    public abstract void activateAbility(Player player, Enemy enemy);
 }
