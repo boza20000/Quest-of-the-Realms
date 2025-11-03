@@ -3,16 +3,18 @@ package com.questoftherealm.friendlyEntities.Entities;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.missions.Explore_the_Village;
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
+import com.questoftherealm.friendlyEntities.FriendInterfaces.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
 import com.questoftherealm.interaction.MissionInteractions;
 
-public class Villager extends Npc implements Friendly {
+public class Villager extends Npc {
     private static boolean hasTalkedVillage1 = false;
     private static boolean hasTalkedVillage2 = false;
 
     public Villager() {
+        super(NpcType.Villager);
     }
 
     @Override

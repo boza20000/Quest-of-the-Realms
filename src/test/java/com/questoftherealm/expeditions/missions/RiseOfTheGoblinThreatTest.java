@@ -9,17 +9,13 @@ import com.questoftherealm.expeditions.QuestFactory;
 import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
-import com.questoftherealm.interaction.Interactions;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TileTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
 import java.util.Queue;
 import java.util.Random;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 

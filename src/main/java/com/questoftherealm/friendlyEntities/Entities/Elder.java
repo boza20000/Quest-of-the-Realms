@@ -1,17 +1,18 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
-import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.friendlyEntities.FriendInterfaces.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
 
-public class Elder extends Npc implements Friendly {
+public class Elder extends Npc  {
     private final String name = "Evaery";
     private static boolean hasTalked = false;
 
     public Elder() {
+        super(NpcType.Elder);
     }
 
     public static boolean isHasTalked() {
