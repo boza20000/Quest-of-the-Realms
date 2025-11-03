@@ -1,4 +1,4 @@
-package com.questoftherealm.map;
+package com.questoftherealm.map.interfaces;
 
 import com.questoftherealm.characters.player.Player;
 

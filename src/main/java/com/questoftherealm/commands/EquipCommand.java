@@ -5,9 +5,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
-
 import java.util.Arrays;
-
 import static com.questoftherealm.items.ItemRegistry.getItem;
 
 public class EquipCommand extends Command {

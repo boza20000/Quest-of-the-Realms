@@ -3,8 +3,6 @@ package com.questoftherealm.commands;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
 
-import static com.questoftherealm.game.Game.getPlayer;
-
 public class InventoryCommand extends Command {
     public InventoryCommand() {
         super("inventory");

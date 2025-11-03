@@ -15,8 +15,7 @@ import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
-import com.questoftherealm.interaction.Interactions;
-import com.questoftherealm.items.Chest;
+import com.questoftherealm.interaction.ExploreManager;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
@@ -288,8 +287,8 @@ public class Player implements InventoryHandler, Explorer {
         switch (line.toUpperCase()){
             case "ENTER" ->{
                 System.out.println("You enter ");
-                Interactions interactions = new Interactions();
-                interactions.exploreStructure(location,this);
+                ExploreManager interaction = new ExploreManager();
+                interaction.exploreStructure(location,this);
             }
             case "LEAVE" ->{
                 System.out.println("You decide to leave...");

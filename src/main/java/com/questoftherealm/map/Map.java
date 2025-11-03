@@ -46,12 +46,12 @@ public class Map {
 
     }
 
-    public void print() {
+    public void print(Player player) {
         for (int i = 0; i < gameMap.length; i++) {
             System.out.print("      ");
             System.out.print("║");
             for (int j = 0; j < gameMap[i].length; j++) {
-                boolean isPlayerHere = (j == Game.getPlayer().getX() && i == Game.getPlayer().getY());
+                boolean isPlayerHere = (j == player.getX() && i == player.getY());
                 Tile tile = gameMap[i][j];
                 String symbol = getTileSymbol(tile);
 

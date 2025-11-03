@@ -2,14 +2,16 @@ package com.questoftherealm.items;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
-
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class Chest {
 
-    private final static Random random = new Random();
+    private static Random random() {
+        return ThreadLocalRandom.current();
+    }
 
     public static ItemDrop generateRandomItem() {
         try {
@@ -23,7 +25,7 @@ public class Chest {
 
     private static ItemType randomType() {
         ItemType[] category = {ItemType.ARMOR, ItemType.WEAPON, ItemType.POTION, ItemType.CONSUMABLES};
-        return category[random.nextInt(category.length)];
+        return category[random().nextInt(category.length)];
     }
 
     private static int randomQuantity(Item item) {
@@ -31,13 +33,13 @@ public class Chest {
 
         switch (item.getRarity()) {
             case COMMON -> {
-                return random.nextInt(1, 6);
+                return random().nextInt(1, 6);
             }
             case UNCOMMON -> {
-                return random.nextInt(1, 4);
+                return random().nextInt(1, 4);
             }
             case RARE, EPIC -> {
-                return random.nextInt(1, 3);
+                return random().nextInt(1, 3);
             }
             default -> {
                 return 1;
@@ -46,7 +48,7 @@ public class Chest {
     }
 
     private static Rarity randomRarity() {
-        int rand = random.nextInt(100) + 1;
+        int rand = random().nextInt(100) + 1;
         if (rand <= 50) return Rarity.COMMON;
         if (rand <= 75) return Rarity.UNCOMMON;
         if (rand <= 90) return Rarity.RARE;
@@ -70,7 +72,7 @@ public class Chest {
                     .filter(i -> i.getType() == type && i.getRarity() == fallback)
                     .toList();
         }
-        Item selectedItem = possibleItems.get(random.nextInt(possibleItems.size()));
+        Item selectedItem = possibleItems.get(random().nextInt(possibleItems.size()));
         int quantity = randomQuantity(selectedItem);
         return new ItemDrop(selectedItem, quantity);
     }
@@ -87,7 +89,7 @@ public class Chest {
         if (possibleWeapons.isEmpty()){
             throw new RandomItemNotGenerated("No weapons available for generation.");
         }
-        Item weapon = possibleWeapons.get(random.nextInt(possibleWeapons.size()));
+        Item weapon = possibleWeapons.get(random().nextInt(possibleWeapons.size()));
         return new ItemDrop(weapon, quantity);
     }
 
@@ -113,7 +115,7 @@ public class Chest {
             throw new RandomItemNotGenerated("No helmets available for generation.");
         }
 
-        Item helmet = possibleHelmets.get(random.nextInt(possibleHelmets.size()));
+        Item helmet = possibleHelmets.get(random().nextInt(possibleHelmets.size()));
         return new ItemDrop(helmet, quantity);
     }
 
@@ -130,7 +132,7 @@ public class Chest {
             throw new RandomItemNotGenerated("No chestplates available for generation.");
         }
 
-        Item chestplate = possibleChestplates.get(random.nextInt(possibleChestplates.size()));
+        Item chestplate = possibleChestplates.get(random().nextInt(possibleChestplates.size()));
         return new ItemDrop(chestplate, quantity);
     }
 
@@ -147,7 +149,7 @@ public class Chest {
             throw new RandomItemNotGenerated("No boots available for generation.");
         }
 
-        Item boots = possibleBoots.get(random.nextInt(possibleBoots.size()));
+        Item boots = possibleBoots.get(random().nextInt(possibleBoots.size()));
         return new ItemDrop(boots, quantity);
     }
 }

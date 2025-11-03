@@ -30,7 +30,6 @@ public class TalkCommand extends Command {
         if (!makeSafe(args, player)) {
             return;
         }
-
         String target = args[1].toLowerCase();
         Position curPos = new Position(player.getX(), player.getY());
         switch (target) {

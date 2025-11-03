@@ -50,12 +50,12 @@ public abstract class Enemy implements Fightable, Lootable {
 
     @Override
     public void takeDamage(int damage) {
-        int reducedDamageTaken = getHealth() - damage + getBaseDefense() / 2;
-        int newHealth = Math.max(0, reducedDamageTaken);
+        int reducedDamageTaken = Math.max(0, damage - (getBaseDefense() / 2));
+        int newHealth = Math.max(0, getHealth() - reducedDamageTaken);
         setHealth(newHealth);
         isDead = newHealth == 0;
         if (!isDead) {
-            System.out.println("Only " + reducedDamageTaken + "HP taken.The " + this.getClass().getSimpleName() + " thick skin reduces some of the damage!");
+            System.out.println("The " + this.getClass().getSimpleName() + " shrugs off some damage (" + reducedDamageTaken + "HP lost)!");
         }
     }
 
@@ -83,9 +83,9 @@ public abstract class Enemy implements Fightable, Lootable {
         } else if (countRoll < GameConstants.ONE_ENEMY_CHANCE) {
             enemyCount = 1;
         }
-        EnemyType[] pool = enemyPoolForTile(type);
+        List<EnemyType> pool = enemyPoolForTile(type);
         for (int i = 0; i < enemyCount; i++) {
-            EnemyType picked = pool[rand.nextInt(pool.length)];
+            EnemyType picked = pool.get(rand.nextInt(pool.size()));
             chosenEnemies.add(picked);
         }
         return toEnemyObj(chosenEnemies);
@@ -100,32 +100,15 @@ public abstract class Enemy implements Fightable, Lootable {
     }
 
 
-    private static EnemyType[] enemyPoolForTile(TileTypes type) {
+    private static List<EnemyType> enemyPoolForTile(TileTypes type) {
         return switch (type) {
-            case GRASS -> new EnemyType[]{
-                    EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT, EnemyType.TRAVELING_TRADER
-            };
-            case FOREST -> new EnemyType[]{
-                    EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GOBLIN_HORDE, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT
-            };
-            case SWAMP -> new EnemyType[]{
-                    EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON
-            };
-            case MOUNTAIN -> new EnemyType[]{
-                    EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF
-            };
-            case WATER -> new EnemyType[]{
-                    EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN
-            };
-            case VILLAGE -> new EnemyType[]{
-                    EnemyType.BANDIT, EnemyType.WOLF, EnemyType.TRAVELING_TRADER
-            };
-            case CASTLE -> new EnemyType[]{
-                    EnemyType.DARK_MAGE, EnemyType.SKELETON
-            };
-//            case QUEST_LOCATION -> new EnemyType[]{
-//                    // Empty, quest-specific spawns only
-//            };
+            case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT, EnemyType.TRAVELING_TRADER);
+            case FOREST -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GOBLIN_HORDE, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
+            case SWAMP -> List.of(EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON);
+            case MOUNTAIN -> List.of(EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF);
+            case WATER -> List.of(EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN);
+            case VILLAGE -> List.of(EnemyType.BANDIT, EnemyType.WOLF, EnemyType.TRAVELING_TRADER);
+            case CASTLE -> List.of(EnemyType.DARK_MAGE, EnemyType.SKELETON);
         };
     }
 
@@ -147,7 +130,7 @@ public abstract class Enemy implements Fightable, Lootable {
 
     public String getDescription() {
 
-        return " ";
+        return description;
     }
 
     public void setArmor(List<Item> armor) {

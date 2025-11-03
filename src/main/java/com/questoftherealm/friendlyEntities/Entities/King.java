@@ -1,5 +1,7 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
-public class King {
+import com.questoftherealm.friendlyEntities.Npc;
+
+public class King extends Npc {
     public static boolean hasTalkedToTheKing = false;
 }

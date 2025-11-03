@@ -2,6 +2,7 @@ package com.questoftherealm.map;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Position;
+import com.questoftherealm.map.interfaces.TriggerAction;
 
 public class LocationTrigger{
     private final Position position;

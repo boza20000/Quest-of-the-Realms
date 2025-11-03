@@ -3,13 +3,9 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.MonsterBehavior;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemRegistry;
-
 import java.util.Random;
-
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Orc extends Characters implements MonsterBehavior {

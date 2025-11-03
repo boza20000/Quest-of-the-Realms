@@ -24,7 +24,7 @@ public class MapCommand extends Command {
         System.out.print("      ");
         System.out.println("╔════════ MAP ══════╗");
         try {
-            map.print();
+            map.print(player);
         } catch (Exception e) {
             System.out.println("Something went wrong while printing the map");
         }

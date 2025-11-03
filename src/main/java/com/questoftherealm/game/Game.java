@@ -4,7 +4,6 @@ import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.expeditions.QuestFactory;
 import com.questoftherealm.interaction.Console;
 import com.questoftherealm.interaction.GameUI;
-import com.questoftherealm.interaction.Interactions;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
@@ -16,32 +15,26 @@ public class Game {
     private static Player player;
     private static Map gameMap;
     private static Queue<Quest> gameQuests;
-
     private final GameUI gameUI = new GameUI();
     private final Console console = new Console();
-
     public static boolean gameOver = false;
-
 
     public static Player getPlayer() {
         return player;
     }
-
     public static void setGameQuests(Queue<Quest> gameQuests) {
         Game.gameQuests = gameQuests;
     }
-
     public static void setPlayer(Player player) {
         Game.player = player;
     }
-
     public static Map getGameMap() {
         return gameMap;
     }
-
     public static Queue<Quest> getQuests() {
         return gameQuests;
     }
+
 
     public void newGame() {
         try {
@@ -130,6 +123,13 @@ public class Game {
             case 1 -> newGame();
             case 2 -> loadGame();
         }
+        try{
+            NpcInitializer.registerAll(gameMap);
+        }catch (Exception e){
+            System.out.println("Something went wrong Npcs could not be initialized!");
+            System.exit(0);
+        }
+
         //game loop
         GameLoop loop = new GameLoop();
         loop.startLoop();

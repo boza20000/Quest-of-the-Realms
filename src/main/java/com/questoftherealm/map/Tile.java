@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
+import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
-import com.questoftherealm.interaction.Interactions;
+import com.questoftherealm.game.Position;
+import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 
@@ -22,9 +24,9 @@ public class Tile {
     private final boolean walkable;
     private Locations structure;
     private List<Enemy> enemies = new ArrayList<>();
-    private Event event;
     private List<ItemDrop> drops = new ArrayList<>();
     private boolean contentGenerated = false;
+    private List<Npc> npcs = new ArrayList<>();
 
     @JsonCreator
     public Tile(@JsonProperty("type") TileTypes type, @JsonProperty("description") String description, @JsonProperty("walkable") boolean walkable) {
@@ -36,6 +38,7 @@ public class Tile {
     public Locations getStructure() {
         return structure;
     }
+
     public boolean isContentGenerated() {
         return contentGenerated;
     }
@@ -80,8 +83,11 @@ public class Tile {
     }
 
     void generateContent() {
-        this.structure = Locations.generateLocation(type);
+        if (structure == null) {
+            this.structure = Locations.generateLocation(type);
+        }
         this.enemies = Enemy.generateEnemies(type);
+        this.drops.clear();
         try {
             generateItems();
         } catch (RandomItemNotGenerated e) {
@@ -102,11 +108,11 @@ public class Tile {
     }
 
     private void displayLocation() {
-        if(structure == null){
+        if (structure == null) {
             return;
         }
         System.out.println();
-        System.out.println(Interactions.getRandomSpotting(structure.getName()) + structure.getName());
+        System.out.println(TravelManger.getRandomSpotting(structure.getName()) + structure.getName());
         System.out.print(structure.getDescription());
     }
 
@@ -167,7 +173,12 @@ public class Tile {
     }
 
     public boolean isEmpty() {
-        return drops.isEmpty() && enemies.isEmpty() ;
+        return drops.isEmpty() && enemies.isEmpty();
         //&& structure.isExplored() soon!!!
     }
+
+    public void addNpc(Npc npc) {
+        npcs.add(npc);
+    }
+
 }

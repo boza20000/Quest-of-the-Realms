@@ -5,7 +5,7 @@ import com.questoftherealm.exceptions.InvalidCommand;
 import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
 import com.questoftherealm.interaction.Console;
-import com.questoftherealm.interaction.Interactions;
+import com.questoftherealm.interaction.MissionInteractions;
 
 import java.util.Scanner;
 
@@ -17,8 +17,7 @@ public class GameLoop {
     private final Console console = new Console();
 
     public void startLoop() {
-        Interactions.worldStart();
-
+        MissionInteractions.worldStart();
         Player player = Game.getPlayer();
         player.setStartTime(System.currentTimeMillis());
 

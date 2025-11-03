@@ -11,7 +11,6 @@ public class EnemyFactory {
             case WOLF -> new Wolf();
             case GOBLIN_HORDE -> new GoblinHorde();
             case DARK_MAGE -> new DarkMage();
-            //case GOBLIN_GENERAL -> new GoblinGeneral();
             case GIANT_SPIDER -> new GiantSpider();
             case LOST_SPIRIT -> new Spirit();
             case TRAVELING_TRADER -> new TraderNPC();

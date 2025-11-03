@@ -3,8 +3,8 @@ package com.questoftherealm.commands;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
-import com.questoftherealm.interaction.Interactions;
 import com.questoftherealm.interaction.SlowPrinter;
+import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.map.TileTypes;
 
 public class MoveCommand extends Command {
@@ -89,7 +89,7 @@ public class MoveCommand extends Command {
             System.out.println("You going to an undefined area.");
             return;
         }
-        SlowPrinter.slowPrint(Interactions.getTransition(start, end));
+        SlowPrinter.slowPrint(TravelManger.getTransition(start, end));
         SlowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toUpperCase()));
     }
 
@@ -101,7 +101,7 @@ public class MoveCommand extends Command {
                 Thread.sleep(600);
                 System.out.print(".");
             }
-            Interactions.pathInteraction(Game.getGameMap().curZone(player.getX(), player.getY()).getType(), direction);
+            TravelManger.pathInteraction(Game.getGameMap().curZone(player.getX(), player.getY()).getType(), direction);
         } catch (Exception e) {
             System.out.println("Walking failed");
         }

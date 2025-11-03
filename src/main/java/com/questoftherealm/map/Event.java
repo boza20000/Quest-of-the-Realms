@@ -2,136 +2,96 @@ package com.questoftherealm.map;
 
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.entities.*;
-
 import java.util.concurrent.ThreadLocalRandom;
 
-
 public enum Event {
-    GOBLIN_CAMP(
+
+    GOBLIN_CAMP(new EventData(
             "Goblin Camp",
             "A secret camp of ancient creatures called Goblins. " +
-                    "They tend to steal gold and valuable items, and remember they are always in groups. Keep away if you can.",
+                    "They tend to steal gold and valuable items — and they never travel alone.",
             new Goblin()
-    ),
+    )),
 
-    BANDIT_AMBUSH(
+    BANDIT_AMBUSH(new EventData(
             "Bandit Ambush",
-            "A group of ruthless bandits jumps out from the shadows. " +
-                    "They block your path, demanding coin or blood.You have a choice to make",
+            "Ruthless bandits block your path, demanding coin or blood.",
             new Bandit()
-    ),
+    )),
 
-    CURSED_GRAVEYARD(
+    CURSED_GRAVEYARD(new EventData(
             "Cursed Graveyard",
             "The ground trembles as skeletons crawl out of their graves. " +
-                    "Dark magic lingers here, making the dead restless.You should run",
+                    "Dark magic lingers here — best to run.",
             new Skeleton()
-    ),
+    )),
 
-    DARK_RITUAL(
+    DARK_RITUAL(new EventData(
             "Dark Ritual",
-            "A sinister mage is performing a forbidden ritual. " +
-                    "The air reeks of burning incense and blood. Interfere at your own risk.",
+            "A sinister mage performs a forbidden ritual. The air reeks of death.",
             new DarkMage()
-    ),
-    GOBLIN_HORDE(
+    )),
+
+    GOBLIN_HORDE(new EventData(
             "Goblin Horde",
-            "Dozens of goblins swarm the area, led by a brutish commander. " +
-                    "Their war drums echo in the distance as they prepare to attack.",
-            new Goblin() // you could later make a 'GoblinGeneral' class
-    ),
+            "Dozens of goblins swarm the area, led by a brutish commander.",
+            new Goblin()
+    )),
 
-    WOLF_PACK(
+    WOLF_PACK(new EventData(
             "Wolf Pack",
-            "A pack of hungry wolves stalks you from the shadows. " +
-                    "Their glowing eyes pierce through the darkness before they leap. Be ready to fight",
+            "A pack of hungry wolves stalks you from the shadows. Be ready to fight.",
             new Wolf()
-    ),
+    )),
 
-    TRAVELING_TRADER(
+    TRAVELING_TRADER(new EventData(
             "Traveling Trader",
-            "A mysterious trader sets up camp on the roadside. " +
-                    "He offers exotic items, but his prices seem suspiciously high.",
-            new TraderNPC() // could be non-hostile NPC
-    ),
+            "A mysterious trader greets you with a grin. His prices seem... questionable.",
+            new TraderNPC()
+    )),
 
-    LOST_SPIRIT(
+    LOST_SPIRIT(new EventData(
             "Lost Spirit",
-            "A wandering spirit drifts in silence. " +
-                    "It may curse you if angered, or bless you if appeased.",
+            "A wandering spirit drifts nearby. It might bless you — or curse you.",
             new Spirit()
-    ),
+    )),
 
-    GIANT_SPIDER_NEST(
+    GIANT_SPIDER_NEST(new EventData(
             "Giant Spider Nest",
-            "Thick webs hang between the trees, and the air is eerily still. " +
-                    "All of a sudden everything goes silent. " +
-                    "You see a monstrous spider lurks within, waiting for prey.",
+            "Thick webs cover the trees. Something massive lurks within.",
             new GiantSpider()
-    );
+    ));
 
 
-    private final String name;
-    private final String description;
-    private final Enemy npc;
+    private final EventData data;
 
 
-    Event(String name, String description, Enemy npc) {
-        this.name = name;
-        this.description = description;
-        this.npc = npc;
+    Event(final EventData eventData) {
+        data = eventData;
     }
+
+    public String getName() {
+        return data.name();
+    }
+
+    public String getDescription() {
+        return data.description();
+    }
+
+    public Enemy getNpc() {
+        return data.npc();
+    }
+
 
     public static Event generateEvent(TileTypes type) {
         return switch (type) {
-            case GRASS -> randomOf(
-                    GOBLIN_CAMP,
-                    BANDIT_AMBUSH,
-                    WOLF_PACK,
-                    TRAVELING_TRADER,
-                    LOST_SPIRIT
-            );
-
-            case FOREST -> randomOf(
-                    GOBLIN_CAMP,
-                    GOBLIN_HORDE,
-                    WOLF_PACK,
-                    CURSED_GRAVEYARD,
-                    GIANT_SPIDER_NEST
-            );
-
-            case SWAMP -> randomOf(
-                    CURSED_GRAVEYARD,
-                    DARK_RITUAL,
-                    LOST_SPIRIT,
-                    GIANT_SPIDER_NEST
-            );
-
-            case VILLAGE -> randomOf(
-                    BANDIT_AMBUSH,
-                    TRAVELING_TRADER,
-                    LOST_SPIRIT
-            );
-
-            case CASTLE -> randomOf(
-                    DARK_RITUAL,
-                    BANDIT_AMBUSH
-                   // GOBLIN_GENERAL
-            );
-
-            case MOUNTAIN -> randomOf(
-                    GIANT_SPIDER_NEST,
-                    WOLF_PACK,
-                    GOBLIN_HORDE,
-                    LOST_SPIRIT
-            );
-
-            case WATER -> randomOf(
-                    LOST_SPIRIT,
-                    TRAVELING_TRADER
-            );
-
-//            case QUEST_LOCATION -> null; // leave empty or special scripted quest logic
+            case GRASS -> randomOf(GOBLIN_CAMP, BANDIT_AMBUSH, WOLF_PACK, TRAVELING_TRADER, LOST_SPIRIT);
+            case FOREST -> randomOf(GOBLIN_CAMP, GOBLIN_HORDE, WOLF_PACK, CURSED_GRAVEYARD, GIANT_SPIDER_NEST);
+            case SWAMP -> randomOf(CURSED_GRAVEYARD, DARK_RITUAL, LOST_SPIRIT, GIANT_SPIDER_NEST);
+            case VILLAGE -> randomOf(BANDIT_AMBUSH, TRAVELING_TRADER, LOST_SPIRIT);
+            case CASTLE -> randomOf(DARK_RITUAL, BANDIT_AMBUSH);
+            case MOUNTAIN -> randomOf(GIANT_SPIDER_NEST, WOLF_PACK, GOBLIN_HORDE, LOST_SPIRIT);
+            case WATER -> randomOf(LOST_SPIRIT, TRAVELING_TRADER);
         };
     }
 
@@ -140,16 +100,4 @@ public enum Event {
         return options[ThreadLocalRandom.current().nextInt(options.length)];
     }
 
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Enemy getNpc() {
-        return npc;
-    }
 }

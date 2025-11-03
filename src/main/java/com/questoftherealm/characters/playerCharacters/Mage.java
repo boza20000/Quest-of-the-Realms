@@ -7,9 +7,7 @@ import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.spells.Spell;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.spells.SpellRegister;
-
 import java.util.Scanner;
-
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Mage extends Characters implements SpellCaster {

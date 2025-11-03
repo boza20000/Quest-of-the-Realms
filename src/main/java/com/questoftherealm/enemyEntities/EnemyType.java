@@ -7,7 +7,6 @@ public enum EnemyType {
     WOLF,
     GOBLIN_HORDE,
     DARK_MAGE,
-    //GOBLIN_GENERAL,
     GIANT_SPIDER,
     LOST_SPIRIT,
     TRAVELING_TRADER;

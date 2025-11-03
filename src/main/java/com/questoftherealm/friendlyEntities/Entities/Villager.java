@@ -6,7 +6,7 @@ import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
-import com.questoftherealm.interaction.Interactions;
+import com.questoftherealm.interaction.MissionInteractions;
 
 public class Villager extends Npc implements Friendly {
     private static boolean hasTalkedVillage1 = false;
@@ -25,7 +25,7 @@ public class Villager extends Npc implements Friendly {
             }
             if (!hasTalkedVillage1) {
                 hasTalkedVillage1 = true;
-                Interactions.villagerDialogue(player, 1);
+                MissionInteractions.villagerDialogue(player, 1);
                 System.out.println("✅ You have explored North Village 1.");
             } else {
                 System.out.println("The villager looks tired. He has nothing more to say.");
@@ -37,7 +37,7 @@ public class Villager extends Npc implements Friendly {
             }
             if (!hasTalkedVillage2) {
                 hasTalkedVillage2 = true;
-                Interactions.villagerDialogue(player, 2);
+                MissionInteractions.villagerDialogue(player, 2);
                 System.out.println("✅ You have explored North Village 2.");
             } else {
                 System.out.println("The villager avoids your gaze, saying no more.");
