@@ -2,8 +2,7 @@ package com.questoftherealm.friendlyEntities.Entities;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.missions.Explore_the_Village;
-import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
-import com.questoftherealm.friendlyEntities.FriendInterfaces.NpcType;
+import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.Position;
@@ -18,7 +17,7 @@ public class Villager extends Npc {
     }
 
     @Override
-    public void talk(Player player) {
+    public void talk(Player player,boolean isSimulation) {
         Position pos = new Position(player.getX(),player.getY());
         if (pos.equals(GameConstants.NorthVillage_1)) {
             if (!Explore_the_Village.isHasSearched_1()) {
@@ -52,4 +51,8 @@ public class Villager extends Npc {
         return hasTalkedVillage1 && hasTalkedVillage2;
     }
 
+    @Override
+    public boolean isHasTalked() {
+        return false;
+    }
 }

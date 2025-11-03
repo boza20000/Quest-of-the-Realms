@@ -13,7 +13,7 @@ public class EnemyFactory {
             case DARK_MAGE -> new DarkMage();
             case GIANT_SPIDER -> new GiantSpider();
             case LOST_SPIRIT -> new Spirit();
-            case TRAVELING_TRADER -> new TraderNPC();
+            case SUSPICIOUS_TRADER -> new SuspiciousTrader();
         };
     }
 }

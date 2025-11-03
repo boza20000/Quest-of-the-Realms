@@ -1,14 +1,13 @@
 package com.questoftherealm.enemyEntities.entities;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.enemyEntities.EnemiesInterfaces.Talkable;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.EnemyConstants;
 import com.questoftherealm.items.ItemDrop;
 
 import java.util.List;
 
-public class Bandit extends Enemy implements Talkable {
+public class Bandit extends Enemy  {
     public Bandit(){
         super(EnemyConstants.BANDIT);
     }
@@ -18,8 +17,4 @@ public class Bandit extends Enemy implements Talkable {
         return List.of();
     }
 
-    @Override
-    public void talk(Player player) {
-
-    }
 }

@@ -1,7 +1,7 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.friendlyEntities.FriendInterfaces.NpcType;
+import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.interaction.SlowPrinter;
 
@@ -13,7 +13,11 @@ public class King extends Npc {
     }
 
     @Override
-    public void talk(Player player) {
+    public void talk(Player player,boolean isSimulation) {
+        if(isSimulation){
+            hasTalkedToTheKing = true;
+            return;
+        }
         SlowPrinter.slowPrint("""
                 🏰 You arrive at the Castle.
                 The guards at the gates barely recognise you — dirt-streaked, armor dented, eyes weary from the northern wilds.
@@ -67,5 +71,10 @@ public class King extends Npc {
                 ⚔️ The drums of war begin to thunder across the realm...
                 """);
         hasTalkedToTheKing = true;
+    }
+
+    @Override
+    public boolean isHasTalked() {
+        return false;
     }
 }

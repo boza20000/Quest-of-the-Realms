@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
-import com.questoftherealm.friendlyEntities.FriendInterfaces.NpcType;
+import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.interaction.TravelManger;

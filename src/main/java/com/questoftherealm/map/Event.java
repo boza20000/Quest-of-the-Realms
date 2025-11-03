@@ -47,7 +47,7 @@ public enum Event {
     TRAVELING_TRADER(new EventData(
             "Traveling Trader",
             "A mysterious trader greets you with a grin. His prices seem... questionable.",
-            new TraderNPC()
+            new SuspiciousTrader()
     )),
 
     LOST_SPIRIT(new EventData(

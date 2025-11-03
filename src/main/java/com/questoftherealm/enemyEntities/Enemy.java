@@ -102,12 +102,12 @@ public abstract class Enemy implements Fightable, Lootable {
 
     private static List<EnemyType> enemyPoolForTile(TileTypes type) {
         return switch (type) {
-            case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT, EnemyType.TRAVELING_TRADER);
+            case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT, EnemyType.SUSPICIOUS_TRADER);
             case FOREST -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GOBLIN_HORDE, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
             case SWAMP -> List.of(EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON);
             case MOUNTAIN -> List.of(EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF);
             case WATER -> List.of(EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN);
-            case VILLAGE -> List.of(EnemyType.BANDIT, EnemyType.WOLF, EnemyType.TRAVELING_TRADER);
+            case VILLAGE -> List.of(EnemyType.BANDIT, EnemyType.WOLF, EnemyType.SUSPICIOUS_TRADER);
             case CASTLE -> List.of(EnemyType.DARK_MAGE, EnemyType.SKELETON);
         };
     }

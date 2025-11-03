@@ -1,7 +1,6 @@
 package com.questoftherealm.friendlyEntities;
 
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
-import com.questoftherealm.friendlyEntities.FriendInterfaces.NpcType;
 
 import java.util.Objects;
 
@@ -34,4 +33,6 @@ public abstract class Npc implements Friendly {
     public int hashCode() {
         return Objects.hash(type, id);
     }
+
+    public abstract boolean isHasTalked();
 }

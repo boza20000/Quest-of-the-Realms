@@ -3,7 +3,7 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.Trader;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.enemyEntities.entities.TraderNPC;
+import com.questoftherealm.enemyEntities.entities.SuspiciousTrader;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
@@ -28,7 +28,7 @@ public class Warrior extends Characters implements Trader {
     }
 
     @Override
-    public void buyItem(TraderNPC trader, Item item, int quantity) {
+    public void buyItem(SuspiciousTrader trader, Item item, int quantity) {
 
     }
 

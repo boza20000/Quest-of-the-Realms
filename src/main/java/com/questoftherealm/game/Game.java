@@ -18,7 +18,10 @@ public class Game {
     private final GameUI gameUI = new GameUI();
     private final Console console = new Console();
     public static boolean gameOver = false;
+    public static boolean isSimulation = false;
 
+    public static boolean isSimulation() {return isSimulation;}
+    public static void setSimulation(boolean simulation) {isSimulation = simulation;}
     public static Player getPlayer() {
         return player;
     }

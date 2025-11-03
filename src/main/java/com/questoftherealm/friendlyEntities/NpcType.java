@@ -1,4 +1,4 @@
-package com.questoftherealm.friendlyEntities.FriendInterfaces;
+package com.questoftherealm.friendlyEntities;
 
 public enum NpcType {
     Villager,

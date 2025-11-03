@@ -146,7 +146,7 @@ public final class EnemyConstants {
 
     public static final EnemyData TRAVELING_TRADER = new EnemyData(
             "A traveling trader offering goods",
-            EnemyType.TRAVELING_TRADER,
+            EnemyType.SUSPICIOUS_TRADER,
             40,
             2,
             1,

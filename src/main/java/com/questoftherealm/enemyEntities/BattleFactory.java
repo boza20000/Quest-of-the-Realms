@@ -8,8 +8,4 @@ public class BattleFactory {
         return new Battle(player,enemy);
     }
 
-//    public static Battle createBattle(Player player, List<Enemy> enemies) {
-//        return new Battle(player, enemies);
-//    }
-
 }

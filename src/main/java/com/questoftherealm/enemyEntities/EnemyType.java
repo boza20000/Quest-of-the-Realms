@@ -9,5 +9,5 @@ public enum EnemyType {
     DARK_MAGE,
     GIANT_SPIDER,
     LOST_SPIRIT,
-    TRAVELING_TRADER;
+    SUSPICIOUS_TRADER;
 }
