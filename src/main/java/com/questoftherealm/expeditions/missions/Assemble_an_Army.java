@@ -1,5 +1,6 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.expeditions.quests.GoblinAmbush;
 import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
@@ -15,13 +16,13 @@ public class Assemble_an_Army extends Mission {
     public static boolean reportedToKing = false;
     public static int armyPower = 20;
 
-    public Assemble_an_Army() {
-        super("Assemble an Army", "Rally knights, archers, and mages to face the goblins.");
+    public Assemble_an_Army(Player player) {
+        super("Assemble an Army", "Rally knights, archers, and mages to face the goblins.",player);
     }
     @Override
     public boolean checkCompletion() {
         if(isCompleted())return true;
-        if(Game.getPlayer().getCurQuest() instanceof RiseOfTheGoblinThreat &&
+        if(player.getCurQuest() instanceof RiseOfTheGoblinThreat &&
                 knightsTriedToRecruit && archersTriedToRecruit && magesTriedToRecruit && reportedToKing){
             updateArmyStatus();
             complete();

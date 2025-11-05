@@ -11,8 +11,8 @@ public class Elder extends Npc {
     private final String name = "Evaery";
     private boolean hasTalked = false;
 
-    public Elder() {
-        super(NpcType.Elder);
+    public Elder(String name) {
+        super(NpcType.Elder,name);
     }
 
     @Override

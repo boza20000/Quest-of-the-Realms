@@ -2,6 +2,7 @@ package com.questoftherealm.map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.MapNotLoaded;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 
@@ -33,7 +34,7 @@ public class Map {
             ObjectMapper mapper = new ObjectMapper();
             gameMap = mapper.readValue(is, Tile[][].class);
         } catch (Exception e) {
-            e.printStackTrace();
+           throw new MapNotLoaded("Error occurred while Map was loading");
         }
     }
 

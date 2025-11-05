@@ -40,7 +40,7 @@ public class GameLoop {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println("Sleep failed");
                 }
                 System.out.print("\033[1A\033[2K\r");
             } else {

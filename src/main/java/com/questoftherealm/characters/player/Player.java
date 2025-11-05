@@ -23,6 +23,7 @@ import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Locations;
 import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.TriggerRegister;
+
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
@@ -35,7 +36,7 @@ public class Player implements InventoryHandler, Explorer {
     private final String name;
     private final PlayerTypes playerType;
     private final Characters playerCharacter;
-    private final Inventory inventory;
+    private Inventory inventory;
     private int level;
     private int experience;
     private int gold;
@@ -48,6 +49,7 @@ public class Player implements InventoryHandler, Explorer {
     private Mission curMission;
     private PlayTime playTime;
     private long startTime;
+    private QuestFactory questFactory;
 
     public Player(String name, PlayerTypes type) {
         this.name = name;
@@ -66,10 +68,12 @@ public class Player implements InventoryHandler, Explorer {
         this.x = PLAYER_START.x();
         this.y = PLAYER_START.y();
         this.position = PLAYER_START;
-        this.curQuest = new StartQuest();
-        this.curMission = new Meet_the_Elder();
         this.playTime = new PlayTime(0, 0);
         this.startTime = 0;
+        this.questFactory = new QuestFactory(this);
+        this.curQuest = questFactory.getCurrentQuest();
+        this.curMission = questFactory.getCurrentMission();
+
     }
 
     @JsonCreator
@@ -86,7 +90,8 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("inventory") Inventory inventory,
                   @JsonProperty("curQuest") Quest quest,
                   @JsonProperty("curMission") Mission mission,
-                  @JsonProperty("playTime") PlayTime playTime) {
+                  @JsonProperty("playTime") PlayTime playTime,
+                  @JsonProperty("quests") QuestFactory questFactory) {
         this.name = name;
         this.playerType = playerType;
         this.playerCharacter = PlayerFactory.createPlayer(playerType);
@@ -99,14 +104,25 @@ public class Player implements InventoryHandler, Explorer {
         this.currentZone = currentZone;
         this.weapon = weapon != null ? weapon : playerCharacter.getDefaultWeapon();
         this.armor = armor != null ? armor : new HashMap<>();
-        if (!this.armor.containsKey(ItemEffect.HELMET)) this.armor.put(ItemEffect.HELMET, null);
-        if (!this.armor.containsKey(ItemEffect.CHESTPLATE)) this.armor.put(ItemEffect.CHESTPLATE, null);
-        if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
-        this.inventory = inventory != null ? inventory : new Inventory(MAX_ITEMS_IN_INVENTORY);
+        //fix
+        createArmor();
+        initializeInventory(inventory);
+        //fix
         recalculateStats();
         this.curQuest = quest;
         this.curMission = mission;
         this.playTime = playTime;
+        this.questFactory = questFactory;
+    }
+
+    private void createArmor(){
+        if (!this.armor.containsKey(ItemEffect.HELMET)) this.armor.put(ItemEffect.HELMET, null);
+        if (!this.armor.containsKey(ItemEffect.CHESTPLATE)) this.armor.put(ItemEffect.CHESTPLATE, null);
+        if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
+
+    }
+    private void initializeInventory(Inventory inventory){
+        this.inventory = inventory != null ? inventory : new Inventory(MAX_ITEMS_IN_INVENTORY);
     }
 
     public void addExp(int exp) {
@@ -216,6 +232,14 @@ public class Player implements InventoryHandler, Explorer {
         this.y = position.y();
     }
 
+    public void setQuestFactory(QuestFactory questFactory) {
+        this.questFactory = questFactory;
+    }
+
+    public QuestFactory getQuestFactory() {
+        return questFactory;
+    }
+
     public Quest getCurQuest() {
         return curQuest;
     }
@@ -275,7 +299,7 @@ public class Player implements InventoryHandler, Explorer {
     public void exploreStructure(String structure) {
 
         Locations location = Locations.getStructure(structure);
-        if(location==null){
+        if (location == null) {
             System.out.println("No such location");
             return;
         }
@@ -284,13 +308,13 @@ public class Player implements InventoryHandler, Explorer {
         System.out.println("Do you want to ENTER or LEAVE?");
         System.out.print("> ");
         String line = scanner.nextLine();
-        switch (line.toUpperCase()){
-            case "ENTER" ->{
+        switch (line.toUpperCase()) {
+            case "ENTER" -> {
                 System.out.println("You enter ");
                 ExploreManager interaction = new ExploreManager();
-                interaction.exploreStructure(location,this);
+                interaction.exploreStructure(location, this);
             }
-            case "LEAVE" ->{
+            case "LEAVE" -> {
                 System.out.println("You decide to leave...");
             }
             default -> {
@@ -391,7 +415,8 @@ public class Player implements InventoryHandler, Explorer {
     }
 
     public void updateQuestStatus() {
-        Quest currentQuest = QuestFactory.getCurrentQuest();
+        if (questFactory == null) return;
+        Quest currentQuest = questFactory.getCurrentQuest();
         if (currentQuest == null) {
             System.out.println("🏁 All quests completed!");
             this.curQuest = null;
@@ -399,8 +424,8 @@ public class Player implements InventoryHandler, Explorer {
             return;
         }
         currentQuest.updateStatus();
-        this.curQuest = QuestFactory.getCurrentQuest();
-        this.curMission = QuestFactory.getCurrentMission();
+        this.curQuest = questFactory.getCurrentQuest();
+        this.curMission = questFactory.getCurrentMission();
     }
 
     public void trackPlayTime() {

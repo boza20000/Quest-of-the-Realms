@@ -3,18 +3,18 @@ package com.questoftherealm.friendlyEntities;
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class Npc implements Friendly {
    private final NpcType type;
-   private int id ;
-   private static int idGenerator = 1;
+   private String id ;
 
-    public Npc(NpcType type) {
+    public Npc(NpcType type, String id) {
         this.type = type;
-        this.id = idGenerator++;
+        this.id = id;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -24,9 +24,9 @@ public abstract class Npc implements Friendly {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Npc npc = (Npc) o;
-        return id == npc.id && type == npc.type;
+        if (this == o) return true;
+        if (!(o instanceof Npc npc)) return false;
+        return Objects.equals(id, npc.id) && Objects.equals(type,npc.type);
     }
 
     @Override

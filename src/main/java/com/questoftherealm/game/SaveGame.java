@@ -3,6 +3,7 @@ package com.questoftherealm.game;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.SaveError;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +31,9 @@ public class SaveGame {
             System.out.println("✅ Game saved successfully → " + fileSave.getAbsolutePath());
 
         } catch (IOException e) {
-            System.err.println("❌ Failed to save game: " + e.getMessage());
+            throw new SaveError("❌ Failed to save game: ");
         } catch (Exception e) {
-            System.err.println("❌ Unexpected error while saving: " + e);
+            throw new SaveError("❌ Unexpected error while saving: ");
         }
     }
 }

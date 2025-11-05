@@ -1,50 +1,73 @@
 package com.questoftherealm.expeditions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.quests.*;
 import com.questoftherealm.interaction.SlowPrinter;
-
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class QuestFactory {
-    private static final Queue<Quest> quests = new LinkedList<>();
+    private final Queue<Quest> quests = new LinkedList<>();
+    @JsonIgnore
+    private Player player;
 
-    public QuestFactory() {
-        register(new StartQuest());
-        register(new NorthExploration());
-        register(new GoblinAmbush());
-        register(new RiseOfTheGoblinThreat());
-        register(new FinalBattle());
+    private void registerDefaultQuests(Player player) {
+        player.setQuestFactory(this);
+        register(new StartQuest(player));
+        register(new NorthExploration(player));
+        register(new GoblinAmbush(player));
+        register(new RiseOfTheGoblinThreat(player));
+        register(new FinalBattle(player));
     }
 
-    public static Queue<Quest> getQuests() {
+    public QuestFactory(Player player) {
+        this.player = player;
+        registerDefaultQuests(player);
+    }
+
+    @JsonCreator
+    public QuestFactory(@JsonProperty("quests") Queue<Quest> questList) {
+        if (questList != null) this.quests.addAll(questList);
+    }
+
+    @JsonProperty("quests")
+    public Queue<Quest> getQuests() {
         return quests;
     }
 
-    public static Quest getCurrentQuest() {
+
+    @JsonIgnore
+    public void setPlayer(Player player) {
+        this.player = player;
+        for (Quest quest : quests) {
+            quest.setPlayer(player);
+        }
+    }
+
+    public Quest getCurrentQuest() {
         return quests.peek();
     }
 
-    public static void nextQuest() {
-        if(!quests.isEmpty() && quests.peek().isCompleted()){
+    public void nextQuest() {
+        if (!quests.isEmpty() && quests.peek().isCompleted()) {
             quests.poll();
-        }
-        else if (!quests.isEmpty() && !quests.peek().isCompleted()){
+        } else if (!quests.isEmpty() && !quests.peek().isCompleted()) {
             SlowPrinter.slowPrint("Quest is not completed");
-        }
-        else {
+        } else {
             System.out.println("No more quests available");
         }
     }
 
-    public static Mission getCurrentMission() {
-        if(getCurrentQuest()==null) {
+    public Mission getCurrentMission() {
+        if (getCurrentQuest() == null) {
             return null;
         }
         for (Mission m : getCurrentQuest().getMissions()) {
             if (!m.isCompleted()) {
-              return m;
+                return m;
             }
         }
         return null;
@@ -54,7 +77,7 @@ public class QuestFactory {
         quests.offer(quest);
     }
 
-    public static void listAllQuests() {
+    public void listAllQuests() {
         System.out.println("All quests:");
         quests.forEach((Quest quest) -> System.out.println("Quest:" + quest.getName()));
     }

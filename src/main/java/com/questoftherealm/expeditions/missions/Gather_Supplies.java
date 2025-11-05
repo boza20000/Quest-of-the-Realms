@@ -1,5 +1,6 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.expeditions.quests.NorthExploration;
 import com.questoftherealm.expeditions.quests.StartQuest;
@@ -9,8 +10,8 @@ import com.questoftherealm.items.ItemType;
 import java.util.Map;
 
 public final class Gather_Supplies extends Mission {
-    public Gather_Supplies() {
-        super("Gather Supplies", "Collect at least 1 potion and 5 food for the journey ahead.");
+    public Gather_Supplies(Player player) {
+        super("Gather Supplies", "Collect at least 1 potion and 5 food for the journey ahead.",player);
     }
 
     @Override
@@ -18,7 +19,7 @@ public final class Gather_Supplies extends Mission {
         if(isCompleted())return true;
         boolean hasPotion = false;
         int foodSum = 0;
-        Map<Item, Integer> inventory = Game.getPlayer().getInventory().getItems();
+        Map<Item, Integer> inventory = player.getInventory().getItems();
         for (Item i : inventory.keySet()) {
             int quantity = inventory.get(i);
             if (i.getType() == ItemType.POTION && quantity >= 1) {
@@ -28,7 +29,7 @@ public final class Gather_Supplies extends Mission {
                 foodSum += quantity;
             }
         }
-        if (Game.getPlayer().getCurQuest() instanceof StartQuest && hasPotion && foodSum >= 5) {
+        if (player.getCurQuest() instanceof StartQuest && hasPotion && foodSum >= 5) {
             complete();
             return true;
         }

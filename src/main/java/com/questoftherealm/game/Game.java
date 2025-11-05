@@ -14,7 +14,6 @@ import java.util.Queue;
 public class Game {
     private static Player player;
     private static Map gameMap;
-    private static Queue<Quest> gameQuests;
     private final GameUI gameUI = new GameUI();
     private final Console console = new Console();
     public static boolean gameOver = false;
@@ -22,20 +21,12 @@ public class Game {
 
     public static boolean isSimulation() {return isSimulation;}
     public static void setSimulation(boolean simulation) {isSimulation = simulation;}
-    public static Player getPlayer() {
-        return player;
-    }
-    public static void setGameQuests(Queue<Quest> gameQuests) {
-        Game.gameQuests = gameQuests;
-    }
+    public static Player getPlayer() {return player;}
     public static void setPlayer(Player player) {
         Game.player = player;
     }
     public static Map getGameMap() {
         return gameMap;
-    }
-    public static Queue<Quest> getQuests() {
-        return gameQuests;
     }
 
 
@@ -113,13 +104,6 @@ public class Game {
             System.out.println("Map unavailable");
             System.out.println("restart game");
             System.exit(0);
-        }
-        //quests instance
-        try {
-            new QuestFactory();
-            gameQuests = QuestFactory.getQuests();
-        } catch (Exception e) {
-            System.out.println("Story Quests unavailable");
         }
         //load game type
         switch (gameType) {

@@ -31,7 +31,7 @@ public class LoadGame {
                 ObjectMapper mapper = new ObjectMapper();
                 Game.setPlayer(mapper.readValue(savedFile, Player.class));
             } else {
-                throw new FileNotFoundException();
+                throw new FileNotFoundException("File not found");
             }
         } catch (Exception e) {
             throw new FileNotLoaded("File no loaded");
@@ -45,6 +45,10 @@ public class LoadGame {
             if (saveDir.exists() && saveDir.isDirectory()) {
                 List<File> savedFiles = List.of(Objects.requireNonNull(saveDir.listFiles((dir, name) -> name.endsWith(".json"))));
                 System.out.println("-----------Saves-----------");
+                if(savedFiles.isEmpty()){
+                    System.out.println("You don't have saves");
+                    return;
+                }
                 for (File f : savedFiles) {
                     System.out.println(f.getName());
                 }
@@ -54,7 +58,7 @@ public class LoadGame {
                 System.out.println("Saves not found directory does not exist or name mismatched");
             }
         } catch (Exception e) {
-            throw new SavesNotFound("saves not available");
+            throw new SavesNotFound("Saves not available");
         }
     }
 }

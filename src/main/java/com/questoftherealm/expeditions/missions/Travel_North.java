@@ -10,14 +10,13 @@ import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 
 public class Travel_North extends Mission {
-    public Travel_North() {
-        super("Travel North", "Journey through forests and mountains to reach the northern region.");
+    public Travel_North(Player player) {
+        super("Travel North", "Journey through forests and mountains to reach the northern region.",player);
     }
 
     @Override
     public boolean checkCompletion() {
         if(isCompleted())return true;
-        Player player = Game.getPlayer();
         int y = player.getY();
         if ((player.getCurQuest() instanceof NorthExploration) && y <= GameConstants.North_Y) {
             complete();

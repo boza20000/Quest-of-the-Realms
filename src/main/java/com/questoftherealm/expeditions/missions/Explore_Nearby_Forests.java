@@ -11,14 +11,13 @@ public class Explore_Nearby_Forests extends Mission {
 
     public static boolean campFound = false;
 
-    public Explore_Nearby_Forests() {
-        super("Find the creatures", "Explore the forest near the village and search for potential camp");
+    public Explore_Nearby_Forests(Player player) {
+        super("Find the creatures", "Explore the forest near the village and search for potential camp",player);
     }
 
     @Override
     public boolean checkCompletion() {
         if(isCompleted())return true;
-        Player player = Game.getPlayer();
         Position pos = new Position(player.getX(),player.getY());
         if(Game.getPlayer().getCurQuest() instanceof GoblinAmbush && pos.equals(GameConstants.Goblin_Camp)){
             complete();

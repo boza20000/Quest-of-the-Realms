@@ -24,7 +24,9 @@ public final class TriggerRegister {
         triggers.add(new LocationTrigger(GameConstants.NorthVillage_1, player -> {
             if (player.getCurQuest() instanceof NorthExploration) {
                 MissionInteractions.villageIntro_1();
-                Explore_the_Village.setSearched_1(true);
+                Explore_the_Village exploreTheVillage =(Explore_the_Village) player.getCurMission();
+                exploreTheVillage.setSearched_1(true);
+               // Explore_the_Village.setSearched_1(true);
             }
         }));
 
@@ -32,7 +34,9 @@ public final class TriggerRegister {
         triggers.add(new LocationTrigger(GameConstants.NorthVillage_2, player -> {
             if (player.getCurQuest() instanceof NorthExploration) {
                 MissionInteractions.villageIntro_2();
-                Explore_the_Village.setSearched_2(true);
+                Explore_the_Village exploreTheVillage =(Explore_the_Village) player.getCurMission();
+                exploreTheVillage.setSearched_2(true);
+              //  Explore_the_Village.setSearched_2(true);
             }
         }));
 

@@ -2,9 +2,8 @@ package com.questoftherealm.spells;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.spells.interfaces.DamageSpell;
 
-public class Fireball extends Spell implements DamageSpell {
+public class Fireball extends DamageSpell {
 
     public Fireball() {
         super("Fireball", 25, "A blazing orb of fire that scorches your enemies.", 5);

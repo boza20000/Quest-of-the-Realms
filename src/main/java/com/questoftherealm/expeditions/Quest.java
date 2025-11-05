@@ -2,6 +2,7 @@ package com.questoftherealm.expeditions;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.quests.*;
 import java.util.List;
 import java.util.Objects;
@@ -24,11 +25,13 @@ public abstract class Quest {
     private final String name;
     private final String description;
     private boolean completed = false;
+    private Player player;
 
-    public Quest(String name, List<Mission> missions, String description) {
+    public Quest(String name, List<Mission> missions, String description,Player player) {
         this.missions = missions;
         this.description = description;
         this.name = name;
+        this.player = player;
     }
 
     public boolean isCompleted() {
@@ -41,6 +44,10 @@ public abstract class Quest {
 
     public String getDescription() {
         return description;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public List<Mission> getMissions() {
@@ -58,7 +65,7 @@ public abstract class Quest {
         }
         if (isAllReady) {
             this.setCompleted(true);
-            QuestFactory.nextQuest();
+            player.getQuestFactory().nextQuest();
             System.out.println("You have completed this quest successfully");
         }
     }
@@ -83,5 +90,12 @@ public abstract class Quest {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+        for (Mission m :getMissions()){
+            m.setPlayer(player);
+        }
     }
 }

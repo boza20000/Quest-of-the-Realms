@@ -2,9 +2,8 @@ package com.questoftherealm.spells;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.spells.interfaces.DamageSpell;
 
-public class LightningBolt extends Spell implements DamageSpell {
+public class LightningBolt extends DamageSpell {
 
     public LightningBolt() {
         super("Lightning Bolt", 30, "A crackling bolt of lightning strikes your enemy.", 7);

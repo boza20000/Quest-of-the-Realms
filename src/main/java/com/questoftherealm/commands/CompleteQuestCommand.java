@@ -28,7 +28,7 @@ public class CompleteQuestCommand extends Command {
         List<Mission> missions = List.of();
         if (player.getCurQuest() != null) {
             try {
-                missions = Game.getQuests().peek().getMissions();
+                missions = player.getQuestFactory().getQuests().peek().getMissions();
             } catch (NullPointerException e) {
                 e.getSuppressed();
                 System.out.println("Missions unavailable they are null");

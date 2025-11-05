@@ -8,8 +8,8 @@ import com.questoftherealm.interaction.SlowPrinter;
 public class King extends Npc {
     public static boolean hasTalkedToTheKing = false;
 
-    public King() {
-        super(NpcType.King);
+    public King(String name) {
+        super(NpcType.King,name);
     }
 
     @Override

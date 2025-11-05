@@ -5,17 +5,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
+import com.questoftherealm.exceptions.StructureNotGenerated;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
 public class Tile {
@@ -26,7 +29,8 @@ public class Tile {
     private List<Enemy> enemies = new ArrayList<>();
     private List<ItemDrop> drops = new ArrayList<>();
     private boolean contentGenerated = false;
-    private final Map<Integer, Npc> npcRegister = new HashMap<>();
+    private final Map<String, Npc> npcRegister = new HashMap<>();
+
     @JsonCreator
     public Tile(@JsonProperty("type") TileTypes type, @JsonProperty("description") String description, @JsonProperty("walkable") boolean walkable) {
         this.type = type;
@@ -82,15 +86,19 @@ public class Tile {
     }
 
     void generateContent() {
-        if (structure == null) {
-            this.structure = Locations.generateLocation(type);
-        }
-        this.enemies = Enemy.generateEnemies(type);
-        this.drops.clear();
         try {
+            if (structure == null) {
+                this.structure = Locations.generateLocation(type);
+            }
+            this.enemies = Enemy.generateEnemies(type);
+            this.drops.clear();
             generateItems();
         } catch (RandomItemNotGenerated e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error occurred random items were not generated");
+        } catch (StructureNotGenerated e) {
+            System.out.println("Error occurred structure was not generated");
+        } catch (Exception e) {
+            System.out.println("Error occurred while generating content");
         }
         contentGenerated = true;
     }
@@ -180,7 +188,7 @@ public class Tile {
         npcRegister.put(npc.getId(), npc);
     }
 
-    public Npc getNpcById(int id) {
+    public Npc getNpcById(String id) {
         return npcRegister.get(id);
     }
 
