@@ -8,6 +8,7 @@ import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_King;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -17,31 +18,10 @@ public class GoblinKingManager {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void goblinKingdomFound() {
-        SlowPrinter.slowPrint(
-                """
-                        🌄 You and your elite strike team reach the Far North Mountains...
-                        The wind howls through jagged peaks as twilight fades into blackness.
-                        Ahead, faint torches flicker — the entrance to the Goblin Kingdom.
-                        
-                        🕳️ You slip inside the cavern, the walls glowing faintly with strange fungus.
-                        Voices echo deeper within — guttural and harsh. You creep closer...
-                        
-                        🔥 You peer around a bend and see a massive cavern filled with goblins.
-                        Hundreds kneel before a towering goblin with a bone crown — the Goblin King.
-                        He snarls in fury: 'Our armies… crushed by humans?! Useless worms!'
-                        He grabs one of his generals by the throat and snaps his neck.
-                        'Send word to the tribes in the Frozen Wastes! We will rebuild — BIGGER!'
-                        
-                        The goblins cheer, pounding their weapons on the ground in rage.
-                        Your lieutenant whispers: 'If we act now, we can end this war before it begins.'
-                        
-                        You must decide the fate of this battle.
-                        """
-        );
+        SlowPrinter.slowPrint("🌄 " + MessageBundle.get("goblinking.intro"));
         Breach_the_Stronghold.isBreached = true;
 
-        System.out.println("\n1️⃣ Sneak through the stronghold and assassinate the King silently.");
-        System.out.println("2️⃣ Lead an all-out assault and crush the goblin horde head-on!");
+        System.out.println(MessageBundle.get("goblinking.choice.menu"));
         int choice;
         try {
             choice = scanner.nextInt();
@@ -55,57 +35,19 @@ public class GoblinKingManager {
         }
     }
 
-    //aggressive infiltration
     private static void fullAssault() {
-        SlowPrinter.slowPrint(
-                """
-                        ⚔️ You rally your team and raise your sword high!
-                        'FOR THE REALM!' you cry — and charge into the heart of the stronghold.
-                        
-                        The goblins reel in shock as your warriors crash into their ranks.
-                        Fire and steel fill the air — the tunnels burn red with war.
-                        """
-        );
+        SlowPrinter.slowPrint("⚔️ " + MessageBundle.get("goblinking.assault.start"));
+        SlowPrinter.slowPrint("💥 " + MessageBundle.get("goblinking.assault.mid"));
 
-        SlowPrinter.slowPrint(
-                """
-                        💥 The Goblin King roars in rage and flees deeper into the mountain.
-                        You pursue — blades clash in the dark, until he turns to face you.
-                        
-                        The King strikes down one of your comrades with a crushing blow!
-                        'You took my army,' he growls, 'but I’ll take your life!'
-                        
-                        The others fall back — this fight is yours alone.
-                        """
-        );
-
-        System.out.println("🔥 Boss Fight Begins: The Goblin King!");
+        System.out.println("🔥 " + MessageBundle.get("goblinking.assault.fight"));
         startBossFight();
     }
 
-    //silent approach
     private static void stealthInfiltration() {
-        SlowPrinter.slowPrint(
-                """
-                        🕶️ You motion for silence and melt into the shadows.
-                        Step by step, you and your team slip between patrols.
-                        You dispatch guards with silent blades and muffled cries.
-                        Each tunnel brings you closer to the throne chamber...
-                        """
-        );
+        SlowPrinter.slowPrint("🕶️ " + MessageBundle.get("goblinking.stealth.start"));
         pause();
 
-        SlowPrinter.slowPrint(
-                """
-                        💀 At last, you see him — the Goblin King upon his bone throne,
-                        barking orders to his generals. He hasn’t noticed you.
-                        
-                        You count the guards — six of them. Your team moves in position.
-                        
-                        1️⃣ Take the shot — assassinate the guards and rush the King.
-                        2️⃣ Wait for the perfect moment — strike when he’s alone.
-                        """
-        );
+        SlowPrinter.slowPrint("💀 " + MessageBundle.get("goblinking.stealth.throne"));
 
         int subChoice;
         try {
@@ -113,81 +55,41 @@ public class GoblinKingManager {
         } catch (Exception e) {
             subChoice = random.nextInt(1, 3);
         }
+
         if (subChoice == 1) {
-            SlowPrinter.slowPrint(
-                    """
-                            ⚡ You give the signal — arrows and daggers fly!
-                            The guards fall before they can raise the alarm.
-                            The King roars in fury, summoning dark magic.
-                            Together, you and your squad charge!
-                            """
-            );
+            SlowPrinter.slowPrint("⚡ " + MessageBundle.get("goblinking.stealth.attack"));
             Defeat_the_Goblin_King.isDefeated = true;
-
-            SlowPrinter.slowPrint("""
-                    👑 The Goblin King falls beneath a storm of steel and fire.
-                    🎉 The realm is saved — the goblin threat is ended at last!
-                     You all go to the designated meeting spot with minimal casualties
-                     and reunite with the rest of the group that intercepted the scouts.
-                     Together you go out of the mountains and head to the castle...
-                    """);
-
+            SlowPrinter.slowPrint("👑 " + MessageBundle.get("goblinking.stealth.success"));
         } else {
-            SlowPrinter.slowPrint(
-                    """
-                            ⏳ You wait... the King dismisses his generals.
-                            The moment his guards leave, you strike like a shadow.
-                            One clean thrust — and the war ends in silence.
-                            """
-            );
+            SlowPrinter.slowPrint("⏳ " + MessageBundle.get("goblinking.stealth.wait"));
             Defeat_the_Goblin_King.isDefeated = true;
-            SlowPrinter.slowPrint("""
-                    ✨The Goblin King dies without a word. The mission is success...
-                     You sneak back out of the cave..
-                     After that you go to the designated meeting spot and reunite with the rest of the group.
-                     Together you go out of the mountains and head to the castle...""");
+            SlowPrinter.slowPrint("✨ " + MessageBundle.get("goblinking.stealth.silent.success"));
         }
     }
 
-
-
-    //1v1 with the king boss
     private static void startBossFight() {
         Characters character = Game.getPlayer().getPlayerCharacter();
         GoblinKing king = new GoblinKing();
         int round = 1;
 
-        SlowPrinter.slowPrint(
-                """
-                        👑 The Goblin King towers before you, his armor glimmering red in the firelight.
-                        He growls: "You think victory over my generals makes you a hero? Foolish mortal!"
-                        Sparks fall from the cavern ceiling as the final battle begins...
-                        """
-        );
+        SlowPrinter.slowPrint("👑 " + MessageBundle.get("goblinking.boss.intro"));
 
         while (!character.isDead() && !king.isDead()) {
             System.out.println("\n🔥 ROUND " + round++ + " 🔥");
-            System.out.println("💚 Your HP: " + character.getHealth() + " | 🔵 Mana: " + character.getMana());
-            System.out.println("❤️ Goblin King HP: " + king.getHealth());
-            SlowPrinter.slowPrint("\n" + king.getName() + " raises his sword...");
+            System.out.println("💚 " + MessageBundle.get("goblinking.status.player", character.getHealth(), character.getMana()));
+            System.out.println("❤️ " + MessageBundle.get("goblinking.status.boss", king.getHealth()));
+            SlowPrinter.slowPrint("\n" + king.getName() + " " + MessageBundle.get("goblinking.boss.prepare"));
 
-            int bossMove = random.nextInt(5); // 0: heavy swing, 1: charge, 2: feint, 3: surprise attack, 4: super attack
+            int bossMove = random.nextInt(5);
             switch (bossMove) {
-                case 0 -> System.out.println("⚔️ " + king.getName() + " prepares a crushing overhead swing!");
-                case 1 -> System.out.println("🏃‍♂️ " + king.getName() + " charges forward with fury!");
-                case 2 -> System.out.println("😈 " + king.getName() + " feints left, trying to bait your move!");
-                case 3 ->
-                        System.out.println("💨 " + king.getName() + " disappears into the shadows for a surprise strike!");
-                case 4 ->
-                        System.out.println("🌋 " + king.getName() + " channels dark fire — his ultimate attack is coming!");
+                case 0 -> System.out.println("⚔️ " + MessageBundle.get("goblinking.boss.move.0"));
+                case 1 -> System.out.println("🏃‍♂️ " + MessageBundle.get("goblinking.boss.move.1"));
+                case 2 -> System.out.println("😈 " + MessageBundle.get("goblinking.boss.move.2"));
+                case 3 -> System.out.println("💨 " + MessageBundle.get("goblinking.boss.move.3"));
+                case 4 -> System.out.println("🌋 " + MessageBundle.get("goblinking.boss.move.4"));
             }
 
-            System.out.println("\nYour action:");
-            System.out.println("1️⃣ Dodge (uses Mana)");
-            System.out.println("2️⃣ Block (reduces damage)");
-            System.out.println("3️⃣ Counterattack (risky, high reward)");
-            System.out.println("4️⃣ Hide behind a pillar (chance for surprise attack)");
-            System.out.println("5️⃣ Use potion and attack (risky but powerful)");
+            System.out.println(MessageBundle.get("goblinking.player.menu"));
             System.out.print("> ");
             String input = scanner.nextLine();
 
@@ -205,118 +107,96 @@ public class GoblinKingManager {
                     if (character.getMana() >= 5) {
                         character.setMana(character.getMana() - 5);
                         if (random.nextInt(100) < 60) {
-                            System.out.println("💨 You roll aside — the King's blade slams into the stone floor!");
+                            System.out.println("💨 " + MessageBundle.get("goblinking.player.dodge.success"));
                         } else {
-                            System.out.println("❌ Too slow! The edge grazes your arm!");
+                            System.out.println("❌ " + MessageBundle.get("goblinking.player.dodge.fail"));
                             damageToPlayer = king.getBaseAttack() / 2;
                         }
                     } else {
-                        System.out.println("⚠️ Not enough mana to dodge!");
+                        System.out.println("⚠️ " + MessageBundle.get("goblinking.player.nomana"));
                         damageToPlayer = king.getBaseAttack();
                     }
                 }
                 case 2 -> { // Block
-                    System.out.println("🛡️ You brace your weapon and prepare for the hit!");
+                    System.out.println("🛡️ " + MessageBundle.get("goblinking.player.block"));
                     damageToPlayer = king.getBaseAttack() / 3;
                     if (random.nextInt(100) < 30) {
-                        System.out.println("💥 You parry his strike and counterattack!");
+                        System.out.println("💥 " + MessageBundle.get("goblinking.player.parry"));
                         damageToBoss = character.getAttack() / 2;
                     }
                 }
                 case 3 -> { // Counterattack
-                    System.out.println("⚔️ You watch his movements closely...");
+                    System.out.println("⚔️ " + MessageBundle.get("goblinking.player.counter.start"));
                     if (random.nextInt(100) < 45) {
-                        System.out.println("🔥 You strike just as he exposes his flank!");
+                        System.out.println("🔥 " + MessageBundle.get("goblinking.player.counter.success"));
                         damageToBoss = character.getAttack();
                     } else {
-                        System.out.println("💀 You mistime your strike — the King smashes you aside!");
+                        System.out.println("💀 " + MessageBundle.get("goblinking.player.counter.fail"));
                         damageToPlayer = king.getBaseAttack();
                     }
                 }
-                case 4 -> { // Hide behind a pillar
-                    System.out.println("🏗️ You dive behind a pillar. The King roars in confusion...");
+                case 4 -> { // Hide
+                    System.out.println("🏗️ " + MessageBundle.get("goblinking.player.hide"));
                     if (random.nextInt(100) < 60) {
-                        System.out.println("🎯 You leap out and stab him in the back!");
+                        System.out.println("🎯 " + MessageBundle.get("goblinking.player.hide.success"));
                         damageToBoss = (int) (character.getAttack() * 1.3);
                     } else {
-                        System.out.println("💀 The King smashes through the stone — debris slams into you!");
+                        System.out.println("💀 " + MessageBundle.get("goblinking.player.hide.fail"));
                         damageToPlayer = (int) (king.getBaseAttack() * 1.2);
                     }
                 }
-                case 5 -> { // Potion + attack
+                case 5 -> { // Potion
                     try {
                         String item = scanner.nextLine();
                         Item i = ItemRegistry.getItem(item);
                         Game.getPlayer().useItem(i);
                     } catch (Exception e) {
-                        System.out.println("⚠️ Item unavailable!");
+                        System.out.println("⚠️ " + MessageBundle.get("goblinking.player.itemfail"));
                     }
-                    System.out.println("💥 You charge in with reckless fury!");
+                    System.out.println("💥 " + MessageBundle.get("goblinking.player.attack"));
                     if (random.nextInt(100) < 50) {
                         damageToBoss = (int) (character.getAttack() * 1.5);
-                        System.out.println("🔥 Your blade cuts deep into the King's chest!");
+                        System.out.println("🔥 " + MessageBundle.get("goblinking.player.attack.success"));
                     } else {
-                        System.out.println("😖 The King sidesteps and slashes your side!");
+                        System.out.println("😖 " + MessageBundle.get("goblinking.player.attack.fail"));
                         damageToPlayer = (int) (king.getBaseAttack() * 1.2);
                     }
                 }
                 default -> {
-                    System.out.println("😨 You hesitate — the Goblin King takes advantage!");
+                    System.out.println("😨 " + MessageBundle.get("goblinking.player.hesitate"));
                     damageToPlayer = king.getBaseAttack();
                 }
             }
 
-            // Boss Super Attack (only if move 4)
             if (bossMove == 4 && random.nextInt(100) < 60) {
-                System.out.println("🌪️ The King unleashes a wave of dark fire!");
+                System.out.println("🌪️ " + MessageBundle.get("goblinking.boss.super"));
                 damageToPlayer += (int) (king.getBaseAttack() * 1.5);
             }
 
-            // Enrage phase when HP < 20%
             if ((double) king.getHealth() / CharacterConstants.GoblinKing_HEALTH <= 0.2 && random.nextInt(100) < 40) {
-                System.out.println("💢 The Goblin King bellows in fury — his strength surges!");
+                System.out.println("💢 " + MessageBundle.get("goblinking.boss.enrage"));
                 king.setAttack((int) (king.getBaseAttack() * 1.3));
             }
 
-            // Apply damage
             if (damageToBoss > 0) {
                 king.takeDamage(damageToBoss);
-                System.out.println("💥 You deal " + damageToBoss + " damage!");
+                System.out.println("💥 " + MessageBundle.get("goblinking.damage.boss", damageToBoss));
             }
             if (damageToPlayer > 0) {
                 character.takeDamage(damageToPlayer);
-                System.out.println("😖 You take " + damageToPlayer + " damage!");
+                System.out.println("😖 " + MessageBundle.get("goblinking.damage.player", damageToPlayer));
             }
 
-            if (!king.isDead() && !character.isDead()) {
-                pause();
-            }
+            if (!king.isDead() && !character.isDead()) pause();
         }
 
-        // === After the fight ===
         if (king.isDead()) {
-            SlowPrinter.slowPrint(
-                    """
-                            ⚔️ With a final cry, you drive your weapon through the Goblin King's heart!
-                            His crown shatters — his reign ends in silence.
-                            👑 The Goblin Kingdom falls. The war is over.
-                            """
-            );
+            SlowPrinter.slowPrint("⚔️ " + MessageBundle.get("goblinking.boss.death"));
             Defeat_the_Goblin_King.isDefeated = true;
         } else {
-            SlowPrinter.slowPrint(
-                    """
-                            💀 The Goblin King lets out a guttural laugh as his blade pierces your chest.
-                            Darkness closes in... your vision fades.
-                            The last thing you hear is the echo of his victory roar.
-                            """
-            );
+            SlowPrinter.slowPrint("💀 " + MessageBundle.get("goblinking.boss.playerdeath"));
             character.setHealth(0);
         }
-    }
-
-    private static void doge(){
-
     }
 
     private static void pause() {

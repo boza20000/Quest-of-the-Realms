@@ -5,6 +5,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.MapNotLoaded;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.io.InputStream;
 
@@ -28,13 +29,13 @@ public class Map {
     private void loadMap() {
         try (InputStream is = Map.class.getResourceAsStream("/map.json")) {
             if (is == null) {
-                System.out.println("map.json not found. Generating random map instead.");
-                return;
+                System.out.println(MessageBundle.get("map.notFound.error"));
+                System.exit(0);
             }
             ObjectMapper mapper = new ObjectMapper();
             gameMap = mapper.readValue(is, Tile[][].class);
         } catch (Exception e) {
-           throw new MapNotLoaded("Error occurred while Map was loading");
+           throw new MapNotLoaded(MessageBundle.get("map.load.error"));
         }
     }
 

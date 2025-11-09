@@ -4,16 +4,17 @@ import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.friendlyEntities.Entities.King;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.friendlyEntities.Npc;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Tile;
 import com.questoftherealm.map.Map;
 
 public class NpcInitializer {
 
     public static void registerAll(Map gameMap) {
-        Npc villager1 = new Villager("North_Villager_1");
-        Villager villager2 = new Villager("North_Villager_2");
-        King king = new King("King_MainHall");
-        Elder elder = new Elder("Elder_Castle");
+        Npc villager1 = new Villager(MessageBundle.get("npc.northVillager1"));
+        Villager villager2 = new Villager(MessageBundle.get("npc.northVillager2"));
+        King king = new King(MessageBundle.get("npc.king"));
+        Elder elder = new Elder(MessageBundle.get("npc.elder"));
 
         //castle
         Tile castleTile = gameMap.curZone(GameConstants.Castle.x(),GameConstants.Castle.y());

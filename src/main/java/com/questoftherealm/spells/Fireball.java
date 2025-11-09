@@ -2,11 +2,12 @@ package com.questoftherealm.spells;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.localization.MessageBundle;
 
 public class Fireball extends DamageSpell {
 
     public Fireball() {
-        super("Fireball", 25, "A blazing orb of fire that scorches your enemies.", 5);
+        super(MessageBundle.get("spells.fireball.name"), 25, MessageBundle.get("spells.fireball.description"), 5);
     }
 
     public void castFireball(Player player, Enemy enemy) {

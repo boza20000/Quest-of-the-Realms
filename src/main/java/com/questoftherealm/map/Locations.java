@@ -1,20 +1,58 @@
 package com.questoftherealm.map;
 
+import com.questoftherealm.localization.MessageBundle;
 import java.util.concurrent.ThreadLocalRandom;
 
 public enum Locations {
-    ABANDONED_TOWER(new LocationData("Abandoned Tower", "A crumbling tower that once served as a lookout, now eerily silent.")),
-    FORGOTTEN_RUINS(new LocationData("Forgotten Ruins", "The remains of a lost civilization, swallowed by time.")),
-    CRUMBLING_WATCHTOWER(new LocationData("Crumbling Watchtower", "Once a proud guard post, now reduced to rubble.")),
-    MAGES_TOWER(new LocationData("Mage’s Tower", "A spire where a sorcerer once dwelled, filled with lingering magic.")),
-    IRON_MINE(new LocationData("Iron Mine", "A mine carved into the earth, rich in ore but plagued with danger.")),
-    SHADOW_CAVERN(new LocationData("Shadow Cavern", "A yawning cave said to shelter creatures of the dark.")),
-    SACRED_GROVE(new LocationData("Sacred Grove", "An ancient place, protected by nature’s magic.")),
-    CRYSTAL_LAKE(new LocationData("Crystal Lake", "Shimmering waters that seem to hum with magical energy.")),
-    BANDIT_CAMP(new LocationData("Bandit Camp", "A rough encampment of outlaws and thieves.")),
-    SUNKEN_SWAMP(new LocationData("Sunken Swamp", "Rotting wetlands where the unwary often vanish.")),
-    ANCIENT_ALTAR(new LocationData("Ancient Altar", "A stone altar covered in strange markings, radiating mystery.")),
-    ABANDONED_HUT(new LocationData("Abandoned Hut", "A decrepit shack, its walls sagging with secrets long forgotten."));
+
+    ABANDONED_TOWER(new LocationData(
+            MessageBundle.get("location.abandonedTower.name"),
+            MessageBundle.get("location.abandonedTower.desc")
+    )),
+    FORGOTTEN_RUINS(new LocationData(
+            MessageBundle.get("location.forgottenRuins.name"),
+            MessageBundle.get("location.forgottenRuins.desc")
+    )),
+    CRUMBLING_WATCHTOWER(new LocationData(
+            MessageBundle.get("location.crumblingWatchtower.name"),
+            MessageBundle.get("location.crumblingWatchtower.desc")
+    )),
+    MAGES_TOWER(new LocationData(
+            MessageBundle.get("location.magesTower.name"),
+            MessageBundle.get("location.magesTower.desc")
+    )),
+    IRON_MINE(new LocationData(
+            MessageBundle.get("location.ironMine.name"),
+            MessageBundle.get("location.ironMine.desc")
+    )),
+    SHADOW_CAVERN(new LocationData(
+            MessageBundle.get("location.shadowCavern.name"),
+            MessageBundle.get("location.shadowCavern.desc")
+    )),
+    SACRED_GROVE(new LocationData(
+            MessageBundle.get("location.sacredGrove.name"),
+            MessageBundle.get("location.sacredGrove.desc")
+    )),
+    CRYSTAL_LAKE(new LocationData(
+            MessageBundle.get("location.crystalLake.name"),
+            MessageBundle.get("location.crystalLake.desc")
+    )),
+    BANDIT_CAMP(new LocationData(
+            MessageBundle.get("location.banditCamp.name"),
+            MessageBundle.get("location.banditCamp.desc")
+    )),
+    SUNKEN_SWAMP(new LocationData(
+            MessageBundle.get("location.sunkenSwamp.name"),
+            MessageBundle.get("location.sunkenSwamp.desc")
+    )),
+    ANCIENT_ALTAR(new LocationData(
+            MessageBundle.get("location.ancientAltar.name"),
+            MessageBundle.get("location.ancientAltar.desc")
+    )),
+    ABANDONED_HUT(new LocationData(
+            MessageBundle.get("location.abandonedHut.name"),
+            MessageBundle.get("location.abandonedHut.desc")
+    ));
 
     private final LocationData data;
 
@@ -22,27 +60,27 @@ public enum Locations {
         this.data = data;
     }
 
-    public String getName(){
+    public String getName() {
         return data.name();
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return data.description();
     }
 
     public static Locations generateLocation(TileTypes type) {
         return switch (type) {
-            case GRASS -> randomOf(Locations.SACRED_GROVE, Locations.ABANDONED_HUT, Locations.ANCIENT_ALTAR);
-            case FOREST -> randomOf(Locations.FORGOTTEN_RUINS, Locations.CRUMBLING_WATCHTOWER, Locations.ABANDONED_TOWER);
-            case SWAMP -> randomOf(Locations.SUNKEN_SWAMP, Locations.SHADOW_CAVERN, Locations.BANDIT_CAMP);
+            case GRASS -> randomOf(SACRED_GROVE, ABANDONED_HUT, ANCIENT_ALTAR);
+            case FOREST -> randomOf(FORGOTTEN_RUINS, CRUMBLING_WATCHTOWER, ABANDONED_TOWER);
+            case SWAMP -> randomOf(SUNKEN_SWAMP, SHADOW_CAVERN, BANDIT_CAMP);
             case VILLAGE, CASTLE -> null;
-            case MOUNTAIN -> randomOf(Locations.IRON_MINE, Locations.ABANDONED_TOWER, Locations.CRUMBLING_WATCHTOWER);
-            case WATER -> randomOf(Locations.CRYSTAL_LAKE);
+            case MOUNTAIN -> randomOf(IRON_MINE, ABANDONED_TOWER, CRUMBLING_WATCHTOWER);
+            case WATER -> randomOf(CRYSTAL_LAKE);
         };
     }
 
     private static Locations randomOf(Locations... options) {
-        return options[ThreadLocalRandom.current().nextInt(options.length)];//returns random location
+        return options[ThreadLocalRandom.current().nextInt(options.length)];
     }
 
     public static Locations getStructure(String structure) {
@@ -58,5 +96,4 @@ public enum Locations {
         }
         return null;
     }
-
 }

@@ -6,6 +6,7 @@ import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemKeyDeserializer;
 import com.questoftherealm.items.ItemKeySerializer;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +31,10 @@ public class Inventory {
             int sum = curItemQuantity + quantity;
             if (sum <= GameConstants.MAX_ITEMS_IN_STACK) {
                 items.put(item, sum);
-                System.out.println(quantity + " x " + item + " added (now " + sum + ").");
+                System.out.println(MessageBundle.get("inventory.added", quantity, item, sum));
             } else {
-                System.out.println("Cannot carry more than " + GameConstants.MAX_ITEMS_IN_STACK + " of " + item.getName() + ".");
+                System.out.println(MessageBundle.get("inventory.cannotCarry",
+                        GameConstants.MAX_ITEMS_IN_STACK, item.getName()));
             }
         } else {
             int curItemQuantity = items.getOrDefault(item, 0);
@@ -40,13 +42,12 @@ public class Inventory {
 
             if (items.size() < capacity || items.containsKey(item)) {
                 items.put(item, newTotal);
-                System.out.println(quantity + " x " + item + " added (now " + newTotal + ").");
+                System.out.println(MessageBundle.get("inventory.added", quantity, item, newTotal));
             } else {
-                System.out.println("Inventory full! Cannot add " + item.getName());
+                System.out.println(MessageBundle.get("inventory.full", item.getName()));
             }
         }
     }
-
 
     public void removeItem(Item item, int quantity) {
         if (items.containsKey(item)) {
@@ -56,24 +57,24 @@ public class Inventory {
             } else {
                 items.put(item, current - quantity);
             }
-            System.out.println(quantity + " x " + item + " removed.");
+            System.out.println(MessageBundle.get("inventory.removed", quantity, item));
         } else {
-            System.out.println(item + " not found.");
+            System.out.println(MessageBundle.get("inventory.notFound", item));
         }
     }
 
     public void listItems() {
         if (items.isEmpty()) {
-            System.out.println("Inventory is empty.");
+            System.out.println(MessageBundle.get("inventory.isEmpty"));
         } else {
-            System.out.println("=== Inventory ===");
-            items.forEach((item, qty) -> System.out.println("- " + item + " x" + qty));
+            System.out.println(MessageBundle.get("inventory.printStart"));
+            items.forEach((item, qty) ->
+                    System.out.println(MessageBundle.get("inventory.listItems", item, qty)));
         }
     }
 
     public Map<Item, Integer> getItems() {
-        return new HashMap<>(items) {
-        };
+        return new HashMap<>(items);
     }
 
     public int getQuantity(Item item) {
@@ -81,11 +82,10 @@ public class Inventory {
     }
 
     public boolean containsItem(Item item) {
-        return getItems().containsKey(item);
+        return items.containsKey(item);
     }
 
-    public void clear(){
+    public void clear() {
         items.clear();
     }
-
 }

@@ -1,5 +1,8 @@
 package com.questoftherealm.characters.player;
 
+import com.questoftherealm.exceptions.IllegalPlayerType;
+import com.questoftherealm.localization.MessageBundle;
+
 public enum PlayerTypes {
     Mage,
     Warrior,
@@ -12,7 +15,7 @@ public enum PlayerTypes {
             case 2 -> Mage;
             case 3 -> Orc;
             case 4 -> Rogue;
-            default -> throw new IllegalArgumentException("Invalid option: " + choice);
+            default -> throw new IllegalPlayerType(MessageBundle.get("error.command.IllegalPlayerType",choice));
         };
     }
 }

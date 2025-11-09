@@ -7,9 +7,9 @@ import com.questoftherealm.interaction.GameUI;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.io.IOException;
-import java.util.Queue;
 
 public class Game {
     private static Player player;
@@ -19,16 +19,11 @@ public class Game {
     public static boolean gameOver = false;
     public static boolean isSimulation = false;
 
-    public static boolean isSimulation() {return isSimulation;}
-    public static void setSimulation(boolean simulation) {isSimulation = simulation;}
-    public static Player getPlayer() {return player;}
-    public static void setPlayer(Player player) {
-        Game.player = player;
-    }
-    public static Map getGameMap() {
-        return gameMap;
-    }
-
+    public static boolean isSimulation() { return isSimulation; }
+    public static void setSimulation(boolean simulation) { isSimulation = simulation; }
+    public static Player getPlayer() { return player; }
+    public static void setPlayer(Player player) { Game.player = player; }
+    public static Map getGameMap() { return gameMap; }
 
     public void newGame() {
         try {
@@ -43,13 +38,14 @@ public class Game {
 
     public void loadGame() {
         LoadGame loadGame = new LoadGame();
-        System.out.println("Which save you want to load?");
+        System.out.println(MessageBundle.get("game.load.ask"));
         loadGame.printSaves();
         String save = gameUI.getScanner().nextLine();
-        System.out.println("Loading...");
+        System.out.println(MessageBundle.get("game.load.loading"));
         try {
             loadGame.loadGameSave(save);
         } catch (Exception e) {
+            System.out.println(MessageBundle.get("game.load.error"));
             throw new RuntimeException(e);
         }
     }
@@ -58,27 +54,32 @@ public class Game {
         String name = gameUI.characterCreationScreen();
         int count = 0;
         int typeChoice;
+
         while (true) {
             try {
-                System.out.print(">");
+                System.out.print(MessageBundle.get("game.choice.prompt"));
                 typeChoice = Integer.parseInt(gameUI.getScanner().nextLine());
-                if (typeChoice == 1 || typeChoice == 2 || typeChoice == 3 || typeChoice == 4) break;
+                if (typeChoice >= 1 && typeChoice <= 4) break;
                 else {
                     count++;
-                    if (count <= 1) System.out.println("Please enter a number between 1 and 4.");
+                    if (count <= 1) System.out.println(MessageBundle.get("game.choice.invalidRange"));
                 }
             } catch (NumberFormatException e) {
                 count++;
-                if (count <= 1) System.out.println("Invalid input. Please enter a number between 1 and 4.");
+                if (count <= 1) System.out.println(MessageBundle.get("game.choice.invalidInput"));
             }
         }
+
         PlayerTypes type = PlayerTypes.fromInt(typeChoice);
         player = new Player(name, type);
-        System.out.println("You have chosen " + type);
-        System.out.println(player.getPlayerCharacter());
+
+        System.out.println(MessageBundle.get("game.player.choice.confirm", type));
+        System.out.println(MessageBundle.get("game.player.character.show", player.getPlayerCharacter()));
+
         try {
             Thread.sleep(6000);
         } catch (InterruptedException e) {
+            System.out.println(MessageBundle.get("game.sleep.error"));
             throw new RuntimeException(e);
         }
     }
@@ -87,39 +88,39 @@ public class Game {
         gameUI.getConsole().displayTitle();
         int gameType;
         int count = 0;
+
         while (true) {
             try {
                 count++;
                 gameType = gameUI.showMainMenu(count);
                 if (gameType == 1 || gameType == 2) break;
             } catch (NumberFormatException e) {
-                if (count <= 1) System.out.println("Invalid input. Please enter a number.");
+                if (count <= 1) System.out.println(MessageBundle.get("game.start.invalidInput"));
                 count++;
             }
         }
-        //map instance
+
         try {
             gameMap = Map.getInstance();
         } catch (Exception e) {
-            System.out.println("Map unavailable");
-            System.out.println("restart game");
+            System.out.println(MessageBundle.get("game.map.unavailable"));
+            System.out.println(MessageBundle.get("game.map.restart"));
             System.exit(0);
         }
-        //load game type
+
         switch (gameType) {
             case 1 -> newGame();
             case 2 -> loadGame();
         }
-        try{
+
+        try {
             NpcInitializer.registerAll(gameMap);
-        }catch (Exception e){
-            System.out.println("Something went wrong Npcs could not be initialized!");
+        } catch (Exception e) {
+            System.out.println(MessageBundle.get("game.npc.init.error"));
             System.exit(0);
         }
 
-        //game loop
         GameLoop loop = new GameLoop();
         loop.startLoop();
     }
-
 }

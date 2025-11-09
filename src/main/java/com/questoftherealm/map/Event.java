@@ -2,72 +2,70 @@ package com.questoftherealm.map;
 
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.entities.*;
+import com.questoftherealm.localization.MessageBundle;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public enum Event {
 
     GOBLIN_CAMP(new EventData(
-            "Goblin Camp",
-            "A secret camp of ancient creatures called Goblins. " +
-                    "They tend to steal gold and valuable items — and they never travel alone.",
+            MessageBundle.get("event.goblinCamp.name"),
+            MessageBundle.get("event.goblinCamp.desc"),
             new Goblin()
     )),
 
     BANDIT_AMBUSH(new EventData(
-            "Bandit Ambush",
-            "Ruthless bandits block your path, demanding coin or blood.",
+            MessageBundle.get("event.banditAmbush.name"),
+            MessageBundle.get("event.banditAmbush.desc"),
             new Bandit()
     )),
 
     CURSED_GRAVEYARD(new EventData(
-            "Cursed Graveyard",
-            "The ground trembles as skeletons crawl out of their graves. " +
-                    "Dark magic lingers here — best to run.",
+            MessageBundle.get("event.cursedGraveyard.name"),
+            MessageBundle.get("event.cursedGraveyard.desc"),
             new Skeleton()
     )),
 
     DARK_RITUAL(new EventData(
-            "Dark Ritual",
-            "A sinister mage performs a forbidden ritual. The air reeks of death.",
+            MessageBundle.get("event.darkRitual.name"),
+            MessageBundle.get("event.darkRitual.desc"),
             new DarkMage()
     )),
 
     GOBLIN_HORDE(new EventData(
-            "Goblin Horde",
-            "Dozens of goblins swarm the area, led by a brutish commander.",
+            MessageBundle.get("event.goblinHorde.name"),
+            MessageBundle.get("event.goblinHorde.desc"),
             new Goblin()
     )),
 
     WOLF_PACK(new EventData(
-            "Wolf Pack",
-            "A pack of hungry wolves stalks you from the shadows. Be ready to fight.",
+            MessageBundle.get("event.wolfPack.name"),
+            MessageBundle.get("event.wolfPack.desc"),
             new Wolf()
     )),
 
     TRAVELING_TRADER(new EventData(
-            "Traveling Trader",
-            "A mysterious trader greets you with a grin. His prices seem... questionable.",
+            MessageBundle.get("event.travelingTrader.name"),
+            MessageBundle.get("event.travelingTrader.desc"),
             new SuspiciousTrader()
     )),
 
     LOST_SPIRIT(new EventData(
-            "Lost Spirit",
-            "A wandering spirit drifts nearby. It might bless you — or curse you.",
+            MessageBundle.get("event.lostSpirit.name"),
+            MessageBundle.get("event.lostSpirit.desc"),
             new Spirit()
     )),
 
     GIANT_SPIDER_NEST(new EventData(
-            "Giant Spider Nest",
-            "Thick webs cover the trees. Something massive lurks within.",
+            MessageBundle.get("event.giantSpiderNest.name"),
+            MessageBundle.get("event.giantSpiderNest.desc"),
             new GiantSpider()
     ));
 
-
     private final EventData data;
 
-
     Event(final EventData eventData) {
-        data = eventData;
+        this.data = eventData;
     }
 
     public String getName() {
@@ -82,7 +80,6 @@ public enum Event {
         return data.npc();
     }
 
-
     public static Event generateEvent(TileTypes type) {
         return switch (type) {
             case GRASS -> randomOf(GOBLIN_CAMP, BANDIT_AMBUSH, WOLF_PACK, TRAVELING_TRADER, LOST_SPIRIT);
@@ -95,9 +92,7 @@ public enum Event {
         };
     }
 
-
     private static Event randomOf(Event... options) {
         return options[ThreadLocalRandom.current().nextInt(options.length)];
     }
-
 }

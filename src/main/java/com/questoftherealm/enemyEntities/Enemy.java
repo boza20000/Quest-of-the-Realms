@@ -5,6 +5,7 @@ import com.questoftherealm.enemyEntities.EnemiesInterfaces.Lootable;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.TileTypes;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public abstract class Enemy implements Fightable, Lootable {
     @Override
     public void attack(Player player) {
         int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
-        System.out.println(this.getClass().getSimpleName() + " attacks player back for " + damage + "HP!");
+        System.out.println(MessageBundle.get("enemy.attack.player"));
         player.getPlayerCharacter().takeDamage(damage);
     }
 
@@ -55,7 +56,7 @@ public abstract class Enemy implements Fightable, Lootable {
         setHealth(newHealth);
         isDead = newHealth == 0;
         if (!isDead) {
-            System.out.println("The " + this.getClass().getSimpleName() + " shrugs off some damage (" + reducedDamageTaken + "HP lost)!");
+            System.out.println(MessageBundle.get("enemy.armor.block",this.getClass().getSimpleName(),reducedDamageTaken));
         }
     }
 

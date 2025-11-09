@@ -6,6 +6,7 @@ import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
 import com.questoftherealm.interaction.Console;
 import com.questoftherealm.interaction.MissionInteractions;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.Scanner;
 
@@ -22,38 +23,41 @@ public class GameLoop {
         player.setStartTime(System.currentTimeMillis());
 
         while (!gameOver) {
-            System.out.print(">");
+            System.out.print(MessageBundle.get("console.enter.command.symbol"));
             String command = scanner.nextLine().trim();
+
             if (command.isEmpty()) {
-                System.out.print("\033[1A\033[2K\r");
                 continue;
             }
+
             String[] parts = command.trim().split("\\s+");
             String commandName = parts[0];
             Command cmd = null;
+
             try {
                 cmd = factory.getCommand(commandName);
             } catch (InvalidCommand e) {
-                System.out.println(e.getMessage());
+                System.out.println(MessageBundle.get("error.command.InvalidCommand"));
             }
+
             if (cmd == null) {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    System.out.println("Sleep failed");
+                    System.out.println(MessageBundle.get("error.command.sleepFail"));
                 }
-                System.out.print("\033[1A\033[2K\r");
             } else {
                 try {
                     cmd.execute(parts);
-                    System.out.println("Command went trough");
+                    System.out.println(MessageBundle.get("gameLoop.command.success"));
                     Game.getPlayer().updateQuestStatus();
                 } catch (Exception e) {
-                    System.out.println("Command syntax: ");
+                    System.out.println(MessageBundle.get("gameLoop.command.syntax"));
                     System.out.print(cmd.getDescription());
                 }
             }
         }
+
         player.trackPlayTime();
         console.displayEnd(player);
     }

@@ -7,20 +7,20 @@ import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.exceptions.TargetNotFound;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.localization.MessageBundle;
 
 import static com.questoftherealm.game.GameConstants.*;
 
 public abstract class Characters implements Combatant {
 
-    // Stat from GameConstants
-    private int health;        // 0 - MAX_HEALTH
-    private int mana;          // 0 - MAX_MANA
-    private int attack;        // 0 - MAX_ATTACK
-    private int defence;       // 0 - MAX_DEFENCE
-    private int armor;         // 0 - MAX_ARMOR
-    private int charisma;      // 0 - MAX_CHARISMA
-    private int spells;        // 0 - MAX_SPELLS
-    private int intelligence;  // 0 - MAX_INTELLIGENCE
+    private int health;
+    private int mana;
+    private int attack;
+    private int defence;
+    private int armor;
+    private int charisma;
+    private int spells;
+    private int intelligence;
 
     public Characters(Characters other) {
         setHealth(other.getHealth());
@@ -48,12 +48,12 @@ public abstract class Characters implements Combatant {
     @Override
     public void attack(Enemy target, Player player) {
         if (target.isDead()) {
-            System.out.println(target.getClass().getSimpleName() + " is already dead!");
+            System.out.println(MessageBundle.get("character.target.alreadyDead", target.getClass().getSimpleName()));
             return;
         }
         try {
             int damageDealt = player.getWeapon().getPower() + this.getAttack();
-            System.out.println("You attack " + target.getClass().getSimpleName() + " for " + damageDealt + "HP!");
+            System.out.println(MessageBundle.get("character.attack.hit", target.getClass().getSimpleName(), damageDealt));
             target.takeDamage(damageDealt);
             useMana(player.getWeapon().getMana());
         } catch (TargetNotFound e) {
@@ -64,11 +64,11 @@ public abstract class Characters implements Combatant {
     public void takeDamage(int damage) {
         int mitigation = defence * 5 + armor;
         int reducedDamage = damage * 100 / (100 + mitigation);
-        setHealth(health - reducedDamage);  // uses setter now
-        System.out.println("Only " + reducedDamage + "HP taken.Your armor reduces some of the damage! Health now: " + health + "HP");
+        setHealth(health - reducedDamage);
+        System.out.println(MessageBundle.get("character.damage.taken", reducedDamage, health));
 
         if (isDead()) {
-            System.out.println(this.getClass().getSimpleName() + " has died!");
+            System.out.println(MessageBundle.get("character.dead", this.getClass().getSimpleName()));
             Command c = new ExitCommand();
             c.execute(new String[]{});
         }
@@ -80,11 +80,8 @@ public abstract class Characters implements Combatant {
 
     // ===== Abstract Weapon =====
     public abstract Item getDefaultWeapon();
-
     public abstract int getBaseAttack();
-
     public abstract int getBaseDefence();
-
     public abstract int getMaxHealth();
 
     // ===== Getters & Setters =====
@@ -154,16 +151,16 @@ public abstract class Characters implements Combatant {
 
     @Override
     public String toString() {
-        return "===== " + this.getClass().getSimpleName() + " Stats =====\n" +
-                "Health      : " + getHealth() + "\n" +
-                "Mana        : " + getMana() + "\n" +
-                "Attack      : " + getAttack() + "\n" +
-                "Defence     : " + getDefence() + "\n" +
-                "Armor       : " + getArmor() + "\n" +
-                "Charisma    : " + getCharisma() + "\n" +
-                "Spells      : " + getSpells() + "\n" +
-                "Intelligence: " + getIntelligence() + "\n" +
-                "==========================";
+        return MessageBundle.get("character.stats.header", this.getClass().getSimpleName()) + "\n" +
+                MessageBundle.get("character.stats.health", getHealth()) + "\n" +
+                MessageBundle.get("character.stats.mana", getMana()) + "\n" +
+                MessageBundle.get("character.stats.attack", getAttack()) + "\n" +
+                MessageBundle.get("character.stats.defence", getDefence()) + "\n" +
+                MessageBundle.get("character.stats.armor", getArmor()) + "\n" +
+                MessageBundle.get("character.stats.charisma", getCharisma()) + "\n" +
+                MessageBundle.get("character.stats.spells", getSpells()) + "\n" +
+                MessageBundle.get("character.stats.intelligence", getIntelligence()) + "\n" +
+                MessageBundle.get("character.stats.footer");
     }
 
     public void useMana(int mana) {

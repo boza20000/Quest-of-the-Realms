@@ -1,6 +1,7 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.game.Game;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Event;
 import com.questoftherealm.map.TileTypes;
 
@@ -17,42 +18,42 @@ public class TravelManger {
     }
 
     private static final List<String> MOVE_CONNECTORS = List.of(
-            "➡️ You leave the %s behind and make your way %s, the road stretching before you.",
-            "🚶 From the %s, your journey takes you %s, with the wind brushing past as you walk.",
-            "🌍 Departing the %s, you follow the worn path leading %s into the unknown.",
-            "🧭 The %s fades behind you as you continue %s, footsteps steady and determined.",
-            "🏞️ Moving away from the %s, the world ahead opens up as you travel %s.",
-            "➡️ Quietly leaving the %s, you tread %s, your thoughts wandering with each step.",
-            "🌅 Turning your back on the %s, you set off %s beneath the changing sky.",
-            "🌾 The %s grows distant as you venture %s, each step taking you further from what you know."
+            "➡️ " + MessageBundle.get("travel.move.connector1"),
+            "🚶 " + MessageBundle.get("travel.move.connector2"),
+            "🌍 " + MessageBundle.get("travel.move.connector3"),
+            "🧭 " + MessageBundle.get("travel.move.connector4"),
+            "🏞️ " + MessageBundle.get("travel.move.connector5"),
+            "➡️ " + MessageBundle.get("travel.move.connector6"),
+            "🌅 " + MessageBundle.get("travel.move.connector7"),
+            "🌾 " + MessageBundle.get("travel.move.connector8")
     );
 
     private static void randomTravelText(String direction, TileTypes start) {
         String line = MOVE_CONNECTORS.get(random().nextInt(MOVE_CONNECTORS.size()));
-        SlowPrinter.slowPrint(line.formatted(start, direction));
+        SlowPrinter.slowPrint(String.format(line, start, direction));
     }
 
     private static void randomEvent(TileTypes type) {
         Event event = Event.generateEvent(type);
-        SlowPrinter.slowPrint("⚠️ While traveling, you stumble upon: " + event.getName());
+        SlowPrinter.slowPrint("⚠️ " + MessageBundle.get("travel.event.encounter", event.getName()));
         SlowPrinter.slowPrint(event.getDescription());
-        boolean investigate = promptYesNo("Do you want to investigate?");
+        boolean investigate = promptYesNo(MessageBundle.get("travel.event.investigate.question"));
         if (investigate) {
-            SlowPrinter.slowPrint("👉 You decide to face it head-on!");
+            SlowPrinter.slowPrint("👉 " + MessageBundle.get("travel.event.investigate.accept"));
             event.getNpc().interact(Game.getPlayer());
         } else {
-            SlowPrinter.slowPrint("➡️ You ignore it and continue your journey...");
+            SlowPrinter.slowPrint("➡️ " + MessageBundle.get("travel.event.investigate.decline"));
         }
     }
 
     public static boolean promptYesNo(String question) {
-        SlowPrinter.slowPrint(question + " (yes/no)");
+        SlowPrinter.slowPrint(question + " " + MessageBundle.get("travel.prompt.yesno"));
         while (true) {
             System.out.print(">");
             String input = scanner.nextLine().trim().toLowerCase();
             if (input.equals("yes") || input.equals("y")) return true;
             if (input.equals("no") || input.equals("n")) return false;
-            System.out.println("Please type yes or no.");
+            System.out.println(MessageBundle.get("travel.prompt.invalid"));
         }
     }
 
@@ -67,54 +68,41 @@ public class TravelManger {
     public static String getTransition(TileTypes start, TileTypes end) {
         if (start == end) {
             return switch (end) {
-                case MOUNTAIN ->
-                        "⛰️ You continue winding along the rocky mountain paths, surrounded by towering cliffs and echoing winds.";
-                case FOREST ->
-                        "🌲 You press deeper into the forest, where the canopy thickens and shadows play across the mossy ground.";
-                case SWAMP ->
-                        "💧 The swamp stretches endlessly, each step sending ripples through murky water and whispering reeds.";
-                case GRASS -> "🌾 The grasslands roll endlessly ahead, waves of green swaying under the open sky.";
-                case VILLAGE ->
-                        "🏘️ You wander through the village, passing familiar faces and hearing the soft hum of daily life.";
-                case CASTLE ->
-                        "🏰 You roam within the castle’s domain, its walls echoing the weight of stories and power.";
-                case WATER ->
-                        "💦 You remain near the water’s edge, where waves lap gently and the air smells of salt and cool mist.";
+                case MOUNTAIN -> "⛰️ " + MessageBundle.get("travel.transition.same.mountain");
+                case FOREST -> "🌲 " + MessageBundle.get("travel.transition.same.forest");
+                case SWAMP -> "💧 " + MessageBundle.get("travel.transition.same.swamp");
+                case GRASS -> "🌾 " + MessageBundle.get("travel.transition.same.grass");
+                case VILLAGE -> "🏘️ " + MessageBundle.get("travel.transition.same.village");
+                case CASTLE -> "🏰 " + MessageBundle.get("travel.transition.same.castle");
+                case WATER -> "💦 " + MessageBundle.get("travel.transition.same.water");
             };
         }
         return switch (end) {
-            case MOUNTAIN ->
-                    "⛰️ The air grows thinner and colder. The path ahead winds upward, becoming steep and treacherous.";
-            case FOREST ->
-                    "🌲 The trees close in around you. The canopy above blocks out most of the light, and the forest grows quiet.";
-            case SWAMP ->
-                    "💧 The ground grows damp and soft. The air becomes heavy with mist, and the smell of stagnant water fills your nose.";
-            case GRASS ->
-                    "🌾 The land opens into wide grasslands. The breeze carries the scent of wildflowers and sun-warmed earth.";
-            case VILLAGE ->
-                    "🏘️ You arrive at a village — laughter and chatter fill the air, and warm light spills from nearby windows.";
-            case CASTLE ->
-                    "🏰 The walls shrink behind you as you walk further. The world ahead feels less guarded, more uncertain.";
-            case WATER ->
-                    "💦 You hear the sound of waves and trickling streams. The ground softens, and the air carries a cool, refreshing scent.";
+            case MOUNTAIN -> "⛰️ " + MessageBundle.get("travel.transition.to.mountain");
+            case FOREST -> "🌲 " + MessageBundle.get("travel.transition.to.forest");
+            case SWAMP -> "💧 " + MessageBundle.get("travel.transition.to.swamp");
+            case GRASS -> "🌾 " + MessageBundle.get("travel.transition.to.grass");
+            case VILLAGE -> "🏘️ " + MessageBundle.get("travel.transition.to.village");
+            case CASTLE -> "🏰 " + MessageBundle.get("travel.transition.to.castle");
+            case WATER -> "💦 " + MessageBundle.get("travel.transition.to.water");
         };
     }
 
     private static final List<String> SPOTTING_CONNECTORS = List.of(
-            "👀 In the distance, you spot %s.",
-            "🏕️ As you travel, you come across %s.",
-            "🌄 On the horizon, you see %s.",
-            "🔎 Your eyes catch sight of %s nearby.",
-            "🌲 Between the trees, %s comes into view.",
-            "⚔️ You notice %s standing ahead of you.",
-            "✨ Unexpectedly, you stumble upon %s.",
-            "🌍 As the path bends, you discover %s.",
-            "🔥 Smoke or movement draws your attention to %s.",
-            "🏚️ Hidden among the landscape, you find %s."
+            "👀 " + MessageBundle.get("travel.spot.connector1"),
+            "🏕️ " + MessageBundle.get("travel.spot.connector2"),
+            "🌄 " + MessageBundle.get("travel.spot.connector3"),
+            "🔎 " + MessageBundle.get("travel.spot.connector4"),
+            "🌲 " + MessageBundle.get("travel.spot.connector5"),
+            "⚔️ " + MessageBundle.get("travel.spot.connector6"),
+            "✨ " + MessageBundle.get("travel.spot.connector7"),
+            "🌍 " + MessageBundle.get("travel.spot.connector8"),
+            "🔥 " + MessageBundle.get("travel.spot.connector9"),
+            "🏚️ " + MessageBundle.get("travel.spot.connector10")
     );
 
     public static String getRandomSpotting(String locationName) {
         String template = SPOTTING_CONNECTORS.get(random().nextInt(SPOTTING_CONNECTORS.size()));
-        return template.formatted(locationName);
+        return String.format(template, locationName);
     }
 }

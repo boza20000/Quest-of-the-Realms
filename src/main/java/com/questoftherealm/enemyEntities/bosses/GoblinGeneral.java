@@ -6,16 +6,16 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.List;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
-import static com.questoftherealm.characters.playerCharacters.CharacterConstants.GoblinGeneral_INTELLIGENCE;
 
 public class GoblinGeneral extends Boss {
-    private static final String name = "Azok";
-    private static final Item weapon = ItemRegistry.getItem("Big Battle Axe");
+    private static final String NAME = MessageBundle.get("boss.goblinGeneral.name");
+    private static final Item WEAPON = ItemRegistry.getItem("Big Battle Axe");
 
     public GoblinGeneral() {
         super(GoblinGeneral_HEALTH,
@@ -26,12 +26,10 @@ public class GoblinGeneral extends Boss {
                 GoblinGeneral_CHARISMA,
                 GoblinGeneral_SPELLS,
                 GoblinGeneral_INTELLIGENCE,
-                name,
+                NAME,
                 createArmor(),
-                weapon,
-                createLoot()
-        );
-
+                WEAPON,
+                createLoot());
     }
 
     private static HashMap<ItemEffect, Item> createArmor() {
@@ -53,11 +51,12 @@ public class GoblinGeneral extends Boss {
     public void superMove() {
         int newHealth = getHealth() * 2;
         setHealth(newHealth);
+        System.out.println(MessageBundle.get("boss.goblinGeneral.superMove", NAME));
     }
 
     @Override
     public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Big Battle Axe");
+        return WEAPON;
     }
 
     @Override
@@ -81,6 +80,6 @@ public class GoblinGeneral extends Boss {
     }
 
     public String getName() {
-        return name;
+        return NAME;
     }
 }

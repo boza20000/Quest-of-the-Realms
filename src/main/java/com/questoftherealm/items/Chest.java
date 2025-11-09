@@ -1,7 +1,11 @@
 package com.questoftherealm.items;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.ArmorPieceNotGenerated;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
+import com.questoftherealm.exceptions.RandomWeaponNotGenerated;
+import com.questoftherealm.localization.MessageBundle;
+
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,7 +23,7 @@ public class Chest {
             Rarity rarity = randomRarity();
             return randomItemFrom(type, rarity);
         } catch (Exception e) {
-            throw new RandomItemNotGenerated("Generated Item not found");
+            throw new RandomItemNotGenerated(MessageBundle.get("error.message.itemNotGenerated"));
         }
     }
 
@@ -86,8 +90,8 @@ public class Chest {
         List<Item> possibleWeapons = ItemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == effect)
                 .toList();
-        if (possibleWeapons.isEmpty()){
-            throw new RandomItemNotGenerated("No weapons available for generation.");
+        if (possibleWeapons.isEmpty()) {
+            throw new RandomWeaponNotGenerated(MessageBundle.get("error.message.weaponNotGenerated"));
         }
         Item weapon = possibleWeapons.get(random().nextInt(possibleWeapons.size()));
         return new ItemDrop(weapon, quantity);
@@ -112,7 +116,7 @@ public class Chest {
                 .toList();
 
         if (possibleHelmets.isEmpty()) {
-            throw new RandomItemNotGenerated("No helmets available for generation.");
+            throw new ArmorPieceNotGenerated(MessageBundle.get("error.message.helmetNotGenerated"));
         }
 
         Item helmet = possibleHelmets.get(random().nextInt(possibleHelmets.size()));
@@ -129,7 +133,7 @@ public class Chest {
                 .toList();
 
         if (possibleChestplates.isEmpty()) {
-            throw new RandomItemNotGenerated("No chestplates available for generation.");
+            throw new ArmorPieceNotGenerated(MessageBundle.get("error.message.chestplateNotGenerated"));
         }
 
         Item chestplate = possibleChestplates.get(random().nextInt(possibleChestplates.size()));
@@ -146,7 +150,7 @@ public class Chest {
                 .toList();
 
         if (possibleBoots.isEmpty()) {
-            throw new RandomItemNotGenerated("No boots available for generation.");
+            throw new ArmorPieceNotGenerated(MessageBundle.get("error.message.bootsNotGenerated"));
         }
 
         Item boots = possibleBoots.get(random().nextInt(possibleBoots.size()));

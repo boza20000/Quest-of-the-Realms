@@ -6,9 +6,10 @@ import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.localization.MessageBundle;
 
 public class Elder extends Npc {
-    private final String name = "Evaery";
+    private final String name = MessageBundle.get("elder.name");
     private boolean hasTalked = false;
 
     public Elder(String name) {
@@ -26,7 +27,7 @@ public class Elder extends Npc {
             hasTalked = true;
             giveRewards(player, isSimulation);
         } else {
-            System.out.println("There is nothing else to be said");
+            System.out.println(MessageBundle.get("elder.has.talked"));
         }
     }
 

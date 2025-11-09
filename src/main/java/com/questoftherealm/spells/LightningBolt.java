@@ -2,11 +2,12 @@ package com.questoftherealm.spells;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.localization.MessageBundle;
 
 public class LightningBolt extends DamageSpell {
 
     public LightningBolt() {
-        super("Lightning Bolt", 30, "A crackling bolt of lightning strikes your enemy.", 7);
+        super(MessageBundle.get("spells.lightning.name"), 30, MessageBundle.get("spells.lightning.description"), 7);
     }
 
     public void castLightning(Player player, Enemy enemy) {

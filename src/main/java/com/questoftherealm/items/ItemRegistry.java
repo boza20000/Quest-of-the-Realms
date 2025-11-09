@@ -8,7 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.questoftherealm.exceptions.ItemNotFound;
-
+import com.questoftherealm.localization.MessageBundle;
 
 public class ItemRegistry {
     private static List<Item> allItems;
@@ -17,31 +17,27 @@ public class ItemRegistry {
         if (allItems == null) {
             try (InputStream is = ItemRegistry.class.getResourceAsStream("/items.json")) {
                 if (is == null) {
-                    throw new FileNotFoundException("items.json not found in a");
+                    throw new FileNotFoundException(MessageBundle.get("itemRegistry.fileNotFound"));
                 }
                 ObjectMapper mapper = new ObjectMapper();
-                allItems = mapper.readValue(is, new TypeReference<List<Item>>() {
-                });
+                allItems = mapper.readValue(is, new TypeReference<List<Item>>() {});
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(MessageBundle.get("itemRegistry.loadError", e.getMessage()));
                 allItems = Collections.emptyList();
             }
         }
         return allItems;
     }
 
-    //Null pointer except
     public static Item getItem(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Item name cannot be null or blank");
+            throw new IllegalArgumentException(MessageBundle.get("itemRegistry.nullName"));
         }
         for (Item i : getAllItems()) {
             if (i != null && name.equals(i.getName())) {
                 return i;
             }
         }
-        throw new ItemNotFound("Item '" + name + "' not found");
+        throw new ItemNotFound(MessageBundle.get("itemRegistry.notFound", name));
     }
-
-
 }

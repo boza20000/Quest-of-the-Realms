@@ -1,6 +1,7 @@
 package com.questoftherealm.enemyEntities;
 
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public final class EnemyConstants {
     }
 
     public static final EnemyData GOBLIN = new EnemyData(
-            "A sneaky goblin that lurks in the shadows",
+            MessageBundle.get("enemy.goblin.desc"),
             EnemyType.GOBLIN,
             30,
             5,
@@ -18,15 +19,14 @@ public final class EnemyConstants {
             List.of(ItemRegistry.getItem("Torn Leather Armor")),
             ItemRegistry.getItem("Iron Dagger"),
             List.of(
-                    new Loot(ItemRegistry.getItem("Health Potion"), 0.3, 1, 1),   // small chance to carry potions
-                    new Loot(ItemRegistry.getItem("Iron Dagger"), 0.15, 1, 1)    // might drop weapon
-
+                    new Loot(ItemRegistry.getItem("Health Potion"), 0.3, 1, 1),
+                    new Loot(ItemRegistry.getItem("Iron Dagger"), 0.15, 1, 1)
             ),
             false
     );
 
     public static final EnemyData BANDIT = new EnemyData(
-            "A rogue bandit",
+            MessageBundle.get("enemy.bandit.desc"),
             EnemyType.BANDIT,
             50,
             6,
@@ -41,7 +41,7 @@ public final class EnemyConstants {
     );
 
     public static final EnemyData SKELETON = new EnemyData(
-            "A reanimated skeleton",
+            MessageBundle.get("enemy.skeleton.desc"),
             EnemyType.SKELETON,
             40,
             7,
@@ -49,14 +49,13 @@ public final class EnemyConstants {
             List.of(ItemRegistry.getItem("Rusty Helmet")),
             ItemRegistry.getItem("Bronze Sword"),
             List.of(
-                    //new Loot(ItemRegistry.getItem(""), 0.7, 1, 3),
                     new Loot(ItemRegistry.getItem("Bronze Sword"), 0.1, 1, 1)
             ),
             false
     );
 
     public static final EnemyData WOLF = new EnemyData(
-            "A feral wolf",
+            MessageBundle.get("enemy.wolf.desc"),
             EnemyType.WOLF,
             35,
             6,
@@ -65,14 +64,12 @@ public final class EnemyConstants {
             null,
             List.of(
                     new Loot(ItemRegistry.getItem("Bronze Sword"), 0.1, 1, 1)
-                   //new Loot(ItemRegistry.getItem("Wolf Pelt"), 0.6, 1, 1),
-                   // new Loot(ItemRegistry.getItem("Wolf Fang"), 0.3, 1, 1)
             ),
             false
     );
 
     public static final EnemyData GOBLIN_HORDE = new EnemyData(
-            "A group of goblins attacking together",
+            MessageBundle.get("enemy.goblinHorde.desc"),
             EnemyType.GOBLIN_HORDE,
             80,
             10,
@@ -87,7 +84,7 @@ public final class EnemyConstants {
     );
 
     public static final EnemyData DARK_MAGE = new EnemyData(
-            "A dark mage with sinister powers",
+            MessageBundle.get("enemy.darkMage.desc"),
             EnemyType.DARK_MAGE,
             60,
             12,
@@ -101,23 +98,8 @@ public final class EnemyConstants {
             false
     );
 
-//    public static final EnemyData GOBLIN_GENERAL = new EnemyData(
-//            "The commanding goblin general",
-//            EnemyType.GOBLIN_GENERAL,
-//            100,
-//            15,
-//            7,
-//            List.of(ItemRegistry.getItem("Iron Helmet"), ItemRegistry.getItem("Iron Chestplate")),
-//            ItemRegistry.getItem("Orcish Axe"),
-//            List.of(
-//                    new Loot(ItemRegistry.getItem("Orcish Axe"), 0.15, 1, 1),
-//                    new Loot(ItemRegistry.getItem("Health Potion"), 0.4, 1, 2)
-//            ),
-//            false
-//    );
-
     public static final EnemyData GIANT_SPIDER = new EnemyData(
-            "A terrifying giant spider",
+            MessageBundle.get("enemy.giantSpider.desc"),
             EnemyType.GIANT_SPIDER,
             70,
             10,
@@ -131,7 +113,7 @@ public final class EnemyConstants {
     );
 
     public static final EnemyData SPIRIT = new EnemyData(
-            "A wandering lost spirit",
+            MessageBundle.get("enemy.spirit.desc"),
             EnemyType.LOST_SPIRIT,
             45,
             8,
@@ -145,7 +127,7 @@ public final class EnemyConstants {
     );
 
     public static final EnemyData TRAVELING_TRADER = new EnemyData(
-            "A traveling trader offering goods",
+            MessageBundle.get("enemy.trader.desc"),
             EnemyType.SUSPICIOUS_TRADER,
             40,
             2,
@@ -153,8 +135,8 @@ public final class EnemyConstants {
             List.of(),
             null,
             List.of(
-                    new Loot(ItemRegistry.getItem("Health Potion"), 0.5, 1, 2),   // carries potions
-                    new Loot(ItemRegistry.getItem("Mana Potion"), 0.4, 1, 2)     // and mana
+                    new Loot(ItemRegistry.getItem("Health Potion"), 0.5, 1, 2),
+                    new Loot(ItemRegistry.getItem("Mana Potion"), 0.4, 1, 2)
             ),
             false
     );

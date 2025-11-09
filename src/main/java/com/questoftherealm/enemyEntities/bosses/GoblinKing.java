@@ -9,6 +9,7 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +18,8 @@ import java.util.Random;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class GoblinKing extends Boss {
-    private static final String name = "Tot";
-    private static final Item weapon = ItemRegistry.getItem("Goblin King Sword");
+    private static final String NAME = MessageBundle.get("boss.goblinKing.name");
+    private static final Item WEAPON = ItemRegistry.getItem("Goblin King Sword");
 
     public GoblinKing() {
         super(GoblinKing_HEALTH,
@@ -29,9 +30,9 @@ public class GoblinKing extends Boss {
                 GoblinKing_CHARISMA,
                 GoblinKing_SPELLS,
                 GoblinKing_INTELLIGENCE,
-                name,
+                NAME,
                 createArmor(),
-                weapon,
+                WEAPON,
                 createLoot());
     }
 
@@ -50,25 +51,23 @@ public class GoblinKing extends Boss {
         );
     }
 
-
     @Override
-    //29% instant kill
     public void superMove() {
         Random random = new Random();
         int roll = random.nextInt(100);
+        SlowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.start"));
+
         if (GameConstants.GoblinKing_Percent_INSTAKILL <= roll) {
-            SlowPrinter.slowPrint("The Goblin king swing his sword with a huge strength.");
-            SlowPrinter.slowPrint("You try to doge.. but unsuccessful...You get sliced");
+            SlowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.success"));
             Game.getPlayer().getPlayerCharacter().setHealth(0);
         } else {
-            SlowPrinter.slowPrint("The Goblin king swing his sword with a huge strength.");
-            SlowPrinter.slowPrint("You almost get killed but you doge it");
+            SlowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.fail"));
         }
     }
 
     @Override
     public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Goblin King Sword");
+        return WEAPON;
     }
 
     @Override
@@ -92,6 +91,6 @@ public class GoblinKing extends Boss {
     }
 
     public String getName() {
-        return name;
+        return NAME;
     }
 }

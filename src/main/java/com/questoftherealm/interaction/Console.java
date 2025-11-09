@@ -1,6 +1,7 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.Scanner;
 
@@ -42,13 +43,7 @@ public class Console {
     }
 
     public void worldIntro() {
-        SlowPrinter.slowPrint("""
-                🌍 You stand before the gates of the king’s castle, summoned by the ruler himself.
-                The king entrusts you with the most important task of your life: to protect the kingdom from an unknown threat.
-                The castle’s banners flutter in the wind as courtiers and guards watch silently, aware of the gravity of your mission.
-                A sense of destiny weighs upon you, the fate of the realm now rests in your hands.
-                \n(Press ENTER to continue...)
-                """);
+        SlowPrinter.slowPrint(MessageBundle.get("console.worldIntro"));
         scanner.nextLine();
         System.out.println();
     }

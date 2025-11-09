@@ -9,22 +9,24 @@ import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_General;
 import com.questoftherealm.game.Game;
 
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
 public class GoblinGeneralManger {
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
+    private static final ResourceBundle messages = ResourceBundle.getBundle("messages");
 
     public static void startFinalBattle() {
-        System.out.println("\n⚔️ The Battle for the Realm Begins!");
-        System.out.println("Your army marches to meet the Goblin Horde under a blood-red sky...");
+        System.out.println("\n⚔️ " + messages.getString("goblinGeneral.battle.start"));
+        System.out.println(messages.getString("goblinGeneral.battle.march"));
 
         int playerArmyPower = calculatePlayerArmyPower();
         int enemyArmyPower = 120 + random.nextInt(60);
 
-        System.out.println("🏇 Your Army Power: " + playerArmyPower);
-        System.out.println("👹 Goblin Army Power: " + enemyArmyPower);
-        System.out.println("The armies clash in a storm of steel and fire...");
+        System.out.println("🏇 " + messages.getString("goblinGeneral.battle.player.power") + playerArmyPower);
+        System.out.println("👹 " + messages.getString("goblinGeneral.battle.enemy.power") + enemyArmyPower);
+        System.out.println(messages.getString("goblinGeneral.battle.begin"));
         simulateArmyBattle(playerArmyPower, enemyArmyPower);
     }
 
@@ -38,38 +40,39 @@ public class GoblinGeneralManger {
         double winChance = (double) playerPower / (playerPower + enemyPower);
         int roll = random.nextInt(100);
 
-        System.out.println("\n💥 The battle rages on...");
-        System.out.println("Drums thunder, arrows fly, and spells light the sky!");
+        System.out.println("\n💥 " + messages.getString("goblinGeneral.battle.rage"));
+        System.out.println(messages.getString("goblinGeneral.battle.scene"));
 
         if (Assemble_an_Army.knightsRecruited) {
             pause();
-            System.out.println("Knights charge into goblin lines...");
+            System.out.println(messages.getString("goblinGeneral.battle.knights"));
         }
         if (Assemble_an_Army.magesRecruited) {
             pause();
-            System.out.println("Mages unleash firestorms...");
+            System.out.println(messages.getString("goblinGeneral.battle.mages"));
         }
         if (Assemble_an_Army.archersRecruited) {
             pause();
-            System.out.println("Archers rain death from above...");
+            System.out.println(messages.getString("goblinGeneral.battle.archers"));
         }
+
         pause();
         if (roll < (winChance * 100)) {
-            System.out.println("\n🏆 Your army has triumphed! The goblin horde breaks and flees!");
-            System.out.println("But in the chaos, the Goblin General himself appears...");
+            System.out.println("\n🏆 " + messages.getString("goblinGeneral.battle.victory"));
+            System.out.println(messages.getString("goblinGeneral.battle.general.appears"));
             duelGoblinGeneral();
         } else {
-            System.out.println("\n💀 Your army is overwhelmed... You fall in battle.");
+            System.out.println("\n💀 " + messages.getString("goblinGeneral.battle.defeat"));
             Game.getPlayer().getPlayerCharacter().setHealth(0);
-            System.out.println("You were slain defending the realm.");
+            System.out.println(messages.getString("goblinGeneral.battle.death"));
         }
     }
 
-    private static void pause(){
+    private static void pause() {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ignored) {
-            System.out.println("sleep method error");
+            System.out.println(messages.getString("goblinGeneral.error.sleep"));
         }
     }
 
@@ -77,109 +80,102 @@ public class GoblinGeneralManger {
         Player player = Game.getPlayer();
         goblinGeneralFight(player);
         if (!player.getPlayerCharacter().isDead()) {
-            System.out.println("\n🔥 With one final blow, you slay the Goblin General!");
+            System.out.println("\n🔥 " + messages.getString("goblinGeneral.duel.victory"));
             Defeat_the_Goblin_General.isDefeated = true;
-            System.out.println("🎉 The realm is safe... for now.");
+            System.out.println("🎉 " + messages.getString("goblinGeneral.duel.safe"));
         } else {
-            System.out.println("\n💀 The Goblin General strikes you down. Darkness takes you...");
+            System.out.println("\n💀 " + messages.getString("goblinGeneral.duel.death"));
             Game.getPlayer().getPlayerCharacter().setHealth(0);
-            System.out.println("Defeated by the Goblin General.");
+            System.out.println(messages.getString("goblinGeneral.duel.defeated"));
         }
     }
 
     private static void goblinGeneralFight(Player player) {
         GoblinGeneral general = new GoblinGeneral();
         Characters character = player.getPlayerCharacter();
-        System.out.println("\n👹 The Goblin General roars: 'You will fall like your king, human!'");
+        System.out.println("\n👹 " + messages.getString("goblinGeneral.duel.intro"));
         int round = 1;
 
         while (!character.isDead() && !general.isDead()) {
-            System.out.println("\n⚔️ Round " + round++);
-            System.out.println("💚 Your HP: " + character.getHealth() + " | 🔵 Mana: " + character.getMana());
-            System.out.println("❤️ Goblin General HP: " + general.getHealth());
-            SlowPrinter.slowPrint("\n" + general.getName() + " raises his weapon...");
+            System.out.println("\n⚔️ " + messages.getString("goblinGeneral.duel.round") + " " + round++);
+            System.out.println("💚 " + messages.getString("goblinGeneral.duel.hp") + character.getHealth() +
+                    " | 🔵 " + messages.getString("goblinGeneral.duel.mana") + character.getMana());
+            System.out.println("❤️ " + messages.getString("goblinGeneral.duel.boss.hp") + general.getHealth());
+            SlowPrinter.slowPrint("\n" + general.getName() + messages.getString("goblinGeneral.duel.raise.weapon"));
 
-            int bossMove = random.nextInt(3); // 0: heavy swing, 1: charge, 2: feint
+            int bossMove = random.nextInt(3);
             switch (bossMove) {
-                case 0 -> System.out.println("⚔️ Azok prepares a heavy overhead swing!");
-                case 1 -> System.out.println("🏃‍♂️ Azok charges forward!");
-                case 2 -> System.out.println("😈 Azok feints to your left!");
+                case 0 -> System.out.println("⚔️ " + messages.getString("goblinGeneral.duel.boss.swing"));
+                case 1 -> System.out.println("🏃‍♂️ " + messages.getString("goblinGeneral.duel.boss.charge"));
+                case 2 -> System.out.println("😈 " + messages.getString("goblinGeneral.duel.boss.feint"));
             }
 
-            System.out.println("\nYour action:");
-            System.out.println("1️⃣ Dodge (uses  Mana)");
-            System.out.println("2️⃣ Block (reduces damage)");
-            System.out.println("3️⃣ Counterattack (risky, high reward)");
-            System.out.print("Choose: ");
+            System.out.println("\n" + messages.getString("goblinGeneral.duel.action"));
+            System.out.println("1️⃣ " + messages.getString("goblinGeneral.duel.option.dodge"));
+            System.out.println("2️⃣ " + messages.getString("goblinGeneral.duel.option.block"));
+            System.out.println("3️⃣ " + messages.getString("goblinGeneral.duel.option.counter"));
+            System.out.print(messages.getString("goblinGeneral.duel.choose"));
             String input = scanner.nextLine();
 
             int damageToBoss = 0;
             int damageToPlayer = 0;
 
-            // === PLAYER ACTIONS ===
             switch (input) {
-                case "1" -> { // Dodge
+                case "1" -> {
                     if (character.getMana() >= 5) {
                         character.setMana(character.getMana() - 5);
-                        if (random.nextInt(100) < 60) {
-                            System.out.println("💨 You roll away just in time — no damage!");
-                        } else {
-                            System.out.println("❌ Too slow! You get clipped by his attack!");
+                        if (random.nextInt(100) < 60)
+                            System.out.println("💨 " + messages.getString("goblinGeneral.duel.dodge.success"));
+                        else {
+                            System.out.println("❌ " + messages.getString("goblinGeneral.duel.dodge.fail"));
                             damageToPlayer = general.getBaseAttack() / 2;
                         }
                     } else {
-                        System.out.println("⚠️ Not enough mana! You fail to dodge!");
+                        System.out.println("⚠️ " + messages.getString("goblinGeneral.duel.dodge.nomana"));
                         damageToPlayer = general.getBaseAttack();
                     }
                 }
-                case "2" -> { // Block
-                    System.out.println("🛡️ You brace for impact!");
+                case "2" -> {
+                    System.out.println("🛡️ " + messages.getString("goblinGeneral.duel.block"));
                     damageToPlayer = general.getBaseAttack() / 3;
                     if (random.nextInt(100) < 25) {
-                        System.out.println("💥 You parry and counter!");
+                        System.out.println("💥 " + messages.getString("goblinGeneral.duel.parry"));
                         damageToBoss = character.getAttack() / 2;
                     }
                 }
-                case "3" -> { // Counterattack
+                case "3" -> {
                     if (random.nextInt(100) < 40) {
-                        System.out.println("🔥 You strike during his swing — a solid hit!");
+                        System.out.println("🔥 " + messages.getString("goblinGeneral.duel.counter.success"));
                         damageToBoss = character.getAttack();
                     } else {
-                        System.out.println("❌ Your counter fails! You’re open to attack!");
+                        System.out.println("❌ " + messages.getString("goblinGeneral.duel.counter.fail"));
                         damageToPlayer = general.getBaseAttack();
                     }
                 }
                 default -> {
-                    System.out.println("You hesitate, and Azok attacks!");
+                    System.out.println(messages.getString("goblinGeneral.duel.hesitate"));
                     damageToPlayer = general.getBaseAttack();
                 }
             }
 
-            // === APPLY DAMAGE ===
             if (damageToBoss > 0) {
                 general.takeDamage(damageToBoss);
-                System.out.println("💥 You deal " + damageToBoss + " damage!");
+                System.out.println("💥 " + messages.getString("goblinGeneral.duel.deal.damage") + damageToBoss);
             }
             if (damageToPlayer > 0) {
                 character.takeDamage(damageToPlayer);
-                System.out.println("😖 You take " + damageToPlayer + " damage!");
+                System.out.println("😖 " + messages.getString("goblinGeneral.duel.take.damage") + damageToPlayer);
             }
 
-            // === SPECIAL MOVE ===
             double bossHpPercent = (double) general.getHealth() / CharacterConstants.GoblinGeneral_HEALTH;
             if (bossHpPercent <= 0.2 && random.nextInt(100) < 50) {
-                SlowPrinter.slowPrint("\n⚡ Azok lets out a monstrous roar — he’s enraged!");
+                SlowPrinter.slowPrint("\n⚡ " + messages.getString("goblinGeneral.duel.boss.enrage"));
                 general.superMove();
-                SlowPrinter.slowPrint("\n⚡ Azok drinks some potion... He regains some health!");
+                SlowPrinter.slowPrint("\n⚡ " + messages.getString("goblinGeneral.duel.boss.heal"));
             }
 
             if (character.isDead() || general.isDead()) break;
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
-
+            pause();
         }
     }
 }

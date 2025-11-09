@@ -7,20 +7,13 @@ import com.questoftherealm.enemyEntities.entities.SuspiciousTrader;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
-
+import com.questoftherealm.localization.MessageBundle;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Warrior extends Characters implements Trader {
 
     public Warrior() {
-        super(WARRIOR_HEALTH,
-                WARRIOR_MANA,
-                WARRIOR_ATTACK,
-                WARRIOR_DEFENCE,
-                WARRIOR_ARMOR,
-                WARRIOR_CHARISMA,
-                WARRIOR_SPELLS,
-                WARRIOR_INTELLIGENCE);
+        super(WARRIOR_HEALTH, WARRIOR_MANA, WARRIOR_ATTACK, WARRIOR_DEFENCE, WARRIOR_ARMOR, WARRIOR_CHARISMA, WARRIOR_SPELLS, WARRIOR_INTELLIGENCE);
     }
 
     public Warrior(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
@@ -29,7 +22,7 @@ public class Warrior extends Characters implements Trader {
 
     @Override
     public void buyItem(SuspiciousTrader trader, Item item, int quantity) {
-
+        // Implemented elsewhere
     }
 
     @Override
@@ -41,7 +34,7 @@ public class Warrior extends Characters implements Trader {
 
     @Override
     public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Bronze Sword");
+        return ItemRegistry.getItem(MessageBundle.get("warrior.weapon.default"));
     }
 
     @Override
@@ -61,8 +54,7 @@ public class Warrior extends Characters implements Trader {
 
     @Override
     public void activateAbility(Player player, Enemy enemy) {
-        System.out.println("🗡️You use your special move and swing you " + player.getWeapon().getName() + " with full force");
+        System.out.println(MessageBundle.get("warrior.ability.use", player.getWeapon().getName()));
         enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2);
     }
-
 }

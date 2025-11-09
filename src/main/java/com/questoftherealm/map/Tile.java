@@ -12,13 +12,12 @@ import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
-
+import com.questoftherealm.localization.MessageBundle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
 import static com.questoftherealm.items.Chest.generateRandomItem;
 
 public class Tile {
@@ -32,7 +31,9 @@ public class Tile {
     private final Map<String, Npc> npcRegister = new HashMap<>();
 
     @JsonCreator
-    public Tile(@JsonProperty("type") TileTypes type, @JsonProperty("description") String description, @JsonProperty("walkable") boolean walkable) {
+    public Tile(@JsonProperty("type") TileTypes type,
+                @JsonProperty("description") String description,
+                @JsonProperty("walkable") boolean walkable) {
         this.type = type;
         this.description = description;
         this.walkable = walkable;
@@ -94,11 +95,11 @@ public class Tile {
             this.drops.clear();
             generateItems();
         } catch (RandomItemNotGenerated e) {
-            System.out.println("Error occurred random items were not generated");
+            System.out.println(MessageBundle.get("tile.error.items"));
         } catch (StructureNotGenerated e) {
-            System.out.println("Error occurred structure was not generated");
+            System.out.println(MessageBundle.get("tile.error.structure"));
         } catch (Exception e) {
-            System.out.println("Error occurred while generating content");
+            System.out.println(MessageBundle.get("tile.error.general"));
         }
         contentGenerated = true;
     }
@@ -115,9 +116,8 @@ public class Tile {
     }
 
     private void displayLocation() {
-        if (structure == null) {
-            return;
-        }
+        if (structure == null) return;
+
         System.out.println();
         System.out.println(TravelManger.getRandomSpotting(structure.getName()) + structure.getName());
         System.out.print(structure.getDescription());
@@ -125,18 +125,18 @@ public class Tile {
 
     private void displayItems() {
         if (!drops.isEmpty()) {
-            System.out.println("You see some items here:");
+            System.out.println(MessageBundle.get("tile.items.found"));
             printAvailableItems();
         }
     }
 
     private void displayEnemies() {
         if (enemies.isEmpty()) {
-            System.out.println("No enemies spotted");
+            System.out.println(MessageBundle.get("tile.enemies.none"));
             return;
         }
         for (Enemy e : enemies) {
-            System.out.println("You spot in the distance " + e.getClass().getSimpleName() + e.getDescription());
+            System.out.println(MessageBundle.get("tile.enemies.spotted", e.getClass().getSimpleName(), e.getDescription()));
         }
     }
 
@@ -149,16 +149,16 @@ public class Tile {
 
     public void printAvailableItems() {
         if (drops.isEmpty()) {
-            System.out.println("No items found");
+            System.out.println(MessageBundle.get("tile.items.none"));
         }
         for (ItemDrop item : drops) {
-            System.out.println("-" + item.quantity() + "x" + item.item().getName());
+            System.out.println("-" + item.quantity() + "x " + item.item().getName());
         }
     }
 
     public void removeDrop(Item drop, int quantity) {
         if (drop == null || quantity <= 0) {
-            throw new IllegalArgumentException("Invalid item or quantity");
+            throw new IllegalArgumentException(MessageBundle.get("tile.items.invalid"));
         }
         for (int i = 0; i < drops.size(); i++) {
             ItemDrop tileItem = drops.get(i);
@@ -172,7 +172,6 @@ public class Tile {
                 return;
             }
         }
-        //System.out.println("No such item in this zone");
     }
 
     public void removeEnemy(Enemy enemy) {
@@ -181,7 +180,6 @@ public class Tile {
 
     public boolean isEmpty() {
         return drops.isEmpty() && enemies.isEmpty();
-        //&& structure.isExplored() soon!!!
     }
 
     public void registerNpc(Npc npc) {

@@ -1,5 +1,7 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.localization.MessageBundle;
+
 import java.util.List;
 import java.util.Random;
 
@@ -34,6 +36,7 @@ public final class GameConstants {
     public static final int MAX_ITEM_DROPS = 4;
     public static final int MAX_ITEMS_IN_STACK = 20;
     public static final int DELAY_MS = 40;
+    public static final String savesDirectory = MessageBundle.get("saveGame.directory");
 
 
     public static final Position PLAYER_START = new Position(1, 6);

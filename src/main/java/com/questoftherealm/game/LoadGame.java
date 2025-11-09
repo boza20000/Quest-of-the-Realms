@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.FileNotLoaded;
 import com.questoftherealm.exceptions.SavesNotFound;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,54 +12,54 @@ import java.util.List;
 import java.util.Objects;
 
 public class LoadGame {
-    public LoadGame() {
-    }
+    public LoadGame() {}
 
     public void loadGameSave(String filename) {
         try {
             loadGameInformation(filename);
         } catch (FileNotLoaded e) {
-            System.out.println("File not found or was corrupted");
+            System.out.println(MessageBundle.get("loadGame.file.corrupted"));
             System.exit(0);
         }
     }
 
     public void loadGameInformation(String filename) {
         try {
-            File directory = new File("saves");
+            File directory = new File(GameConstants.savesDirectory);
             File savedFile = new File(directory, filename + ".json");
             if (savedFile.exists() && savedFile.isFile()) {
                 ObjectMapper mapper = new ObjectMapper();
                 Game.setPlayer(mapper.readValue(savedFile, Player.class));
             } else {
-                throw new FileNotFoundException("File not found");
+                throw new FileNotFoundException(MessageBundle.get("loadGame.file.notFound"));
             }
         } catch (Exception e) {
-            throw new FileNotLoaded("File no loaded");
+            throw new FileNotLoaded(MessageBundle.get("loadGame.file.notLoaded"));
         }
-
     }
 
     public void printSaves() {
         try {
             File saveDir = new File("saves");
             if (saveDir.exists() && saveDir.isDirectory()) {
-                List<File> savedFiles = List.of(Objects.requireNonNull(saveDir.listFiles((dir, name) -> name.endsWith(".json"))));
-                System.out.println("-----------Saves-----------");
-                if(savedFiles.isEmpty()){
-                    System.out.println("You don't have saves");
+                List<File> savedFiles = List.of(
+                        Objects.requireNonNull(saveDir.listFiles((dir, name) -> name.endsWith(".json")))
+                );
+                System.out.println(MessageBundle.get("loadGame.saves.header"));
+                if (savedFiles.isEmpty()) {
+                    System.out.println(MessageBundle.get("loadGame.saves.none"));
                     return;
                 }
                 for (File f : savedFiles) {
                     System.out.println(f.getName());
                 }
-                System.out.println("---------------------------");
-                System.out.println("Write the name of the save you want to load: ");
+                System.out.println(MessageBundle.get("loadGame.saves.footer"));
+                System.out.println(MessageBundle.get("loadGame.saves.prompt"));
             } else {
-                System.out.println("Saves not found directory does not exist or name mismatched");
+                System.out.println(MessageBundle.get("loadGame.saves.dirMissing"));
             }
         } catch (Exception e) {
-            throw new SavesNotFound("Saves not available");
+            throw new SavesNotFound(MessageBundle.get("loadGame.saves.unavailable"));
         }
     }
 }

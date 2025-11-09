@@ -19,6 +19,7 @@ import com.questoftherealm.interaction.ExploreManager;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Locations;
 import com.questoftherealm.map.Tile;
@@ -136,7 +137,7 @@ public class Player implements InventoryHandler, Explorer {
     public void addMoney(int amount) {
         gold += amount;
         if (gold >= GameConstants.MAX_GOLD) {
-            System.out.println("You have reached max gold!!!");
+            System.out.println(MessageBundle.get("player.reached.maxGold"));
             gold = GameConstants.MAX_GOLD;
         }
     }
@@ -144,7 +145,7 @@ public class Player implements InventoryHandler, Explorer {
     public boolean payMoney(int amount) {
         if (gold - amount >= 0) {
             gold -= amount;
-            System.out.println("Successful payment made.");
+            System.out.println(MessageBundle.get("player.use.gold"));
             return true;
         }
         return false;
@@ -290,7 +291,7 @@ public class Player implements InventoryHandler, Explorer {
         if (!curTile.isContentGenerated() && !curTile.isEmpty()) {
             curTile.onEnter(this);
         } else {
-            System.out.println("There seems to be nothing else...");
+            System.out.println(MessageBundle.get("player.tile.empty"));
         }
 
     }
@@ -300,25 +301,25 @@ public class Player implements InventoryHandler, Explorer {
 
         Locations location = Locations.getStructure(structure);
         if (location == null) {
-            System.out.println("No such location");
+            System.out.println(MessageBundle.get("structure.no.exist"));
             return;
         }
-        System.out.println("You approach " + location.getName() + ".");
+        System.out.println(MessageBundle.get("player.approach.structure",location.getName()));
         System.out.println(location.getDescription());
-        System.out.println("Do you want to ENTER or LEAVE?");
-        System.out.print("> ");
+        System.out.println(MessageBundle.get("player.decision.structure"));
+        System.out.print(MessageBundle.get("console.enter.command.symbol"));
         String line = scanner.nextLine();
         switch (line.toUpperCase()) {
             case "ENTER" -> {
-                System.out.println("You enter ");
+                System.out.println(MessageBundle.get("player.enter.structure"));
                 ExploreManager interaction = new ExploreManager();
                 interaction.exploreStructure(location, this);
             }
             case "LEAVE" -> {
-                System.out.println("You decide to leave...");
+                System.out.println(MessageBundle.get("player.default.structure"));
             }
             default -> {
-                System.out.println("Leaving...");
+                System.out.println(MessageBundle.get("player.leave.structure"));
             }
         }
 
@@ -328,8 +329,8 @@ public class Player implements InventoryHandler, Explorer {
     public void openChest() {
         try {
             ItemDrop drop = generateRandomItem();
-            System.out.println("Chest opened");
-            System.out.println("Random item drop: " + drop.item() + "x" + drop.quantity());
+            System.out.println(MessageBundle.get("player.open.chest"));
+            System.out.println(MessageBundle.get("player.random.item",drop.item(),drop.quantity()));
             this.inventory.addItem(drop.item(), drop.quantity());
         } catch (RandomItemNotGenerated e) {
             System.out.println(e.getMessage());
@@ -418,7 +419,7 @@ public class Player implements InventoryHandler, Explorer {
         if (questFactory == null) return;
         Quest currentQuest = questFactory.getCurrentQuest();
         if (currentQuest == null) {
-            System.out.println("🏁 All quests completed!");
+            System.out.println(MessageBundle.get("player.quests.completed"));
             this.curQuest = null;
             this.curMission = null;
             return;

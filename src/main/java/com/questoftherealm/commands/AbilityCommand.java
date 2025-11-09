@@ -3,6 +3,7 @@ package com.questoftherealm.commands;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.exceptions.AbilityException;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.map.Tile;
 
@@ -31,7 +32,7 @@ public class AbilityCommand extends Command {
         try {
             player.getPlayerCharacter().activateAbility(player, chosenEnemy);
         } catch (Exception e) {
-            e.fillInStackTrace();
+            throw new AbilityException(player.getPlayerCharacter() + "ability failed.");
         }
 
     }
