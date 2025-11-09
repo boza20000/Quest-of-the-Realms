@@ -22,21 +22,19 @@ public final class TriggerRegister {
     static {
         // Village 1
         triggers.add(new LocationTrigger(GameConstants.NorthVillage_1, player -> {
-            if (player.getCurQuest() instanceof NorthExploration) {
+            if (player.getCurQuest() instanceof NorthExploration && player.getCurMission() instanceof Explore_the_Village) {
                 MissionInteractions.villageIntro_1();
-                Explore_the_Village exploreTheVillage =(Explore_the_Village) player.getCurMission();
-                exploreTheVillage.setSearched_1(true);
-               // Explore_the_Village.setSearched_1(true);
+                Explore_the_Village m = (Explore_the_Village) player.getCurMission();
+                m.setSearched_1(true);
             }
         }));
 
         // Village 2
         triggers.add(new LocationTrigger(GameConstants.NorthVillage_2, player -> {
-            if (player.getCurQuest() instanceof NorthExploration) {
+            if (player.getCurQuest() instanceof NorthExploration && player.getCurMission() instanceof Explore_the_Village) {
                 MissionInteractions.villageIntro_2();
-                Explore_the_Village exploreTheVillage =(Explore_the_Village) player.getCurMission();
-                exploreTheVillage.setSearched_2(true);
-              //  Explore_the_Village.setSearched_2(true);
+                Explore_the_Village m = (Explore_the_Village) player.getCurMission();
+                m.setSearched_2(true);
             }
         }));
 
@@ -53,6 +51,7 @@ public final class TriggerRegister {
                     e.getSuppressed();//Make custom exception
                 }
                 MissionInteractions.goblinsTalkingOverheard();
+                //ambushed true
                 player.updateQuestStatus();
                 MissionInteractions.makeDecision(Game.getPlayer());
             }

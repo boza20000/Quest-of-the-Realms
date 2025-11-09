@@ -1,9 +1,7 @@
 package com.questoftherealm.friendlyEntities;
 
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
-
 import java.util.Objects;
-import java.util.UUID;
 
 public abstract class Npc implements Friendly {
    private final NpcType type;
