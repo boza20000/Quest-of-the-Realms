@@ -10,17 +10,10 @@ import com.questoftherealm.game.Position;
 
 public class Infiltrate_the_Camp extends Mission {
     public Infiltrate_the_Camp(Player player) {
-        super("Infiltrate the Camp", "Sneak into a goblin camp to learn their plans.",player);
-    }
-
-    @Override
-    public boolean checkCompletion() {
-        if(isCompleted())return true;
-        Position pos = new Position(player.getX(),player.getY());
-        if(player.getCurQuest() instanceof GoblinAmbush && pos.equals(GameConstants.Goblin_Camp) && Explore_Nearby_Forests.campFound){
-            complete();
-            return true;
-        }
-        return false;
+        super("Infiltrate the Camp",
+                "Sneak into a goblin camp to learn their plans.",
+                player,
+                (p,m)->p.getCurQuest() instanceof GoblinAmbush && p.getPosition().equals(GameConstants.Goblin_Camp) && Explore_Nearby_Forests.campFound
+                );
     }
 }

@@ -14,7 +14,11 @@ public class Explore_the_Village extends Mission {
     private boolean isVisited_2 = false;
 
     public Explore_the_Village(Player player) {
-        super("Explore the Village", "Search the northern villages for signs of disturbance.",player);
+        super("Explore the Village",
+                "Search the northern villages for signs of disturbance.",
+                player,
+                (p,m)->m.checkCompletion()
+                );
     }
 
     @Override

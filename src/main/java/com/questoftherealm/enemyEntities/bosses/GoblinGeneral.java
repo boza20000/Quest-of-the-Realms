@@ -29,7 +29,8 @@ public class GoblinGeneral extends Boss {
                 NAME,
                 createArmor(),
                 WEAPON,
-                createLoot());
+                createLoot(),
+                false);
     }
 
     private static HashMap<ItemEffect, Item> createArmor() {

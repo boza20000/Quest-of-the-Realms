@@ -4,6 +4,7 @@ import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,17 +13,28 @@ public abstract class Boss extends Characters {
     protected HashMap<ItemEffect, Item> armor;
     protected Item weapon;
     protected List<ItemDrop> loot;
+    private boolean isDefeated;
+
 
     public Boss(
             int health, int mana, int attack, int defence, int armorValue,
             int charisma, int spells, int intelligence, String name,
-            HashMap<ItemEffect, Item> armor, Item weapon, List<ItemDrop> loot) {
+            HashMap<ItemEffect, Item> armor, Item weapon, List<ItemDrop> loot, boolean isDefeated) {
 
         super(health, mana, attack, defence, armorValue, charisma, spells, intelligence);
         this.name = name;
         this.armor = armor;
         this.weapon = weapon;
         this.loot = loot;
+        this.isDefeated = false;
+    }
+
+    public boolean isDefeated() {
+        return isDefeated;
+    }
+
+    public void setDefeated(boolean defeated) {
+        isDefeated = defeated;
     }
 
     public abstract void superMove();

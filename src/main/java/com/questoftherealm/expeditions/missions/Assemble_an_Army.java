@@ -17,13 +17,17 @@ public class Assemble_an_Army extends Mission {
     public static int armyPower = 20;
 
     public Assemble_an_Army(Player player) {
-        super("Assemble an Army", "Rally knights, archers, and mages to face the goblins.",player);
+        super("Assemble an Army",
+              "Rally knights, archers, and mages to face the goblins.",
+              player,
+              (p, m) -> m.checkCompletion());
     }
+
     @Override
     public boolean checkCompletion() {
-        if(isCompleted())return true;
-        if(player.getCurQuest() instanceof RiseOfTheGoblinThreat &&
-                knightsTriedToRecruit && archersTriedToRecruit && magesTriedToRecruit && reportedToKing){
+        if (isCompleted()) return true;
+        if (player.getCurQuest() instanceof RiseOfTheGoblinThreat &&
+                knightsTriedToRecruit && archersTriedToRecruit && magesTriedToRecruit && reportedToKing) {
             updateArmyStatus();
             complete();
             return true;
@@ -32,14 +36,14 @@ public class Assemble_an_Army extends Mission {
     }
 
     public static void updateArmyStatus() {
-        if(knightsRecruited){
-            armyPower+=15;
+        if (knightsRecruited) {
+            armyPower += 15;
         }
-        if(magesRecruited){
-            armyPower+=20;
+        if (magesRecruited) {
+            armyPower += 20;
         }
-        if(archersRecruited){
-            armyPower+=15;
+        if (archersRecruited) {
+            armyPower += 15;
         }
     }
 }

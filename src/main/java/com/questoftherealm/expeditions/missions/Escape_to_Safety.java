@@ -9,16 +9,10 @@ public class Escape_to_Safety extends Mission {
     public static boolean playerEscapedAmbush = false;
 
     public Escape_to_Safety(Player player) {
-        super("Escape to Safety", "Barely escape alive and return with urgent news.",player);
-    }
-
-    @Override
-    public boolean checkCompletion() {
-        if (isCompleted()) return true;
-        if (player.getCurQuest() instanceof GoblinAmbush && playerEscapedAmbush) {
-            complete();
-            return true;
-        }
-        return false;
+        super("Escape to Safety",
+                "Barely escape alive and return with urgent news.",
+                player,
+                (p, m) -> player.getCurQuest() instanceof GoblinAmbush && playerEscapedAmbush
+        );
     }
 }

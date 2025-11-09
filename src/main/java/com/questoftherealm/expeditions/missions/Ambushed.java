@@ -10,20 +10,14 @@ public class Ambushed extends Mission {
     public static boolean playerAmbushed = false;
 
     public Ambushed(Player player) {
-        super("Ambushed!", "The goblins discover you—fight your way out!",player);
+        super("Ambushed!",
+                "The goblins discover you—fight your way out!",
+                player,
+                (p,m)->p.getCurQuest() instanceof GoblinAmbush &&
+                        p.getCurQuest().getMissions().get(0).isCompleted() &&
+                        p.getCurQuest().getMissions().get(1).isCompleted() && playerAmbushed
+        );
     }
 
 
-    @Override
-    public boolean checkCompletion() {
-        if(isCompleted())return true;
-        Quest cur = player.getCurQuest();
-        if (cur instanceof GoblinAmbush &&
-                cur.getMissions().get(0).isCompleted() &&
-                cur.getMissions().get(1).isCompleted() && playerAmbushed) {
-            complete();
-            return true;
-        }
-        return false;
-    }
 }

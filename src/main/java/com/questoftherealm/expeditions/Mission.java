@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.expeditions.interfaces.MissionCondition;
 import com.questoftherealm.expeditions.missions.*;
 import java.util.Objects;
 
@@ -35,11 +36,13 @@ public abstract class Mission {
     private final String task;
     private boolean completed;
     protected Player player;
+    private MissionCondition condition;
 
-    public Mission(String name, String task, Player player) {
+    public Mission(String name, String task, Player player,MissionCondition condition) {
         this.name = name;
         this.task = task;
         this.player = player;
+        this.condition = condition;
     }
 
     @JsonCreator
@@ -65,7 +68,14 @@ public abstract class Mission {
         System.out.println("✅ Mission completed: " + name);
     }
 
-    public abstract boolean checkCompletion();
+    public boolean checkCompletion(){
+        if(completed)return true;
+        if(condition!=null && condition.check(player,this)){
+            complete();
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean equals(Object o) {

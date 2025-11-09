@@ -10,21 +10,12 @@ import com.questoftherealm.map.Tile;
 
 public final class Meet_the_Elder extends Mission {
     public Meet_the_Elder(Player player) {
-        super("Meet the Elder", "Speak with the castle elder about strange rumors from the north.",player);
-    }
+        super("Meet the Elder",
+                "Speak with the castle elder about strange rumors from the north.",
+                player,
+                (p, m) -> player.getCurQuest() instanceof StartQuest
+                        && Game.getGameMap().curZone(player.getX(), player.getY()).getNpcByType(NpcType.Elder).isHasTalked()
 
-    @Override
-    public boolean checkCompletion() {
-        if (isCompleted()) return true;
-        if (player.getCurQuest() instanceof StartQuest && !isCompleted()) {
-            Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
-            Npc elder = curTile.getNpcByType(NpcType.Elder);
-            if (elder != null && elder.isHasTalked()) {
-                complete();
-                return true;
-            }
-        }
-        return false;
+        );
     }
-
 }
