@@ -10,7 +10,7 @@ import com.questoftherealm.map.Map;
 
 public class NpcInitializer {
 
-    public static void registerAll(Map gameMap) {
+    public void registerAll(Map gameMap) {
         Npc villager1 = new Villager(MessageBundle.get("npc.northVillager1"));
         Villager villager2 = new Villager(MessageBundle.get("npc.northVillager2"));
         King king = new King(MessageBundle.get("npc.king"));

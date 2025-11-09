@@ -114,7 +114,8 @@ public class Game {
         }
 
         try {
-            NpcInitializer.registerAll(gameMap);
+            NpcInitializer npcInitializer = new NpcInitializer();
+            npcInitializer.registerAll(gameMap);
         } catch (Exception e) {
             System.out.println(MessageBundle.get("game.npc.init.error"));
             System.exit(0);
