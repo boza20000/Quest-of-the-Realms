@@ -7,7 +7,7 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemType;
 import java.util.Map;
 
-public final class Gather_Supplies extends Mission {
+public class Gather_Supplies extends Mission {
     public Gather_Supplies(Player player) {
         super("Gather Supplies",
                 "Collect at least 1 potion and 5 food for the journey ahead.",
