@@ -17,23 +17,26 @@ public class TravelManger {
         return ThreadLocalRandom.current();
     }
 
-    private static final List<String> MOVE_CONNECTORS = List.of(
-            "➡️ " + MessageBundle.get("travel.move.connector1"),
-            "🚶 " + MessageBundle.get("travel.move.connector2"),
-            "🌍 " + MessageBundle.get("travel.move.connector3"),
-            "🧭 " + MessageBundle.get("travel.move.connector4"),
-            "🏞️ " + MessageBundle.get("travel.move.connector5"),
-            "➡️ " + MessageBundle.get("travel.move.connector6"),
-            "🌅 " + MessageBundle.get("travel.move.connector7"),
-            "🌾 " + MessageBundle.get("travel.move.connector8")
+    private final List<String> MOVE_CONNECTORS = List.of(
+            "➡️ travel.move.connector1",
+            "🚶 travel.move.connector2",
+            "🌍 travel.move.connector3",
+            "🧭 travel.move.connector4",
+            "🏞️ travel.move.connector5",
+            "➡️ travel.move.connector6",
+            "🌅 travel.move.connector7",
+            "🌾 travel.move.connector8"
     );
 
-    private static void randomTravelText(String direction, TileTypes start) {
-        String line = MOVE_CONNECTORS.get(random().nextInt(MOVE_CONNECTORS.size()));
-        SlowPrinter.slowPrint(String.format(line, start, direction));
+    private void randomTravelText(String direction, TileTypes start) {
+        String fullEntry = MOVE_CONNECTORS.get(random().nextInt(MOVE_CONNECTORS.size()));
+        String emoji = fullEntry.substring(0, fullEntry.indexOf(' '));
+        String key = fullEntry.substring(fullEntry.indexOf(' ') + 1);
+        String line = emoji + " " + MessageBundle.get(key, start, direction);
+        SlowPrinter.slowPrint(line);
     }
 
-    private static void randomEvent(TileTypes type) {
+    private void randomEvent(TileTypes type) {
         Event event = Event.generateEvent(type);
         SlowPrinter.slowPrint("⚠️ " + MessageBundle.get("travel.event.encounter", event.getName()));
         SlowPrinter.slowPrint(event.getDescription());
@@ -46,7 +49,7 @@ public class TravelManger {
         }
     }
 
-    public static boolean promptYesNo(String question) {
+    private boolean promptYesNo(String question) {
         SlowPrinter.slowPrint(question + " " + MessageBundle.get("travel.prompt.yesno"));
         while (true) {
             System.out.print(">");
@@ -57,7 +60,7 @@ public class TravelManger {
         }
     }
 
-    public static void pathInteraction(TileTypes start, String direction) {
+    public void pathInteraction(TileTypes start, String direction) {
         if (random().nextInt(100) < 30) { // 30% chance
             randomEvent(start);
         } else {
@@ -65,7 +68,7 @@ public class TravelManger {
         }
     }
 
-    public static String getTransition(TileTypes start, TileTypes end) {
+    public String getTransition(TileTypes start, TileTypes end) {
         if (start == end) {
             return switch (end) {
                 case MOUNTAIN -> "⛰️ " + MessageBundle.get("travel.transition.same.mountain");
@@ -88,21 +91,23 @@ public class TravelManger {
         };
     }
 
-    private static final List<String> SPOTTING_CONNECTORS = List.of(
-            "👀 " + MessageBundle.get("travel.spot.connector1"),
-            "🏕️ " + MessageBundle.get("travel.spot.connector2"),
-            "🌄 " + MessageBundle.get("travel.spot.connector3"),
-            "🔎 " + MessageBundle.get("travel.spot.connector4"),
-            "🌲 " + MessageBundle.get("travel.spot.connector5"),
-            "⚔️ " + MessageBundle.get("travel.spot.connector6"),
-            "✨ " + MessageBundle.get("travel.spot.connector7"),
-            "🌍 " + MessageBundle.get("travel.spot.connector8"),
-            "🔥 " + MessageBundle.get("travel.spot.connector9"),
-            "🏚️ " + MessageBundle.get("travel.spot.connector10")
+    private final List<String> SPOTTING_CONNECTORS = List.of(
+            "👀 travel.spot.connector1",
+            "🏕️ travel.spot.connector2",
+            "🌄 travel.spot.connector3",
+            "🔎 travel.spot.connector4",
+            "🌲 travel.spot.connector5",
+            "⚔️ travel.spot.connector6",
+            "✨ travel.spot.connector7",
+            "🌍 travel.spot.connector8",
+            "🔥 travel.spot.connector9",
+            "🏚️ travel.spot.connector10"
     );
 
-    public static String getRandomSpotting(String locationName) {
-        String template = SPOTTING_CONNECTORS.get(random().nextInt(SPOTTING_CONNECTORS.size()));
-        return String.format(template, locationName);
+    public String getRandomSpotting(String locationName) {
+        String fullEntry = SPOTTING_CONNECTORS.get(random().nextInt(SPOTTING_CONNECTORS.size()));
+        String emoji = fullEntry.substring(0, fullEntry.indexOf(' '));
+        String key = fullEntry.substring(fullEntry.indexOf(' ') + 1);
+        return emoji + " " + MessageBundle.get(key, locationName);
     }
 }

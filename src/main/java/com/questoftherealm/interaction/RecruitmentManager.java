@@ -1,7 +1,8 @@
 package com.questoftherealm.interaction;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.missions.Assemble_an_Army;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.localization.MessageBundle;
 
 import java.util.Scanner;
@@ -14,9 +15,13 @@ public class RecruitmentManager {
     }
 
     // === KNIGHTS ===
-    public static void talkToTheKnights() {
-        Assemble_an_Army.knightsTriedToRecruit = true;
-        if (Assemble_an_Army.knightsRecruited) {
+    public void talkToTheKnights(Player player) {
+        RiseOfTheGoblinThreat q = checkSafe(player);
+        if (q == null) {
+            return;
+        }
+        q.setKnightsTriedToRecruit(true);
+        if (q.isKnightsRecruited()) {
             System.out.println("⚔️ " + MessageBundle.get("recruit.knights.already"));
             return;
         }
@@ -34,8 +39,8 @@ public class RecruitmentManager {
             String choice = scanner.nextLine();
 
             switch (choice) {
-                case "1" -> persuasionBranch();
-                case "2" -> intimidationBranch();
+                case "1" -> persuasionBranch(player, q);
+                case "2" -> intimidationBranch(player, q);
                 case "3" -> {
                     System.out.println(MessageBundle.get("recruit.knights.leave"));
                     return;
@@ -43,26 +48,26 @@ public class RecruitmentManager {
                 default -> System.out.println(MessageBundle.get("recruit.knights.invalid"));
             }
 
-            if (Assemble_an_Army.knightsRecruited) return;
+            if (q.isKnightsRecruited()) return;
         }
     }
 
-    private static void persuasionBranch() {
+    private void persuasionBranch(Player player, RiseOfTheGoblinThreat q) {
         System.out.println(MessageBundle.get("recruit.knights.persuade.start"));
         if (roll() < 50) {
             System.out.println(MessageBundle.get("recruit.knights.persuade.success"));
-            Assemble_an_Army.knightsRecruited = true;
+            q.setKnightsRecruited(true);
         } else {
             System.out.println(MessageBundle.get("recruit.knights.persuade.fail"));
             System.out.println(MessageBundle.get("recruit.knights.persuade.options"));
             System.out.print("> ");
             String choice = scanner.nextLine();
             switch (choice) {
-                case "1" -> payForKnights();
+                case "1" -> payForKnights(player, q);
                 case "2" -> {
                     if (roll() < 40) {
                         System.out.println(MessageBundle.get("recruit.knights.persuade.reason.success"));
-                        Assemble_an_Army.knightsRecruited = true;
+                        q.setKnightsRecruited(true);
                     } else {
                         System.out.println(MessageBundle.get("recruit.knights.persuade.reason.fail"));
                     }
@@ -72,22 +77,22 @@ public class RecruitmentManager {
         }
     }
 
-    private static void intimidationBranch() {
+    private void intimidationBranch(Player player, RiseOfTheGoblinThreat q) {
         System.out.println(MessageBundle.get("recruit.knights.intimidate.start"));
         if (roll() < 45) {
             System.out.println(MessageBundle.get("recruit.knights.intimidate.success"));
-            Assemble_an_Army.knightsRecruited = true;
+            q.setKnightsRecruited(true);
         } else {
             System.out.println(MessageBundle.get("recruit.knights.intimidate.fail"));
             System.out.println(MessageBundle.get("recruit.knights.intimidate.options"));
             System.out.print("> ");
             String choice = scanner.nextLine();
             switch (choice) {
-                case "1" -> persuasionBranch();
+                case "1" -> persuasionBranch(player, q);
                 case "2" -> {
                     if (roll() < 30) {
                         System.out.println(MessageBundle.get("recruit.knights.intimidate.double.success"));
-                        Assemble_an_Army.knightsRecruited = true;
+                        q.setKnightsRecruited(true);
                     } else {
                         System.out.println(MessageBundle.get("recruit.knights.intimidate.double.fail"));
                     }
@@ -97,19 +102,23 @@ public class RecruitmentManager {
         }
     }
 
-    private static void payForKnights() {
-        if (Game.getPlayer().payMoney(50)) {
+    private void payForKnights(Player player, RiseOfTheGoblinThreat q) {
+        if (player.payMoney(50)) {
             System.out.println("💰 " + MessageBundle.get("recruit.knights.pay.success"));
-            Assemble_an_Army.knightsRecruited = true;
+            q.setKnightsRecruited(true);
         } else {
             System.out.println(MessageBundle.get("recruit.knights.pay.fail"));
         }
     }
 
     // === ARCHERS ===
-    public static void talkToTheArchers() {
-        Assemble_an_Army.archersTriedToRecruit = true;
-        if (Assemble_an_Army.archersRecruited) {
+    public void talkToTheArchers(Player player) {
+        RiseOfTheGoblinThreat q = checkSafe(player);
+        if (q == null) {
+            return;
+        }
+        q.setArchersTriedToRecruit(true);
+        if (q.isArchersRecruited()) {
             System.out.println("🏹 " + MessageBundle.get("recruit.archers.already"));
             return;
         }
@@ -120,27 +129,27 @@ public class RecruitmentManager {
         int roll = roll();
         if (roll < 35) {
             System.out.println(MessageBundle.get("recruit.archers.eager"));
-            Assemble_an_Army.archersRecruited = true;
+            q.setArchersRecruited(true);
         } else if (roll < 80) {
             System.out.println(MessageBundle.get("recruit.archers.resource"));
             System.out.println(MessageBundle.get("recruit.archers.resource.options"));
-            handleArcherChoice();
+            handleArcherChoice(player, q);
         } else {
             System.out.println(MessageBundle.get("recruit.archers.refuse"));
             System.out.println(MessageBundle.get("recruit.archers.refuse.options"));
-            handleArcherRefusalChoice();
+            handleArcherRefusalChoice(player, q);
         }
     }
 
-    private static void handleArcherChoice() {
+    private void handleArcherChoice(Player player, RiseOfTheGoblinThreat q) {
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         switch (input) {
             case "1" -> System.out.println(MessageBundle.get("recruit.archers.promise"));
             case "2" -> {
-                if (Game.getPlayer().payMoney(30)) {
+                if (player.payMoney(30)) {
                     System.out.println("💰 " + MessageBundle.get("recruit.archers.gold.success"));
-                    Assemble_an_Army.archersRecruited = true;
+                    q.setArchersRecruited(true);
                 } else {
                     System.out.println(MessageBundle.get("recruit.archers.gold.fail"));
                 }
@@ -148,7 +157,7 @@ public class RecruitmentManager {
             case "3" -> {
                 if (roll() < 40) {
                     System.out.println(MessageBundle.get("recruit.archers.threat.success"));
-                    Assemble_an_Army.archersRecruited = true;
+                    q.setArchersRecruited(true);
                 } else {
                     System.out.println(MessageBundle.get("recruit.archers.threat.fail"));
                 }
@@ -157,21 +166,25 @@ public class RecruitmentManager {
         }
     }
 
-    private static void handleArcherRefusalChoice() {
+    private void handleArcherRefusalChoice(Player player, RiseOfTheGoblinThreat q) {
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         if (roll() < 50 && (input.equals("1") || input.equals("2"))) {
             System.out.println(MessageBundle.get("recruit.archers.courage.success"));
-            Assemble_an_Army.archersRecruited = true;
+            q.setArchersRecruited(true);
         } else {
             System.out.println(MessageBundle.get("recruit.archers.courage.fail"));
         }
     }
 
     // === MAGES ===
-    public static void talkToTheMages() {
-        Assemble_an_Army.magesTriedToRecruit = true;
-        if (Assemble_an_Army.magesRecruited) {
+    public void talkToTheMages(Player player) {
+        RiseOfTheGoblinThreat q = checkSafe(player);
+        if (q == null) {
+            return;
+        }
+        q.setMagesTriedToRecruit(true);
+        if (q.isMagesRecruited()) {
             System.out.println("🪄 " + MessageBundle.get("recruit.mages.already"));
             return;
         }
@@ -182,26 +195,26 @@ public class RecruitmentManager {
         int roll = roll();
         if (roll < 30) {
             System.out.println(MessageBundle.get("recruit.mages.prophecy"));
-            Assemble_an_Army.magesRecruited = true;
+            q.setMagesRecruited(true);
         } else if (roll < 75) {
             System.out.println(MessageBundle.get("recruit.mages.price"));
             System.out.println(MessageBundle.get("recruit.mages.price.options"));
-            handleMageChoice();
+            handleMageChoice(player, q);
         } else {
             System.out.println(MessageBundle.get("recruit.mages.refuse"));
             System.out.println(MessageBundle.get("recruit.mages.refuse.options"));
-            handleMageRefusalChoice();
+            handleMageRefusalChoice(player, q);
         }
     }
 
-    private static void handleMageChoice() {
+    private void handleMageChoice(Player player, RiseOfTheGoblinThreat q) {
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         switch (input) {
             case "1" -> {
-                if (Game.getPlayer().payMoney(70)) {
+                if (player.payMoney(70)) {
                     System.out.println("💰 " + MessageBundle.get("recruit.mages.gold.success"));
-                    Assemble_an_Army.magesRecruited = true;
+                    q.setMagesRecruited(true);
                 } else {
                     System.out.println(MessageBundle.get("recruit.mages.gold.fail"));
                 }
@@ -209,7 +222,7 @@ public class RecruitmentManager {
             case "2" -> {
                 if (roll() < 50) {
                     System.out.println(MessageBundle.get("recruit.mages.reason.success"));
-                    Assemble_an_Army.magesRecruited = true;
+                    q.setMagesRecruited(true);
                 } else {
                     System.out.println(MessageBundle.get("recruit.mages.reason.fail"));
                 }
@@ -218,14 +231,21 @@ public class RecruitmentManager {
         }
     }
 
-    private static void handleMageRefusalChoice() {
+    private void handleMageRefusalChoice(Player player, RiseOfTheGoblinThreat q) {
         System.out.print("Choose: ");
         String input = scanner.nextLine();
         if (roll() < 40 && (input.equals("1") || input.equals("2"))) {
             System.out.println(MessageBundle.get("recruit.mages.convince.success"));
-            Assemble_an_Army.magesRecruited = true;
+            q.setMagesRecruited(true);
         } else {
             System.out.println(MessageBundle.get("recruit.mages.convince.fail"));
         }
+    }
+
+    private RiseOfTheGoblinThreat checkSafe(Player player) {
+        if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && player.getCurMission() instanceof Assemble_an_Army) {
+            return q;
+        }
+        return null;
     }
 }

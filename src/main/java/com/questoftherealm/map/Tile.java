@@ -29,6 +29,7 @@ public class Tile {
     private List<ItemDrop> drops = new ArrayList<>();
     private boolean contentGenerated = false;
     private final Map<String, Npc> npcRegister = new HashMap<>();
+    private final TravelManger travelManger = new TravelManger();
 
     @JsonCreator
     public Tile(@JsonProperty("type") TileTypes type,
@@ -119,7 +120,7 @@ public class Tile {
         if (structure == null) return;
 
         System.out.println();
-        System.out.println(TravelManger.getRandomSpotting(structure.getName()) + structure.getName());
+        System.out.println(travelManger.getRandomSpotting(structure.getName()) + structure.getName());
         System.out.print(structure.getDescription());
     }
 

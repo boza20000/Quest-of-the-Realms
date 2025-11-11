@@ -1,13 +1,13 @@
 package com.questoftherealm.expeditions;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.interfaces.MissionCondition;
 import com.questoftherealm.expeditions.missions.*;
+
 import java.util.Objects;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -16,9 +16,8 @@ import java.util.Objects;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Meet_the_Elder.class, name = "Meet_the_Elder"),
-        @JsonSubTypes.Type(value = Explore_the_Village.class, name = "Explore_the_Village"),
         @JsonSubTypes.Type(value = Travel_North.class, name = "Travel_North"),
-        @JsonSubTypes.Type(value = Talk_To_Survivors.class, name = "Talk_To_Survivors"),
+        @JsonSubTypes.Type(value = Investigate_Northern_Villages.class, name = "Investigate_Northern_Villages"),
         @JsonSubTypes.Type(value = Gather_Supplies.class, name = "Gather_Supplies"),
         @JsonSubTypes.Type(value = Explore_Nearby_Forests.class, name = "Explore_Nearby_Forests"),
         @JsonSubTypes.Type(value = Infiltrate_the_Camp.class, name = "Infiltrate_the_Camp"),
@@ -32,45 +31,77 @@ import java.util.Objects;
         @JsonSubTypes.Type(value = Defeat_the_Goblin_King.class, name = "Defeat_the_Goblin_King")
 })
 public abstract class Mission {
-    private final String name;
-    private final String task;
-    private boolean completed;
+    protected String name;
+    protected String task;
+    protected boolean completed;
+    @JsonIgnore
     protected Player player;
-    private MissionCondition condition;
+    @JsonIgnore
+    protected MissionCondition condition;
+    private MissionConditionType conditionType;
 
-    public Mission(String name, String task, Player player,MissionCondition condition) {
+    public Mission(String name, String task, Player player, MissionCondition condition) {
         this.name = name;
         this.task = task;
         this.player = player;
         this.condition = condition;
+        this.conditionType = MissionConditionFactory.getTypeForMission(this);
+    }
+
+    protected Mission() {
     }
 
     @JsonCreator
     public Mission(
             @JsonProperty("name") String name,
             @JsonProperty("task") String task,
-            @JsonProperty("completed") boolean completed
+            @JsonProperty("completed") boolean completed,
+            @JsonProperty("conditionType") MissionConditionType conditionType
     ) {
         this.name = name;
         this.task = task;
         this.completed = completed;
+        this.conditionType = conditionType;
         this.player = null;
+        this.condition = null;
     }
 
-    public String getName() { return name; }
-    public String getTask() { return task; }
-    public Player getPlayer() { return player; }
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
+    public MissionConditionType getConditionType() {
+        return conditionType;
+    }
+
+    public void setCondition(MissionCondition condition) {
+        this.condition = condition;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
 
     protected void complete() {
         setCompleted(true);
         System.out.println("✅ Mission completed: " + name);
     }
 
-    public boolean checkCompletion(){
-        if(completed)return true;
-        if(condition!=null && condition.check(player,this)){
+    public boolean checkCompletion() {
+        if (completed) return true;
+        if (condition != null && condition.check(player, this)) {
             complete();
             return true;
         }

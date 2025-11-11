@@ -6,12 +6,13 @@ import com.questoftherealm.game.Game;
 import com.questoftherealm.characters.player.Player;
 
 public class Breach_the_Stronghold extends Mission {
-    public static boolean isBreached = false;
+
     public Breach_the_Stronghold(Player player) {
         super("Breach the Stronghold",
                 "Fight through endless goblin soldiers to reach the throne room.",
                 player,
-                (p, m) -> p.getCurQuest() instanceof FinalBattle && isBreached
+                (p, m) -> p.getCurQuest() instanceof FinalBattle q && q.isBreached()
         );
     }
+    public Breach_the_Stronghold(){}
 }

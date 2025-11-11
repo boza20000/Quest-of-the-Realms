@@ -32,6 +32,7 @@ public class Gather_Supplies extends Mission {
                 }
         );
     }
+    public Gather_Supplies(){}
 
 
 }

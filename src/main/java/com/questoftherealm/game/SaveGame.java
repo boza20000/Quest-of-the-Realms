@@ -14,7 +14,7 @@ public class SaveGame {
 
     public void createSave(String saveName) {
         try {
-            File saveDir = new File(MessageBundle.get(GameConstants.savesDirectory));
+            File saveDir = new File("saves");
             if (!saveDir.exists() && !saveDir.mkdirs()) {
                 System.err.println(MessageBundle.get("saveGame.error.notCreated"));
                 return;

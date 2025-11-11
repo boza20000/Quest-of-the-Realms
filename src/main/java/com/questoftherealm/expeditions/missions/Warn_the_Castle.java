@@ -11,7 +11,10 @@ public class Warn_the_Castle extends Mission {
         super("Warn the Castle",
                 "Return to the capital and inform the king of the looming goblin threat.",
                 player,
-                (p,m)->p.getCurQuest() instanceof RiseOfTheGoblinThreat  && p.getPosition().equals(GameConstants.Castle)
-                );
+                (p, m) -> p.getCurQuest() instanceof RiseOfTheGoblinThreat q
+                        && p.getPosition().equals(GameConstants.Castle)
+                        && q.isReportedToKing()
+        );
     }
+    public Warn_the_Castle(){}
 }

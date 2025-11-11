@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.expeditions.interfaces.MissionCondition;
 import com.questoftherealm.expeditions.quests.*;
 import com.questoftherealm.interaction.SlowPrinter;
 import java.util.LinkedList;
@@ -46,7 +47,7 @@ public class QuestFactory {
             quest.setPlayer(player);
         }
     }
-
+    @JsonIgnore
     public Quest getCurrentQuest() {
         return quests.peek();
     }
@@ -60,7 +61,7 @@ public class QuestFactory {
             System.out.println("No more quests available");
         }
     }
-
+    @JsonIgnore
     public Mission getCurrentMission() {
         if (getCurrentQuest() == null) {
             return null;
@@ -82,4 +83,20 @@ public class QuestFactory {
         quests.forEach((Quest quest) -> System.out.println("Quest:" + quest.getName()));
     }
 
+    public void restoreAfterLoad(Player loadedPlayer) {
+        this.player = loadedPlayer;
+        for (Quest q : quests) {
+            q.setPlayer(loadedPlayer);
+            if (q.getMissions() != null) {
+                for (Mission m : q.getMissions()) {
+                    m.setPlayer(loadedPlayer);
+                    MissionConditionType type = m.getConditionType();
+                    if (type != null && type != MissionConditionType.CUSTOM_CHECK_COMPLETION) {
+                        MissionCondition logic = MissionConditionFactory.getCondition(type);
+                        m.setCondition(logic);
+                    }
+                }
+            }
+        }
+    }
 }

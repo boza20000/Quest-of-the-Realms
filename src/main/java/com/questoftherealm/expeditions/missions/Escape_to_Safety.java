@@ -6,13 +6,12 @@ import com.questoftherealm.expeditions.quests.GoblinAmbush;
 import com.questoftherealm.game.Game;
 
 public class Escape_to_Safety extends Mission {
-    public static boolean playerEscapedAmbush = false;
-
     public Escape_to_Safety(Player player) {
         super("Escape to Safety",
                 "Barely escape alive and return with urgent news.",
                 player,
-                (p, m) -> player.getCurQuest() instanceof GoblinAmbush && playerEscapedAmbush
+                (p, m) -> player.getCurQuest() instanceof GoblinAmbush q && q.isPlayerEscapedAmbush()
         );
     }
+    public Escape_to_Safety(){}
 }

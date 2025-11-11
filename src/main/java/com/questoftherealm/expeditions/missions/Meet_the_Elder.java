@@ -11,8 +11,9 @@ public class Meet_the_Elder extends Mission {
         super("Meet the Elder",
                 "Speak with the castle elder about strange rumors from the north.",
                 player,
-                (p, m) -> p.getCurQuest() instanceof StartQuest
-                        && Game.getGameMap().curZone(p.getX(), p.getY()).getNpcByType(NpcType.Elder).isHasTalked()
+                (p, m) -> p.getCurQuest() instanceof StartQuest q
+                        && q.isElderHasTalked()
         );
     }
+    public Meet_the_Elder(){}
 }

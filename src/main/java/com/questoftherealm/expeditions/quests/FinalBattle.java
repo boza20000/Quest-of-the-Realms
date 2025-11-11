@@ -11,6 +11,9 @@ import com.questoftherealm.expeditions.missions.March_Into_the_Far_North;
 import java.util.List;
 
 public class FinalBattle extends Quest {
+    private boolean isBreached = false;
+    private boolean isDefeated = false;
+
     public FinalBattle(Player player) {
         super(
                 "Final Battle",
@@ -23,5 +26,35 @@ public class FinalBattle extends Quest {
                 player
 
         );
+    }
+
+    public FinalBattle() {
+        super(
+                "Final Battle",
+                List.of(
+                        new March_Into_the_Far_North(null),
+                        new Breach_the_Stronghold(null),
+                        new Defeat_the_Goblin_King(null)
+                ),
+                "The time has come. Deep in the Fifth Kingdom, the Goblin King awaits you.",
+                null
+
+        );
+    }
+
+    public boolean isDefeated() {
+        return isDefeated;
+    }
+
+    public void setDefeated(boolean defeated) {
+        isDefeated = defeated;
+    }
+
+    public boolean isBreached() {
+        return isBreached;
+    }
+
+    public void setBreached(boolean breached) {
+        isBreached = breached;
     }
 }

@@ -6,15 +6,6 @@ import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.EnemyFactory;
 import com.questoftherealm.enemyEntities.EnemyType;
-import com.questoftherealm.enemyEntities.entities.Goblin;
-import com.questoftherealm.expeditions.Mission;
-import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.expeditions.missions.Assemble_an_Army;
-import com.questoftherealm.expeditions.missions.Explore_the_Village;
-import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
-import com.questoftherealm.expeditions.quests.StartQuest;
-import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.map.Map;
@@ -24,9 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.*;
 

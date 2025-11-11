@@ -4,10 +4,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.playerCharacters.CharacterConstants;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.bosses.GoblinGeneral;
-import com.questoftherealm.expeditions.missions.Assemble_an_Army;
-import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_General;
-import com.questoftherealm.game.Game;
-
+import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -17,41 +14,41 @@ public class GoblinGeneralManger {
     private static final Scanner scanner = new Scanner(System.in);
     private static final ResourceBundle messages = ResourceBundle.getBundle("messages");
 
-    public static void startFinalBattle() {
+    public void startFinalBattle(Player player, RiseOfTheGoblinThreat q) {
         System.out.println("\n⚔️ " + messages.getString("goblinGeneral.battle.start"));
         System.out.println(messages.getString("goblinGeneral.battle.march"));
 
-        int playerArmyPower = calculatePlayerArmyPower();
+        int playerArmyPower = calculatePlayerArmyPower(player, q);
         int enemyArmyPower = 120 + random.nextInt(60);
 
         System.out.println("🏇 " + messages.getString("goblinGeneral.battle.player.power") + playerArmyPower);
         System.out.println("👹 " + messages.getString("goblinGeneral.battle.enemy.power") + enemyArmyPower);
         System.out.println(messages.getString("goblinGeneral.battle.begin"));
-        simulateArmyBattle(playerArmyPower, enemyArmyPower);
+        simulateArmyBattle(player, playerArmyPower, enemyArmyPower, q);
     }
 
-    private static int calculatePlayerArmyPower() {
-        int power = Assemble_an_Army.armyPower;
-        power += Game.getPlayer().getLevel() * 5;
+    private int calculatePlayerArmyPower(Player player, RiseOfTheGoblinThreat q) {
+        int power = q.getArmyPower();
+        power += player.getLevel() * 5;
         return power;
     }
 
-    private static void simulateArmyBattle(int playerPower, int enemyPower) {
+    private void simulateArmyBattle(Player player, int playerPower, int enemyPower, RiseOfTheGoblinThreat q) {
         double winChance = (double) playerPower / (playerPower + enemyPower);
         int roll = random.nextInt(100);
 
         System.out.println("\n💥 " + messages.getString("goblinGeneral.battle.rage"));
         System.out.println(messages.getString("goblinGeneral.battle.scene"));
 
-        if (Assemble_an_Army.knightsRecruited) {
+        if (q.isKnightsRecruited()) {
             pause();
             System.out.println(messages.getString("goblinGeneral.battle.knights"));
         }
-        if (Assemble_an_Army.magesRecruited) {
+        if (q.isMagesRecruited()) {
             pause();
             System.out.println(messages.getString("goblinGeneral.battle.mages"));
         }
-        if (Assemble_an_Army.archersRecruited) {
+        if (q.isArchersRecruited()) {
             pause();
             System.out.println(messages.getString("goblinGeneral.battle.archers"));
         }
@@ -60,15 +57,15 @@ public class GoblinGeneralManger {
         if (roll < (winChance * 100)) {
             System.out.println("\n🏆 " + messages.getString("goblinGeneral.battle.victory"));
             System.out.println(messages.getString("goblinGeneral.battle.general.appears"));
-            duelGoblinGeneral();
+            duelGoblinGeneral(player,q);
         } else {
             System.out.println("\n💀 " + messages.getString("goblinGeneral.battle.defeat"));
-            Game.getPlayer().getPlayerCharacter().setHealth(0);
+            player.getPlayerCharacter().setHealth(0);
             System.out.println(messages.getString("goblinGeneral.battle.death"));
         }
     }
 
-    private static void pause() {
+    private void pause() {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ignored) {
@@ -76,21 +73,20 @@ public class GoblinGeneralManger {
         }
     }
 
-    private static void duelGoblinGeneral() {
-        Player player = Game.getPlayer();
+    private void duelGoblinGeneral(Player player,RiseOfTheGoblinThreat q) {
         goblinGeneralFight(player);
         if (!player.getPlayerCharacter().isDead()) {
             System.out.println("\n🔥 " + messages.getString("goblinGeneral.duel.victory"));
-            Defeat_the_Goblin_General.isDefeated = true;
+            q.setDefeated(true);
             System.out.println("🎉 " + messages.getString("goblinGeneral.duel.safe"));
         } else {
             System.out.println("\n💀 " + messages.getString("goblinGeneral.duel.death"));
-            Game.getPlayer().getPlayerCharacter().setHealth(0);
+            player.getPlayerCharacter().setHealth(0);
             System.out.println(messages.getString("goblinGeneral.duel.defeated"));
         }
     }
 
-    private static void goblinGeneralFight(Player player) {
+    private void goblinGeneralFight(Player player) {
         GoblinGeneral general = new GoblinGeneral();
         Characters character = player.getPlayerCharacter();
         System.out.println("\n👹 " + messages.getString("goblinGeneral.duel.intro"));

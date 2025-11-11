@@ -46,7 +46,9 @@ public class Player implements InventoryHandler, Explorer {
     private String currentZone;
     private HashMap<ItemEffect, Item> armor;
     private Item weapon;
+    @JsonIgnore
     private Quest curQuest;
+    @JsonIgnore
     private Mission curMission;
     private PlayTime playTime;
     private long startTime;
@@ -89,10 +91,9 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("armor") HashMap<ItemEffect, Item> armor,
                   @JsonProperty("weapon") Item weapon,
                   @JsonProperty("inventory") Inventory inventory,
-                  @JsonProperty("curQuest") Quest quest,
-                  @JsonProperty("curMission") Mission mission,
                   @JsonProperty("playTime") PlayTime playTime,
-                  @JsonProperty("quests") QuestFactory questFactory) {
+                  @JsonProperty("questFactory") QuestFactory questFactory) {
+
         this.name = name;
         this.playerType = playerType;
         this.playerCharacter = PlayerFactory.createPlayer(playerType);
@@ -105,24 +106,28 @@ public class Player implements InventoryHandler, Explorer {
         this.currentZone = currentZone;
         this.weapon = weapon != null ? weapon : playerCharacter.getDefaultWeapon();
         this.armor = armor != null ? armor : new HashMap<>();
-        //fix
         createArmor();
         initializeInventory(inventory);
-        //fix
         recalculateStats();
-        this.curQuest = quest;
-        this.curMission = mission;
-        this.playTime = playTime;
+
         this.questFactory = questFactory;
+        if (questFactory != null) {
+            this.questFactory.setPlayer(this);
+            this.curQuest = questFactory.getCurrentQuest();
+            this.curMission = questFactory.getCurrentMission();
+        }
+
+        this.playTime = playTime != null ? playTime : new PlayTime(0,0);
     }
 
-    private void createArmor(){
+    private void createArmor() {
         if (!this.armor.containsKey(ItemEffect.HELMET)) this.armor.put(ItemEffect.HELMET, null);
         if (!this.armor.containsKey(ItemEffect.CHESTPLATE)) this.armor.put(ItemEffect.CHESTPLATE, null);
         if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
 
     }
-    private void initializeInventory(Inventory inventory){
+
+    private void initializeInventory(Inventory inventory) {
         this.inventory = inventory != null ? inventory : new Inventory(MAX_ITEMS_IN_INVENTORY);
     }
 
@@ -240,19 +245,19 @@ public class Player implements InventoryHandler, Explorer {
     public QuestFactory getQuestFactory() {
         return questFactory;
     }
-
+    @JsonIgnore
     public Quest getCurQuest() {
         return curQuest;
     }
-
+    @JsonIgnore
     public void setCurQuest(Quest curQuest) {
         this.curQuest = curQuest;
     }
-
+    @JsonIgnore
     public Mission getCurMission() {
         return curMission;
     }
-
+    @JsonIgnore
     public void setCurMission(Mission curMission) {
         this.curMission = curMission;
     }
@@ -286,14 +291,12 @@ public class Player implements InventoryHandler, Explorer {
                 return;
             }
         }
-
         Tile curTile = Game.getGameMap().curZone(getX(), getY());
         if (!curTile.isContentGenerated() && !curTile.isEmpty()) {
             curTile.onEnter(this);
         } else {
             System.out.println(MessageBundle.get("player.tile.empty"));
         }
-
     }
 
     @Override
@@ -304,7 +307,7 @@ public class Player implements InventoryHandler, Explorer {
             System.out.println(MessageBundle.get("structure.no.exist"));
             return;
         }
-        System.out.println(MessageBundle.get("player.approach.structure",location.getName()));
+        System.out.println(MessageBundle.get("player.approach.structure", location.getName()));
         System.out.println(location.getDescription());
         System.out.println(MessageBundle.get("player.decision.structure"));
         System.out.print(MessageBundle.get("console.enter.command.symbol"));
@@ -330,7 +333,7 @@ public class Player implements InventoryHandler, Explorer {
         try {
             ItemDrop drop = generateRandomItem();
             System.out.println(MessageBundle.get("player.open.chest"));
-            System.out.println(MessageBundle.get("player.random.item",drop.item(),drop.quantity()));
+            System.out.println(MessageBundle.get("player.random.item", drop.item(), drop.quantity()));
             this.inventory.addItem(drop.item(), drop.quantity());
         } catch (RandomItemNotGenerated e) {
             System.out.println(e.getMessage());

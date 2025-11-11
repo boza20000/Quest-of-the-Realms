@@ -32,5 +32,4 @@ public abstract class Npc implements Friendly {
         return Objects.hash(type, id);
     }
 
-    public abstract boolean isHasTalked();
 }

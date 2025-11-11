@@ -13,4 +13,5 @@ public class Travel_North extends Mission {
                 (p, m) -> (p.getCurQuest() instanceof NorthExploration) && p.getY() <= GameConstants.North_Y
         );
     }
+    public Travel_North(){}
 }

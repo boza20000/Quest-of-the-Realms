@@ -1,5 +1,6 @@
 package com.questoftherealm.expeditions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.questoftherealm.characters.player.Player;
@@ -25,6 +26,7 @@ public abstract class Quest {
     private final String name;
     private final String description;
     private boolean completed = false;
+    @JsonIgnore
     private Player player;
 
     public Quest(String name, List<Mission> missions, String description,Player player) {

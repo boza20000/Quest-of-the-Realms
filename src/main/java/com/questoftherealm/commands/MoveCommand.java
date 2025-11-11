@@ -8,6 +8,7 @@ import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.map.TileTypes;
 
 public class MoveCommand extends Command {
+    private final TravelManger travelManger = new TravelManger();
 
     public MoveCommand() {
         super("move");
@@ -89,7 +90,7 @@ public class MoveCommand extends Command {
             System.out.println("You going to an undefined area.");
             return;
         }
-        SlowPrinter.slowPrint(TravelManger.getTransition(start, end));
+        SlowPrinter.slowPrint(travelManger.getTransition(start, end));
         SlowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toUpperCase()));
     }
 
@@ -101,7 +102,7 @@ public class MoveCommand extends Command {
                 Thread.sleep(600);
                 System.out.print(".");
             }
-            TravelManger.pathInteraction(Game.getGameMap().curZone(player.getX(), player.getY()).getType(), direction);
+            travelManger.pathInteraction(Game.getGameMap().curZone(player.getX(), player.getY()).getType(), direction);
         } catch (Exception e) {
             System.out.println("Walking failed");
         }

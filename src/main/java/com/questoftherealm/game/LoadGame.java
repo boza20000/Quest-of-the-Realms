@@ -25,11 +25,17 @@ public class LoadGame {
 
     public void loadGameInformation(String filename) {
         try {
-            File directory = new File(GameConstants.savesDirectory);
+            File directory = new File("saves");
             File savedFile = new File(directory, filename + ".json");
             if (savedFile.exists() && savedFile.isFile()) {
+
                 ObjectMapper mapper = new ObjectMapper();
-                Game.setPlayer(mapper.readValue(savedFile, Player.class));
+                Player loaded = mapper.readValue(savedFile, Player.class);
+                if (loaded.getQuestFactory() != null) {
+                    loaded.getQuestFactory().restoreAfterLoad(loaded);
+                }
+                Game.setPlayer(loaded);
+
             } else {
                 throw new FileNotFoundException(MessageBundle.get("loadGame.file.notFound"));
             }

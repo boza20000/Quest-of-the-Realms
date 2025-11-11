@@ -1,6 +1,7 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.expeditions.quests.StartQuest;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.interaction.MissionInteractions;
@@ -10,21 +11,19 @@ import com.questoftherealm.localization.MessageBundle;
 
 public class Elder extends Npc {
     private final String name = MessageBundle.get("elder.name");
-    private boolean hasTalked = false;
 
     public Elder(String name) {
-        super(NpcType.Elder,name);
-    }
-
-    @Override
-    public boolean isHasTalked() {
-        return hasTalked;
+        super(NpcType.ELDER,name);
     }
 
     @Override
     public void talk(Player player, boolean isSimulation) {
-        if (!hasTalked) {
-            hasTalked = true;
+        if (!(player.getCurQuest() instanceof StartQuest q)) {
+            System.out.println(MessageBundle.get("elder.confused"));
+            return;
+        }
+        if (!q.isElderHasTalked()) {
+            q.setElderHasTalked(true);
             giveRewards(player, isSimulation);
         } else {
             System.out.println(MessageBundle.get("elder.has.talked"));

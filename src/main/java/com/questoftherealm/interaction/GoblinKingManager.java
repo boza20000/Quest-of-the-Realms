@@ -1,11 +1,10 @@
 package com.questoftherealm.interaction;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.playerCharacters.CharacterConstants;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.bosses.GoblinKing;
-import com.questoftherealm.expeditions.missions.Breach_the_Stronghold;
-import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_King;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.expeditions.quests.FinalBattle;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.MessageBundle;
@@ -17,9 +16,9 @@ public class GoblinKingManager {
     private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static void goblinKingdomFound() {
+    public void goblinKingdomFound(Player player, FinalBattle q) {
         SlowPrinter.slowPrint("🌄 " + MessageBundle.get("goblinking.intro"));
-        Breach_the_Stronghold.isBreached = true;
+        q.setBreached(true);
 
         System.out.println(MessageBundle.get("goblinking.choice.menu"));
         int choice;
@@ -29,21 +28,20 @@ public class GoblinKingManager {
             choice = random.nextInt(1, 3);
         }
         if (choice == 1) {
-            stealthInfiltration();
+            stealthInfiltration(q);
         } else {
-            fullAssault();
+            fullAssault(player, q);
         }
     }
 
-    private static void fullAssault() {
+    private void fullAssault(Player player, FinalBattle q) {
         SlowPrinter.slowPrint("⚔️ " + MessageBundle.get("goblinking.assault.start"));
         SlowPrinter.slowPrint("💥 " + MessageBundle.get("goblinking.assault.mid"));
-
         System.out.println("🔥 " + MessageBundle.get("goblinking.assault.fight"));
-        startBossFight();
+        startBossFight(player, q);
     }
 
-    private static void stealthInfiltration() {
+    private void stealthInfiltration(FinalBattle q) {
         SlowPrinter.slowPrint("🕶️ " + MessageBundle.get("goblinking.stealth.start"));
         pause();
 
@@ -58,17 +56,17 @@ public class GoblinKingManager {
 
         if (subChoice == 1) {
             SlowPrinter.slowPrint("⚡ " + MessageBundle.get("goblinking.stealth.attack"));
-            Defeat_the_Goblin_King.isDefeated = true;
+            q.setDefeated(true);
             SlowPrinter.slowPrint("👑 " + MessageBundle.get("goblinking.stealth.success"));
         } else {
             SlowPrinter.slowPrint("⏳ " + MessageBundle.get("goblinking.stealth.wait"));
-            Defeat_the_Goblin_King.isDefeated = true;
+            q.setDefeated(true);
             SlowPrinter.slowPrint("✨ " + MessageBundle.get("goblinking.stealth.silent.success"));
         }
     }
 
-    private static void startBossFight() {
-        Characters character = Game.getPlayer().getPlayerCharacter();
+    private void startBossFight(Player player, FinalBattle q) {
+        Characters character = player.getPlayerCharacter();
         GoblinKing king = new GoblinKing();
         int round = 1;
 
@@ -149,7 +147,7 @@ public class GoblinKingManager {
                     try {
                         String item = scanner.nextLine();
                         Item i = ItemRegistry.getItem(item);
-                        Game.getPlayer().useItem(i);
+                        player.useItem(i);
                     } catch (Exception e) {
                         System.out.println("⚠️ " + MessageBundle.get("goblinking.player.itemfail"));
                     }
@@ -192,14 +190,14 @@ public class GoblinKingManager {
 
         if (king.isDead()) {
             SlowPrinter.slowPrint("⚔️ " + MessageBundle.get("goblinking.boss.death"));
-            Defeat_the_Goblin_King.isDefeated = true;
+            q.setDefeated(true);
         } else {
             SlowPrinter.slowPrint("💀 " + MessageBundle.get("goblinking.boss.playerdeath"));
             character.setHealth(0);
         }
     }
 
-    private static void pause() {
+    private void pause() {
         try {
             Thread.sleep(800);
         } catch (InterruptedException ignored) {

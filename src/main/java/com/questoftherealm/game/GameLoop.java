@@ -50,7 +50,7 @@ public class GameLoop {
                 try {
                     cmd.execute(parts);
                     System.out.println(MessageBundle.get("gameLoop.command.success"));
-                    Game.getPlayer().updateQuestStatus();
+                    player.updateQuestStatus();
                 } catch (Exception e) {
                     System.out.println(MessageBundle.get("gameLoop.command.syntax"));
                     System.out.print(cmd.getDescription());

@@ -13,7 +13,8 @@ public class Infiltrate_the_Camp extends Mission {
         super("Infiltrate the Camp",
                 "Sneak into a goblin camp to learn their plans.",
                 player,
-                (p,m)->p.getCurQuest() instanceof GoblinAmbush && p.getPosition().equals(GameConstants.Goblin_Camp) && Explore_Nearby_Forests.campFound
-                );
+                (p,m)->p.getCurQuest() instanceof GoblinAmbush q && p.getPosition().equals(GameConstants.Goblin_Camp) && q.isCampFound()
+        );
     }
+    public Infiltrate_the_Camp(){}
 }
