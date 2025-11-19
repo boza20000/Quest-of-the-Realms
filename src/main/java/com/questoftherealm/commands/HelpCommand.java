@@ -2,6 +2,7 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 
 public class HelpCommand extends Command {
     private final CommandFactory factory;
@@ -17,24 +18,23 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if(!makeSafe(args,player)){
+    public void execute(String[] args,Player player, GameState state) {
+        if(!makeSafe(args,player,state)){
             return;
         }
-        System.out.println("Available commands:");
-        factory.getAllCommands().forEach((name, cmd) ->
-                System.out.println("- " + name + "->" + cmd.getDescription())
-        );
+        state.getGameServices().getOutput().println("Available commands:");
+        factory.getAllCommands().entrySet().stream()
+                .sorted((e1,e2)->(e1.getKey().compareToIgnoreCase(e2.getKey())))
+                .forEach((entry) -> state.getGameServices().getOutput().println("- " + entry.getKey() + "->" + entry.getValue().getDescription()));
     }
 }
 

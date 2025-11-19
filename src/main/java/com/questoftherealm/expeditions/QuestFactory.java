@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.interfaces.MissionCondition;
 import com.questoftherealm.expeditions.quests.*;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.interaction.SlowPrinter;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -52,13 +53,14 @@ public class QuestFactory {
         return quests.peek();
     }
 
-    public void nextQuest() {
+    public void nextQuest(GameState state) {
         if (!quests.isEmpty() && quests.peek().isCompleted()) {
             quests.poll();
         } else if (!quests.isEmpty() && !quests.peek().isCompleted()) {
-            SlowPrinter.slowPrint("Quest is not completed");
+            SlowPrinter slowPrinter = new SlowPrinter(state);
+            slowPrinter.slowPrint("Quest is not completed");
         } else {
-            System.out.println("No more quests available");
+            state.getGameServices().getOutput().println("No more quests available");
         }
     }
     @JsonIgnore
@@ -78,12 +80,8 @@ public class QuestFactory {
         quests.offer(quest);
     }
 
-    public void listAllQuests() {
-        System.out.println("All quests:");
-        quests.forEach((Quest quest) -> System.out.println("Quest:" + quest.getName()));
-    }
 
-    public void restoreAfterLoad(Player loadedPlayer) {
+    public void restoreAfterLoad(Player loadedPlayer,GameState state) {
         this.player = loadedPlayer;
         for (Quest q : quests) {
             q.setPlayer(loadedPlayer);
@@ -94,6 +92,7 @@ public class QuestFactory {
                     if (type != null && type != MissionConditionType.CUSTOM_CHECK_COMPLETION) {
                         MissionCondition logic = MissionConditionFactory.getCondition(type);
                         m.setCondition(logic);
+                        m.setState(state);
                     }
                 }
             }

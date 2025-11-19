@@ -1,10 +1,10 @@
 package com.questoftherealm.game;
 
-import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.expeditions.QuestFactory;
+import com.questoftherealm.exceptions.FileNotLoaded;
+import com.questoftherealm.exceptions.IntroException;
+import com.questoftherealm.exceptions.OutputServiceError;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.Console;
-import com.questoftherealm.interaction.GameUI;
-import com.questoftherealm.map.Map;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.localization.MessageBundle;
@@ -12,116 +12,162 @@ import com.questoftherealm.localization.MessageBundle;
 import java.io.IOException;
 
 public class Game {
-    private static Player player;
-    private static Map gameMap;
-    private final GameUI gameUI = new GameUI();
-    private final Console console = new Console();
-    public static boolean gameOver = false;
-    public static boolean isSimulation = false;
+    private GameState gameState;
+    private Console console;
+    private Output output;
 
-    public static boolean isSimulation() { return isSimulation; }
-    public static void setSimulation(boolean simulation) { isSimulation = simulation; }
-    public static Player getPlayer() { return player; }
-    public static void setPlayer(Player player) { Game.player = player; }
-    public static Map getGameMap() { return gameMap; }
 
-    public void newGame() {
-        try {
-            buildPlayerCharacter();
-            gameUI.showIntro();
-            gameUI.getConsole().clear();
-            console.worldIntro();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public GameState getGameState() {
+        return gameState;
     }
 
-    public void loadGame() {
-        LoadGame loadGame = new LoadGame();
-        System.out.println(MessageBundle.get("game.load.ask"));
+    public void newGame() {
+        Player player = buildPlayerCharacter();
+        gameState.setPlayer(player);
+
+        try {
+            console.showIntro();
+        } catch (IOException e) {
+            throw new IntroException("Intro was corrupted");
+        }
+        console.worldIntro();
+
+    }
+
+    public void loadGame(GameState state) {
+        LoadGame loadGame = new LoadGame(state);
+        output.println(MessageBundle.get("game.load.ask"));
         loadGame.printSaves();
-        String save = gameUI.getScanner().nextLine();
-        System.out.println(MessageBundle.get("game.load.loading"));
+        String save = state.getGameServices().getInput().nextLine();
+        output.println(MessageBundle.get("game.load.loading"));
         try {
             loadGame.loadGameSave(save);
         } catch (Exception e) {
-            System.out.println(MessageBundle.get("game.load.error"));
-            throw new RuntimeException(e);
+            throw new FileNotLoaded(MessageBundle.get("game.load.error"));
         }
     }
 
-    public void buildPlayerCharacter() {
-        String name = gameUI.characterCreationScreen();
+    public Player buildPlayerCharacter() {
+        String name = console.characterCreationScreen(gameState);
         int count = 0;
         int typeChoice;
 
         while (true) {
             try {
-                System.out.print(MessageBundle.get("game.choice.prompt"));
-                typeChoice = Integer.parseInt(gameUI.getScanner().nextLine());
+                output.print(MessageBundle.get("game.choice.prompt"));
+                typeChoice = Integer.parseInt(gameState.getGameServices().getInput().nextLine());
                 if (typeChoice >= 1 && typeChoice <= 4) break;
                 else {
                     count++;
-                    if (count <= 1) System.out.println(MessageBundle.get("game.choice.invalidRange"));
+                    if (count <= 1) output.println(MessageBundle.get("game.choice.invalidRange"));
                 }
             } catch (NumberFormatException e) {
                 count++;
-                if (count <= 1) System.out.println(MessageBundle.get("game.choice.invalidInput"));
+                if (count <= 1) output.println(MessageBundle.get("game.choice.invalidInput"));
             }
         }
 
         PlayerTypes type = PlayerTypes.fromInt(typeChoice);
-        player = new Player(name, type);
+        Player player = new Player(name, type);
 
-        System.out.println(MessageBundle.get("game.player.choice.confirm", type));
-        System.out.println(MessageBundle.get("game.player.character.show", player.getPlayerCharacter()));
+        output.println(MessageBundle.get("game.player.choice.confirm", type));
+        output.println(MessageBundle.get("game.player.character.show", player.getPlayerCharacter()));
 
         try {
             Thread.sleep(6000);
         } catch (InterruptedException e) {
-            System.out.println(MessageBundle.get("game.sleep.error"));
+            output.println(MessageBundle.get("game.sleep.error"));
             throw new RuntimeException(e);
         }
+        return player;
+    }
+
+    private Output gameType(int gameType) throws IOException {
+        return switch (gameType) {
+            case 1 -> new ConsoleOutput();
+//            case 2 -> {
+//                Socket socket = MultiplayerClient.connectToServer();
+//                yield new ClientSocketOutput(socket);
+//            }
+            default -> new ConsoleOutput();
+        };
     }
 
     public void start() {
-        gameUI.getConsole().displayTitle();
-        int gameType;
-        int count = 0;
-
-        while (true) {
-            try {
-                count++;
-                gameType = gameUI.showMainMenu(count);
-                if (gameType == 1 || gameType == 2) break;
-            } catch (NumberFormatException e) {
-                if (count <= 1) System.out.println(MessageBundle.get("game.start.invalidInput"));
-                count++;
-            }
-        }
-
+        //single or multiplayer
+        int gameRules = gameRules( new InputService(), new ConsoleOutput());
         try {
-            gameMap = Map.getInstance();
-        } catch (Exception e) {
-            System.out.println(MessageBundle.get("game.map.unavailable"));
-            System.out.println(MessageBundle.get("game.map.restart"));
-            System.exit(0);
+            output = gameType(gameRules);
+        } catch (IOException e) {
+            throw new OutputServiceError("output was not loaded");
         }
+        gameState = new GameState(null, output, new GameServices(output));
+        console = new Console(gameState);
+        console.displayTitle();
 
-        switch (gameType) {
+        // new or load game
+        int gameMode = getGameMode();
+        switch (gameMode) {
             case 1 -> newGame();
-            case 2 -> loadGame();
+            case 2 -> loadGame(gameState);
         }
 
         try {
             NpcInitializer npcInitializer = new NpcInitializer();
-            npcInitializer.registerAll(gameMap);
+            npcInitializer.registerAll(gameState);
         } catch (Exception e) {
-            System.out.println(MessageBundle.get("game.npc.init.error"));
-            System.exit(0);
+            output.println(MessageBundle.get("game.npc.init.error"));
+            return;
         }
 
         GameLoop loop = new GameLoop();
-        loop.startLoop();
+        loop.startLoop(this);
+    }
+
+    private int getGameMode() {
+        int count = 0;
+        int type;
+        while (true) {
+            try {
+                count++;
+                type = console.showMainMenu(count, gameState);
+                if (type == 1 || type == 2) break;
+            } catch (NumberFormatException e) {
+                if (count <= 1) output.println(MessageBundle.get("game.start.invalidInput"));
+                count++;
+            }
+        }
+        return type;
+    }
+
+    public int gameRules(InputService inputService,ConsoleOutput outputService) {
+        outputService.print("1.Single player\n2.Multiplayer\n");
+        outputService.print("Enter choice >");
+        int mode;
+        int count = 1;
+        while (true) {
+            try {
+                mode = Integer.parseInt(inputService.nextLine());
+                if (mode == 1 || mode == 2) {
+                    break;
+                } else if (count <= 1) {
+                    outputService.println("Number out of range! single player (1) multiplayer (2)");
+                }
+            }
+            catch (NumberFormatException e){
+                outputService.println("Enter number!");
+            }
+            count++;
+            outputService.print(">");
+            if(count>=10){
+                outputService.print("Default choice -> single player mode");
+                return 1;
+            }
+        }
+        return mode;
+    }
+
+    public Console getConsole() {
+        return console;
     }
 }

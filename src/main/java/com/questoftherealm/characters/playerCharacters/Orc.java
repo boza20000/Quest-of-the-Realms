@@ -3,6 +3,7 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.MonsterBehavior;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.MessageBundle;
@@ -20,20 +21,20 @@ public class Orc extends Characters implements MonsterBehavior {
     }
 
     @Override
-    public void resurrect() {
+    public void resurrect(GameState state) {
         if (isDead()) {
-            System.out.println(MessageBundle.get("orc.resurrect.call"));
-            System.out.println(MessageBundle.get("orc.resurrect.spiritsSummoned"));
+            state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.call"));
+            state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.spiritsSummoned"));
 
             int roll = new Random().nextInt(10);
             if (roll < 4) {
                 setHealth(getMaxHealth());
-                System.out.println(MessageBundle.get("orc.resurrect.success"));
+                state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.success"));
             } else {
-                System.out.println(MessageBundle.get("orc.resurrect.fail"));
+                state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.fail"));
             }
         } else {
-            System.out.println(MessageBundle.get("orc.resurrect.notDead"));
+            state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.notDead"));
         }
     }
 
@@ -58,8 +59,8 @@ public class Orc extends Characters implements MonsterBehavior {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        System.out.println(MessageBundle.get("orc.ability.attack", player.getWeapon().getName()));
-        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2);
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        state.getGameServices().getOutput().println(MessageBundle.get("orc.ability.attack", player.getWeapon().getName()));
+        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2,state);
     }
 }

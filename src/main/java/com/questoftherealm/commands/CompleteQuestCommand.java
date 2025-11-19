@@ -3,6 +3,7 @@ package com.questoftherealm.commands;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 
 import java.util.List;
 
@@ -12,34 +13,38 @@ public class CompleteQuestCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
         if (player.getCurQuest() == null) {
-            System.out.println("Error: No quest loaded.");
+            state.getGameServices().getOutput().println("Error: No quest loaded.");
             return;
         }
         if (player.getCurMission() == null) {
-            System.out.println("Error: No mission loaded.");
+            state.getGameServices().getOutput().println("Error: No mission loaded.");
             return;
         }
         List<Mission> missions = List.of();
         if (player.getCurQuest() != null) {
             try {
-                missions = player.getQuestFactory().getQuests().peek().getMissions();
+                if(player.getCurQuest() !=null) {
+                    missions = player.getCurQuest().getMissions();
+                }
+                else{
+                    state.getGameServices().getOutput().println("All quests done!");
+                }
             } catch (NullPointerException e) {
                 e.getSuppressed();
-                System.out.println("Missions unavailable they are null");
+                state.getGameServices().getOutput().println("Missions unavailable");
             }
         }
         if (!missions.isEmpty()) {
             for (Mission m : missions) {
-                System.out.println(m.getTask() + " " + ((m.isCompleted()) ? "✔" : "❌"));
+                state.getGameServices().getOutput().println(m.getTask() + " " + ((m.isCompleted()) ? "✔" : "❌"));
             }
         } else {
-            System.out.println("No available quest");
+            state.getGameServices().getOutput().println("No available quest");
         }
     }
 
@@ -49,12 +54,12 @@ public class CompleteQuestCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
 }

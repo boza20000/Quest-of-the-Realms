@@ -1,20 +1,28 @@
 package com.questoftherealm.interaction;
 
-import com.questoftherealm.game.Game;
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Event;
 import com.questoftherealm.map.TileTypes;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class TravelManger {
-    private static final Scanner scanner = new Scanner(System.in);
+    private GameState state;
+    private Output output;
+    private SlowPrinter slowPrinter;
 
-    private static Random random() {
-        return ThreadLocalRandom.current();
+    private Random random() {
+        return state.getGameServices().getRandom().random();
+    }
+
+    public TravelManger(GameState s) {
+        state = s;
+        output = s.getGameServices().getOutput();
+        this.slowPrinter = new SlowPrinter(s);
     }
 
     private final List<String> MOVE_CONNECTORS = List.of(
@@ -33,36 +41,36 @@ public class TravelManger {
         String emoji = fullEntry.substring(0, fullEntry.indexOf(' '));
         String key = fullEntry.substring(fullEntry.indexOf(' ') + 1);
         String line = emoji + " " + MessageBundle.get(key, start, direction);
-        SlowPrinter.slowPrint(line);
+        slowPrinter.slowPrint(line);
     }
 
-    private void randomEvent(TileTypes type) {
+    private void randomEvent(TileTypes type, Player player, GameState state) {
         Event event = Event.generateEvent(type);
-        SlowPrinter.slowPrint("⚠️ " + MessageBundle.get("travel.event.encounter", event.getName()));
-        SlowPrinter.slowPrint(event.getDescription());
+        slowPrinter.slowPrint("⚠️ " + MessageBundle.get("travel.event.encounter", event.getName()));
+        slowPrinter.slowPrint(event.getDescription());
         boolean investigate = promptYesNo(MessageBundle.get("travel.event.investigate.question"));
         if (investigate) {
-            SlowPrinter.slowPrint("👉 " + MessageBundle.get("travel.event.investigate.accept"));
-            event.getNpc().interact(Game.getPlayer());
+            slowPrinter.slowPrint("👉 " + MessageBundle.get("travel.event.investigate.accept"));
+            event.getNpc().interact(player, state);
         } else {
-            SlowPrinter.slowPrint("➡️ " + MessageBundle.get("travel.event.investigate.decline"));
+            slowPrinter.slowPrint("➡️ " + MessageBundle.get("travel.event.investigate.decline"));
         }
     }
 
     private boolean promptYesNo(String question) {
-        SlowPrinter.slowPrint(question + " " + MessageBundle.get("travel.prompt.yesno"));
+        slowPrinter.slowPrint(question + " " + MessageBundle.get("travel.prompt.yesno"));
         while (true) {
-            System.out.print(">");
-            String input = scanner.nextLine().trim().toLowerCase();
+            output.print(">");
+            String input = state.getGameServices().getInput().nextLine().trim().toLowerCase();
             if (input.equals("yes") || input.equals("y")) return true;
             if (input.equals("no") || input.equals("n")) return false;
-            System.out.println(MessageBundle.get("travel.prompt.invalid"));
+            output.println(MessageBundle.get("travel.prompt.invalid"));
         }
     }
 
-    public void pathInteraction(TileTypes start, String direction) {
+    public void pathInteraction(TileTypes start, String direction, Player player, GameState state) {
         if (random().nextInt(100) < 30) { // 30% chance
-            randomEvent(start);
+            randomEvent(start, player, state);
         } else {
             randomTravelText(direction, start);
         }

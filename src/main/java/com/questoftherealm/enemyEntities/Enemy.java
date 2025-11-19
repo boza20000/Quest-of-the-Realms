@@ -4,6 +4,7 @@ import com.questoftherealm.enemyEntities.EnemiesInterfaces.Fightable;
 import com.questoftherealm.enemyEntities.EnemiesInterfaces.Lootable;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.TileTypes;
@@ -39,10 +40,10 @@ public abstract class Enemy implements Fightable, Lootable {
 
 
     @Override
-    public void attack(Player player) {
+    public void attack(Player player, GameState state) {
         int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
-        System.out.println(MessageBundle.get("enemy.attack.player"));
-        player.getPlayerCharacter().takeDamage(damage);
+        state.getGameServices().getOutput().println(MessageBundle.get("enemy.attack.player"));
+        player.getPlayerCharacter().takeDamage(damage,state);
     }
 
     public int getBaseAttack() {
@@ -50,13 +51,13 @@ public abstract class Enemy implements Fightable, Lootable {
     }
 
     @Override
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, GameState state) {
         int reducedDamageTaken = Math.max(0, damage - (getBaseDefense() / 2));
         int newHealth = Math.max(0, getHealth() - reducedDamageTaken);
         setHealth(newHealth);
         isDead = newHealth == 0;
         if (!isDead) {
-            System.out.println(MessageBundle.get("enemy.armor.block",this.getClass().getSimpleName(),reducedDamageTaken));
+            state.getGameServices().getOutput().println(MessageBundle.get("enemy.armor.block", this.getClass().getSimpleName(), reducedDamageTaken));
         }
     }
 
@@ -104,7 +105,8 @@ public abstract class Enemy implements Fightable, Lootable {
     private static List<EnemyType> enemyPoolForTile(TileTypes type) {
         return switch (type) {
             case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT, EnemyType.SUSPICIOUS_TRADER);
-            case FOREST -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GOBLIN_HORDE, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
+            case FOREST ->
+                    List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GOBLIN_HORDE, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
             case SWAMP -> List.of(EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON);
             case MOUNTAIN -> List.of(EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF);
             case WATER -> List.of(EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN);
@@ -162,8 +164,8 @@ public abstract class Enemy implements Fightable, Lootable {
         return baseDefense;
     }
 
-    public boolean interact(Player player) {
-        Battle newBattle = BattleFactory.createBattle(player, this);
+    public boolean interact(Player player, GameState state) {
+        Battle newBattle = BattleFactory.createBattle(player, this, state);
         return newBattle.simulate();
     }
 }

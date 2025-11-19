@@ -8,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.questoftherealm.exceptions.ItemNotFound;
+import com.questoftherealm.exceptions.ItemRegistryError;
 import com.questoftherealm.localization.MessageBundle;
 
 public class ItemRegistry {
@@ -20,10 +21,11 @@ public class ItemRegistry {
                     throw new FileNotFoundException(MessageBundle.get("itemRegistry.fileNotFound"));
                 }
                 ObjectMapper mapper = new ObjectMapper();
-                allItems = mapper.readValue(is, new TypeReference<List<Item>>() {});
+                allItems = mapper.readValue(is, new TypeReference<List<Item>>() {
+                });
             } catch (Exception e) {
-                System.out.println(MessageBundle.get("itemRegistry.loadError", e.getMessage()));
                 allItems = Collections.emptyList();
+                throw new ItemRegistryError(MessageBundle.get("itemRegistry.loadError", e.getMessage()));
             }
         }
         return allItems;

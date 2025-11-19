@@ -6,6 +6,7 @@ import com.questoftherealm.commands.ExitCommand;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.exceptions.TargetNotFound;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.localization.MessageBundle;
 
@@ -46,31 +47,29 @@ public abstract class Characters implements Combatant {
     }
 
     @Override
-    public void attack(Enemy target, Player player) {
+    public void attack(Enemy target, Player player, GameState state) {
         if (target.isDead()) {
-            System.out.println(MessageBundle.get("character.target.alreadyDead", target.getClass().getSimpleName()));
+            state.getGameServices().getOutput().println(MessageBundle.get("character.target.alreadyDead", target.getClass().getSimpleName()));
             return;
         }
         try {
             int damageDealt = player.getWeapon().getPower() + this.getAttack();
-            System.out.println(MessageBundle.get("character.attack.hit", target.getClass().getSimpleName(), damageDealt));
-            target.takeDamage(damageDealt);
+            state.getGameServices().getOutput().println(MessageBundle.get("character.attack.hit", target.getClass().getSimpleName(), damageDealt));
+            target.takeDamage(damageDealt, state);
             useMana(player.getWeapon().getMana());
         } catch (TargetNotFound e) {
-            System.out.println(e.getMessage());
+            state.getGameServices().getOutput().println(e.getMessage());
         }
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, GameState state) {
         int mitigation = defence * 5 + armor;
         int reducedDamage = damage * 100 / (100 + mitigation);
         setHealth(health - reducedDamage);
-        System.out.println(MessageBundle.get("character.damage.taken", reducedDamage, health));
+        state.getGameServices().getOutput().println(MessageBundle.get("character.damage.taken", reducedDamage, health));
 
         if (isDead()) {
-            System.out.println(MessageBundle.get("character.dead", this.getClass().getSimpleName()));
-            Command c = new ExitCommand();
-            c.execute(new String[]{});
+            state.getGameServices().getOutput().println(MessageBundle.get("character.dead", this.getClass().getSimpleName()));
         }
     }
 
@@ -80,8 +79,11 @@ public abstract class Characters implements Combatant {
 
     // ===== Abstract Weapon =====
     public abstract Item getDefaultWeapon();
+
     public abstract int getBaseAttack();
+
     public abstract int getBaseDefence();
+
     public abstract int getMaxHealth();
 
     // ===== Getters & Setters =====
@@ -167,5 +169,5 @@ public abstract class Characters implements Combatant {
         setMana(Math.max(0, getMana() - mana));
     }
 
-    public abstract void activateAbility(Player player, Enemy enemy);
+    public abstract void activateAbility(Player player, Enemy enemy, GameState state);
 }

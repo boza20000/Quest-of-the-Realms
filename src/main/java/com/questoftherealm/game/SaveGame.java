@@ -12,11 +12,11 @@ import java.io.IOException;
 public class SaveGame {
     public SaveGame() {}
 
-    public void createSave(String saveName) {
+    public void createSave(String saveName,Player player,GameState state) {
         try {
             File saveDir = new File("saves");
             if (!saveDir.exists() && !saveDir.mkdirs()) {
-                System.err.println(MessageBundle.get("saveGame.error.notCreated"));
+                state.getGameServices().getOutput().println(MessageBundle.get("saveGame.error.notCreated"));
                 return;
             }
 
@@ -25,11 +25,10 @@ public class SaveGame {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            Player player = Game.getPlayer();
             player.trackPlayTime();
             mapper.writeValue(fileSave, player);
 
-            System.out.println(MessageBundle.get("saveGame.save.successful",fileSave.getAbsolutePath()));
+            state.getGameServices().getOutput().println(MessageBundle.get("saveGame.save.successful",fileSave.getAbsolutePath()));
 
         } catch (IOException e) {
             throw new SaveError(MessageBundle.get("saveGame.save.failed",saveName));

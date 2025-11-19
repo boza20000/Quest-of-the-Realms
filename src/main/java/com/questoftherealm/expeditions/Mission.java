@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.interfaces.MissionCondition;
 import com.questoftherealm.expeditions.missions.*;
+import com.questoftherealm.game.GameState;
 
 import java.util.Objects;
 
@@ -39,6 +40,8 @@ public abstract class Mission {
     @JsonIgnore
     protected MissionCondition condition;
     private MissionConditionType conditionType;
+    @JsonIgnore
+    private GameState state;
 
     public Mission(String name, String task, Player player, MissionCondition condition) {
         this.name = name;
@@ -96,7 +99,7 @@ public abstract class Mission {
 
     protected void complete() {
         setCompleted(true);
-        System.out.println("✅ Mission completed: " + name);
+        state.getGameServices().getOutput().println("✅ Mission completed: " + name);
     }
 
     public boolean checkCompletion() {
@@ -113,6 +116,10 @@ public abstract class Mission {
         if (this == o) return true;
         if (!(o instanceof Mission m)) return false;
         return Objects.equals(this.getName(), m.getName());
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
     }
 
     @Override

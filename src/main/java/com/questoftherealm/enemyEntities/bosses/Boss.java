@@ -1,6 +1,8 @@
 package com.questoftherealm.enemyEntities.bosses;
 
+import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.playerCharacters.Characters;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
@@ -37,5 +39,5 @@ public abstract class Boss extends Characters {
         isDefeated = defeated;
     }
 
-    public abstract void superMove();
+    public abstract void superMove(Player player,GameState state);
 }

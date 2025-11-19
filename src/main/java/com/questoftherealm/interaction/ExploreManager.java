@@ -5,39 +5,42 @@ import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.EnemyFactory;
 import com.questoftherealm.enemyEntities.EnemyType;
-import com.questoftherealm.exceptions.SleepException;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.map.Locations;
 import com.questoftherealm.localization.MessageBundle;
 
-import java.util.Random;
-import java.util.Scanner;
 
 public class ExploreManager {
-    private static final Random random = new Random();
-    private static final Scanner scanner = new Scanner(System.in);
+    private GameState state;
+    private Output output;
+    private SlowPrinter slowPrinter;
 
-    public void exploreStructure(Locations structure, Player player) {
-        SlowPrinter.slowPrint("\n" + MessageBundle.get("explore.arrive", structure.getName()));
-        SlowPrinter.slowPrint(MessageBundle.get("explore.description", structure.getDescription()));
-        SlowPrinter.slowPrint(MessageBundle.get("explore.choice.prompt"));
-        SlowPrinter.slowPrint(MessageBundle.get("explore.choice.1"));
-        SlowPrinter.slowPrint(MessageBundle.get("explore.choice.2"));
-        SlowPrinter.slowPrint(MessageBundle.get("explore.choice.3"));
+    public void exploreStructure(Locations structure, Player player, GameState state) {
+        this.state = state;
+        this.output = state.getGameServices().getOutput();
+        this.slowPrinter = new SlowPrinter(state);
+        slowPrinter.slowPrint("\n" + MessageBundle.get("explore.arrive", structure.getName()));
+        slowPrinter.slowPrint(MessageBundle.get("explore.description", structure.getDescription()));
+        slowPrinter.slowPrint(MessageBundle.get("explore.choice.prompt"));
+        slowPrinter.slowPrint(MessageBundle.get("explore.choice.1"));
+        slowPrinter.slowPrint(MessageBundle.get("explore.choice.2"));
+        slowPrinter.slowPrint(MessageBundle.get("explore.choice.3"));
         int choice = getChoice(3);
 
         switch (choice) {
             case 1 -> enterStructure(player, structure);
             case 2 -> observeStructure(player, structure);
-            default -> SlowPrinter.slowPrint(MessageBundle.get("explore.leave"));
+            default -> slowPrinter.slowPrint(MessageBundle.get("explore.leave"));
         }
     }
 
     private void enterStructure(Player player, Locations structure) {
-        SlowPrinter.slowPrint(MessageBundle.get("explore.enter.start"));
+        slowPrinter.slowPrint(MessageBundle.get("explore.enter.start"));
         pause();
-        int outcome = random.nextInt(100);
+        int outcome = state.getGameServices().getRandom().randomInt(100);
 
         switch (structure) {
             case ABANDONED_TOWER, MAGES_TOWER -> exploreTower(player, outcome);
@@ -50,84 +53,85 @@ public class ExploreManager {
 
     private void exploreTower(Player player, int outcome) {
         if (outcome < 30) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.tower.ghost"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.tower.ghost"));
             Enemy spirit = EnemyFactory.createEnemy(EnemyType.LOST_SPIRIT);
-            spirit.interact(player);
+            spirit.interact(player, state);
         } else if (outcome < 60) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.tower.chest"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.tower.chest"));
             findLoot(player);
         } else {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.tower.empty"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.tower.empty"));
         }
     }
 
     private void exploreCave(Player player, int outcome) {
         if (outcome < 40) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.cave.beast"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.cave.beast"));
             Enemy beast = EnemyFactory.createEnemy(EnemyType.WOLF);
-            beast.interact(player);
+            beast.interact(player, state);
         } else if (outcome < 70) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.cave.crystal"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.cave.crystal"));
             findLoot(player);
         } else {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.cave.empty"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.cave.empty"));
         }
     }
 
     private void exploreRuins(Player player, int outcome) {
         if (outcome < 35) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.ruins.trap"));
-            player.getPlayerCharacter().takeDamage(10);
+            slowPrinter.slowPrint(MessageBundle.get("explore.ruins.trap"));
+            player.getPlayerCharacter().takeDamage(10,state);
         } else if (outcome < 65) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.ruins.relic"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.ruins.relic"));
             findLoot(player);
         } else {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.ruins.empty"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.ruins.empty"));
         }
     }
 
     private void exploreSacredPlace(Player player, int outcome) {
         Characters character = player.getPlayerCharacter();
         if (outcome < 25) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.sacred.attack"));
-            character.takeDamage(8);
+            slowPrinter.slowPrint(MessageBundle.get("explore.sacred.attack"));
+            character.takeDamage(8,state);
         } else if (outcome < 55) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.sacred.heal"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.sacred.heal"));
             character.setHealth(character.getHealth() + 10);
         } else {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.sacred.herb"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.sacred.herb"));
             findLoot(player);
         }
     }
 
     private void exploreGeneric(Player player, int outcome) {
         if (outcome < 50) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.generic.find"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.generic.find"));
             findLoot(player);
         } else {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.generic.empty"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.generic.empty"));
         }
     }
 
     private void observeStructure(Player player, Locations structure) {
-        int roll = random.nextInt(100);
+        int roll = state.getGameServices().getRandom().randomInt(100);
         if (roll < 30) {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.observe.spotted"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.observe.spotted"));
         } else {
-            SlowPrinter.slowPrint(MessageBundle.get("explore.observe.notes"));
+            slowPrinter.slowPrint(MessageBundle.get("explore.observe.notes"));
         }
     }
 
     private void findLoot(Player player) {
-        ItemDrop loot = Chest.generateRandomItem();
-        player.getInventory().addItem(loot.item(), loot.quantity());
-        SlowPrinter.slowPrint(MessageBundle.get("explore.loot", loot.item().getName()));
+        Chest chest = new Chest(state);
+        ItemDrop loot = chest.generateRandomItem();
+        player.getInventory().addItem(loot.item(), loot.quantity(),state);
+        slowPrinter.slowPrint(MessageBundle.get("explore.loot", loot.item().getName()));
     }
 
     private int getChoice(int max) {
-        System.out.print("> ");
+        output.print("> ");
         try {
-            int choice = Integer.parseInt(scanner.nextLine());
+            int choice = Integer.parseInt(state.getGameServices().getInput().nextLine());
             return Math.max(1, Math.min(choice, max));
         } catch (Exception e) {
             return 3;
@@ -138,7 +142,7 @@ public class ExploreManager {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ignored) {
-            System.out.println("sleep failed");
+            output.println("sleep failed");
         }
     }
 }

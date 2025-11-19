@@ -3,6 +3,8 @@ package com.questoftherealm.spells;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.MessageBundle;
 
 public abstract class DamageSpell extends Spell {
@@ -10,18 +12,19 @@ public abstract class DamageSpell extends Spell {
         super(spellName, power, description, manaCost);
     }
 
-    protected void damage(Player player, Enemy enemy, Spell spell) {
+    protected void damage(Player player, Enemy enemy, Spell spell, GameState state) {
+        Output output = state.getGameServices().getOutput();
         if (player.getPlayerCharacter().getMana() < spell.getManaCost()) {
-            System.out.println("💤 " + MessageBundle.get("spells.damageSpell.lowMana",spell.getSpellName()));
+            output.println("💤 " + MessageBundle.get("spells.damageSpell.lowMana", spell.getSpellName()));
             return;
         }
         if (!player.getPlayerType().equals(PlayerTypes.Mage)) {
-            System.out.println("🚫 " + MessageBundle.get("spells.damageSpell.error.playerType",player.getPlayerCharacter()));
+            output.println("🚫 " + MessageBundle.get("spells.damageSpell.error.playerType", player.getPlayerCharacter()));
         }
-        enemy.takeDamage(spell.takePower());
+        enemy.takeDamage(spell.takePower(),state);
         player.loseMana(spell.getManaCost());
-        System.out.println(MessageBundle.get("spells.damageSpell.castSpell",spell.getSymbol(),spell.getSpellName()));
-        System.out.println("💥 " + spell.getDescription());
+        output.println(MessageBundle.get("spells.damageSpell.castSpell", spell.getSymbol(), spell.getSpellName()));
+        output.println("💥 " + spell.getDescription());
 
     }
 }

@@ -2,6 +2,7 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
 
 public class ExploreCommand extends Command {
@@ -10,25 +11,24 @@ public class ExploreCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
-        Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
+        Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
-            System.out.println("You are in an undefined area.");
+            state.getGameServices().getOutput().println("You are in an undefined area.");
             return;
         }
         try {
             String structure = args[1];
             if (curTile.getStructure().getName().equalsIgnoreCase(structure)) {
-                player.exploreStructure(structure);
+                player.exploreStructure(structure, state);
             } else {
-                System.out.println("Structure name mismatch");
+                state.getGameServices().getOutput().println("Structure name mismatch");
             }
         } catch (Exception e) {
-            System.out.println("Structure unavailable");
+            state.getGameServices().getOutput().println("Structure unavailable");
         }
     }
 
@@ -38,11 +38,11 @@ public class ExploreCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length < 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 }

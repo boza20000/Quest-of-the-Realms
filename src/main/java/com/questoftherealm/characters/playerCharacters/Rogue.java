@@ -3,6 +3,8 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.Deceiver;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -22,14 +24,15 @@ public class Rogue extends Characters implements Deceiver {
     }
 
     @Override
-    public void pickpocket(Player player,Enemy enemy) {
+    public void pickpocket(Player player, Enemy enemy, GameState state) {
         int roll = new Random().nextInt(10);
         if (roll < 6) {
-            ItemDrop loot = Chest.generateRandomItem();
-            player.getInventory().addItem(loot.item(), loot.quantity());
-            System.out.println(MessageBundle.get("rouge.pickpocket.successful",enemy.getClass().getSimpleName()));
+            Chest chest = new Chest(state);
+            ItemDrop loot = chest.generateRandomItem();
+            player.getInventory().addItem(loot.item(), loot.quantity(),state);
+            state.getGameServices().getOutput().println(MessageBundle.get("rouge.pickpocket.successful",enemy.getClass().getSimpleName()));
         } else {
-            System.out.println(MessageBundle.get("rogue.pickpocket.fail"));
+            state.getGameServices().getOutput().println(MessageBundle.get("rogue.pickpocket.fail"));
         }
     }
 
@@ -54,11 +57,11 @@ public class Rogue extends Characters implements Deceiver {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        System.out.println(MessageBundle.get("rogue.ability.start", enemy.getClass().getSimpleName().toUpperCase()));
+    public void activateAbility(Player player, Enemy enemy,GameState state) {
+        state.getGameServices().getOutput().println(MessageBundle.get("rogue.ability.start", enemy.getClass().getSimpleName().toUpperCase()));
         if(enemy.isDead() ){//check if enemy can be pick-pocketed
             return;
         }
-        pickpocket(player,enemy);
+        pickpocket(player,enemy,state);
     }
 }

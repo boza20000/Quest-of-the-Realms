@@ -4,20 +4,23 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.ArmorPieceNotGenerated;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.exceptions.RandomWeaponNotGenerated;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.localization.MessageBundle;
 
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
 
 public class Chest {
+    private GameState state;
 
-    private static Random random() {
-        return ThreadLocalRandom.current();
+    private Random random() {
+        return state.getGameServices().getRandom().random();
+    }
+    public Chest(GameState state){
+        this.state = state;
     }
 
-    public static ItemDrop generateRandomItem() {
+    public ItemDrop generateRandomItem() {
         try {
             ItemType type = randomType();
             Rarity rarity = randomRarity();
@@ -27,12 +30,12 @@ public class Chest {
         }
     }
 
-    private static ItemType randomType() {
+    private ItemType randomType() {
         ItemType[] category = {ItemType.ARMOR, ItemType.WEAPON, ItemType.POTION, ItemType.CONSUMABLES};
         return category[random().nextInt(category.length)];
     }
 
-    private static int randomQuantity(Item item) {
+    private int randomQuantity(Item item) {
         if (!item.isStackable()) return 1;
 
         switch (item.getRarity()) {
@@ -51,7 +54,7 @@ public class Chest {
         }
     }
 
-    private static Rarity randomRarity() {
+    private Rarity randomRarity() {
         int rand = random().nextInt(100) + 1;
         if (rand <= 50) return Rarity.COMMON;
         if (rand <= 75) return Rarity.UNCOMMON;
@@ -60,7 +63,7 @@ public class Chest {
         return Rarity.LEGENDARY;
     }
 
-    private static ItemDrop randomItemFrom(ItemType type, Rarity rarity) {
+    private ItemDrop randomItemFrom(ItemType type, Rarity rarity) {
         List<Item> possibleItems = ItemRegistry.getAllItems().stream()
                 .filter(i -> i.getRarity() == rarity && i.getType() == type)
                 .toList();
@@ -81,7 +84,7 @@ public class Chest {
         return new ItemDrop(selectedItem, quantity);
     }
 
-    public static ItemDrop generateRandomWeapon(Player player) {
+    public ItemDrop generateRandomWeapon(Player player) {
 
         ItemEffect effect = getWeaponType(player);
         ItemType type = ItemType.WEAPON;
@@ -97,7 +100,7 @@ public class Chest {
         return new ItemDrop(weapon, quantity);
     }
 
-    private static ItemEffect getWeaponType(Player player) {
+    private ItemEffect getWeaponType(Player player) {
         return switch (player.getPlayerType()) {
             case Mage -> ItemEffect.STAFF;
             case Warrior -> ItemEffect.SWORD;
@@ -106,7 +109,7 @@ public class Chest {
         };
     }
 
-    public static ItemDrop generateRandomHelmet(Player player) {
+    public ItemDrop generateRandomHelmet(Player player) {
         ItemType type = ItemType.ARMOR;
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;
@@ -123,7 +126,7 @@ public class Chest {
         return new ItemDrop(helmet, quantity);
     }
 
-    public static ItemDrop generateRandomChestplate(Player player) {
+    public ItemDrop generateRandomChestplate(Player player) {
         ItemType type = ItemType.ARMOR;
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;
@@ -140,7 +143,7 @@ public class Chest {
         return new ItemDrop(chestplate, quantity);
     }
 
-    public static ItemDrop generateRandomBoots(Player player) {
+    public ItemDrop generateRandomBoots(Player player) {
         ItemType type = ItemType.ARMOR;
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;

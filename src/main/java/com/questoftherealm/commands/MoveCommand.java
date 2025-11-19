@@ -3,12 +3,12 @@ package com.questoftherealm.commands;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.map.TileTypes;
 
 public class MoveCommand extends Command {
-    private final TravelManger travelManger = new TravelManger();
 
     public MoveCommand() {
         super("move");
@@ -20,22 +20,23 @@ public class MoveCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        TravelManger travelManger = new TravelManger(state);
+        SlowPrinter slowPrinter = new SlowPrinter(state);
+        if (!makeSafe(args, player,state)) {
             return;
         }
-        if (Game.getGameMap().curZone(player.getX(), player.getY()) == null) {
-            System.out.println("You are in an undefined area.");
+        if (state.getMap().curZone(player.getX(), player.getY()) == null) {
+            state.getGameServices().getOutput().println("You are in an undefined area.");
             return;
         }
 
@@ -48,7 +49,7 @@ public class MoveCommand extends Command {
                 if (y - 1 >= GameConstants.MAP_START) {
                     y -= 1;
                 } else {
-                    SlowPrinter.slowPrint("You can't go further north!");
+                    slowPrinter.slowPrint("You can't go further north!");
                     return;
                 }
             }
@@ -56,7 +57,7 @@ public class MoveCommand extends Command {
                 if (y + 1 < GameConstants.MAP_END) {
                     y += 1;
                 } else {
-                    SlowPrinter.slowPrint("You can't go further south!");
+                    slowPrinter.slowPrint("You can't go further south!");
                     return;
                 }
             }
@@ -64,7 +65,7 @@ public class MoveCommand extends Command {
                 if (x + 1 < GameConstants.MAP_END) {
                     x += 1;
                 } else {
-                    SlowPrinter.slowPrint("You can't go further east!");
+                    slowPrinter.slowPrint("You can't go further east!");
                     return;
                 }
             }
@@ -72,39 +73,40 @@ public class MoveCommand extends Command {
                 if (x - 1 >= GameConstants.MAP_START) {
                     x -= 1;
                 } else {
-                    SlowPrinter.slowPrint("You can't go further west!");
+                    slowPrinter.slowPrint("You can't go further west!");
                     return;
                 }
             }
             default -> {
-                SlowPrinter.slowPrint("Invalid direction! Use north, south, east, or west.");
+                slowPrinter.slowPrint("Invalid direction! Use north, south, east, or west.");
                 return;
             }
         }
 
-        TileTypes start = Game.getGameMap().curZone(player.getX(), player.getY()).getType();
-        pathToDestination(direction, player);
+        TileTypes start = state.getMap().curZone(player.getX(), player.getY()).getType();
+        pathToDestination(direction, player, state, travelManger);
         player.move(x, y);
-        TileTypes end = Game.getGameMap().curZone(player.getX(), player.getY()).getType();
-        if (Game.getGameMap().curZone(Game.getPlayer().getX(), Game.getPlayer().getY()) == null) {
-            System.out.println("You going to an undefined area.");
+        state.getMap().movePlayer(player, player.getX(), player.getY());
+        if (state.getMap().curZone(player.getX(), player.getY()) == null) {
+            state.getGameServices().getOutput().println("You going to an undefined area.");
             return;
         }
-        SlowPrinter.slowPrint(travelManger.getTransition(start, end));
-        SlowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toUpperCase()));
+        TileTypes end = state.getMap().curZone(player.getX(), player.getY()).getType();
+        slowPrinter.slowPrint(travelManger.getTransition(start, end));
+        slowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toUpperCase()));
     }
 
 
-    private void pathToDestination(String direction, Player player) {
+    private void pathToDestination(String direction, Player player, GameState state, TravelManger travelManger) {
         try {
-            System.out.print("Walking");
+            state.getGameServices().getOutput().print("Walking");
             for (int i = 0; i < 3; i++) {
                 Thread.sleep(600);
-                System.out.print(".");
+                state.getGameServices().getOutput().print(".");
             }
-            travelManger.pathInteraction(Game.getGameMap().curZone(player.getX(), player.getY()).getType(), direction);
+            travelManger.pathInteraction(state.getMap().curZone(player.getX(), player.getY()).getType(), direction, player, state);
         } catch (Exception e) {
-            System.out.println("Walking failed");
+            state.getGameServices().getOutput().println("Walking failed");
         }
 
     }

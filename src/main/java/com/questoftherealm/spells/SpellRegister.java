@@ -1,6 +1,7 @@
 package com.questoftherealm.spells;
 
 import com.questoftherealm.exceptions.InvalidCommand;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
@@ -8,8 +9,10 @@ import java.util.Map;
 
 public class SpellRegister {
     private final Map<String, Spell> spells = new HashMap<>();
+    private Output output;
 
-    public SpellRegister() {
+    public SpellRegister(Output output) {
+        this.output = output;
         registerSpell(MessageBundle.get("spells.register.fireball"), new Fireball());
         registerSpell(MessageBundle.get("spells.register.lightning"), new LightningBolt());
     }
@@ -20,9 +23,10 @@ public class SpellRegister {
 
     public void listSpells() {
         for (Spell s : spells.values()) {
-            System.out.println(s.getSpellName() + ": " + s.getDescription());
+            output.println(s.getSpellName() + ": " + s.getDescription());
         }
     }
+
     public Spell getSpell(String name) {
         if (spells.get(name) == null) {
             throw new InvalidCommand(MessageBundle.get("error.command.InvalidCommand"));

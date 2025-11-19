@@ -4,46 +4,44 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.localization.MessageBundle;
 
 public class King extends Npc {
+    private Output output;
 
-    public King(String name) {
-        super(NpcType.KING, name);
+    public King(String id, GameState state, MissionInteractions missionInteractions) {
+        super(NpcType.KING, id, state, missionInteractions);
+        this.output = state.getGameServices().getOutput();
     }
 
     @Override
-    public void talk(Player player, boolean isSimulation) {
-        if(player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isReportedToKing()) {
+    public void talk(GameState state, Player player, boolean isSimulation) {
+        if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isReportedToKing()) {
             if (isSimulation) {
                 q.setReportedToKing(true);
                 return;
             }
-            kingDialog();
+            kingDialog(state);
             q.setReportedToKing(true);
-        }
-        else{
-            System.out.println(MessageBundle.get("king.talked"));
+        } else {
+            output.println(MessageBundle.get("king.talked"));
         }
     }
 
-    private void printMessage(String key) {
-        String message = MessageBundle.get(key);
-        message = message.replace("\\n", "\n");
-        SlowPrinter.slowPrint(message);
-    }
-
-    private void kingDialog() {
-        SlowPrinter.slowPrint("🏰 " + MessageBundle.get("mission.report.king.intro1"));
-        SlowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.intro2"));
-        SlowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line1"));
-        SlowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.line2"));
-        SlowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line3"));
-        SlowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.line4"));
-        SlowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line5"));
-        SlowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line6"));
-        SlowPrinter.slowPrint("⚔️ " + MessageBundle.get("mission.report.king.closure"));
+    private void kingDialog(GameState state) {
+        SlowPrinter slowPrinter = new SlowPrinter(state);
+        slowPrinter.slowPrint("🏰 " + MessageBundle.get("mission.report.king.intro1"));
+        slowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.intro2"));
+        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line1"));
+        slowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.line2"));
+        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line3"));
+        slowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.line4"));
+        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line5"));
+        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line6"));
+        slowPrinter.slowPrint("⚔️ " + MessageBundle.get("mission.report.king.closure"));
     }
 }

@@ -2,8 +2,10 @@ package com.questoftherealm.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.CorruptedFileException;
 import com.questoftherealm.exceptions.FileNotLoaded;
 import com.questoftherealm.exceptions.SavesNotFound;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.MessageBundle;
 
 import java.io.File;
@@ -12,14 +14,18 @@ import java.util.List;
 import java.util.Objects;
 
 public class LoadGame {
-    public LoadGame() {}
+    private Output output;
+    private GameState state;
+    public LoadGame(GameState state) {
+        this.state = state;
+        this.output = state.getGameServices().getOutput();
+    }
 
     public void loadGameSave(String filename) {
         try {
             loadGameInformation(filename);
         } catch (FileNotLoaded e) {
-            System.out.println(MessageBundle.get("loadGame.file.corrupted"));
-            System.exit(0);
+            throw new CorruptedFileException(MessageBundle.get("loadGame.file.corrupted"));
         }
     }
 
@@ -32,9 +38,9 @@ public class LoadGame {
                 ObjectMapper mapper = new ObjectMapper();
                 Player loaded = mapper.readValue(savedFile, Player.class);
                 if (loaded.getQuestFactory() != null) {
-                    loaded.getQuestFactory().restoreAfterLoad(loaded);
+                    loaded.getQuestFactory().restoreAfterLoad(loaded,state);
                 }
-                Game.setPlayer(loaded);
+                state.setPlayer(loaded);
 
             } else {
                 throw new FileNotFoundException(MessageBundle.get("loadGame.file.notFound"));
@@ -51,18 +57,18 @@ public class LoadGame {
                 List<File> savedFiles = List.of(
                         Objects.requireNonNull(saveDir.listFiles((dir, name) -> name.endsWith(".json")))
                 );
-                System.out.println(MessageBundle.get("loadGame.saves.header"));
+                output.println(MessageBundle.get("loadGame.saves.header"));
                 if (savedFiles.isEmpty()) {
-                    System.out.println(MessageBundle.get("loadGame.saves.none"));
+                    output.println(MessageBundle.get("loadGame.saves.none"));
                     return;
                 }
                 for (File f : savedFiles) {
-                    System.out.println(f.getName());
+                    output.println(f.getName());
                 }
-                System.out.println(MessageBundle.get("loadGame.saves.footer"));
-                System.out.println(MessageBundle.get("loadGame.saves.prompt"));
+                output.println(MessageBundle.get("loadGame.saves.footer"));
+                output.println(MessageBundle.get("loadGame.saves.prompt"));
             } else {
-                System.out.println(MessageBundle.get("loadGame.saves.dirMissing"));
+                output.println(MessageBundle.get("loadGame.saves.dirMissing"));
             }
         } catch (Exception e) {
             throw new SavesNotFound(MessageBundle.get("loadGame.saves.unavailable"));

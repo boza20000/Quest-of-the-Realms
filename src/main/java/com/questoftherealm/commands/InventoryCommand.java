@@ -2,6 +2,7 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 
 public class InventoryCommand extends Command {
     public InventoryCommand() {
@@ -14,20 +15,19 @@ public class InventoryCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
-        player.openInventory();
+        player.openInventory(state);
     }
 }

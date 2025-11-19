@@ -2,6 +2,7 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 
 public class LookCommand extends Command {
 
@@ -15,29 +16,28 @@ public class LookCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
         try {
-            System.out.print("Looking");
+            state.getGameServices().getOutput().print("Looking");
             for (int i = 0; i < 3; i++) {
                 Thread.sleep(1000);
-                System.out.print(".");
+                state.getGameServices().getOutput().print(".");
             }
-            player.look();
+            player.look(state);
         } catch (Exception e) {
-            System.out.println("Looking failed");
+            state.getGameServices().getOutput().println("Looking failed");
         }
     }
 }

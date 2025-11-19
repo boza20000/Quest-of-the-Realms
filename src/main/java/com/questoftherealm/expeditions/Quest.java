@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.expeditions.quests.*;
+import com.questoftherealm.game.GameState;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -56,7 +58,7 @@ public abstract class Quest {
         return missions;
     }
 
-    public void updateStatus() {
+    public void updateStatus(GameState state) {
         boolean isAllReady = true;
         if (this.isCompleted()) return;
         for (Mission m : this.getMissions()) {
@@ -67,19 +69,13 @@ public abstract class Quest {
         }
         if (isAllReady) {
             this.setCompleted(true);
-            player.getQuestFactory().nextQuest();
-            System.out.println("You have completed this quest successfully");
+            player.getQuestFactory().nextQuest(state);
+            state.getGameServices().getOutput().println("You have completed this quest successfully");
         }
     }
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
-    }
-
-    public void listMissions() {
-        for (Mission mission : missions) {
-            System.out.println("Missions: " + mission.getName());
-        }
     }
 
     @Override

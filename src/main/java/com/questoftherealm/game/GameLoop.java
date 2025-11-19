@@ -4,27 +4,23 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.InvalidCommand;
 import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
-import com.questoftherealm.interaction.Console;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.localization.MessageBundle;
 
-import java.util.Scanner;
-
-import static com.questoftherealm.game.Game.gameOver;
-
 public class GameLoop {
-    private final Scanner scanner = new Scanner(System.in);
     private final CommandFactory factory = new CommandFactory();
-    private final Console console = new Console();
 
-    public void startLoop() {
-        MissionInteractions.worldStart();
-        Player player = Game.getPlayer();
+    public void startLoop(Game game) {
+        Player player = game.getGameState().getPlayer();
+        MissionInteractions missionInteractions = new MissionInteractions(game.getGameState());
+        missionInteractions.worldStart(player);
         player.setStartTime(System.currentTimeMillis());
+        Output output = game.getGameState().getGameServices().getOutput();
 
-        while (!gameOver) {
-            System.out.print(MessageBundle.get("console.enter.command.symbol"));
-            String command = scanner.nextLine().trim();
+        while (!game.getGameState().isGameOver()) {
+            output.print(MessageBundle.get("console.enter.command.symbol"));
+            String command = game.getGameState().getGameServices().getInput().nextLine().trim();
 
             if (command.isEmpty()) {
                 continue;
@@ -37,28 +33,28 @@ public class GameLoop {
             try {
                 cmd = factory.getCommand(commandName);
             } catch (InvalidCommand e) {
-                System.out.println(MessageBundle.get("error.command.InvalidCommand"));
+                output.println(MessageBundle.get("error.command.InvalidCommand"));
             }
 
             if (cmd == null) {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    System.out.println(MessageBundle.get("error.command.sleepFail"));
+                    output.println(MessageBundle.get("error.command.sleepFail"));
                 }
             } else {
                 try {
-                    cmd.execute(parts);
-                    System.out.println(MessageBundle.get("gameLoop.command.success"));
-                    player.updateQuestStatus();
+                    cmd.execute(parts, player, game.getGameState());
+                    output.println(MessageBundle.get("gameLoop.command.success"));
+                    player.updateQuestStatus(game.getGameState());
                 } catch (Exception e) {
-                    System.out.println(MessageBundle.get("gameLoop.command.syntax"));
-                    System.out.print(cmd.getDescription());
+                    output.println(MessageBundle.get("gameLoop.command.syntax"));
+                    output.print(cmd.getDescription());
                 }
             }
         }
 
         player.trackPlayTime();
-        console.displayEnd(player);
+        game.getConsole().displayEnd(player);
     }
 }

@@ -2,10 +2,11 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.ItemNotFound;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 
 import java.util.Arrays;
+
 import static com.questoftherealm.items.ItemRegistry.getItem;
 
 
@@ -21,18 +22,17 @@ public class UseCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length < 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player, state)) {
             return;
         }
         String nameItem = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
@@ -40,15 +40,15 @@ public class UseCommand extends Command {
         try {
             item = getItem(nameItem);
         } catch (IllegalArgumentException e) {
-            System.out.println("This is not item");
+            state.getGameServices().getOutput().println("This is not item");
             return;
         } catch (ItemNotFound ex) {
-            System.out.println("Item not found");
+            state.getGameServices().getOutput().println("Item not found");
             return;
         }
         if (player.getInventory().containsItem(item)) {
             player.useItem(item);
-            player.getInventory().removeItem(item, 1);
+            player.getInventory().removeItem(item, 1,state);
         }
     }
 }

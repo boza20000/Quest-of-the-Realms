@@ -4,6 +4,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -53,16 +54,17 @@ public class GoblinKing extends Boss {
     }
 
     @Override
-    public void superMove() {
+    public void superMove(Player player,GameState state) {
+        SlowPrinter slowPrinter = new SlowPrinter(state);
         Random random = new Random();
         int roll = random.nextInt(100);
-        SlowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.start"));
+        slowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.start"));
 
         if (GameConstants.GoblinKing_Percent_INSTAKILL <= roll) {
-            SlowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.success"));
-            Game.getPlayer().getPlayerCharacter().setHealth(0);
+            slowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.success"));
+            player.getPlayerCharacter().setHealth(0);
         } else {
-            SlowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.fail"));
+            slowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.fail"));
         }
     }
 
@@ -87,8 +89,8 @@ public class GoblinKing extends Boss {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        superMove();
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        superMove(player,state);
     }
 
     public String getName() {

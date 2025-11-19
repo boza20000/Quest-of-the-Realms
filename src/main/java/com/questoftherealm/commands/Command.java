@@ -1,6 +1,7 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.GameState;
 
 public abstract class Command {
     private final String name;
@@ -13,15 +14,15 @@ public abstract class Command {
         return name;
     }
 
-    public abstract void execute(String[] args);
+    public abstract void execute(String[] args, Player player, GameState state);
 
     public abstract String getDescription();
 
-    public abstract boolean makeSafe(String[] args,Player player);
+    public abstract boolean makeSafe(String[] args, Player player,GameState state);
 
-    public boolean playerBaseCheck(Player player) {
+    public boolean playerBaseCheck(Player player,GameState state) {
         if (player == null) {
-            System.out.println("Error: No player loaded.");
+            state.getGameServices().getOutput().println("Error: No player loaded.");
             return false;
         }
         return true;

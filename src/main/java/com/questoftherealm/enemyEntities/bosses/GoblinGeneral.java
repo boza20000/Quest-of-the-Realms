@@ -2,6 +2,7 @@ package com.questoftherealm.enemyEntities.bosses;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
@@ -49,10 +50,10 @@ public class GoblinGeneral extends Boss {
     }
 
     @Override
-    public void superMove() {
+    public void superMove(Player player,GameState state) {
         int newHealth = getHealth() * 2;
         setHealth(newHealth);
-        System.out.println(MessageBundle.get("boss.goblinGeneral.superMove", NAME));
+        state.getGameServices().getOutput().println(MessageBundle.get("boss.goblinGeneral.superMove", NAME));
     }
 
     @Override
@@ -76,8 +77,8 @@ public class GoblinGeneral extends Boss {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        superMove();
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        superMove(player,state);
     }
 
     public String getName() {

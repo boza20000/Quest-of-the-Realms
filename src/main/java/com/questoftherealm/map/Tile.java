@@ -9,7 +9,10 @@ import com.questoftherealm.exceptions.StructureNotGenerated;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.TravelManger;
+import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.localization.MessageBundle;
@@ -18,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import static com.questoftherealm.items.Chest.generateRandomItem;
 
 public class Tile {
     private final TileTypes type;
@@ -29,7 +31,8 @@ public class Tile {
     private List<ItemDrop> drops = new ArrayList<>();
     private boolean contentGenerated = false;
     private final Map<String, Npc> npcRegister = new HashMap<>();
-    private final TravelManger travelManger = new TravelManger();
+    private TravelManger travelManger ;
+    private Output output;
 
     @JsonCreator
     public Tile(@JsonProperty("type") TileTypes type,
@@ -87,26 +90,29 @@ public class Tile {
         return null;
     }
 
-    void generateContent() {
+    void generateContent(GameState state) {
+        travelManger = new TravelManger(state);
         try {
+            output.println();
             if (structure == null) {
                 this.structure = Locations.generateLocation(type);
             }
             this.enemies = Enemy.generateEnemies(type);
             this.drops.clear();
-            generateItems();
+            generateItems(state);
         } catch (RandomItemNotGenerated e) {
-            System.out.println(MessageBundle.get("tile.error.items"));
+            output.println(MessageBundle.get("tile.error.items"));
         } catch (StructureNotGenerated e) {
-            System.out.println(MessageBundle.get("tile.error.structure"));
+            output.println(MessageBundle.get("tile.error.structure"));
         } catch (Exception e) {
-            System.out.println(MessageBundle.get("tile.error.general"));
+            output.println(MessageBundle.get("tile.error.general"));
         }
         contentGenerated = true;
     }
 
-    public void onEnter(Player player) {
-        generateContent();
+    public void onEnter(Player player,GameState state) {
+        this.output = state.getGameServices().getOutput();
+        generateContent(state);
         listContent();
     }
 
@@ -114,46 +120,56 @@ public class Tile {
         displayLocation();
         displayItems();
         displayEnemies();
+        displayNpc();
+    }
+
+    private void displayNpc() {
+        if(!this.npcRegister.isEmpty()){
+            output.println("You see: ");
+            for(Npc n : npcRegister.values()){
+                output.println("-" + n.getType());
+            }
+        }
     }
 
     private void displayLocation() {
         if (structure == null) return;
-
-        System.out.println();
-        System.out.println(travelManger.getRandomSpotting(structure.getName()) + structure.getName());
-        System.out.print(structure.getDescription());
+        output.println();
+        output.println(travelManger.getRandomSpotting(structure.getName()) + structure.getName());
+        output.print(structure.getDescription());
     }
 
     private void displayItems() {
         if (!drops.isEmpty()) {
-            System.out.println(MessageBundle.get("tile.items.found"));
+            output.println(MessageBundle.get("tile.items.found"));
             printAvailableItems();
         }
     }
 
     private void displayEnemies() {
         if (enemies.isEmpty()) {
-            System.out.println(MessageBundle.get("tile.enemies.none"));
+            output.println(MessageBundle.get("tile.enemies.none"));
             return;
         }
         for (Enemy e : enemies) {
-            System.out.println(MessageBundle.get("tile.enemies.spotted", e.getClass().getSimpleName(), e.getDescription()));
+            output.println(MessageBundle.get("tile.enemies.spotted", e.getClass().getSimpleName(), e.getDescription()));
         }
     }
 
-    public void generateItems() {
+    public void generateItems(GameState state) {
         int itemCount = ThreadLocalRandom.current().nextInt(GameConstants.MAX_ITEM_DROPS + 1);
+        Chest chest = new Chest(state);
         for (int i = 0; i < itemCount; i++) {
-            drops.add(generateRandomItem());
+            drops.add(chest.generateRandomItem());
         }
     }
 
     public void printAvailableItems() {
         if (drops.isEmpty()) {
-            System.out.println(MessageBundle.get("tile.items.none"));
+            output.println(MessageBundle.get("tile.items.none"));
         }
         for (ItemDrop item : drops) {
-            System.out.println("-" + item.quantity() + "x " + item.item().getName());
+            output.println("-" + item.quantity() + "x " + item.item().getName());
         }
     }
 

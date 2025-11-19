@@ -4,12 +4,14 @@ import com.questoftherealm.characters.characterInterfaces.SpellCaster;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.exceptions.NoSuchSpell;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.spells.Spell;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.spells.SpellRegister;
 import com.questoftherealm.localization.MessageBundle;
-import java.util.Scanner;
+
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Mage extends Characters implements SpellCaster {
@@ -23,8 +25,8 @@ public class Mage extends Characters implements SpellCaster {
     }
 
     @Override
-    public void castSpell(Player player, Spell spell, Enemy target) {
-        spell.cast(player, target);
+    public void castSpell(Player player, Spell spell, Enemy target, GameState state) {
+        spell.cast(player, target, state);
     }
 
     @Override
@@ -48,19 +50,19 @@ public class Mage extends Characters implements SpellCaster {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        SpellRegister spellRegister = new SpellRegister();
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        Output output = state.getGameServices().getOutput();
+        SpellRegister spellRegister = new SpellRegister(state.getGameServices().getOutput());
         spellRegister.listSpells();
-        System.out.println(MessageBundle.get("mage.spell.choose"));
-        System.out.print(">");
-        Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
+        output.println(MessageBundle.get("mage.spell.choose"));
+        output.print(">");
+        String line = state.getGameServices().getInput().nextLine();
         Spell choice;
         try {
             choice = spellRegister.getSpell(line);
         } catch (Exception e) {
             throw new NoSuchSpell(MessageBundle.get("mage.spell.notFound"));
         }
-        castSpell(player, choice, enemy);
+        castSpell(player, choice, enemy, state);
     }
 }

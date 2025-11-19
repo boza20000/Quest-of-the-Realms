@@ -5,6 +5,7 @@ import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.exceptions.AbilityException;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
 
 public class AbilityCommand extends Command {
@@ -13,28 +14,26 @@ public class AbilityCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
         String enemyName = args[1];
-        Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
+        Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
-            System.out.println("You are in an undefined area.");
+            state.getGameServices().getOutput().println("You are in an undefined area.");
             return;
         }
         Enemy chosenEnemy = curTile.getEnemy(enemyName);
         if (chosenEnemy == null) {
-            System.out.println("No enemy named '" + enemyName + "' here!");
+            state.getGameServices().getOutput().println("No enemy named '" + enemyName + "' here!");
             return;
         }
         try {
-            player.getPlayerCharacter().activateAbility(player, chosenEnemy);
+            player.getPlayerCharacter().activateAbility(player, chosenEnemy,state);
         } catch (Exception e) {
             throw new AbilityException(player.getPlayerCharacter() + "ability failed.");
         }
-
     }
 
     @Override
@@ -43,11 +42,11 @@ public class AbilityCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 }
