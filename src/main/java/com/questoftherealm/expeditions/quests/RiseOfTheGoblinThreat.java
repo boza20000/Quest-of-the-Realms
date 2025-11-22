@@ -49,7 +49,7 @@ public class RiseOfTheGoblinThreat extends Quest {
     }
 
     public void setDefeated(boolean defeated) {
-        isDefeated = defeated;
+        this.isDefeated = defeated;
     }
 
     public boolean isKnightsTriedToRecruit() {

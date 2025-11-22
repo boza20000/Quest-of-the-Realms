@@ -14,7 +14,7 @@ import com.questoftherealm.localization.MessageBundle;
 public class ItemRegistry {
     private static List<Item> allItems;
 
-    public static List<Item> getAllItems() {
+    public static synchronized List<Item> getAllItems() {
         if (allItems == null) {
             try (InputStream is = ItemRegistry.class.getResourceAsStream("/items.json")) {
                 if (is == null) {

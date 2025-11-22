@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 public class Villager extends Npc {
     private static final ResourceBundle messages = ResourceBundle.getBundle("messages");
     private Output output;
+    private boolean simulation;
 
     public Villager(String id, GameState state, MissionInteractions missionInteractions) {
         super(NpcType.VILLAGER, id, state, missionInteractions);
@@ -24,7 +25,7 @@ public class Villager extends Npc {
 
     @Override
     public void talk(GameState state, Player player, boolean isSimulation) {
-
+        simulation = isSimulation;
         Position pos = new Position(player.getX(), player.getY());
         Tile tile = state.getMap().curZone(pos.x(), pos.y());
         Mission mission = player.getCurMission();
@@ -83,7 +84,9 @@ public class Villager extends Npc {
 
     private void northVillager1(Player player, NorthExploration quest) {
         if (!quest.isTalkedToVillager1()) {
-            getMissionInteractions().villagerDialogue(player, 1);
+            if(!simulation) {
+                getMissionInteractions().villagerDialogue(player, 1);
+            }
             quest.setTalkedToVillager1(true);
             output.println("✅ " + messages.getString("villager.explored1"));
         } else {
@@ -93,7 +96,9 @@ public class Villager extends Npc {
 
     private void northVillager2(Player player, NorthExploration quest) {
         if (!quest.isTalkedToVillager2()) {
-            getMissionInteractions().villagerDialogue(player, 2);
+            if(!simulation) {
+                getMissionInteractions().villagerDialogue(player, 2);
+            }
             quest.setTalkedToVillager2(true);
             output.println("✅ " + messages.getString("villager.explored2"));
         } else {

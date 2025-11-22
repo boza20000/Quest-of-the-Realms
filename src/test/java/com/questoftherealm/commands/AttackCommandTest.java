@@ -4,97 +4,148 @@ import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.enemyEntities.EnemyFactory;
-import com.questoftherealm.enemyEntities.EnemyType;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.GameServices;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
-import com.questoftherealm.map.TileTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-public class AttackCommandTest {
+class AttackCommandTest {
+
+    private AttackCommand command;
     private Player player;
-    private Tile currentTile;
-    private Command attackCommand;
+    private GameState state;
+    private Output output;
     private Map gameMap;
+    private Tile curTile;
 
     @BeforeEach
-    void setup() throws Exception {
-        gameMap = Map.getInstance();
-        Tile[][] tiles = new Tile[8][8];
-        for (int y = 0; y < 8; y++) {
-            for (int x = 0; x < 8; x++) {
-                tiles[y][x] = new Tile(TileTypes.GRASS, "Zone " + x + "," + y, true);
-            }
-        }
-
-        // Inject tile grid into Map
-        var field = Map.class.getDeclaredField("gameMap");
-        field.setAccessible(true);
-        field.set(gameMap, tiles);
-
-        // Also inject map into Game
-        var gmField = Game.class.getDeclaredField("gameMap");
-        gmField.setAccessible(true);
-        gmField.set(null, gameMap);
-
-        // 🧍 Create player
-        player = new Player(
+    void setup() {
+        player = spy(new Player(
                 "TestHero",
                 PlayerTypes.Warrior,
-                1, 0, 0,       // Level, XP, gold
-                0, 0,          // Position X,Y (we’ll use 0,0)
-                "Spawn",
-                null, null,
+                1, 0, 0,
+                GameConstants.Castle.x(),
+                GameConstants.Castle.y(),
+                "Castle",
+                null,
+                null,
                 new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null, null,  // mission
-                null
-        );
-        Game.setPlayer(player);
+                null,
+                null,
+                false
+        ));
 
-        // 🧌 Create and place an enemy on the same tile as player
-        currentTile = tiles[0][0];
-        Enemy goblin = EnemyFactory.createEnemy(EnemyType.GOBLIN);
-        currentTile.getEnemies().add(goblin);
+        command = spy(new AttackCommand());
 
-        // 🗡️ Load command
-        attackCommand = new CommandFactory().getCommand("attack");
+        output = mock(Output.class);
+        GameServices services = mock(GameServices.class);
 
+        when(services.getOutput()).thenReturn(output);
+
+        state = new GameState(player, output, services);
+
+        gameMap = mock(Map.class);
+        curTile = mock(Tile.class);
+
+        state.setMap(gameMap);
+        when(gameMap.curZone(player.getX(), player.getY())).thenReturn(curTile);
+
+        when(curTile.getEnemy(anyString())).thenReturn(null);
+
+        doReturn(true).when(command).playerBaseCheck(player, state);
     }
 
     @Test
-    void testAttackSimulatedBattle() {
-        String simulatedInput = "1\n1\n1\n";
-        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
-        String[] args = {"attack", "Goblin"};
-        attackCommand.execute(args);
-        boolean stillExists = currentTile.getEnemies().stream()
-                .anyMatch(e -> e.getType().equals(EnemyType.GOBLIN));
-        assertFalse(stillExists, "Goblin should be defeated and removed from the tile");
+    void makeSafe_Fails_WhenIncorrectArgs() {
+        assertFalse(command.makeSafe(new String[]{"attack"}, player, state));
+        verify(output).println(anyString());
     }
 
     @Test
-    void testAttackUnknownEnemyDoesNothing() {
-        String simulatedInput = "1\n";
-        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
-
-        String[] args = {"attack", "Wolf"};
-        attackCommand.execute(args);
-
-        assertEquals(1, currentTile.getEnemies().size(), "Tile should still have the goblin");
+    void makeSafe_Passes_WithTwoArgs() {
+        assertTrue(command.makeSafe(new String[]{"attack", "goblin"}, player, state));
     }
 
     @Test
-    void testAttackMissingArgument() {
-        String[] args = {"attack"};
-        attackCommand.execute(args);
-        assertEquals(1, currentTile.getEnemies().size());
+    void makeSafe_Fails_WhenPlayerCheckFails() {
+        doReturn(false).when(command).playerBaseCheck(player, state);
+        assertFalse(command.makeSafe(new String[]{"attack", "goblin"}, player, state));
     }
 
+    @Test
+    void execute_Stops_WhenMakeSafeFails() {
+        doReturn(false).when(command).makeSafe(any(), eq(player), eq(state));
+        command.execute(new String[]{"attack", "goblin"}, player, state);
+        verify(gameMap, never()).curZone(anyInt(), anyInt());
+    }
+
+    @Test
+    void execute_PrintsUndefinedArea_WhenTileNull() {
+        doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
+        when(gameMap.curZone(player.getX(), player.getY())).thenReturn(null);
+        command.execute(new String[]{"attack", "goblin"}, player, state);
+        verify(output).println("You are in an undefined area.");
+    }
+
+    @Test
+    void execute_PrintsEnemyMissing_WhenEnemyNull() {
+        doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
+        when(curTile.getEnemy("orc")).thenReturn(null);
+        command.execute(new String[]{"attack", "orc"}, player, state);
+        verify(output).println("No enemy named 'orc' here!");
+    }
+
+    @Test
+    void execute_PrintsError_WhenInteractThrows() throws Exception {
+        doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
+
+        Enemy enemy = mock(Enemy.class);
+        when(curTile.getEnemy("goblin")).thenReturn(enemy);
+
+        doThrow(new RuntimeException("boom")).when(enemy).interact(player, state);
+
+        command.execute(new String[]{"attack", "goblin"}, player, state);
+
+        verify(output).println("Battle was unavailable");
+    }
+
+    @Test
+    void execute_NoRewards_WhenEnemyNotKilled() throws Exception {
+        doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
+
+        Enemy enemy = mock(Enemy.class);
+        when(curTile.getEnemy("goblin")).thenReturn(enemy);
+
+        when(enemy.interact(player, state)).thenReturn(false);
+
+        command.execute(new String[]{"attack", "goblin"}, player, state);
+
+        verify(player, never()).addMoney(anyInt(), eq(state));
+        verify(player, never()).addExp(anyInt());
+        verify(curTile, never()).removeEnemy(enemy);
+    }
+
+    @Test
+    void execute_GivesRewards_WhenEnemyKilled() throws Exception {
+        doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
+
+        Enemy enemy = mock(Enemy.class);
+        when(curTile.getEnemy("goblin")).thenReturn(enemy);
+
+        when(enemy.interact(player, state)).thenReturn(true);
+
+        command.execute(new String[]{"attack", "goblin"}, player, state);
+
+        verify(player).addMoney(5, state);
+        verify(player).addExp(10);
+        verify(curTile).removeEnemy(enemy);
+        verify(output).println("Successful battle! You receive 5Gold and you receive 10XP.");
+    }
 }

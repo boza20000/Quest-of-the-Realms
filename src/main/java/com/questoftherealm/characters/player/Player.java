@@ -236,6 +236,7 @@ public class Player implements InventoryHandler, Explorer {
         this.y = position.y();
     }
 
+
     public void setQuestFactory(QuestFactory questFactory) {
         this.questFactory = questFactory;
     }
@@ -295,7 +296,7 @@ public class Player implements InventoryHandler, Explorer {
         }
         Tile curTile = state.getMap().curZone(getX(), getY());
         if (curTile == null) {
-            state.getGameServices().getOutput().println("you current location is empty");
+            state.getGameServices().getOutput().println(MessageBundle.get("player.tile.empty"));
             return;
         }
         if (!curTile.isContentGenerated() || curTile.isEmpty()) {
@@ -395,13 +396,13 @@ public class Player implements InventoryHandler, Explorer {
                     playerCharacter.setMana(Math.min(item.getPower() + playerCharacter.getMana(), MAX_MANA));
             case BUFF_STRENGTH ->
                     playerCharacter.setAttack(Math.min(playerCharacter.getAttack() + item.getPower(), MAX_ATTACK));
+            case RESTORE_HP ->
+                    playerCharacter.setHealth(Math.min(playerCharacter.getHealth() + item.getPower(), MAX_HEALTH));
 //                case SPELL_FIRE -> curCharacter.castSpell("fireball", item.getPower());
 //                case SPELL_ICE -> curCharacter.castSpell("iceSpike", item.getPower());
 //                case SPELL_HEAL -> curCharacter.castSpell("heal", item.getPower());
 //                case SPELL_SHIELD -> curCharacter.castSpell("shield", item.getPower());
 //                case SPELL_LIGHTNING -> curCharacter.castSpell("lightning", item.getPower());
-            case RESTORE_HP ->
-                    playerCharacter.setHealth(Math.min(playerCharacter.getHealth() + item.getPower(), MAX_HEALTH));
 //                case BUFF_CHARISMA -> curCharacter.addBuff("charisma", item.getPower());
 //              case BUFF_INTELLIGENCE -> curCharacter.addBuff("intelligence", item.getPower());
 //                case QUEST_ITEM -> Game.getQuestManager().collectItem(item);

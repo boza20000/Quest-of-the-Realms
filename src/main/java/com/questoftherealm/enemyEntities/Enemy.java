@@ -52,7 +52,8 @@ public abstract class Enemy implements Fightable, Lootable {
 
     @Override
     public void takeDamage(int damage, GameState state) {
-        int reducedDamageTaken = Math.max(0, damage - (getBaseDefense() / 2));
+        int armorPower = armor.stream().mapToInt(Item::getPower).sum();
+        int reducedDamageTaken = Math.max(0, damage - ((getBaseDefense() + armorPower)/ 2));
         int newHealth = Math.max(0, getHealth() - reducedDamageTaken);
         setHealth(newHealth);
         isDead = newHealth == 0;
@@ -141,6 +142,9 @@ public abstract class Enemy implements Fightable, Lootable {
     }
 
     public void setHealth(int health) {
+        if(health == 0){
+            isDead = true;
+        }
         this.health = health;
     }
 

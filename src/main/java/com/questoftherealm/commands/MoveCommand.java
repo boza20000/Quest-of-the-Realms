@@ -20,19 +20,19 @@ public class MoveCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player,GameState state) {
+    public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
             state.getGameServices().getOutput().println("Usage: " + getDescription());
             return false;
         }
-        return playerBaseCheck(player,state);
+        return playerBaseCheck(player, state);
     }
 
     @Override
     public void execute(String[] args, Player player, GameState state) {
         TravelManger travelManger = new TravelManger(state);
         SlowPrinter slowPrinter = new SlowPrinter(state);
-        if (!makeSafe(args, player,state)) {
+        if (!makeSafe(args, player, state)) {
             return;
         }
         if (state.getMap().curZone(player.getX(), player.getY()) == null) {
@@ -82,7 +82,11 @@ public class MoveCommand extends Command {
                 return;
             }
         }
-
+        if (!state.isSimulation()) {
+            player.move(x, y);
+            state.getMap().movePlayer(player, player.getX(), player.getY());
+            return;
+        }
         TileTypes start = state.getMap().curZone(player.getX(), player.getY()).getType();
         pathToDestination(direction, player, state, travelManger);
         player.move(x, y);

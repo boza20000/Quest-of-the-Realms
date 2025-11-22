@@ -8,9 +8,10 @@ import com.questoftherealm.map.TriggerRegister;
 public class GameState {
     private final GameServices gameServices;
     private Player player;
-    private final Map gameMap;
+    private Map gameMap;
     private final TriggerRegister triggerRegister;
     private boolean gameOver;
+    private boolean isSimulation;
 
     public GameState(Player player, Output output, GameServices services) {
         this.player = player;
@@ -18,6 +19,7 @@ public class GameState {
         this.gameMap = new Map();
         this.triggerRegister = new TriggerRegister(this);
         gameOver = false;
+        isSimulation = false;
     }
 
     public Player getPlayer() {
@@ -44,6 +46,17 @@ public class GameState {
         this.gameOver = gameOver;
     }
 
+    public void setMap(Map gameMap){
+        this.gameMap = gameMap;
+    }
+
+    public void setSimulation(boolean simulation) {
+        isSimulation = simulation;
+    }
+
+    public boolean isSimulation() {
+        return isSimulation;
+    }
 
     public void setPlayer(Player loaded) {
         player = loaded;

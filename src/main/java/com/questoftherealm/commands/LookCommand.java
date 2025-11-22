@@ -32,7 +32,9 @@ public class LookCommand extends Command {
         try {
             state.getGameServices().getOutput().print("Looking");
             for (int i = 0; i < 3; i++) {
-                Thread.sleep(1000);
+                if(!state.isSimulation()) {
+                    Thread.sleep(1000);
+                }
                 state.getGameServices().getOutput().print(".");
             }
             player.look(state);

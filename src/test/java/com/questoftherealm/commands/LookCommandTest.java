@@ -1,44 +1,50 @@
 package com.questoftherealm.commands;
 
-import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.game.Game;
-import com.questoftherealm.game.GameConstants;
-import org.junit.jupiter.api.*;
+import com.questoftherealm.game.GameServices;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import static org.mockito.Mockito.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+class LookCommandTest {
 
-public class LookCommandTest {
     private Player player;
     private LookCommand lookCommand;
-    private ByteArrayOutputStream output;
+    private GameState state;
+    private Output output;
 
     @BeforeEach
     void setup() {
-        output = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(output));
-        player = new Player("TestHero", PlayerTypes.Warrior,
-                1, 0, 0, 0, 0, "Spawn",
-                null, null, new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null, null,  // mission
-                null);
-        Game.setPlayer(player);
+        player = spy(new Player("TestHero", PlayerTypes.Warrior));
+        state = mock(GameState.class);
+        output = mock(Output.class);
+        GameServices services = mock(GameServices.class);
+        when(state.getGameServices()).thenReturn(services);
+        when(services.getOutput()).thenReturn(output);
         lookCommand = new LookCommand();
+        state.setSimulation(true);
     }
 
     @Test
-    void testLookCommandExecutes() {
-        lookCommand.execute(new String[]{"look"});
-        assertTrue(output.toString().contains("Looking") || output.toString().contains("failed"));
+    void execute_PrintsLookingAndCallsPlayerLook() throws InterruptedException {
+        lookCommand.execute(new String[]{"look"}, player, state);
+        verify(output).print("Looking");
+        verify(player).look(state);
     }
 
     @Test
-    void testLookInvalidArgs() {
-        lookCommand.execute(new String[]{"look", "extra"});
-        assertTrue(output.toString().contains("Usage"));
+    void execute_PrintsUsage_WhenExtraArgumentsProvided() {
+        lookCommand.execute(new String[]{"look", "extra"}, player, state);
+        verify(output).println("Usage: " + lookCommand.getDescription());
+    }
+
+    @Test
+    void execute_PrintsError_WhenPlayerIsNull() {
+        lookCommand.execute(new String[]{"look"}, null, state);
+        verify(output).println("Error: No player loaded.");
     }
 }

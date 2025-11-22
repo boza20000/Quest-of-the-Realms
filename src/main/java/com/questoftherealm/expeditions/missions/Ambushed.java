@@ -9,7 +9,7 @@ public class Ambushed extends Mission {
         super("Ambushed!",
                 "The goblins discover you—fight your way out!",
                 player,
-                (p,m)->(p.getCurQuest() instanceof GoblinAmbush q && q.isPlayerAmbushed()
+                (p,m)->(p.getCurQuest() instanceof GoblinAmbush q && q.isPlayerAmbushed() && q.isCampFound()
         ));
     }
     public Ambushed(){}
