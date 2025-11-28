@@ -12,7 +12,7 @@ public class StatsCommand extends Command {
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -28,7 +28,7 @@ public class StatsCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state) {
         return "stats — displays your character’s current stats and attributes";
     }
 }

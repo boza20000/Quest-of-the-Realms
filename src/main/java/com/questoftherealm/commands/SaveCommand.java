@@ -11,14 +11,14 @@ public class SaveCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state) {
         return "save [name] — saves your current game progress under the specified name";
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player,state);

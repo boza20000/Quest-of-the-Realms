@@ -11,14 +11,14 @@ public class LookCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state) {
         return "look — observe your surroundings for items, enemies, or structures";
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player,state);

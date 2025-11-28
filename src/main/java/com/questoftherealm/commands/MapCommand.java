@@ -32,14 +32,14 @@ public class MapCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state)  {
         return "map — displays the current map layout and your position";
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player,state);
