@@ -8,7 +8,6 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.interaction.SlowPrinter;
-import com.questoftherealm.localization.MessageBundle;
 
 public class King extends Npc {
     private Output output;
@@ -28,20 +27,20 @@ public class King extends Npc {
             kingDialog(state);
             q.setReportedToKing(true);
         } else {
-            output.println(MessageBundle.get("king.talked"));
+            output.println(state.getMessages().getBundle().get("king.talked"));
         }
     }
 
     private void kingDialog(GameState state) {
         SlowPrinter slowPrinter = new SlowPrinter(state);
-        slowPrinter.slowPrint("🏰 " + MessageBundle.get("mission.report.king.intro1"));
-        slowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.intro2"));
-        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line1"));
-        slowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.line2"));
-        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line3"));
-        slowPrinter.slowPrint("🧝‍♂️ " + MessageBundle.get("mission.report.king.line4"));
-        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line5"));
-        slowPrinter.slowPrint("👑 " + MessageBundle.get("mission.report.king.line6"));
-        slowPrinter.slowPrint("⚔️ " + MessageBundle.get("mission.report.king.closure"));
+        slowPrinter.slowPrint("🏰 " + state.getMessages().getBundle().get("mission.report.king.intro1"));
+        slowPrinter.slowPrint("🧝‍♂️ " + state.getMessages().getBundle().get("mission.report.king.intro2"));
+        slowPrinter.slowPrint("👑 " + state.getMessages().getBundle().get("mission.report.king.line1"));
+        slowPrinter.slowPrint("🧝‍♂️ " + state.getMessages().getBundle().get("mission.report.king.line2"));
+        slowPrinter.slowPrint("👑 " + state.getMessages().getBundle().get("mission.report.king.line3"));
+        slowPrinter.slowPrint("🧝‍♂️ " + state.getMessages().getBundle().get("mission.report.king.line4"));
+        slowPrinter.slowPrint("👑 " + state.getMessages().getBundle().get("mission.report.king.line5"));
+        slowPrinter.slowPrint("👑 " + state.getMessages().getBundle().get("mission.report.king.line6"));
+        slowPrinter.slowPrint("⚔️ " + state.getMessages().getBundle().get("mission.report.king.closure"));
     }
 }

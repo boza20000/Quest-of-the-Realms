@@ -23,24 +23,24 @@ public class Orc extends Characters implements MonsterBehavior {
     @Override
     public void resurrect(GameState state) {
         if (isDead()) {
-            state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.call"));
-            state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.spiritsSummoned"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.call"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.spiritsSummoned"));
 
             int roll = new Random().nextInt(10);
             if (roll < 4) {
                 setHealth(getMaxHealth());
-                state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.success"));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.success"));
             } else {
-                state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.fail"));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.fail"));
             }
         } else {
-            state.getGameServices().getOutput().println(MessageBundle.get("orc.resurrect.notDead"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.notDead"));
         }
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem(MessageBundle.get("orc.weapon.default"));
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get("orc.weapon.default");
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Orc extends Characters implements MonsterBehavior {
 
     @Override
     public void activateAbility(Player player, Enemy enemy, GameState state) {
-        state.getGameServices().getOutput().println(MessageBundle.get("orc.ability.attack", player.getWeapon().getName()));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.ability.attack", player.getWeapon().getName()));
         enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2,state);
     }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.SaveError;
-import com.questoftherealm.localization.MessageBundle;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class SaveGame {
         try {
             File saveDir = new File("saves");
             if (!saveDir.exists() && !saveDir.mkdirs()) {
-                state.getGameServices().getOutput().println(MessageBundle.get("saveGame.error.notCreated"));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("saveGame.error.notCreated"));
                 return;
             }
 
@@ -25,15 +24,15 @@ public class SaveGame {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            player.trackPlayTime();
+            player.trackPlayTime(state);
             mapper.writeValue(fileSave, player);
 
-            state.getGameServices().getOutput().println(MessageBundle.get("saveGame.save.successful",fileSave.getAbsolutePath()));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("saveGame.save.successful",fileSave.getAbsolutePath()));
 
         } catch (IOException e) {
-            throw new SaveError(MessageBundle.get("saveGame.save.failed",saveName));
+            throw new SaveError(state.getMessages().getBundle().get("saveGame.save.failed",saveName));
         } catch (Exception e) {
-            throw new SaveError(MessageBundle.get("saveGame.save.unexpectedly.failed",saveName));
+            throw new SaveError(state.getMessages().getBundle().get("saveGame.save.unexpectedly.failed",saveName));
         }
     }
 }

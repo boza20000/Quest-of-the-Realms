@@ -10,15 +10,12 @@ import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.expeditions.Mission;
 import com.questoftherealm.expeditions.Quest;
 import com.questoftherealm.expeditions.QuestFactory;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.Position;
 import com.questoftherealm.interaction.ExploreManager;
-import com.questoftherealm.items.Chest;
-import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.items.ItemEffect;
-import com.questoftherealm.localization.MessageBundle;
+import com.questoftherealm.items.*;
 import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Locations;
 import com.questoftherealm.map.Tile;
@@ -51,7 +48,8 @@ public class Player implements InventoryHandler, Explorer {
     private QuestFactory questFactory;
     private boolean isDead;
 
-    public Player(String name, PlayerTypes type) {
+    public Player(String name, PlayerTypes type, GameState state) {
+        WeaponFactory weaponFactory = new WeaponFactory(state.getItemRegistry());
         this.name = name;
         this.playerType = type;
         this.playerCharacter = (PlayerFactory.createPlayer(type));
@@ -64,7 +62,7 @@ public class Player implements InventoryHandler, Explorer {
         armor.put(ItemEffect.HELMET, null);
         armor.put(ItemEffect.CHESTPLATE, null);
         armor.put(ItemEffect.BOOTS, null);
-        this.weapon = this.playerCharacter.getDefaultWeapon();
+        this.weapon = weaponFactory.create(playerCharacter.getDefaultWeapon(state));
         this.x = PLAYER_START.x();
         this.y = PLAYER_START.y();
         this.position = PLAYER_START;
@@ -102,7 +100,7 @@ public class Player implements InventoryHandler, Explorer {
         this.x = x;
         this.y = y;
         this.currentZone = currentZone;
-        this.weapon = weapon != null ? weapon : playerCharacter.getDefaultWeapon();
+        this.weapon = weapon;
         this.armor = armor != null ? armor : new HashMap<>();
         createArmor();
         initializeInventory(inventory);
@@ -141,7 +139,7 @@ public class Player implements InventoryHandler, Explorer {
     public void addMoney(int amount, GameState state) {
         gold += amount;
         if (gold >= GameConstants.MAX_GOLD) {
-            state.getGameServices().getOutput().println(MessageBundle.get("player.reached.maxGold"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.reached.maxGold"));
             gold = GameConstants.MAX_GOLD;
         }
     }
@@ -149,7 +147,7 @@ public class Player implements InventoryHandler, Explorer {
     public boolean payMoney(int amount, GameState state) {
         if (gold - amount >= 0) {
             gold -= amount;
-            state.getGameServices().getOutput().println(MessageBundle.get("player.use.gold"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.use.gold"));
             return true;
         }
         return false;
@@ -291,18 +289,20 @@ public class Player implements InventoryHandler, Explorer {
         for (LocationTrigger locTrigger : state.getTriggerRegister().getTriggers()) {
             if (locTrigger.isAtPosition(pos)) {
                 locTrigger.trigger(this);
-                return;
+                if(locTrigger.isExecuted()){
+                    return;
+                }
             }
         }
         Tile curTile = state.getMap().curZone(getX(), getY());
         if (curTile == null) {
-            state.getGameServices().getOutput().println(MessageBundle.get("player.tile.empty"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.tile.empty"));
             return;
         }
-        if (!curTile.isContentGenerated() || curTile.isEmpty()) {
+        if (!curTile.isContentGenerated() && curTile.isEmpty()) {
             curTile.onEnter(this, state);
         } else {
-            state.getGameServices().getOutput().println(MessageBundle.get("player.tile.empty"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.tile.empty"));
         }
     }
 
@@ -310,25 +310,25 @@ public class Player implements InventoryHandler, Explorer {
     public void exploreStructure(String structure, GameState state) {
         Locations location = Locations.getStructure(structure);
         if (location == null) {
-            state.getGameServices().getOutput().println(MessageBundle.get("structure.no.exist"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("structure.no.exist"));
             return;
         }
-        state.getGameServices().getOutput().println(MessageBundle.get("player.approach.structure", location.getName()));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.approach.structure", location.getName()));
         state.getGameServices().getOutput().println(location.getDescription());
-        state.getGameServices().getOutput().println(MessageBundle.get("player.decision.structure"));
-        state.getGameServices().getOutput().print(MessageBundle.get("console.enter.command.symbol"));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.decision.structure"));
+        state.getGameServices().getOutput().print(state.getMessages().getBundle().get("console.enter.command.symbol"));
         String line = state.getGameServices().getInput().nextLine();
         switch (line.toUpperCase()) {
             case "ENTER" -> {
-                state.getGameServices().getOutput().println(MessageBundle.get("player.enter.structure"));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.enter.structure"));
                 ExploreManager interaction = new ExploreManager();
                 interaction.exploreStructure(location, this, state);
             }
             case "LEAVE" -> {
-                state.getGameServices().getOutput().println(MessageBundle.get("player.default.structure"));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.default.structure"));
             }
             default -> {
-                state.getGameServices().getOutput().println(MessageBundle.get("player.leave.structure"));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.leave.structure"));
             }
         }
 
@@ -339,8 +339,8 @@ public class Player implements InventoryHandler, Explorer {
         try {
             Chest chest = new Chest(state);
             ItemDrop drop = chest.generateRandomItem();
-            state.getGameServices().getOutput().println(MessageBundle.get("player.open.chest"));
-            state.getGameServices().getOutput().println(MessageBundle.get("player.random.item", drop.item(), drop.quantity()));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.open.chest"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.random.item", drop.item(), drop.quantity()));
             this.inventory.addItem(drop.item(), drop.quantity(), state);
         } catch (RandomItemNotGenerated e) {
             state.getGameServices().getOutput().println(e.getMessage());
@@ -429,7 +429,7 @@ public class Player implements InventoryHandler, Explorer {
         if (questFactory == null) return;
         Quest currentQuest = questFactory.getCurrentQuest();
         if (currentQuest == null) {
-            state.getGameServices().getOutput().println(MessageBundle.get("player.quests.completed"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.quests.completed"));
             this.curQuest = null;
             this.curMission = null;
             return;
@@ -439,8 +439,8 @@ public class Player implements InventoryHandler, Explorer {
         this.curMission = questFactory.getCurrentMission();
     }
 
-    public void trackPlayTime() {
-        long endTime = System.currentTimeMillis();
+    public void trackPlayTime(GameState state) {
+        long endTime = state.getClock().now();
         long duration = endTime - getStartTime();
         setPlayTime(duration);
     }

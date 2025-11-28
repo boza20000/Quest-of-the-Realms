@@ -1,16 +1,23 @@
 package com.questoftherealm.localization;
 
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public final class MessageBundle {
     private static final String BASE_NAME = "messages";
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BASE_NAME, java.util.Locale.ENGLISH);
+    private ResourceBundle BUNDLE;
 
-    private MessageBundle() {}
+    public MessageBundle(Locale locale) {
+         BUNDLE = ResourceBundle.getBundle(BASE_NAME, locale);
+    }
+    public MessageBundle(){
+        BUNDLE = ResourceBundle.getBundle(BASE_NAME, java.util.Locale.ENGLISH);
+    }
 
-    public static String get(String key, Object... args) {
+
+    public String get(String key, Object... args) {
         if (key == null || key.isBlank()) {
             return "???null???";
         }

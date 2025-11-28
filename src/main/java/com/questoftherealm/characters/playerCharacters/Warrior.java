@@ -4,7 +4,7 @@ import com.questoftherealm.characters.characterInterfaces.Trader;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.entities.SuspiciousTrader;
-import com.questoftherealm.game.Game;
+
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
@@ -30,15 +30,13 @@ public class Warrior extends Characters implements Trader {
     @Override
     public void sellItem(Player player, SuspiciousTrader trader, Item item, int quantity, GameState state) {
         int money = item.getPrice();
-
-        
         player.addMoney(money,state);
         player.getInventory().removeItem(item, quantity, state);
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem(MessageBundle.get("warrior.weapon.default"));
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get("warrior.weapon.default");
     }
 
     @Override
@@ -58,7 +56,7 @@ public class Warrior extends Characters implements Trader {
 
     @Override
     public void activateAbility(Player player, Enemy enemy, GameState state) {
-        state.getGameServices().getOutput().println(MessageBundle.get("warrior.ability.use", player.getWeapon().getName()));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.ability.use", player.getWeapon().getName()));
         enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2, state);
     }
 }

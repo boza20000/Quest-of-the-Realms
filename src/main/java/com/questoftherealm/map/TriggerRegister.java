@@ -23,6 +23,7 @@ public final class TriggerRegister {
     private final GoblinGeneralManager goblinGeneralManager;
     private final GoblinKingManager goblinKingManager;
     private final GameState state;
+    private boolean isExecuted = false;
 
     public TriggerRegister(GameState state) {
         registerTriggers();
@@ -43,6 +44,7 @@ public final class TriggerRegister {
             if (player.getCurQuest() instanceof NorthExploration q && player.getCurMission() instanceof Investigate_Northern_Villages) {
                 missionInteractions.villageIntro_1();
                 q.setSearchedVillage1(true);
+                isExecuted = true;
             }
         }));
 
@@ -51,6 +53,7 @@ public final class TriggerRegister {
             if (player.getCurQuest() instanceof NorthExploration q && player.getCurMission() instanceof Investigate_Northern_Villages) {
                 missionInteractions.villageIntro_2();
                 q.setSearchedVillage2(true);
+                isExecuted = true;
             }
         }));
 
@@ -61,16 +64,19 @@ public final class TriggerRegister {
                     missionInteractions.goblinCampSpotted();
                     q.setCampFound(true);
                     player.updateQuestStatus(state);
+                    isExecuted = true;
                 }
                 pause(state.getGameServices().getOutput());
                 if (player.getCurMission() instanceof Ambushed) {
                     missionInteractions.goblinsTalkingOverheard();
                     q.setPlayerAmbushed(true);
                     player.updateQuestStatus(state);
+                    isExecuted = true;
                 }
                 if (player.getCurMission() instanceof Escape_to_Safety) {
                     missionInteractions.makeDecision(player);
                     player.updateQuestStatus(state);
+                    isExecuted = true;
                 }
 
             }
@@ -79,32 +85,44 @@ public final class TriggerRegister {
         triggers.add(new LocationTrigger(GameConstants.SouthVillage_1, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isKnightsRecruited()) {
                 recruitmentManager.talkToTheKnights(player,state);
-
+                isExecuted = true;
             }
         }));
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.SouthVillage_2, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isArchersRecruited()) {
                 recruitmentManager.talkToTheArchers(player,state);
+                isExecuted = true;
             }
         }));
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.MagesOutPost, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isMagesRecruited()) {
                 recruitmentManager.talkToTheMages(player,state);
+                isExecuted = true;
             }
         }));
         // Army fight
         triggers.add(new LocationTrigger(GameConstants.Battlefield, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && player.getCurMission() instanceof Defeat_the_Goblin_General) {
                 goblinGeneralManager.startFinalBattle(player, q,state);
+                isExecuted = true;
             }
         }));
         triggers.add(new LocationTrigger(GameConstants.FarNorthMountain, player -> {
             if (player.getCurQuest() instanceof FinalBattle q && player.getCurMission() instanceof March_Into_the_Far_North) {
                 goblinKingManager.goblinKingdomFound(player, q);
+                isExecuted = true;
             }
         }));
+    }
+
+    public boolean isExecuted() {
+        return isExecuted;
+    }
+
+    public void setExecuted(boolean executed) {
+        isExecuted = executed;
     }
 
     void pause(Output output) {

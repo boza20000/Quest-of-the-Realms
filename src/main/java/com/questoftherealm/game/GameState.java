@@ -2,6 +2,8 @@ package com.questoftherealm.game;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.TriggerRegister;
 
@@ -12,14 +14,21 @@ public class GameState {
     private final TriggerRegister triggerRegister;
     private boolean gameOver;
     private boolean isSimulation;
+    private ServerClock clock;
+    private LocalizationService messages;
+    private ItemRegistry itemRegistry;
 
-    public GameState(Player player, Output output, GameServices services) {
+    public GameState(Player player, GameServices services) {
         this.player = player;
         this.gameServices = services;
-        this.gameMap = new Map();
+        this.gameMap = new Map(this);
         this.triggerRegister = new TriggerRegister(this);
-        gameOver = false;
-        isSimulation = false;
+        this.gameOver = false;
+        this.isSimulation = false;
+        clock = new ServerClock();
+        //here can be added language in the LocalizationService constructor
+        this.messages = new LocalizationService();
+        this.itemRegistry = new ItemRegistry(messages);
     }
 
     public Player getPlayer() {
@@ -59,6 +68,26 @@ public class GameState {
     }
 
     public void setPlayer(Player loaded) {
-        player = loaded;
+        this.player = loaded;
+    }
+
+    public ServerClock getClock() {
+        return clock;
+    }
+
+    public void setClock(ServerClock clock) {
+        this.clock = clock;
+    }
+
+    public LocalizationService getMessages() {
+        return messages;
+    }
+
+    public void setGameMap(Map gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    public ItemRegistry getItemRegistry() {
+        return itemRegistry;
     }
 }

@@ -9,10 +9,9 @@ import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.localization.MessageBundle;
 
 public class Elder extends Npc {
-    private final String name = MessageBundle.get("elder.name");
+    private final String name = "Evary";
     private Output output;
 
     public Elder(String id, GameState state, MissionInteractions missionInteractions) {
@@ -23,14 +22,14 @@ public class Elder extends Npc {
     @Override
     public void talk(GameState state, Player player, boolean isSimulation) {
         if (!(player.getCurQuest() instanceof StartQuest q)) {
-            output.println(MessageBundle.get("elder.confused"));
+            output.println(state.getMessages().getBundle().get("elder.confused"));
             return;
         }
         if (!q.isElderHasTalked()) {
             q.setElderHasTalked(true);
             giveRewards(player, isSimulation, state);
         } else {
-            output.println(MessageBundle.get("elder.has.talked"));
+            output.println(state.getMessages().getBundle().get("elder.has.talked"));
         }
     }
 

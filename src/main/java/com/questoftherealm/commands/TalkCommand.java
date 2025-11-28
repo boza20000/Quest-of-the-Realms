@@ -17,7 +17,7 @@ public class TalkCommand extends Command {
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: talk <npc>");
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -54,7 +54,7 @@ public class TalkCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state) {
         return "Talk to nearby NPCs to trade or exchange information.";
     }
 }

@@ -15,14 +15,14 @@ public class MoveCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state) {
         return "move [north|south|east|west] — move your character in the specified direction";
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player, state);
@@ -82,7 +82,7 @@ public class MoveCommand extends Command {
                 return;
             }
         }
-        if (!state.isSimulation()) {
+        if (state.isSimulation()) {
             player.move(x, y);
             state.getMap().movePlayer(player, player.getX(), player.getY());
             return;

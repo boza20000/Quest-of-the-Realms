@@ -18,11 +18,11 @@ public class CompleteQuestCommand extends Command {
             return;
         }
         if (player.getCurQuest() == null) {
-            state.getGameServices().getOutput().println("Error: No quest loaded.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("progress.error.noQuestLoaded"));
             return;
         }
         if (player.getCurMission() == null) {
-            state.getGameServices().getOutput().println("Error: No mission loaded.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("progress.error.noMissionLoaded"));
             return;
         }
         List<Mission> missions = List.of();
@@ -32,31 +32,33 @@ public class CompleteQuestCommand extends Command {
                     missions = player.getCurQuest().getMissions();
                 }
                 else{
-                    state.getGameServices().getOutput().println("All quests done!");
+                    state.getGameServices().getOutput().println(state.getMessages().getBundle().get("progress.info.allQuestsDone"));
                 }
             } catch (NullPointerException e) {
                 e.getSuppressed();
-                state.getGameServices().getOutput().println("Missions unavailable");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("progress.error.missionsUnavailable"));
             }
         }
         if (!missions.isEmpty()) {
+            String completedSymbol = state.getMessages().getBundle().get("progress.symbol.completed");
+            String incompleteSymbol = state.getMessages().getBundle().get("progress.symbol.incomplete");
             for (Mission m : missions) {
-                state.getGameServices().getOutput().println(m.getTask() + " " + ((m.isCompleted()) ? "✔" : "❌"));
+                state.getGameServices().getOutput().println(m.getTask() + " " + ((m.isCompleted()) ? completedSymbol : incompleteSymbol));
             }
         } else {
-            state.getGameServices().getOutput().println("No available quest");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("progress.info.noAvailableQuest"));
         }
     }
 
     @Override
-    public String getDescription() {
-        return "progress — displays progress on your current quest and its missions";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("progress.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("progress.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);

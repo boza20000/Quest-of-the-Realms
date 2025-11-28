@@ -6,7 +6,6 @@ import com.questoftherealm.exceptions.MapNotLoaded;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.localization.MessageBundle;
 
 import java.io.InputStream;
 
@@ -14,19 +13,19 @@ import java.io.InputStream;
 public class Map {
     private Tile[][] gameMap;
 
-    public Map() {
-        loadMap();
+    public Map(GameState state) {
+        loadMap(state);
     }
 
-    private void loadMap() {
+    private void loadMap(GameState state) {
         try (InputStream is = Map.class.getResourceAsStream("/map.json")) {
             if (is == null) {
-                throw new MapNotLoaded(MessageBundle.get("map.notFound.error"));
+                throw new MapNotLoaded(state.getMessages().getBundle().get("map.notFound.error"));
             }
             ObjectMapper mapper = new ObjectMapper();
             gameMap = mapper.readValue(is, Tile[][].class);
         } catch (Exception e) {
-           throw new MapNotLoaded(MessageBundle.get("map.load.error"));
+           throw new MapNotLoaded(state.getMessages().getBundle().get("map.load.error"));
         }
     }
 
@@ -68,8 +67,6 @@ public class Map {
             case CASTLE -> GameConstants.CYAN + "\uD83C\uDFF0" + GameConstants.RESET;
             case SWAMP -> GameConstants.MAGENTA + "\uD83D\uDFEB" + GameConstants.RESET;
             case WATER -> GameConstants.BLUE + "\uD83D\uDFE6" + GameConstants.RESET;
-            //case QUEST_LOCATION -> GameConstants.RED + "❓" + GameConstants.RESET;
-            default -> " ";
         };
     }
 

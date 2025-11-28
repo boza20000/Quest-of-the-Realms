@@ -1,57 +1,57 @@
 package com.questoftherealm.map;
 
-import com.questoftherealm.localization.MessageBundle;
+import com.questoftherealm.game.GameState;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public enum Locations {
-
     ABANDONED_TOWER(new LocationData(
-            MessageBundle.get("location.abandonedTower.name"),
-            MessageBundle.get("location.abandonedTower.desc")
+            "location.abandonedTower.name",
+            "location.abandonedTower.desc"
     )),
     FORGOTTEN_RUINS(new LocationData(
-            MessageBundle.get("location.forgottenRuins.name"),
-            MessageBundle.get("location.forgottenRuins.desc")
+            "location.forgottenRuins.name",
+            "location.forgottenRuins.desc"
     )),
     CRUMBLING_WATCHTOWER(new LocationData(
-            MessageBundle.get("location.crumblingWatchtower.name"),
-            MessageBundle.get("location.crumblingWatchtower.desc")
+            "location.crumblingWatchtower.name",
+            "location.crumblingWatchtower.desc"
     )),
     MAGES_TOWER(new LocationData(
-            MessageBundle.get("location.magesTower.name"),
-            MessageBundle.get("location.magesTower.desc")
+            "location.magesTower.name",
+            "location.magesTower.desc"
     )),
     IRON_MINE(new LocationData(
-            MessageBundle.get("location.ironMine.name"),
-            MessageBundle.get("location.ironMine.desc")
+            "location.ironMine.name",
+            "location.ironMine.desc"
     )),
     SHADOW_CAVERN(new LocationData(
-            MessageBundle.get("location.shadowCavern.name"),
-            MessageBundle.get("location.shadowCavern.desc")
+            "location.shadowCavern.name",
+            "location.shadowCavern.desc"
     )),
     SACRED_GROVE(new LocationData(
-            MessageBundle.get("location.sacredGrove.name"),
-            MessageBundle.get("location.sacredGrove.desc")
+            "location.sacredGrove.name",
+            "location.sacredGrove.desc"
     )),
     CRYSTAL_LAKE(new LocationData(
-            MessageBundle.get("location.crystalLake.name"),
-            MessageBundle.get("location.crystalLake.desc")
+            "location.crystalLake.name",
+            "location.crystalLake.desc"
     )),
     BANDIT_CAMP(new LocationData(
-            MessageBundle.get("location.banditCamp.name"),
-            MessageBundle.get("location.banditCamp.desc")
+            "location.banditCamp.name",
+            "location.banditCamp.desc"
     )),
     SUNKEN_SWAMP(new LocationData(
-            MessageBundle.get("location.sunkenSwamp.name"),
-            MessageBundle.get("location.sunkenSwamp.desc")
+            "location.sunkenSwamp.name",
+            "location.sunkenSwamp.desc"
     )),
     ANCIENT_ALTAR(new LocationData(
-            MessageBundle.get("location.ancientAltar.name"),
-            MessageBundle.get("location.ancientAltar.desc")
+            "location.ancientAltar.name",
+            "location.ancientAltar.desc"
     )),
     ABANDONED_HUT(new LocationData(
-            MessageBundle.get("location.abandonedHut.name"),
-            MessageBundle.get("location.abandonedHut.desc")
+            "location.abandonedHut.name",
+            "location.abandonedHut.desc"
     ));
 
     private final LocationData data;

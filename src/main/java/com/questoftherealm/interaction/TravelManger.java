@@ -3,7 +3,6 @@ package com.questoftherealm.interaction;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Event;
 import com.questoftherealm.map.TileTypes;
 
@@ -40,31 +39,33 @@ public class TravelManger {
         String fullEntry = MOVE_CONNECTORS.get(random().nextInt(MOVE_CONNECTORS.size()));
         String emoji = fullEntry.substring(0, fullEntry.indexOf(' '));
         String key = fullEntry.substring(fullEntry.indexOf(' ') + 1);
-        String line = emoji + " " + MessageBundle.get(key, start, direction);
+        String line = emoji + " " + state.getMessages().getBundle().get(key, start, direction);
         slowPrinter.slowPrint(line);
     }
 
     private void randomEvent(TileTypes type, Player player, GameState state) {
-        Event event = Event.generateEvent(type);
-        slowPrinter.slowPrint("⚠️ " + MessageBundle.get("travel.event.encounter", event.getName()));
-        slowPrinter.slowPrint(event.getDescription());
-        boolean investigate = promptYesNo(MessageBundle.get("travel.event.investigate.question"));
+        Event event = Event.generateEvent(type, state);
+        String name = state.getMessages().getBundle().get(event.getName());
+        String description = state.getMessages().getBundle().get(event.getDescription());
+        slowPrinter.slowPrint("⚠️ " + state.getMessages().getBundle().get("travel.event.encounter", name));
+        slowPrinter.slowPrint(description);
+        boolean investigate = promptYesNo(state.getMessages().getBundle().get("travel.event.investigate.question"));
         if (investigate) {
-            slowPrinter.slowPrint("👉 " + MessageBundle.get("travel.event.investigate.accept"));
-            event.getNpc().interact(player, state);
+            slowPrinter.slowPrint("👉 " + state.getMessages().getBundle().get("travel.event.investigate.accept"));
+            event.createEnemy(event,state).interact(player, state);
         } else {
-            slowPrinter.slowPrint("➡️ " + MessageBundle.get("travel.event.investigate.decline"));
+            slowPrinter.slowPrint("➡️ " + state.getMessages().getBundle().get("travel.event.investigate.decline"));
         }
     }
 
     private boolean promptYesNo(String question) {
-        slowPrinter.slowPrint(question + " " + MessageBundle.get("travel.prompt.yesno"));
+        slowPrinter.slowPrint(question + " " + state.getMessages().getBundle().get("travel.prompt.yesno"));
         while (true) {
             output.print(">");
             String input = state.getGameServices().getInput().nextLine().trim().toLowerCase();
             if (input.equals("yes") || input.equals("y")) return true;
             if (input.equals("no") || input.equals("n")) return false;
-            output.println(MessageBundle.get("travel.prompt.invalid"));
+            output.println(state.getMessages().getBundle().get("travel.prompt.invalid"));
         }
     }
 
@@ -79,23 +80,23 @@ public class TravelManger {
     public String getTransition(TileTypes start, TileTypes end) {
         if (start == end) {
             return switch (end) {
-                case MOUNTAIN -> "⛰️ " + MessageBundle.get("travel.transition.same.mountain");
-                case FOREST -> "🌲 " + MessageBundle.get("travel.transition.same.forest");
-                case SWAMP -> "💧 " + MessageBundle.get("travel.transition.same.swamp");
-                case GRASS -> "🌾 " + MessageBundle.get("travel.transition.same.grass");
-                case VILLAGE -> "🏘️ " + MessageBundle.get("travel.transition.same.village");
-                case CASTLE -> "🏰 " + MessageBundle.get("travel.transition.same.castle");
-                case WATER -> "💦 " + MessageBundle.get("travel.transition.same.water");
+                case MOUNTAIN -> "⛰️ " + state.getMessages().getBundle().get("travel.transition.same.mountain");
+                case FOREST -> "🌲 " + state.getMessages().getBundle().get("travel.transition.same.forest");
+                case SWAMP -> "💧 " + state.getMessages().getBundle().get("travel.transition.same.swamp");
+                case GRASS -> "🌾 " + state.getMessages().getBundle().get("travel.transition.same.grass");
+                case VILLAGE -> "🏘️ " + state.getMessages().getBundle().get("travel.transition.same.village");
+                case CASTLE -> "🏰 " + state.getMessages().getBundle().get("travel.transition.same.castle");
+                case WATER -> "💦 " + state.getMessages().getBundle().get("travel.transition.same.water");
             };
         }
         return switch (end) {
-            case MOUNTAIN -> "⛰️ " + MessageBundle.get("travel.transition.to.mountain");
-            case FOREST -> "🌲 " + MessageBundle.get("travel.transition.to.forest");
-            case SWAMP -> "💧 " + MessageBundle.get("travel.transition.to.swamp");
-            case GRASS -> "🌾 " + MessageBundle.get("travel.transition.to.grass");
-            case VILLAGE -> "🏘️ " + MessageBundle.get("travel.transition.to.village");
-            case CASTLE -> "🏰 " + MessageBundle.get("travel.transition.to.castle");
-            case WATER -> "💦 " + MessageBundle.get("travel.transition.to.water");
+            case MOUNTAIN -> "⛰️ " + state.getMessages().getBundle().get("travel.transition.to.mountain");
+            case FOREST -> "🌲 " + state.getMessages().getBundle().get("travel.transition.to.forest");
+            case SWAMP -> "💧 " + state.getMessages().getBundle().get("travel.transition.to.swamp");
+            case GRASS -> "🌾 " + state.getMessages().getBundle().get("travel.transition.to.grass");
+            case VILLAGE -> "🏘️ " + state.getMessages().getBundle().get("travel.transition.to.village");
+            case CASTLE -> "🏰 " + state.getMessages().getBundle().get("travel.transition.to.castle");
+            case WATER -> "💦 " + state.getMessages().getBundle().get("travel.transition.to.water");
         };
     }
 
@@ -116,6 +117,6 @@ public class TravelManger {
         String fullEntry = SPOTTING_CONNECTORS.get(random().nextInt(SPOTTING_CONNECTORS.size()));
         String emoji = fullEntry.substring(0, fullEntry.indexOf(' '));
         String key = fullEntry.substring(fullEntry.indexOf(' ') + 1);
-        return emoji + " " + MessageBundle.get(key, locationName);
+        return emoji + " " + state.getMessages().getBundle().get(key, locationName);
     }
 }

@@ -15,7 +15,6 @@ import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.localization.MessageBundle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,15 +96,15 @@ public class Tile {
             if (structure == null) {
                 this.structure = Locations.generateLocation(type);
             }
-            this.enemies = Enemy.generateEnemies(type);
+            this.enemies = Enemy.generateEnemies(type,state);
             this.drops.clear();
             generateItems(state);
         } catch (RandomItemNotGenerated e) {
-            output.println(MessageBundle.get("tile.error.items"));
+            output.println(state.getMessages().getBundle().get("tile.error.items"));
         } catch (StructureNotGenerated e) {
-            output.println(MessageBundle.get("tile.error.structure"));
+            output.println(state.getMessages().getBundle().get("tile.error.structure"));
         } catch (Exception e) {
-            output.println(MessageBundle.get("tile.error.general"));
+            output.println(state.getMessages().getBundle().get("tile.error.general"));
         }
         contentGenerated = true;
     }
@@ -113,13 +112,13 @@ public class Tile {
     public void onEnter(Player player,GameState state) {
         this.output = state.getGameServices().getOutput();
         generateContent(state);
-        listContent();
+        listContent(state);
     }
 
-    private void listContent() {
-        displayLocation();
-        displayItems();
-        displayEnemies();
+    private void listContent(GameState state) {
+        displayLocation(state);
+        displayItems(state);
+        displayEnemies(state);
         displayNpc();
     }
 
@@ -132,27 +131,28 @@ public class Tile {
         }
     }
 
-    private void displayLocation() {
+    private void displayLocation(GameState state) {
         if (structure == null) return;
         output.println();
-        output.println(travelManger.getRandomSpotting(structure.getName()) + structure.getName());
-        output.print(structure.getDescription());
+        String structureName= state.getMessages().getBundle().get(structure.getName());
+        output.println(travelManger.getRandomSpotting(structureName));
+        output.println(structureName + state.getMessages().getBundle().get(structure.getDescription()));
     }
 
-    private void displayItems() {
+    private void displayItems(GameState state) {
         if (!drops.isEmpty()) {
-            output.println(MessageBundle.get("tile.items.found"));
-            printAvailableItems();
+            output.println(state.getMessages().getBundle().get("tile.items.found"));
+            printAvailableItems(state);
         }
     }
 
-    private void displayEnemies() {
+    private void displayEnemies(GameState state) {
         if (enemies.isEmpty()) {
-            output.println(MessageBundle.get("tile.enemies.none"));
+            output.println(state.getMessages().getBundle().get("tile.enemies.none"));
             return;
         }
         for (Enemy e : enemies) {
-            output.println(MessageBundle.get("tile.enemies.spotted", e.getClass().getSimpleName(), e.getDescription()));
+            output.println(state.getMessages().getBundle().get("tile.enemies.spotted", e.getClass().getSimpleName(), e.getDescription()));
         }
     }
 
@@ -164,18 +164,18 @@ public class Tile {
         }
     }
 
-    public void printAvailableItems() {
+    public void printAvailableItems(GameState state) {
         if (drops.isEmpty()) {
-            output.println(MessageBundle.get("tile.items.none"));
+            output.println(state.getMessages().getBundle().get("tile.items.none"));
         }
         for (ItemDrop item : drops) {
             output.println("-" + item.quantity() + "x " + item.item().getName());
         }
     }
 
-    public void removeDrop(Item drop, int quantity) {
+    public void removeDrop(Item drop, int quantity,GameState state) {
         if (drop == null || quantity <= 0) {
-            throw new IllegalArgumentException(MessageBundle.get("tile.items.invalid"));
+            throw new IllegalArgumentException(state.getMessages().getBundle().get("tile.items.invalid"));
         }
         for (int i = 0; i < drops.size(); i++) {
             ItemDrop tileItem = drops.get(i);

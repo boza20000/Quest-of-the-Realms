@@ -17,7 +17,7 @@ public class ExploreCommand extends Command {
         }
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
-            state.getGameServices().getOutput().println("You are in an undefined area.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("explore.error.undefinedArea"));
             return;
         }
         try {
@@ -25,22 +25,22 @@ public class ExploreCommand extends Command {
             if (curTile.getStructure().getName().equalsIgnoreCase(structure)) {
                 player.exploreStructure(structure, state);
             } else {
-                state.getGameServices().getOutput().println("Structure name mismatch");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("explore.error.nameMismatch"));
             }
         } catch (Exception e) {
-            state.getGameServices().getOutput().println("Structure unavailable");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("explore.error.unavailable"));
         }
     }
 
     @Override
-    public String getDescription() {
-        return "explore [structure name] — explore a nearby structure in your current zone";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("explore.command.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length < 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("explore.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);

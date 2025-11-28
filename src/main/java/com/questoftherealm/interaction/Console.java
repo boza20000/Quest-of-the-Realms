@@ -4,7 +4,6 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.InputService;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.localization.MessageBundle;
 
 import java.io.IOException;
 
@@ -13,10 +12,10 @@ import static com.questoftherealm.game.GameConstants.RESET;
 
 
 public class Console {
-    private GameState state;
-    private Output output;
-    private InputService input;
-    private SlowPrinter slowPrinter;
+    private final GameState state;
+    private final Output output;
+    private final InputService input;
+    private final SlowPrinter slowPrinter;
 
     public Console(GameState state) {
         this.state = state;
@@ -55,7 +54,7 @@ public class Console {
     }
 
     public void worldIntro() {
-        slowPrinter.slowPrint(MessageBundle.get("console.worldIntro"));
+        slowPrinter.slowPrint(state.getMessages().getBundle().get("console.worldIntro"));
         state.getGameServices().getInput().nextLine();
         output.println();
     }
@@ -102,7 +101,7 @@ public class Console {
         output.println();
         output.println("(Press " + RED + "Enter" + RESET + " to skip the story)");
 
-        for (char c : story.getStory().toCharArray()) {
+        for (char c : story.getStory(state).toCharArray()) {
             output.print(String.valueOf(c));
             count++;
             try {
@@ -116,7 +115,7 @@ public class Console {
                 while (input.available() > 0) {
                     input.read();
                 }
-                output.print(story.getStory().substring(count));
+                output.print(story.getStory(state).substring(count));
                 break;
             }
         }

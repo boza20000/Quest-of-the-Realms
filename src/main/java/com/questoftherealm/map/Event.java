@@ -1,65 +1,58 @@
 package com.questoftherealm.map;
 
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.enemyEntities.entities.*;
-import com.questoftherealm.localization.MessageBundle;
-
-import java.util.concurrent.ThreadLocalRandom;
+import com.questoftherealm.enemyEntities.EnemyFactory;
+import com.questoftherealm.enemyEntities.EnemyType;
+import com.questoftherealm.game.GameState;
 
 public enum Event {
 
     GOBLIN_CAMP(new EventData(
-            MessageBundle.get("event.goblinCamp.name"),
-            MessageBundle.get("event.goblinCamp.desc"),
-            new Goblin()
+            "event.goblinCamp.name",
+            "event.goblinCamp.desc",
+            EnemyType.GOBLIN
     )),
 
     BANDIT_AMBUSH(new EventData(
-            MessageBundle.get("event.banditAmbush.name"),
-            MessageBundle.get("event.banditAmbush.desc"),
-            new Bandit()
+            "event.banditAmbush.name",
+            "event.banditAmbush.desc",
+            EnemyType.BANDIT
     )),
 
     CURSED_GRAVEYARD(new EventData(
-            MessageBundle.get("event.cursedGraveyard.name"),
-            MessageBundle.get("event.cursedGraveyard.desc"),
-            new Skeleton()
+            "event.cursedGraveyard.name",
+            "event.cursedGraveyard.desc",
+            EnemyType.SKELETON
     )),
 
     DARK_RITUAL(new EventData(
-            MessageBundle.get("event.darkRitual.name"),
-            MessageBundle.get("event.darkRitual.desc"),
-            new DarkMage()
-    )),
-
-    GOBLIN_HORDE(new EventData(
-            MessageBundle.get("event.goblinHorde.name"),
-            MessageBundle.get("event.goblinHorde.desc"),
-            new Goblin()
+            "event.darkRitual.name",
+            "event.darkRitual.desc",
+            EnemyType.DARK_MAGE
     )),
 
     WOLF_PACK(new EventData(
-            MessageBundle.get("event.wolfPack.name"),
-            MessageBundle.get("event.wolfPack.desc"),
-            new Wolf()
+            "event.wolfPack.name",
+            "event.wolfPack.desc",
+            EnemyType.WOLF
     )),
 
     TRAVELING_TRADER(new EventData(
-            MessageBundle.get("event.travelingTrader.name"),
-            MessageBundle.get("event.travelingTrader.desc"),
-            new SuspiciousTrader()
+            "event.travelingTrader.name",
+            "event.travelingTrader.desc",
+            EnemyType.SUSPICIOUS_TRADER
     )),
 
     LOST_SPIRIT(new EventData(
-            MessageBundle.get("event.lostSpirit.name"),
-            MessageBundle.get("event.lostSpirit.desc"),
-            new Spirit()
+            "event.lostSpirit.name",
+            "event.lostSpirit.desc",
+            EnemyType.LOST_SPIRIT
     )),
 
     GIANT_SPIDER_NEST(new EventData(
-            MessageBundle.get("event.giantSpiderNest.name"),
-            MessageBundle.get("event.giantSpiderNest.desc"),
-            new GiantSpider()
+            "event.giantSpiderNest.name",
+            "event.giantSpiderNest.desc",
+            EnemyType.GIANT_SPIDER
     ));
 
     private final EventData data;
@@ -76,23 +69,23 @@ public enum Event {
         return data.description();
     }
 
-    public Enemy getNpc() {
-        return data.npc();
+    public Enemy createEnemy(Event type,GameState state) {
+        return EnemyFactory.createEnemy(type.data.enemyType(), state);
     }
 
-    public static Event generateEvent(TileTypes type) {
+    public static Event generateEvent(TileTypes type, GameState state) {
         return switch (type) {
-            case GRASS -> randomOf(GOBLIN_CAMP, BANDIT_AMBUSH, WOLF_PACK, TRAVELING_TRADER, LOST_SPIRIT);
-            case FOREST -> randomOf(GOBLIN_CAMP, GOBLIN_HORDE, WOLF_PACK, CURSED_GRAVEYARD, GIANT_SPIDER_NEST);
-            case SWAMP -> randomOf(CURSED_GRAVEYARD, DARK_RITUAL, LOST_SPIRIT, GIANT_SPIDER_NEST);
-            case VILLAGE -> randomOf(BANDIT_AMBUSH, TRAVELING_TRADER, LOST_SPIRIT);
-            case CASTLE -> randomOf(DARK_RITUAL, BANDIT_AMBUSH);
-            case MOUNTAIN -> randomOf(GIANT_SPIDER_NEST, WOLF_PACK, GOBLIN_HORDE, LOST_SPIRIT);
-            case WATER -> randomOf(LOST_SPIRIT, TRAVELING_TRADER);
+            case GRASS -> randomOf(state, BANDIT_AMBUSH, WOLF_PACK, TRAVELING_TRADER, LOST_SPIRIT);
+            case FOREST -> randomOf(state, WOLF_PACK, CURSED_GRAVEYARD, GIANT_SPIDER_NEST);
+            case SWAMP -> randomOf(state, DARK_RITUAL, LOST_SPIRIT, GIANT_SPIDER_NEST);
+            case VILLAGE -> randomOf(state, TRAVELING_TRADER, LOST_SPIRIT);
+            case CASTLE -> randomOf(state, BANDIT_AMBUSH);
+            case MOUNTAIN -> randomOf(state, WOLF_PACK, LOST_SPIRIT);
+            case WATER -> randomOf(state, TRAVELING_TRADER, GOBLIN_CAMP, LOST_SPIRIT);
         };
     }
 
-    private static Event randomOf(Event... options) {
-        return options[ThreadLocalRandom.current().nextInt(options.length)];
+    private static Event randomOf(GameState state, Event... options) {
+        return options[state.getGameServices().getRandom().random().nextInt(options.length)];
     }
 }

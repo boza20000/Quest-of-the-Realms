@@ -3,12 +3,11 @@ package com.questoftherealm.spells;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.localization.MessageBundle;
 
 public class LightningBolt extends DamageSpell {
 
-    public LightningBolt() {
-        super(MessageBundle.get("spells.lightning.name"), 30, MessageBundle.get("spells.lightning.description"), 7);
+    public LightningBolt(GameState state) {
+        super(state.getMessages().getBundle().get("spells.lightning.name"), 30, state.getMessages().getBundle().get("spells.lightning.description"), 7);
     }
 
     public void castLightning(Player player, Enemy enemy, GameState state) {

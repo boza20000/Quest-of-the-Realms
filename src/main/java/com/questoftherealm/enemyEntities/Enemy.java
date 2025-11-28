@@ -6,7 +6,6 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.TileTypes;
 
 import java.util.ArrayList;
@@ -42,8 +41,8 @@ public abstract class Enemy implements Fightable, Lootable {
     @Override
     public void attack(Player player, GameState state) {
         int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
-        state.getGameServices().getOutput().println(MessageBundle.get("enemy.attack.player"));
-        player.getPlayerCharacter().takeDamage(damage,state);
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.attack.player"));
+        player.getPlayerCharacter().takeDamage(damage, state);
     }
 
     public int getBaseAttack() {
@@ -53,12 +52,12 @@ public abstract class Enemy implements Fightable, Lootable {
     @Override
     public void takeDamage(int damage, GameState state) {
         int armorPower = armor.stream().mapToInt(Item::getPower).sum();
-        int reducedDamageTaken = Math.max(0, damage - ((getBaseDefense() + armorPower)/ 2));
+        int reducedDamageTaken = Math.max(0, damage - ((getBaseDefense() + armorPower) / 2));
         int newHealth = Math.max(0, getHealth() - reducedDamageTaken);
         setHealth(newHealth);
         isDead = newHealth == 0;
         if (!isDead) {
-            state.getGameServices().getOutput().println(MessageBundle.get("enemy.armor.block", this.getClass().getSimpleName(), reducedDamageTaken));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.armor.block", this.getClass().getSimpleName(), reducedDamageTaken));
         }
     }
 
@@ -67,14 +66,14 @@ public abstract class Enemy implements Fightable, Lootable {
         return !isDead;
     }
 
-    public static List<Enemy> generateEnemies(TileTypes type) {
+    public static List<Enemy> generateEnemies(TileTypes type, GameState state) {
         List<EnemyType> chosenEnemies = new ArrayList<>();
         ThreadLocalRandom rand = ThreadLocalRandom.current();
 
         // Chance of enemies appearing at all
         int spawnChance = rand.nextInt(100); // 0–99
         if (spawnChance < 60) { // 60% chance no enemies
-            return toEnemyObj(chosenEnemies); // empty list
+            return toEnemyObj(chosenEnemies, state); // empty list
         }
         int countRoll = ThreadLocalRandom.current().nextInt(100);
         int enemyCount = 0;
@@ -91,13 +90,13 @@ public abstract class Enemy implements Fightable, Lootable {
             EnemyType picked = pool.get(rand.nextInt(pool.size()));
             chosenEnemies.add(picked);
         }
-        return toEnemyObj(chosenEnemies);
+        return toEnemyObj(chosenEnemies, state);
     }
 
-    private static List<Enemy> toEnemyObj(List<EnemyType> enemies) {
+    private static List<Enemy> toEnemyObj(List<EnemyType> enemies, GameState state) {
         List<Enemy> result = new ArrayList<>();
         for (EnemyType type : enemies) {
-            result.add(createEnemy(type));
+            result.add(createEnemy(type, state));
         }
         return result;
     }
@@ -106,8 +105,7 @@ public abstract class Enemy implements Fightable, Lootable {
     private static List<EnemyType> enemyPoolForTile(TileTypes type) {
         return switch (type) {
             case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT, EnemyType.SUSPICIOUS_TRADER);
-            case FOREST ->
-                    List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GOBLIN_HORDE, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
+            case FOREST -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
             case SWAMP -> List.of(EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON);
             case MOUNTAIN -> List.of(EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF);
             case WATER -> List.of(EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN);
@@ -142,7 +140,7 @@ public abstract class Enemy implements Fightable, Lootable {
     }
 
     public void setHealth(int health) {
-        if(health == 0){
+        if (health == 0) {
             isDead = true;
         }
         this.health = health;

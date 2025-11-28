@@ -16,13 +16,13 @@ public abstract class Command {
 
     public abstract void execute(String[] args, Player player, GameState state);
 
-    public abstract String getDescription();
+    public abstract String getDescription(GameState state);
 
     public abstract boolean makeSafe(String[] args, Player player,GameState state);
 
     public boolean playerBaseCheck(Player player,GameState state) {
         if (player == null) {
-            state.getGameServices().getOutput().println("Error: No player loaded.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("error.player.not.found"));
             return false;
         }
         return true;

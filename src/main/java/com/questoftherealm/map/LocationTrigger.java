@@ -7,10 +7,12 @@ import com.questoftherealm.map.interfaces.TriggerAction;
 public class LocationTrigger{
     private final Position position;
     private final TriggerAction action;
+    private boolean isExecuted;
 
     public LocationTrigger(Position position, TriggerAction action) {
         this.position = position;
         this.action = action;
+        this.isExecuted = false;
     }
 
     public boolean isAtPosition(Position p) {
@@ -18,7 +20,16 @@ public class LocationTrigger{
     }
 
     public void trigger(Player player){
+        setExecuted(true);
         action.execute(player);
+    }
+
+    public boolean isExecuted() {
+        return isExecuted;
+    }
+
+    public void setExecuted(boolean executed) {
+        isExecuted = executed;
     }
 }
 

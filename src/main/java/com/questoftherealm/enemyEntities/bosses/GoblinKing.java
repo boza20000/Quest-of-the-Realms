@@ -2,7 +2,6 @@ package com.questoftherealm.enemyEntities.bosses;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.interaction.SlowPrinter;
@@ -10,7 +9,6 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.items.ItemRegistry;
-import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +17,11 @@ import java.util.Random;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class GoblinKing extends Boss {
-    private static final String NAME = MessageBundle.get("boss.goblinKing.name");
-    private static final Item WEAPON = ItemRegistry.getItem("Goblin King Sword");
+    private GameState state;
+    private ItemRegistry itemRegistry;
+    private final String NAME = "Azok";
 
-    public GoblinKing() {
+    public GoblinKing(GameState state) {
         super(GoblinKing_HEALTH,
                 GoblinKing_MANA,
                 GoblinKing_ATTACK,
@@ -31,48 +30,49 @@ public class GoblinKing extends Boss {
                 GoblinKing_CHARISMA,
                 GoblinKing_SPELLS,
                 GoblinKing_INTELLIGENCE,
-                NAME,
-                createArmor(),
-                WEAPON,
-                createLoot(),
+                null,
+                null,
+                null,
+                null,
                 false);
+        this.state = state;
+        itemRegistry = state.getItemRegistry();
     }
 
-    private static HashMap<ItemEffect, Item> createArmor() {
+    private HashMap<ItemEffect, Item> createArmor() {
         HashMap<ItemEffect, Item> armor = new HashMap<>();
-        armor.put(ItemEffect.HELMET, ItemRegistry.getItem("Goblin king’s Crown"));
-        armor.put(ItemEffect.CHESTPLATE, ItemRegistry.getItem("Goblin king’s Steel Chestplate"));
+        armor.put(ItemEffect.HELMET, itemRegistry.getItem("Goblin king’s Crown"));
+        armor.put(ItemEffect.CHESTPLATE, itemRegistry.getItem("Goblin king’s Steel Chestplate"));
         armor.put(ItemEffect.BOOTS, null);
         return armor;
     }
 
-    private static List<ItemDrop> createLoot() {
+    private List<ItemDrop> createLoot() {
         return List.of(
-                new ItemDrop(ItemRegistry.getItem("Goblin king’s Crown"), 1),
-                new ItemDrop(ItemRegistry.getItem("Goblin King Sword"), 1)
+                new ItemDrop(itemRegistry.getItem("Goblin king’s Crown"), 1),
+                new ItemDrop(itemRegistry.getItem("Goblin King Sword"), 1)
         );
     }
 
     @Override
-    public void superMove(Player player,GameState state) {
+    public void superMove(Player player, GameState state) {
         SlowPrinter slowPrinter = new SlowPrinter(state);
         Random random = new Random();
         int roll = random.nextInt(100);
-        slowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.start"));
+        slowPrinter.slowPrint(state.getMessages().getBundle().get("boss.goblinKing.attack.start"));
 
         if (GameConstants.GoblinKing_Percent_INSTAKILL <= roll) {
-            slowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.success"));
+            slowPrinter.slowPrint(state.getMessages().getBundle().get("boss.goblinKing.attack.success"));
             player.getPlayerCharacter().setHealth(0);
         } else {
-            slowPrinter.slowPrint(MessageBundle.get("boss.goblinKing.attack.fail"));
+            slowPrinter.slowPrint(state.getMessages().getBundle().get("boss.goblinKing.attack.fail"));
         }
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return WEAPON;
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get(this.weapon.getName());
     }
-
     @Override
     public int getBaseAttack() {
         return GoblinKing_ATTACK;
@@ -90,7 +90,7 @@ public class GoblinKing extends Boss {
 
     @Override
     public void activateAbility(Player player, Enemy enemy, GameState state) {
-        superMove(player,state);
+        superMove(player, state);
     }
 
     public String getName() {

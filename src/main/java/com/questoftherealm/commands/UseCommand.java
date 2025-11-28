@@ -4,10 +4,9 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemRegistry;
 
 import java.util.Arrays;
-
-import static com.questoftherealm.items.ItemRegistry.getItem;
 
 
 public class UseCommand extends Command {
@@ -17,14 +16,14 @@ public class UseCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state) {
         return "use [item name] — uses an item from your inventory (e.g., potion, scroll, etc.)";
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length < 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -38,7 +37,7 @@ public class UseCommand extends Command {
         String nameItem = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         Item item;
         try {
-            item = getItem(nameItem);
+            item = state.getItemRegistry().getItem(nameItem);
         } catch (IllegalArgumentException e) {
             state.getGameServices().getOutput().println("This is not item");
             return;

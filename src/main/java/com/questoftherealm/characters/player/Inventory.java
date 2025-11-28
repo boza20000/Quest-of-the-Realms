@@ -7,7 +7,6 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemKeyDeserializer;
 import com.questoftherealm.items.ItemKeySerializer;
-import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +31,9 @@ public class Inventory {
             int sum = curItemQuantity + quantity;
             if (sum <= GameConstants.MAX_ITEMS_IN_STACK) {
                 items.put(item, sum);
-                state.getGameServices().getOutput().println(MessageBundle.get("inventory.added", quantity, item, sum));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.added", quantity, item, sum));
             } else {
-                state.getGameServices().getOutput().println(MessageBundle.get("inventory.cannotCarry",
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.cannotCarry",
                         GameConstants.MAX_ITEMS_IN_STACK, item.getName()));
             }
         } else {
@@ -43,9 +42,9 @@ public class Inventory {
 
             if (items.size() < capacity || items.containsKey(item)) {
                 items.put(item, newTotal);
-                state.getGameServices().getOutput().println(MessageBundle.get("inventory.added", quantity, item, newTotal));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.added", quantity, item, newTotal));
             } else {
-                state.getGameServices().getOutput().println(MessageBundle.get("inventory.full", item.getName()));
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.full", item.getName()));
             }
         }
     }
@@ -58,19 +57,19 @@ public class Inventory {
             } else {
                 items.put(item, current - quantity);
             }
-            state.getGameServices().getOutput().println(MessageBundle.get("inventory.removed", quantity, item));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.removed", quantity, item));
         } else {
-            state.getGameServices().getOutput().println(MessageBundle.get("inventory.notFound", item));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.notFound", item));
         }
     }
 
     public void listItems(GameState state) {
         if (items.isEmpty()) {
-            state.getGameServices().getOutput().println(MessageBundle.get("inventory.isEmpty"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.isEmpty"));
         } else {
-            state.getGameServices().getOutput().println(MessageBundle.get("inventory.printStart"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.printStart"));
             items.forEach((item, qty) ->
-                    state.getGameServices().getOutput().println(MessageBundle.get("inventory.listItems", item, qty)));
+                    state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.listItems", item, qty)));
         }
     }
 

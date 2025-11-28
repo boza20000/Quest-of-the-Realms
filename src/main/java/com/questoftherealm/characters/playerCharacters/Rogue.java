@@ -30,15 +30,15 @@ public class Rogue extends Characters implements Deceiver {
             Chest chest = new Chest(state);
             ItemDrop loot = chest.generateRandomItem();
             player.getInventory().addItem(loot.item(), loot.quantity(),state);
-            state.getGameServices().getOutput().println(MessageBundle.get("rouge.pickpocket.successful",enemy.getClass().getSimpleName()));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rouge.pickpocket.successful",enemy.getClass().getSimpleName()));
         } else {
-            state.getGameServices().getOutput().println(MessageBundle.get("rogue.pickpocket.fail"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.pickpocket.fail"));
         }
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem(MessageBundle.get("rogue.weapon.default"));
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get("rogue.weapon.default");
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Rogue extends Characters implements Deceiver {
 
     @Override
     public void activateAbility(Player player, Enemy enemy,GameState state) {
-        state.getGameServices().getOutput().println(MessageBundle.get("rogue.ability.start", enemy.getClass().getSimpleName().toUpperCase()));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.ability.start", enemy.getClass().getSimpleName().toUpperCase()));
         if(enemy.isDead() ){//check if enemy can be pick-pocketed
             return;
         }

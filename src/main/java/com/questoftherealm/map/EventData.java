@@ -1,6 +1,7 @@
 package com.questoftherealm.map;
 
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.enemyEntities.EnemyType;
 
-public record EventData(String name, String description,Enemy npc) {
+public record EventData(String name, String description, EnemyType enemyType) {
 }

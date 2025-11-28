@@ -21,30 +21,30 @@ public class AbilityCommand extends Command {
         String enemyName = args[1];
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
-            state.getGameServices().getOutput().println("You are in an undefined area.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.error.undefinedArea"));
             return;
         }
         Enemy chosenEnemy = curTile.getEnemy(enemyName);
         if (chosenEnemy == null) {
-            state.getGameServices().getOutput().println("No enemy named '" + enemyName + "' here!");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.error.noEnemy", enemyName));
             return;
         }
         try {
             player.getPlayerCharacter().activateAbility(player, chosenEnemy,state);
         } catch (Exception e) {
-            throw new AbilityException(player.getPlayerCharacter() + "ability failed.");
+            throw new AbilityException(player.getPlayerCharacter() + state.getMessages().getBundle().get("ability.error.abilityFailed"));
         }
     }
 
     @Override
-    public String getDescription() {
-        return "ability [enemy] - activates player character special ability on the nearest target";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("ability.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);

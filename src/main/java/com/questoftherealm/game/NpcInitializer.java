@@ -5,17 +5,15 @@ import com.questoftherealm.friendlyEntities.Entities.King;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.interaction.MissionInteractions;
-import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Tile;
-import com.questoftherealm.map.Map;
 
 public class NpcInitializer {
     public void registerAll(GameState state) {
         MissionInteractions missionInteractions = new MissionInteractions(state);
-        Npc villager1 = new Villager(MessageBundle.get("npc.northVillager1"), state, missionInteractions);
-        Villager villager2 = new Villager(MessageBundle.get("npc.northVillager2"), state, missionInteractions);
-        King king = new King(MessageBundle.get("npc.king"), state, missionInteractions);
-        Elder elder = new Elder(MessageBundle.get("npc.elder"), state, missionInteractions);
+        Npc villager1 = new Villager(state.getMessages().getBundle().get("npc.northVillager1"), state, missionInteractions);
+        Villager villager2 = new Villager(state.getMessages().getBundle().get("npc.northVillager2"), state, missionInteractions);
+        King king = new King(state.getMessages().getBundle().get("npc.king"), state, missionInteractions);
+        Elder elder = new Elder(state.getMessages().getBundle().get("npc.elder"), state, missionInteractions);
 
         //castle
         Tile castleTile = state.getMap().curZone(GameConstants.Castle.x(), GameConstants.Castle.y());

@@ -4,10 +4,10 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 
-import static com.questoftherealm.items.ItemRegistry.getItem;
 
 public class TakeCommand extends Command {
     public TakeCommand() {
@@ -17,7 +17,7 @@ public class TakeCommand extends Command {
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length < 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -47,7 +47,7 @@ public class TakeCommand extends Command {
         }
         Item newItem;
         try {
-            newItem = getItem(itemName);
+            newItem = state.getItemRegistry().getItem(itemName);
         } catch (Exception e) {
             state.getGameServices().getOutput().println("Item unknown");
             return;
@@ -70,7 +70,7 @@ public class TakeCommand extends Command {
 
         if (drop != null && drop.quantity() >= quantity) {
             player.getInventory().addItem(newItem, quantity,state);
-            curZone.removeDrop(newItem, quantity);
+            curZone.removeDrop(newItem, quantity,state);
             state.getGameServices().getOutput().println("You picked up " + quantity + "x " + newItem.getName());
         } else {
             state.getGameServices().getOutput().println("No such item or not enough quantity.");
@@ -78,7 +78,7 @@ public class TakeCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
+    public String getDescription(GameState state) {
         return "take [item name] [quantity] — picks up the specified number of an item from the ground";
     }
 }

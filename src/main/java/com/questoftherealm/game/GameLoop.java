@@ -6,20 +6,19 @@ import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
-import com.questoftherealm.localization.MessageBundle;
 
 public class GameLoop {
     private final CommandFactory factory = new CommandFactory();
 
     public void startLoop(Game game) {
-        Player player = game.getGameState().getPlayer();
+
         MissionInteractions missionInteractions = new MissionInteractions(game.getGameState());
-        missionInteractions.worldStart(player);
-        player.setStartTime(System.currentTimeMillis());
+        missionInteractions.worldStart( game.getGameState().getPlayer());
+        game.getGameState().getPlayer().setStartTime(game.getGameState().getClock().now());
         Output output = game.getGameState().getGameServices().getOutput();
 
-        while (!game.getGameState().isGameOver()) {
-            output.print(MessageBundle.get("console.enter.command.symbol"));
+        while (!game.getGameState().isGameOver() || game.getGameState().getPlayer().isDead()) {
+            output.print(game.getGameState().getMessages().getBundle().get("console.enter.command.symbol"));
             String command = game.getGameState().getGameServices().getInput().nextLine().trim();
 
             if (command.isEmpty()) {
@@ -31,30 +30,30 @@ public class GameLoop {
             Command cmd = null;
 
             try {
-                cmd = factory.getCommand(commandName);
+                cmd = factory.getCommand(commandName,game.getGameState());
             } catch (InvalidCommand e) {
-                output.println(MessageBundle.get("error.command.InvalidCommand"));
+                output.println(game.getGameState().getMessages().getBundle().get("error.command.InvalidCommand"));
             }
 
             if (cmd == null) {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    output.println(MessageBundle.get("error.command.sleepFail"));
+                    output.println(game.getGameState().getMessages().getBundle().get("error.command.sleepFail"));
                 }
             } else {
                 try {
-                    cmd.execute(parts, player, game.getGameState());
-                    output.println(MessageBundle.get("gameLoop.command.success"));
-                    player.updateQuestStatus(game.getGameState());
+                    cmd.execute(parts, game.getGameState().getPlayer(), game.getGameState());
+                    output.println(game.getGameState().getMessages().getBundle().get("gameLoop.command.success"));
+                    game.getGameState().getPlayer().updateQuestStatus(game.getGameState());
                 } catch (Exception e) {
-                    output.println(MessageBundle.get("gameLoop.command.syntax"));
-                    output.print(cmd.getDescription());
+                    output.println(game.getGameState().getMessages().getBundle().get("gameLoop.command.syntax"));
+                    output.print(cmd.getDescription(game.getGameState()));
                 }
             }
         }
 
-        player.trackPlayTime();
-        game.getConsole().displayEnd(player);
+        game.getGameState().getPlayer().trackPlayTime(game.getGameState());
+        game.getConsole().displayEnd( game.getGameState().getPlayer());
     }
 }

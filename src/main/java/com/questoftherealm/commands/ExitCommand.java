@@ -15,8 +15,8 @@ public class ExitCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "exit — saves and closes the game (prompts before quitting)";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("exit.description");
     }
 
     @Override
@@ -24,28 +24,32 @@ public class ExitCommand extends Command {
         if (!makeSafe(args, player,state)) {
             return;
         }
-        state.getGameServices().getOutput().println("Would you like to save your progress? Y/N");
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.prompt.save"));
         String response = state.getGameServices().getInput().nextLine().trim().toUpperCase();
 
         try {
             if (response.startsWith("Y")) {
-                state.getGameServices().getOutput().println("Save name: ");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.prompt.saveName"));
                 String fileName = state.getGameServices().getInput().nextLine().trim();
-                state.getGameServices().getOutput().println("Saving game...");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.saving"));
                 SaveGame saveGame = new SaveGame();
                 saveGame.createSave(fileName, player,state);
-                state.getGameServices().getOutput().println("✅ Game saved successfully.");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.success.saved"));
             } else {
-                state.getGameServices().getOutput().println("Progress not saved.");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.notSaved"));
             }
 
-            state.getGameServices().getOutput().println("👋 Exiting game. See you next time, adventurer!");
-            player.trackPlayTime();
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.farewell"));
+            player.trackPlayTime(state);
             Thread.sleep(800);
+            //to remove replace with server stop
+            //state.requestCloseGame();
             System.exit(0);
 
         } catch (Exception e) {
-            state.getGameServices().getOutput().println("⚠️ Error while saving the game: " + e.getMessage());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.error.saving", e.getMessage()));
+            //to remove replace with server stop
+            //state.requestCloseGame();
             System.exit(1);
         }
     }
@@ -53,7 +57,7 @@ public class ExitCommand extends Command {
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);

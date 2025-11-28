@@ -19,19 +19,19 @@ public class AttackCommand extends Command {
         String enemyName = args[1];
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
-            state.getGameServices().getOutput().println("You are in an undefined area.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.undefinedArea"));
             return;
         }
         Enemy chosenEnemy = curTile.getEnemy(enemyName);
         if (chosenEnemy == null) {
-            state.getGameServices().getOutput().println("No enemy named '" + enemyName + "' here!");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.noEnemy", enemyName));
             return;
         }
         boolean isKilled = false;
         try {
             isKilled = chosenEnemy.interact(player,state);
         } catch (Exception e) {
-            state.getGameServices().getOutput().println("Battle was unavailable");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable"));
         }
         if (isKilled) {
             int gold = 5;
@@ -39,23 +39,22 @@ public class AttackCommand extends Command {
             player.addMoney(gold,state);
             player.addExp(exp);
             curTile.removeEnemy(chosenEnemy);
-            state.getGameServices().getOutput().println("Successful battle! You receive " + gold + "Gold" + " and you receive " + exp + "XP.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.success.reward", gold, exp));
         }
-       // state.getGameServices().getOutput().println(player.getName() + " attacked " + enemyName + " at " + player.getPosition());
+        // state.getGameServices().getOutput().println(player.getName() + " attacked " + enemyName + " at " + player.getPosition());
     }
 
     @Override
-    public String getDescription() {
-        return "attack [enemy name] — engage an enemy in combat at your current location";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("attack.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);
     }
-
 }

@@ -1,14 +1,10 @@
 package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.commands.Command;
-import com.questoftherealm.commands.ExitCommand;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.exceptions.TargetNotFound;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.items.Item;
-import com.questoftherealm.localization.MessageBundle;
 
 import static com.questoftherealm.game.GameConstants.*;
 
@@ -49,12 +45,12 @@ public abstract class Characters implements Combatant {
     @Override
     public void attack(Enemy target, Player player, GameState state) {
         if (target.isDead()) {
-            state.getGameServices().getOutput().println(MessageBundle.get("character.target.alreadyDead", target.getClass().getSimpleName()));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.target.alreadyDead", target.getClass().getSimpleName()));
             return;
         }
         try {
             int damageDealt = player.getWeapon().getPower() + this.getAttack();
-            state.getGameServices().getOutput().println(MessageBundle.get("character.attack.hit", target.getClass().getSimpleName(), damageDealt));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.attack.hit", target.getClass().getSimpleName(), damageDealt));
             target.takeDamage(damageDealt, state);
             useMana(player.getWeapon().getMana());
         } catch (TargetNotFound e) {
@@ -66,10 +62,10 @@ public abstract class Characters implements Combatant {
         int mitigation = defence * 5 + armor;
         int reducedDamage = damage * 100 / (100 + mitigation);
         setHealth(health - reducedDamage);
-        state.getGameServices().getOutput().println(MessageBundle.get("character.damage.taken", reducedDamage, health));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.damage.taken", reducedDamage, health));
 
         if (isDead()) {
-            state.getGameServices().getOutput().println(MessageBundle.get("character.dead", this.getClass().getSimpleName()));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.dead", this.getClass().getSimpleName()));
         }
     }
 
@@ -78,7 +74,7 @@ public abstract class Characters implements Combatant {
     }
 
     // ===== Abstract Weapon =====
-    public abstract Item getDefaultWeapon();
+    public abstract String getDefaultWeapon(GameState state);
 
     public abstract int getBaseAttack();
 
@@ -151,18 +147,17 @@ public abstract class Characters implements Combatant {
         this.intelligence = Math.max(0, Math.min(intelligence, MAX_INTELLIGENCE));
     }
 
-    @Override
-    public String toString() {
-        return MessageBundle.get("character.stats.header", this.getClass().getSimpleName()) + "\n" +
-                MessageBundle.get("character.stats.health", getHealth()) + "\n" +
-                MessageBundle.get("character.stats.mana", getMana()) + "\n" +
-                MessageBundle.get("character.stats.attack", getAttack()) + "\n" +
-                MessageBundle.get("character.stats.defence", getDefence()) + "\n" +
-                MessageBundle.get("character.stats.armor", getArmor()) + "\n" +
-                MessageBundle.get("character.stats.charisma", getCharisma()) + "\n" +
-                MessageBundle.get("character.stats.spells", getSpells()) + "\n" +
-                MessageBundle.get("character.stats.intelligence", getIntelligence()) + "\n" +
-                MessageBundle.get("character.stats.footer");
+    public String stats(GameState state) {
+        return state.getMessages().getBundle().get("character.stats.header", this.getClass().getSimpleName()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.health", getHealth()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.mana", getMana()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.attack", getAttack()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.defence", getDefence()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.armor", getArmor()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.charisma", getCharisma()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.spells", getSpells()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.intelligence", getIntelligence()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.footer");
     }
 
     public void useMana(int mana) {

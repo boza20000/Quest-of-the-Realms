@@ -5,7 +5,6 @@ public enum EnemyType {
     BANDIT,
     SKELETON,
     WOLF,
-    GOBLIN_HORDE,
     DARK_MAGE,
     GIANT_SPIDER,
     LOST_SPIRIT,

@@ -30,8 +30,8 @@ public class Mage extends Characters implements SpellCaster {
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem(MessageBundle.get("mage.weapon.default"));
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get("mage.weapon.default");
     }
 
     @Override
@@ -52,16 +52,16 @@ public class Mage extends Characters implements SpellCaster {
     @Override
     public void activateAbility(Player player, Enemy enemy, GameState state) {
         Output output = state.getGameServices().getOutput();
-        SpellRegister spellRegister = new SpellRegister(state.getGameServices().getOutput());
+        SpellRegister spellRegister = new SpellRegister(state);
         spellRegister.listSpells();
-        output.println(MessageBundle.get("mage.spell.choose"));
+        output.println(state.getMessages().getBundle().get("mage.spell.choose"));
         output.print(">");
         String line = state.getGameServices().getInput().nextLine();
         Spell choice;
         try {
             choice = spellRegister.getSpell(line);
         } catch (Exception e) {
-            throw new NoSuchSpell(MessageBundle.get("mage.spell.notFound"));
+            throw new NoSuchSpell(state.getMessages().getBundle().get("mage.spell.notFound"));
         }
         castSpell(player, choice, enemy, state);
     }

@@ -5,19 +5,21 @@ import com.questoftherealm.exceptions.ArmorPieceNotGenerated;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.exceptions.RandomWeaponNotGenerated;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.localization.MessageBundle;
 
 import java.util.List;
 import java.util.Random;
 
 public class Chest {
-    private GameState state;
+    private final GameState state;
+    private final ItemRegistry itemRegistry;
 
     private Random random() {
         return state.getGameServices().getRandom().random();
     }
-    public Chest(GameState state){
+
+    public Chest(GameState state) {
         this.state = state;
+        itemRegistry = state.getItemRegistry();
     }
 
     public ItemDrop generateRandomItem() {
@@ -26,7 +28,7 @@ public class Chest {
             Rarity rarity = randomRarity();
             return randomItemFrom(type, rarity);
         } catch (Exception e) {
-            throw new RandomItemNotGenerated(MessageBundle.get("error.message.itemNotGenerated"));
+            throw new RandomItemNotGenerated(state.getMessages().getBundle().get("error.message.itemNotGenerated"));
         }
     }
 
@@ -64,7 +66,7 @@ public class Chest {
     }
 
     private ItemDrop randomItemFrom(ItemType type, Rarity rarity) {
-        List<Item> possibleItems = ItemRegistry.getAllItems().stream()
+        List<Item> possibleItems = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getRarity() == rarity && i.getType() == type)
                 .toList();
 
@@ -75,7 +77,7 @@ public class Chest {
                 case RARE -> Rarity.UNCOMMON;
                 default -> Rarity.COMMON;
             };
-            possibleItems = ItemRegistry.getAllItems().stream()
+            possibleItems = itemRegistry.getAllItems().stream()
                     .filter(i -> i.getType() == type && i.getRarity() == fallback)
                     .toList();
         }
@@ -90,11 +92,11 @@ public class Chest {
         ItemType type = ItemType.WEAPON;
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;
-        List<Item> possibleWeapons = ItemRegistry.getAllItems().stream()
+        List<Item> possibleWeapons = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == effect)
                 .toList();
         if (possibleWeapons.isEmpty()) {
-            throw new RandomWeaponNotGenerated(MessageBundle.get("error.message.weaponNotGenerated"));
+            throw new RandomWeaponNotGenerated(state.getMessages().getBundle().get("error.message.weaponNotGenerated"));
         }
         Item weapon = possibleWeapons.get(random().nextInt(possibleWeapons.size()));
         return new ItemDrop(weapon, quantity);
@@ -114,12 +116,12 @@ public class Chest {
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;
 
-        List<Item> possibleHelmets = ItemRegistry.getAllItems().stream()
+        List<Item> possibleHelmets = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.HELMET)
                 .toList();
 
         if (possibleHelmets.isEmpty()) {
-            throw new ArmorPieceNotGenerated(MessageBundle.get("error.message.helmetNotGenerated"));
+            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.helmetNotGenerated"));
         }
 
         Item helmet = possibleHelmets.get(random().nextInt(possibleHelmets.size()));
@@ -131,12 +133,12 @@ public class Chest {
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;
 
-        List<Item> possibleChestplates = ItemRegistry.getAllItems().stream()
+        List<Item> possibleChestplates = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.CHESTPLATE)
                 .toList();
 
         if (possibleChestplates.isEmpty()) {
-            throw new ArmorPieceNotGenerated(MessageBundle.get("error.message.chestplateNotGenerated"));
+            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.chestplateNotGenerated"));
         }
 
         Item chestplate = possibleChestplates.get(random().nextInt(possibleChestplates.size()));
@@ -148,12 +150,12 @@ public class Chest {
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;
 
-        List<Item> possibleBoots = ItemRegistry.getAllItems().stream()
+        List<Item> possibleBoots = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.BOOTS)
                 .toList();
 
         if (possibleBoots.isEmpty()) {
-            throw new ArmorPieceNotGenerated(MessageBundle.get("error.message.bootsNotGenerated"));
+            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.bootsNotGenerated"));
         }
 
         Item boots = possibleBoots.get(random().nextInt(possibleBoots.size()));
