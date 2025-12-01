@@ -9,6 +9,7 @@ import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ class TakeCommandTest {
     private Output output;
     private Map map;
     private Tile tile;
+    private ItemRegistry registry;
 
     @BeforeEach
     void setup() {
@@ -43,12 +45,13 @@ class TakeCommandTest {
         tile = mock(Tile.class);
         when(state.getMap()).thenReturn(map);
         when(map.curZone(anyInt(), anyInt())).thenReturn(tile);
+        registry = new ItemRegistry(new LocalizationService());
     }
 
     @Test
     void takesItemSuccessfully() {
         TakeCommand cmd = new TakeCommand();
-        Item sword = ItemRegistry.getItem("Bronze Sword");
+        Item sword = registry.getItem("Bronze Sword");
 
         ItemDrop drop = mock(ItemDrop.class);
         when(drop.item()).thenReturn(sword);
@@ -58,14 +61,15 @@ class TakeCommandTest {
         cmd.execute(new String[]{"take", "Bronze", "Sword", "2"}, player, state);
 
         assertEquals(2, player.getInventory().getQuantity(sword));
-        verify(tile).removeDrop(sword, 2);
+        verify(tile).removeDrop(sword, 2,state);
         verify(output).println(contains("You picked up 2x Bronze Sword"));
     }
 
     @Test
     void notEnoughQuantity() {
+
         TakeCommand cmd = new TakeCommand();
-        Item sword = ItemRegistry.getItem("Bronze Sword");
+        Item sword = registry.getItem("Bronze Sword");
 
         ItemDrop drop = mock(ItemDrop.class);
         when(drop.item()).thenReturn(sword);
@@ -111,7 +115,7 @@ class TakeCommandTest {
     @Test
     void missingDropInTile() {
         TakeCommand cmd = new TakeCommand();
-        Item sword = ItemRegistry.getItem("Bronze Sword");
+        Item sword = registry.getItem("Bronze Sword");
         when(tile.getDrops()).thenReturn(List.of());
         cmd.execute(new String[]{"take", "Bronze", "Sword", "1"}, player, state);
         assertEquals(0, player.getInventory().getQuantity(sword));
@@ -121,7 +125,7 @@ class TakeCommandTest {
     @Test
     void handlesThreeWordItems() {
         TakeCommand cmd = new TakeCommand();
-        Item dagger = ItemRegistry.getItem("Dagger of Shadows");
+        Item dagger = registry.getItem("Dagger of Shadows");
         ItemDrop drop = mock(ItemDrop.class);
         when(drop.item()).thenReturn(dagger);
         when(drop.quantity()).thenReturn(1);

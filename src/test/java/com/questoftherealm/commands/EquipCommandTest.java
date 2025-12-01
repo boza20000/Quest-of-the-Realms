@@ -24,6 +24,7 @@ class EquipCommandTest {
     private GameState state;
     private GameServices services;
     private Output output;
+    private ItemRegistry registry;
 
     @BeforeEach
     void setup() {
@@ -49,13 +50,14 @@ class EquipCommandTest {
 
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
-
+       // when(state.getItemRegistry()).thenReturn(new ItemRegistry(state));
+        registry = state.getItemRegistry();
         command = new EquipCommand();
     }
 
     @Test
     void equipsItemSuccessfully_WhenItemExistsInInventory() throws ItemNotFound {
-        Item sword = ItemRegistry.getItem("Bronze Sword");
+        Item sword = registry.getItem("Bronze Sword");
         player.getInventory().addItem(sword, 1, state);
         String[] args = {"equip", "Bronze Sword"};
         command.execute(args, player, state);
@@ -65,7 +67,7 @@ class EquipCommandTest {
 
     @Test
     void printsError_WhenItemExistsButNotInInventory() throws ItemNotFound {
-        Item sword = ItemRegistry.getItem("Bronze Sword");
+        Item sword = registry.getItem("Bronze Sword");
         player.getInventory().clear();
         command.execute(new String[]{"equip", "Bronze Sword"}, player, state);
         assertNotSame(sword, player.getWeapon(), "Player should not equip an item not in inventory");

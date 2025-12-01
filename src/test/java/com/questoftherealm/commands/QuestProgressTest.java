@@ -11,6 +11,7 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,10 +29,10 @@ class QuestProgressTest {
 
     @BeforeEach
     void setup() {
-        player = new Player("TestHero", PlayerTypes.Warrior);
+        player = new Player("TestHero", PlayerTypes.Warrior,state);
         output = new ConsoleOutput();
         services = new GameServices(output);
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
         questProgressCommand = new CompleteQuestCommand();
     }
 
@@ -50,6 +51,7 @@ class QuestProgressTest {
 
     @Test
     void testQuestCompletion() {
+        ItemRegistry itemRegistry = new ItemRegistry(new LocalizationService());
         assertInstanceOf(StartQuest.class, player.getCurQuest(), "Should be Start quest instance");
         StartQuest quest = (StartQuest) player.getCurQuest();
         quest.setElderHasTalked(true);
@@ -58,8 +60,8 @@ class QuestProgressTest {
                     m.setPlayer(player);
                 }
         );
-        player.getInventory().addItem(ItemRegistry.getItem("Health Potion"),2,state);
-        player.getInventory().addItem(ItemRegistry.getItem("Forest Berries"),5,state);
+        player.getInventory().addItem(itemRegistry.getItem("Health Potion"),2,state);
+        player.getInventory().addItem(itemRegistry.getItem("Forest Berries"),5,state);
         player.updateQuestStatus(state);
     }
 

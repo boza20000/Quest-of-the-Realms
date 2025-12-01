@@ -25,7 +25,7 @@ public class Map {
             ObjectMapper mapper = new ObjectMapper();
             gameMap = mapper.readValue(is, Tile[][].class);
         } catch (Exception e) {
-           throw new MapNotLoaded(state.getMessages().getBundle().get("map.load.error"));
+            throw new MapNotLoaded(state.getMessages().getBundle().get("map.load.error"));
         }
     }
 
@@ -42,7 +42,7 @@ public class Map {
         Output output = state.getGameServices().getOutput();
         for (int i = 0; i < gameMap.length; i++) {
             output.print("      ");
-            output.print("║");
+            output.print(state.getMessages().getBundle().get("map.structure.symbol"));
             for (int j = 0; j < gameMap[i].length; j++) {
                 boolean isPlayerHere = (j == player.getX() && i == player.getY());
                 Tile tile = gameMap[i][j];
@@ -53,7 +53,7 @@ public class Map {
                 }
                 output.print(symbol);
             }
-            output.print("║");
+            output.print(state.getMessages().getBundle().get("map.structure.symbol"));
             output.println();
         }
     }

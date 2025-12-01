@@ -9,6 +9,7 @@ import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,8 @@ class UseCommandTest {
     @Test
     void testUseCommandValidItem() throws ItemNotFound {
         UseCommand cmd = new UseCommand();
-        Item potion = ItemRegistry.getItem("Health Potion");
+        ItemRegistry registry = new ItemRegistry(new LocalizationService());
+        Item potion = registry.getItem("Health Potion");
         player.getInventory().addItem(potion, 1,state);
         player.getPlayerCharacter().takeDamage(10,state);
 

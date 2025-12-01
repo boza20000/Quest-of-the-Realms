@@ -24,13 +24,13 @@ class KingTest {
 
     @BeforeEach
     void setup() {
-        Player realPlayer = new Player("Test", PlayerTypes.Mage);
-        player = spy(realPlayer);
+
         output = mock(Output.class);
         interactions = mock(MissionInteractions.class);
         services = new GameServices(output);
-        state = new GameState(player, output, services);
-
+        state = new GameState(player, services);
+        Player realPlayer = new Player("Test", PlayerTypes.Mage, state);
+        player = spy(realPlayer);
         king = new King("king1", state, interactions);
     }
 

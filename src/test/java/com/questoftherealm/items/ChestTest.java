@@ -9,6 +9,7 @@ import com.questoftherealm.game.ConsoleOutput;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,14 +21,17 @@ class ChestTest {
     private GameServices services;
     private Chest chest;
     private Player player;
+    private ItemRegistry itemRegistry;
 
     @BeforeEach
     void setup() {
-        player = new Player("Test", PlayerTypes.Warrior);
+
         Output output = new ConsoleOutput();
         services = new GameServices(output);
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
         chest = new Chest(state);
+        itemRegistry = new ItemRegistry(new LocalizationService());
+        player = new Player("Test", PlayerTypes.Warrior, state);
     }
 
     // ---------------------------
@@ -76,41 +80,41 @@ class ChestTest {
 
     @Test
     void generateRandomItem_NoItems_Throws() {
-        var backup = ItemRegistry.getAllItems().stream().toList();
-        ItemRegistry.getAllItems().clear();
+        var backup = itemRegistry.getAllItems().stream().toList();
+        itemRegistry.getAllItems().clear();
         assertThrows(RandomItemNotGenerated.class, () -> chest.generateRandomItem());
-        ItemRegistry.getAllItems().addAll(backup);
+        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
     void generateRandomWeapon_NoWeapon_Throws() {
-        var backup = ItemRegistry.getAllItems().stream().toList();
-        ItemRegistry.getAllItems().removeIf(i -> i.getType() == ItemType.WEAPON);
+        var backup = itemRegistry.getAllItems().stream().toList();
+        itemRegistry.getAllItems().removeIf(i -> i.getType() == ItemType.WEAPON);
         assertThrows(RandomWeaponNotGenerated.class, () -> chest.generateRandomWeapon(player));
-        ItemRegistry.getAllItems().addAll(backup);
+        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
     void generateRandomHelmet_NoHelmet_Throws() {
-        var backup = ItemRegistry.getAllItems().stream().toList();
-        ItemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.HELMET);
+        var backup = itemRegistry.getAllItems().stream().toList();
+        itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.HELMET);
         assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateRandomHelmet(player));
-        ItemRegistry.getAllItems().addAll(backup);
+        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
     void generateRandomChestplate_NoChestplate_Throws() {
-        var backup = ItemRegistry.getAllItems().stream().toList();
-        ItemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.CHESTPLATE);
+        var backup = itemRegistry.getAllItems().stream().toList();
+        itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.CHESTPLATE);
         assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateRandomChestplate(player));
-        ItemRegistry.getAllItems().addAll(backup);
+        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
     void generateRandomBoots_NoBoots_Throws() {
-        var backup = ItemRegistry.getAllItems().stream().toList();
-        ItemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.BOOTS);
+        var backup = itemRegistry.getAllItems().stream().toList();
+        itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.BOOTS);
         assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateRandomBoots(player));
-        ItemRegistry.getAllItems().addAll(backup);
+        itemRegistry.getAllItems().addAll(backup);
     }
 }

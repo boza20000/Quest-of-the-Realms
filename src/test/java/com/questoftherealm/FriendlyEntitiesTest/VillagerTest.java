@@ -35,15 +35,16 @@ public class VillagerTest {
 
     @BeforeEach
     void setup() {
-        Player realPlayer = new Player("Test", PlayerTypes.Mage);
-        player = spy(realPlayer);
+
         output = mock(ConsoleOutput.class);
         services = new GameServices(output);
-        state = new GameState(player, output, services);
-        gameMap = new Map();
+        state = new GameState(player, services);
+        gameMap = new Map(state);
         state.setMap(gameMap);
         NpcInitializer initializer = new NpcInitializer();
         initializer.registerAll(state);
+        Player realPlayer = new Player("Test", PlayerTypes.Mage, state);
+        player = spy(realPlayer);
     }
 
     @Test

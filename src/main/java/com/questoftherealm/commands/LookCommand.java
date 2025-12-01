@@ -12,13 +12,13 @@ public class LookCommand extends Command {
 
     @Override
     public String getDescription(GameState state) {
-        return "look — observe your surroundings for items, enemies, or structures";
+        return state.getMessages().getBundle().get("look.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("look.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -30,16 +30,16 @@ public class LookCommand extends Command {
             return;
         }
         try {
-            state.getGameServices().getOutput().print("Looking");
+            state.getGameServices().getOutput().print(state.getMessages().getBundle().get("look.info.looking"));
             for (int i = 0; i < 3; i++) {
                 if(!state.isSimulation()) {
                     Thread.sleep(1000);
                 }
-                state.getGameServices().getOutput().print(".");
+                state.getGameServices().getOutput().print(state.getMessages().getBundle().get("look.info.dot"));
             }
             player.look(state);
         } catch (Exception e) {
-            state.getGameServices().getOutput().println("Looking failed");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("look.error.failed"));
         }
     }
 }

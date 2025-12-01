@@ -49,7 +49,7 @@ class AbilityCommandTest {
         output = mock(Output.class);
         var services = mock(GameServices.class);
         when(services.getOutput()).thenReturn(output);
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
         state.setPlayer(player);
         gameMap = mock(Map.class);
         state.setMap(gameMap);

@@ -17,13 +17,13 @@ public class UseCommand extends Command {
 
     @Override
     public String getDescription(GameState state) {
-        return "use [item name] — uses an item from your inventory (e.g., potion, scroll, etc.)";
+        return state.getMessages().getBundle().get("use.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length < 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -39,10 +39,10 @@ public class UseCommand extends Command {
         try {
             item = state.getItemRegistry().getItem(nameItem);
         } catch (IllegalArgumentException e) {
-            state.getGameServices().getOutput().println("This is not item");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.error.notItem"));
             return;
         } catch (ItemNotFound ex) {
-            state.getGameServices().getOutput().println("Item not found");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.error.itemNotFound"));
             return;
         }
         if (player.getInventory().containsItem(item)) {

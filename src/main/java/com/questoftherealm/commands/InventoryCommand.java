@@ -10,14 +10,15 @@ public class InventoryCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "inventory — displays all items in your inventory";
+    public String getDescription(GameState state) {
+
+        return state.getMessages().getBundle().get("inventory.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);

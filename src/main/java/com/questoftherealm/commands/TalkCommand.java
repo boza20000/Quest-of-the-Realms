@@ -17,7 +17,7 @@ public class TalkCommand extends Command {
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -33,13 +33,13 @@ public class TalkCommand extends Command {
         NpcType npcType = parseNpcType(target);
 
         if (npcType == null) {
-            state.getGameServices().getOutput().println("Unknown NPC: " + target);
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.unknownNpc", target));
             return;
         }
         Npc npc = curTile.getNpcByType(npcType);
 
         if (npc == null) {
-            state.getGameServices().getOutput().println("No " + npcType.name().toLowerCase(Locale.ROOT) + " nearby.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.noNpcNearby", npcType.name().toLowerCase(Locale.ROOT)));
             return;
         }
         npc.talk(state, player, false);
@@ -55,6 +55,6 @@ public class TalkCommand extends Command {
 
     @Override
     public String getDescription(GameState state) {
-        return "Talk to nearby NPCs to trade or exchange information.";
+        return state.getMessages().getBundle().get("talk.description");
     }
 }

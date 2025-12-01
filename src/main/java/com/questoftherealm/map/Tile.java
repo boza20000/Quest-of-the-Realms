@@ -119,12 +119,12 @@ public class Tile {
         displayLocation(state);
         displayItems(state);
         displayEnemies(state);
-        displayNpc();
+        displayNpc(state);
     }
 
-    private void displayNpc() {
+    private void displayNpc(GameState state) {
         if(!this.npcRegister.isEmpty()){
-            output.println("You see: ");
+            output.println(state.getMessages().getBundle().get("player.see.npc"));
             for(Npc n : npcRegister.values()){
                 output.println("-" + n.getType());
             }

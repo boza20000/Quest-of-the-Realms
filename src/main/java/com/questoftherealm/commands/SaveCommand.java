@@ -12,13 +12,13 @@ public class SaveCommand extends Command {
 
     @Override
     public String getDescription(GameState state) {
-        return "save [name] — saves your current game progress under the specified name";
+        return state.getMessages().getBundle().get("save.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("save.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -30,8 +30,8 @@ public class SaveCommand extends Command {
             return;
         }
         if (args[1].isEmpty()) {
-            state.getGameServices().getOutput().println("Name can't be empty");
-            throw new SaveError("Save name is empty");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("save.error.emptyName"));
+            throw new SaveError(state.getMessages().getBundle().get("save.error.saveNameEmpty"));
         }
         String fileName = args[1];
 

@@ -31,7 +31,7 @@ public abstract class Quest {
     @JsonIgnore
     private Player player;
 
-    public Quest(String name, List<Mission> missions, String description,Player player) {
+    public Quest(String name, List<Mission> missions, String description, Player player) {
         this.missions = missions;
         this.description = description;
         this.name = name;
@@ -70,7 +70,7 @@ public abstract class Quest {
         if (isAllReady) {
             this.setCompleted(true);
             player.getQuestFactory().nextQuest(state);
-            state.getGameServices().getOutput().println("You have completed this quest successfully");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.completed", name));
         }
     }
 
@@ -92,7 +92,7 @@ public abstract class Quest {
 
     public void setPlayer(Player player) {
         this.player = player;
-        for (Mission m :getMissions()){
+        for (Mission m : getMissions()) {
             m.setPlayer(player);
         }
     }

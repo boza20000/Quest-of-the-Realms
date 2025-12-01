@@ -8,6 +8,9 @@ import com.questoftherealm.exceptions.InvalidCommand;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.localization.MessageBundle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,10 +62,6 @@ class SpellsTest {
         verify(mockOutput, atLeastOnce()).println(anyString());
     }
 
-    // -----------------------------------------------------------------
-    // Fireball and LightningBolt casting tests
-    // -----------------------------------------------------------------
-
     @Test
     void testFireballCastReducesEnemyHealthAndPlayerMana() {
         when(mockChar.getMana()).thenReturn(10); // enough mana
@@ -89,7 +88,7 @@ class SpellsTest {
             return null;
         }).when(mockPlayer).loseMana(anyInt());
 
-        LightningBolt bolt = new LightningBolt();
+        LightningBolt bolt = new LightningBolt(mockState);
         bolt.cast(mockPlayer, mockEnemy, mockState);
 
         verify(mockEnemy).takeDamage(bolt.takePower(), mockState);
@@ -101,7 +100,7 @@ class SpellsTest {
     void testDamageSpellLowMana() {
         when(mockChar.getMana()).thenReturn(1); // less than Fireball manaCost
 
-        Fireball fireball = new Fireball();
+        Fireball fireball = new Fireball(mockState);
         fireball.cast(mockPlayer, mockEnemy, mockState);
 
         verify(mockOutput).println(contains("💤")); // low mana warning
@@ -114,7 +113,7 @@ class SpellsTest {
         when(mockPlayer.getPlayerType()).thenReturn(PlayerTypes.Warrior);
         when(mockChar.getMana()).thenReturn(10);
 
-        Fireball fireball = new Fireball();
+        Fireball fireball = new Fireball(mockState);
         fireball.cast(mockPlayer, mockEnemy, mockState);
 
         verify(mockOutput).println(contains("🚫")); // player type error

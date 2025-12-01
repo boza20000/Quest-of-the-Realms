@@ -40,7 +40,7 @@ class GoblinAmbushTest {
                 false
         );
 
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
 
         quest = new GoblinAmbush(player);
         player.setCurQuest(quest);

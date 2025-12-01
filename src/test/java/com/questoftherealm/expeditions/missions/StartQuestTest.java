@@ -11,6 +11,7 @@ import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +41,7 @@ class StartQuestTest {
                 false
         );
 
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
 
         startQuest = new StartQuest(player);
         player.setCurQuest(startQuest);
@@ -76,23 +77,24 @@ class StartQuestTest {
     @Test
     @DisplayName("Gather Supplies requires >=1 potion AND >=5 food")
     void gatherSuppliesLogic() {
+        ItemRegistry itemRegistry = new ItemRegistry(new LocalizationService());
         Gather_Supplies mission = (Gather_Supplies) startQuest.getMissions().get(1);
         var inv = player.getInventory();
         inv.clear();
 
         assertFalse(mission.checkCompletion());
-        inv.addItem(ItemRegistry.getItem("Health Potion"), 1, state);
+        inv.addItem(itemRegistry.getItem("Health Potion"), 1, state);
         assertFalse(mission.checkCompletion());
         inv.clear();
 
-        inv.addItem(ItemRegistry.getItem("Dried Meat"), 4, state);
+        inv.addItem(itemRegistry.getItem("Dried Meat"), 4, state);
         assertFalse(mission.checkCompletion());
         inv.clear();
 
-        inv.addItem(ItemRegistry.getItem("Dried Meat"), 5, state);
+        inv.addItem(itemRegistry.getItem("Dried Meat"), 5, state);
         assertFalse(mission.checkCompletion());
 
-        inv.addItem(ItemRegistry.getItem("Health Potion"), 1, state);
+        inv.addItem(itemRegistry.getItem("Health Potion"), 1, state);
         assertTrue(mission.checkCompletion());
         assertTrue(mission.isCompleted());
     }

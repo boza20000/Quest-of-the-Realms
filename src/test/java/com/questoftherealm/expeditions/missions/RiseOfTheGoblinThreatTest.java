@@ -40,7 +40,7 @@ class RiseOfTheGoblinThreatTest {
                 false
         );
 
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
 
         quest = new RiseOfTheGoblinThreat(player);
         player.setCurQuest(quest);

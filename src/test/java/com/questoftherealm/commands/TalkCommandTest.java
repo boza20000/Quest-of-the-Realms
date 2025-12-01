@@ -27,7 +27,6 @@ class TalkCommandTest {
 
     @BeforeEach
     void setup() {
-        player = new Player("TestHero", PlayerTypes.Warrior);
 
         state = mock(GameState.class);
         services = mock(GameServices.class);
@@ -39,6 +38,8 @@ class TalkCommandTest {
         tile = mock(Tile.class);
         when(state.getMap()).thenReturn(map);
         when(map.curZone(anyInt(), anyInt())).thenReturn(tile);
+        player = new Player("TestHero", PlayerTypes.Warrior, state);
+
     }
 
     @Test

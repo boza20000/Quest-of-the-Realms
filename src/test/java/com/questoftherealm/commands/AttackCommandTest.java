@@ -49,7 +49,7 @@ class AttackCommandTest {
 
         when(services.getOutput()).thenReturn(output);
 
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
 
         gameMap = mock(Map.class);
         curTile = mock(Tile.class);
@@ -149,3 +149,4 @@ class AttackCommandTest {
         verify(output).println("Successful battle! You receive 5Gold and you receive 10XP.");
     }
 }
+//given<something>_when<something>_then<something>

@@ -14,7 +14,7 @@ import com.questoftherealm.map.Tile;
 import java.util.ResourceBundle;
 
 public class Villager extends Npc {
-    private static final ResourceBundle messages = ResourceBundle.getBundle("messages");
+    private final ResourceBundle messages = ResourceBundle.getBundle("messages");
     private Output output;
     private boolean simulation;
 
@@ -31,7 +31,7 @@ public class Villager extends Npc {
         Mission mission = player.getCurMission();
 
         if (!(player.getCurQuest() instanceof NorthExploration q)) {
-            output.println("The villager doesn’t seem to know you.");
+            output.println(state.getMessages().getBundle().get("villager.doesnt.know.you"));
             return;
         }
 
@@ -44,7 +44,7 @@ public class Villager extends Npc {
             handleTalkToSurvivors(player, tile, pos, nv, q);
 
         } else {
-            output.println("The villager has nothing to say right now.");
+            output.println(state.getMessages().getBundle().get("villager.nothing.to.say"));
         }
     }
 
@@ -84,7 +84,7 @@ public class Villager extends Npc {
 
     private void northVillager1(Player player, NorthExploration quest) {
         if (!quest.isTalkedToVillager1()) {
-            if(!simulation) {
+            if (!simulation) {
                 getMissionInteractions().villagerDialogue(player, 1);
             }
             quest.setTalkedToVillager1(true);
@@ -96,7 +96,7 @@ public class Villager extends Npc {
 
     private void northVillager2(Player player, NorthExploration quest) {
         if (!quest.isTalkedToVillager2()) {
-            if(!simulation) {
+            if (!simulation) {
                 getMissionInteractions().villagerDialogue(player, 2);
             }
             quest.setTalkedToVillager2(true);

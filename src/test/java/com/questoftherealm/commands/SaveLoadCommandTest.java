@@ -2,10 +2,7 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.game.GameServices;
-import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.SaveGame;
-import com.questoftherealm.game.LoadGame;
+import com.questoftherealm.game.*;
 import com.questoftherealm.game.interfaces.Output;
 
 import org.junit.jupiter.api.*;
@@ -34,14 +31,15 @@ class SaveLoadCommandTest {
             savesDir.mkdirs();
         }
 
-        player = new Player("TestHero", PlayerTypes.Warrior);
-
         output = mock(Output.class);
         services = mock(GameServices.class);
         state = mock(GameState.class);
-
+        ServerClock clock = new ServerClock();
+        when(state.getClock()).thenReturn(clock);
+        state.setClock(clock);
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
+        player = new Player("TestHero", PlayerTypes.Warrior,state);
     }
 
     @AfterEach
@@ -53,9 +51,7 @@ class SaveLoadCommandTest {
     @Test
     void testSaveGame_ValidInput_CreatesFile() {
         SaveCommand cmd = new SaveCommand();
-
         cmd.execute(new String[]{"save", "slot1"}, player, state);
-
         File saveFile = new File("saves/slot1.json");
         assertTrue(saveFile.exists(), "Save file should be created");
     }

@@ -19,7 +19,7 @@ class LookCommandTest {
 
     @BeforeEach
     void setup() {
-        player = spy(new Player("TestHero", PlayerTypes.Warrior));
+        player = spy(new Player("TestHero", PlayerTypes.Warrior,state));
         state = mock(GameState.class);
         output = mock(Output.class);
         GameServices services = mock(GameServices.class);

@@ -16,13 +16,13 @@ public class MoveCommand extends Command {
 
     @Override
     public String getDescription(GameState state) {
-        return "move [north|south|east|west] — move your character in the specified direction";
+        return state.getMessages().getBundle().get("move.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player, state);
@@ -36,7 +36,7 @@ public class MoveCommand extends Command {
             return;
         }
         if (state.getMap().curZone(player.getX(), player.getY()) == null) {
-            state.getGameServices().getOutput().println("You are in an undefined area.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.error.undefinedArea"));
             return;
         }
 
@@ -49,7 +49,7 @@ public class MoveCommand extends Command {
                 if (y - 1 >= GameConstants.MAP_START) {
                     y -= 1;
                 } else {
-                    slowPrinter.slowPrint("You can't go further north!");
+                    slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherNorth"));
                     return;
                 }
             }
@@ -57,7 +57,7 @@ public class MoveCommand extends Command {
                 if (y + 1 < GameConstants.MAP_END) {
                     y += 1;
                 } else {
-                    slowPrinter.slowPrint("You can't go further south!");
+                    slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherSouth"));
                     return;
                 }
             }
@@ -65,7 +65,7 @@ public class MoveCommand extends Command {
                 if (x + 1 < GameConstants.MAP_END) {
                     x += 1;
                 } else {
-                    slowPrinter.slowPrint("You can't go further east!");
+                    slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherEast"));
                     return;
                 }
             }
@@ -73,12 +73,12 @@ public class MoveCommand extends Command {
                 if (x - 1 >= GameConstants.MAP_START) {
                     x -= 1;
                 } else {
-                    slowPrinter.slowPrint("You can't go further west!");
+                    slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherWest"));
                     return;
                 }
             }
             default -> {
-                slowPrinter.slowPrint("Invalid direction! Use north, south, east, or west.");
+                slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.invalidDirection"));
                 return;
             }
         }
@@ -92,25 +92,25 @@ public class MoveCommand extends Command {
         player.move(x, y);
         state.getMap().movePlayer(player, player.getX(), player.getY());
         if (state.getMap().curZone(player.getX(), player.getY()) == null) {
-            state.getGameServices().getOutput().println("You going to an undefined area.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.info.undefinedDestination"));
             return;
         }
         TileTypes end = state.getMap().curZone(player.getX(), player.getY()).getType();
         slowPrinter.slowPrint(travelManger.getTransition(start, end));
-        slowPrinter.slowPrint("You have entered %s zone".formatted(end.toString().toUpperCase()));
+        slowPrinter.slowPrint(state.getMessages().getBundle().get("move.info.enteredZone", end.toString().toUpperCase()));
     }
 
 
     private void pathToDestination(String direction, Player player, GameState state, TravelManger travelManger) {
         try {
-            state.getGameServices().getOutput().print("Walking");
+            state.getGameServices().getOutput().print(state.getMessages().getBundle().get("move.info.walking"));
             for (int i = 0; i < 3; i++) {
                 Thread.sleep(600);
-                state.getGameServices().getOutput().print(".");
+                state.getGameServices().getOutput().print(state.getMessages().getBundle().get("move.info.dot"));
             }
             travelManger.pathInteraction(state.getMap().curZone(player.getX(), player.getY()).getType(), direction, player, state);
         } catch (Exception e) {
-            state.getGameServices().getOutput().println("Walking failed");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.error.walkingFailed"));
         }
 
     }

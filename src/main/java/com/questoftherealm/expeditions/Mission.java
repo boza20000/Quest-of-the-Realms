@@ -99,7 +99,7 @@ public abstract class Mission {
 
     protected void complete() {
         setCompleted(true);
-        state.getGameServices().getOutput().println("✅ Mission completed: " + name);
+        state.getGameServices().getOutput().println("✅ " + state.getMessages().getBundle().get("mission.completed", name));
     }
 
     public boolean checkCompletion() {

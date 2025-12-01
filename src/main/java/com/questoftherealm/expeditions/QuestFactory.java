@@ -58,9 +58,9 @@ public class QuestFactory {
             quests.poll();
         } else if (!quests.isEmpty() && !quests.peek().isCompleted()) {
             SlowPrinter slowPrinter = new SlowPrinter(state);
-            slowPrinter.slowPrint("Quest is not completed");
+            slowPrinter.slowPrint(state.getMessages().getBundle().get("quest.notReady"));
         } else {
-            state.getGameServices().getOutput().println("No more quests available");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.noMore"));
         }
     }
     @JsonIgnore

@@ -10,6 +10,7 @@ import com.questoftherealm.game.ConsoleOutput;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.localization.LocalizationService;
 import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.TileTypes;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,18 +27,19 @@ class EnemyTest {
     private Player player;
     private Enemy enemy;
     private GameState state;
+    private LocalizationService localizationService;
 
     @BeforeEach
     void setup() {
         player = mock(Player.class);
-        enemy = new Goblin();
         ConsoleOutput output = new ConsoleOutput();
-        state = new GameState(player, output, new GameServices(output));
+        state = new GameState(player, new GameServices(output));
+        enemy = new Goblin(state,new EnemyConstants());
     }
 
     @Test
     void testConstructorAndGetters() {
-        assertEquals(MessageBundle.get("enemy.goblin.desc"), enemy.getDescription());
+        assertEquals(localizationService.getBundle().get("enemy.goblin.desc"), enemy.getDescription());
         assertEquals(EnemyType.GOBLIN, enemy.getType());
         assertEquals(30, enemy.getHealth());
         assertEquals(5, enemy.getBaseAttack());
@@ -94,7 +96,7 @@ class EnemyTest {
 
     @Test
     void testGenerateEnemies() {
-        List<Enemy> enemies = Enemy.generateEnemies(TileTypes.GRASS);
+        List<Enemy> enemies = Enemy.generateEnemies(TileTypes.GRASS,state);
         assertNotNull(enemies);
         for (Enemy e : enemies) {
             assertNotNull(e.getType());

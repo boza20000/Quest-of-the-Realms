@@ -12,7 +12,9 @@ import com.questoftherealm.game.interfaces.Output;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @DisplayName("Final Battle Quest — Mission & Quest Logic Tests")
 class FinalBattleTest {
@@ -40,7 +42,7 @@ class FinalBattleTest {
                 false
         );
 
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
 
         quest = new FinalBattle(player);
         player.setCurQuest(quest);

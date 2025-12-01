@@ -12,7 +12,7 @@ public class StatsCommand extends Command {
     @Override
     public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("stats.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);
@@ -23,12 +23,12 @@ public class StatsCommand extends Command {
         if (!makeSafe(args, player, state)) {
             return;
         }
-        state.getGameServices().getOutput().println("Player current stats:");
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("stats.info.header"));
         state.getGameServices().getOutput().println(player.getPlayerCharacter().toString());
     }
 
     @Override
     public String getDescription(GameState state) {
-        return "stats — displays your character’s current stats and attributes";
+        return state.getMessages().getBundle().get("stats.description");
     }
 }

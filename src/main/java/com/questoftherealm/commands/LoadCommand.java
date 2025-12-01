@@ -14,13 +14,13 @@ public class LoadCommand extends Command {
 
     @Override
     public String getDescription(GameState state) {
-        return "load [save name] — loads a saved game by its name";
+        return state.getMessages().getBundle().get("load.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("load.usage", getDescription(state)));
             return false;
         }
         return true;

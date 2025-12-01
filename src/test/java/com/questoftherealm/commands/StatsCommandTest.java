@@ -19,13 +19,14 @@ class StatsCommandTest {
 
     @BeforeEach
     void setup() {
-        player = new Player("TestHero", PlayerTypes.Warrior);
 
         state = mock(GameState.class);
         services = mock(GameServices.class);
         output = mock(Output.class);
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
+        player = new Player("TestHero", PlayerTypes.Warrior,state);
+
     }
 
     @Test

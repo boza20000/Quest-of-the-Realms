@@ -14,32 +14,32 @@ public class MapCommand extends Command {
     @Override
     public void execute(String[] args,Player player, GameState state) {
         if (state.getMap() == null) {
-            state.getGameServices().getOutput().println("Game map unavailable");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.error.unavailable"));
             return;
         }
         if (!makeSafe(args, player,state)) {
             return;
         }
-        state.getGameServices().getOutput().print("      ");
-        state.getGameServices().getOutput().println("╔════════ MAP ══════╗");
+        state.getGameServices().getOutput().print(state.getMessages().getBundle().get("map.display.padding"));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.display.header"));
         try {
             state.getMap().print(player,state);
         } catch (Exception e) {
-            state.getGameServices().getOutput().println("Something went wrong while printing the map");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.error.printingFailed"));
         }
-        state.getGameServices().getOutput().print("      ");
-        state.getGameServices().getOutput().println("╚═══════════════════╝");
+        state.getGameServices().getOutput().print(state.getMessages().getBundle().get("map.display.padding"));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.display.footer"));
     }
 
     @Override
     public String getDescription(GameState state)  {
-        return "map — displays the current map layout and your position";
+        return state.getMessages().getBundle().get("map.description");
     }
 
     @Override
     public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            state.getGameServices().getOutput().println("Usage: " + getDescription(state));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.usage", getDescription(state)));
             return false;
         }
         return playerBaseCheck(player,state);

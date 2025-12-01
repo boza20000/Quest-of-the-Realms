@@ -30,26 +30,26 @@ public class Console {
         output.println();
         output.println();
         output.println("""
-                                                              ░██████   ░██     ░██ ░██████████   ░██████   ░██████████     ░██████   ░██████████   ░██████████░██     ░██ ░██████████\s
-                                                             ░██   ░██  ░██     ░██ ░██          ░██   ░██      ░██        ░██   ░██  ░██               ░██    ░██     ░██ ░██        \s
-                                                            ░██     ░██ ░██     ░██ ░██         ░██             ░██       ░██     ░██ ░██               ░██    ░██     ░██ ░██        \s
-                                                            ░██     ░██ ░██     ░██ ░█████████   ░████████      ░██       ░██     ░██ ░█████████        ░██    ░██████████ ░█████████ \s
-                                                            ░██     ░██ ░██     ░██ ░██                 ░██     ░██       ░██     ░██ ░██               ░██    ░██     ░██ ░██        \s
-                                                             ░██   ░██   ░██   ░██  ░██          ░██   ░██      ░██        ░██   ░██  ░██               ░██    ░██     ░██ ░██        \s
-                                                              ░██████     ░██████   ░██████████   ░██████       ░██         ░██████   ░██               ░██    ░██     ░██ ░██████████\s
-                                                                   ░██                                                                                                                \s
-                                                                    ░██                                                                                                               \s
-                                                                                                                                                                        \s
-                                                                                  ░█████████  ░██████████    ░███    ░██         ░███     ░███   ░██████                                        \s
-                                                                                  ░██     ░██ ░██           ░██░██   ░██         ░████   ░████  ░██   ░██                                       \s
-                                                                                  ░██     ░██ ░██          ░██  ░██  ░██         ░██░██ ░██░██ ░██                                              \s
-                                                                                  ░█████████  ░█████████  ░█████████ ░██         ░██ ░████ ░██  ░████████                                       \s
-                                                                                  ░██   ░██   ░██         ░██    ░██ ░██         ░██  ░██  ░██         ░██                                      \s
-                                                                                  ░██    ░██  ░██         ░██    ░██ ░██         ░██       ░██  ░██   ░██                                       \s
-                                                                                  ░██     ░██ ░██████████ ░██    ░██ ░██████████ ░██       ░██   ░██████                                        \s
-                                                                                                                                          \s
-                                                                                                                                          \s
-                                                                                                                                                     \s
+                                                              ░██████   ░██     ░██ ░██████████   ░██████   ░██████████     ░██████   ░██████████   ░██████████░██     ░██ ░██████████ 
+                                                             ░██   ░██  ░██     ░██ ░██          ░██   ░██      ░██        ░██   ░██  ░██               ░██    ░██     ░██ ░██         
+                                                            ░██     ░██ ░██     ░██ ░██         ░██             ░██       ░██     ░██ ░██               ░██    ░██     ░██ ░██         
+                                                            ░██     ░██ ░██     ░██ ░█████████   ░████████      ░██       ░██     ░██ ░█████████        ░██    ░██████████ ░█████████  
+                                                            ░██     ░██ ░██     ░██ ░██                 ░██     ░██       ░██     ░██ ░██               ░██    ░██     ░██ ░██         
+                                                             ░██   ░██   ░██   ░██  ░██          ░██   ░██      ░██        ░██   ░██  ░██               ░██    ░██     ░██ ░██         
+                                                              ░██████     ░██████   ░██████████   ░██████       ░██         ░██████   ░██               ░██    ░██     ░██ ░██████████
+                                                                   ░██                                                                                                                
+                                                                    ░██                                                                                                               
+                                                                                                                                                                        
+                                                                                  ░█████████  ░██████████    ░███    ░██         ░███     ░███   ░██████                                        
+                                                                                  ░██     ░██ ░██           ░██░██   ░██         ░████   ░████  ░██   ░██                                       
+                                                                                  ░██     ░██ ░██          ░██  ░██  ░██         ░██░██ ░██░██ ░██                                              
+                                                                                  ░█████████  ░█████████  ░█████████ ░██         ░██ ░████ ░██  ░████████                                       
+                                                                                  ░██   ░██   ░██         ░██    ░██ ░██         ░██  ░██  ░██         ░██                                      
+                                                                                  ░██    ░██  ░██         ░██    ░██ ░██         ░██       ░██  ░██   ░██                                       
+                                                                                  ░██     ░██ ░██████████ ░██    ░██ ░██████████ ░██       ░██   ░██████                                        
+                                                                                                                                          
+                                                                                                                                          
+                                                                                                                                                     
                 """);
     }
 
@@ -59,11 +59,18 @@ public class Console {
         output.println();
     }
 
+//    public void displayPlayTime(Player player) {
+//        int h = player.getPlayTime().hours();
+//        int m = player.getPlayTime().minutes();
+//
+//        String playTimeArt = String.format(state.getMessages().getBundle().get("console.playTimeArt"), h, m);
+//        output.println(playTimeArt);
+//    }
     public void displayPlayTime(Player player) {
         int h = player.getPlayTime().hours();
         int m = player.getPlayTime().minutes();
 
-        String playTimeArt = String.format("""             
+        String playTimeArt = String.format("""
                                                                                                     ┏━┓╻  ┏━┓╻ ╻   ╺┳╸╻┏┳┓┏━╸   \s
                                                                                                     ┣━┛┃  ┣━┫┗┳┛    ┃ ┃┃┃┃┣╸  ╺━╸  %02d hours %02d minutes
                                                                                                     ╹  ┗━╸╹ ╹ ╹     ╹ ╹╹ ╹┗━╸
@@ -78,17 +85,17 @@ public class Console {
         output.println();
         output.println();
         output.println("""
-                                                                █████████    █████████   ██████   ██████ ██████████       ███████    █████   █████ ██████████ ███████████ \s
-                                                               ███░░░░░███  ███░░░░░███ ░░██████ ██████ ░░███░░░░░█     ███░░░░░███ ░░███   ░░███ ░░███░░░░░█░░███░░░░░███\s
-                                                              ███     ░░░  ░███    ░███  ░███░█████░███  ░███  █ ░     ███     ░░███ ░███    ░███  ░███  █ ░  ░███    ░███\s
-                                                             ░███          ░███████████  ░███░░███ ░███  ░██████      ░███      ░███ ░███    ░███  ░██████    ░██████████ \s
-                                                             ░███    █████ ░███░░░░░███  ░███ ░░░  ░███  ░███░░█      ░███      ░███ ░░███   ███   ░███░░█    ░███░░░░░███\s
-                                                             ░░███  ░░███  ░███    ░███  ░███      ░███  ░███ ░   █   ░░███     ███   ░░░█████░    ░███ ░   █ ░███    ░███\s
+                                                                █████████    █████████   ██████   ██████ ██████████       ███████    █████   █████ ██████████ ███████████ 
+                                                               ███░░░░░███  ███░░░░░███ ░░██████ ██████ ░░███░░░░░█     ███░░░░░███ ░░███   ░░███ ░░███░░░░░█░░███░░░░░███
+                                                              ███     ░░░  ░███    ░███  ░███░█████░███  ░███  █ ░     ███     ░░███ ░███    ░███  ░███  █ ░  ░███    ░███
+                                                             ░███          ░███████████  ░███░░███ ░███  ░██████      ░███      ░███ ░███    ░███  ░██████    ░██████████ 
+                                                             ░███    █████ ░███░░░░░███  ░███ ░░░  ░███  ░███░░█      ░███      ░███ ░░███   ███   ░███░░█    ░███░░░░░███
+                                                             ░░███  ░░███  ░███    ░███  ░███      ░███  ░███ ░   █   ░░███     ███   ░░░█████░    ░███ ░   █ ░███    ░███
                                                               ░░█████████  █████   █████ █████     █████ ██████████    ░░░███████░      ░░███      ██████████ █████   █████
-                                                               ░░░░░░░░░  ░░░░░   ░░░░░ ░░░░░     ░░░░░ ░░░░░░░░░░       ░░░░░░░         ░░░      ░░░░░░░░░░ ░░░░░   ░░░░░\s
-                                                                                                                                                                          \s
-                                                                                                                                                                          \s
-                                                                                                                                                                          \s
+                                                               ░░░░░░░░░  ░░░░░   ░░░░░ ░░░░░     ░░░░░ ░░░░░░░░░░       ░░░░░░░         ░░░      ░░░░░░░░░░ ░░░░░   ░░░░░
+                                                                                                                                                                          
+                                                                                                                                                                          
+                                                                                                                                                                          
                 """);
 
         displayPlayTime(player);
@@ -99,7 +106,7 @@ public class Console {
         final int delay = 30;
         int count = 0;
         output.println();
-        output.println("(Press " + RED + "Enter" + RESET + " to skip the story)");
+        output.println(state.getMessages().getBundle().get("console.intro.skip", RED, RESET));
 
         for (char c : story.getStory(state).toCharArray()) {
             output.print(String.valueOf(c));
@@ -126,40 +133,40 @@ public class Console {
         if (count <= 1) {
             output.println(
                     """
-                            ╺┓     ┏┓╻┏━╸╻ ╻   ┏━╸┏━┓┏┳┓┏━╸  \s
-                             ┃     ┃┗┫┣╸ ┃╻┃   ┃╺┓┣━┫┃┃┃┣╸   \s
-                            ╺┻╸╹   ╹ ╹┗━╸┗┻┛   ┗━┛╹ ╹╹ ╹┗━╸  \s
+                            ╺┓     ┏┓╻┏━╸╻ ╻   ┏━╸┏━┓┏┳┓┏━╸  
+                             ┃     ┃┗┫┣╸ ┃╻┃   ┃╺┓┣━┫┃┃┃┣╸   
+                            ╺┻╸╹   ╹ ╹┗━╸┗┻┛   ┗━┛╹ ╹╹ ╹┗━╸  
                             ┏━┓    ╻  ┏━┓┏━┓╺┳┓   ┏━╸┏━┓┏┳┓┏━╸
-                            ┏━┛    ┃  ┃ ┃┣━┫ ┃┃   ┃╺┓┣━┫┃┃┃┣╸\s
+                            ┏━┛    ┃  ┃ ┃┣━┫ ┃┃   ┃╺┓┣━┫┃┃┃┣╸
                             ┗━╸╹   ┗━╸┗━┛╹ ╹╺┻┛   ┗━┛╹ ╹╹ ╹┗━╸
-                                                             \s
+                                                             
                             """);
-            output.print(">");
+            output.print(state.getMessages().getBundle().get("console.menu.prompt"));
         } else {
-            output.print(">");
+            output.print(state.getMessages().getBundle().get("console.menu.prompt"));
         }
         return Integer.parseInt(state.getGameServices().getInput().nextLine());
     }
 
     public String characterCreationScreen(GameState state) {
         output.println();
-        output.println("Choose your name: ");
-        output.print(">");
+        output.println(state.getMessages().getBundle().get("console.charCreate.namePrompt"));
+        output.print(state.getMessages().getBundle().get("console.menu.prompt"));
         String name = state.getGameServices().getInput().nextLine();
         int count = 0;
         while (name.isBlank()) {
             if (count < 1) {
-                output.println("Name can't be empty");
+                output.println(state.getMessages().getBundle().get("console.charCreate.nameEmptyError"));
             }
-            output.print(">");
+            output.print(state.getMessages().getBundle().get("console.menu.prompt"));
             name = state.getGameServices().getInput().nextLine();
             count++;
         }
-        output.println("Choose your character:");
-        output.println("1. Warrior — A strong fighter with high health and defense.");
-        output.println("2. Mage — A master of spells, fragile but devastating.");
-        output.println("3. Orc — Brutal and tough, with raw strength and resilience.");
-        output.println("4. Rogue — Quick and cunning, excels at stealth and critical strikes.");
+        output.println(state.getMessages().getBundle().get("console.charCreate.classPrompt"));
+        output.println(state.getMessages().getBundle().get("console.charCreate.class1"));
+        output.println(state.getMessages().getBundle().get("console.charCreate.class2"));
+        output.println(state.getMessages().getBundle().get("console.charCreate.class3"));
+        output.println(state.getMessages().getBundle().get("console.charCreate.class4"));
         return name;
     }
 

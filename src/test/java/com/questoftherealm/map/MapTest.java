@@ -19,11 +19,11 @@ class MapTest {
 
     @BeforeEach
     void setup() {
-        map = new Map();
+
         mockPlayer = mock(Player.class);
         mockState = mock(GameState.class);
         mockOutput = mock(Output.class);
-
+        map = new Map(mockState);
         when(mockState.getGameServices()).thenReturn(mock(GameServices.class));
         when(mockState.getGameServices().getOutput()).thenReturn(mockOutput);
     }

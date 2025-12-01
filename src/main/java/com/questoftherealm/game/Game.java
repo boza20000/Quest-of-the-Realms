@@ -10,6 +10,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 
 import java.io.IOException;
 
@@ -30,7 +31,7 @@ public class Game {
         try {
             console.showIntro();
         } catch (IOException e) {
-            throw new IntroException("Intro was corrupted");
+            throw new IntroException(gameState.getMessages().getBundle().get("game.new.error.introCorrupted"));
         }
         console.worldIntro();
 
@@ -101,7 +102,7 @@ public class Game {
         try {
             output = gameType(gameRules);
         } catch (IOException e) {
-            throw new OutputServiceError("output was not loaded");
+            throw new OutputServiceError(gameState.getMessages().getBundle().get("game.error.outputNotLoaded"));
         }
         gameState = new GameState(null, new GameServices(output));
         console = new Console(gameState);
@@ -116,7 +117,7 @@ public class Game {
             }
         }
         catch (IntroException e){
-            output.println("Intro was corrupted");
+            output.println(gameState.getMessages().getBundle().get("game.new.error.introCorrupted"));
             return;
         }
         catch (FileNotLoaded e){
@@ -153,8 +154,9 @@ public class Game {
     }
 
     public int gameRules(InputService inputService, ConsoleOutput outputService) {
-        outputService.print("1.Single player\n2.Multiplayer\n");
-        outputService.print("Enter choice >");
+        LocalizationService temp = new LocalizationService();
+        outputService.print(temp.getBundle().get("game.rules.options"));
+        outputService.print(temp.getBundle().get("game.rules.prompt"));
         int mode;
         int count = 1;
         while (true) {
@@ -163,15 +165,15 @@ public class Game {
                 if (mode == 1 || mode == 2) {
                     break;
                 } else if (count <= 1) {
-                    outputService.println("Number out of range! single player (1) multiplayer (2)");
+                    outputService.println(temp.getBundle().get("game.rules.invalidRange"));
                 }
             } catch (NumberFormatException e) {
-                outputService.println("Enter number!");
+                outputService.println(temp.getBundle().get("game.rules.invalidInput"));
             }
             count++;
-            outputService.print(">");
+            outputService.print(temp.getBundle().get("game.rules.prompt"));
             if (count >= 10) {
-                outputService.print("Default choice -> single player mode");
+                outputService.print(temp.getBundle().get("game.rules.defaultChoice"));
                 return 1;
             }
         }

@@ -42,7 +42,7 @@ class NorthExplorationTest {
                 false
         );
 
-        state = new GameState(player, output, services);
+        state = new GameState(player, services);
         quest = new NorthExploration(player);
         player.setCurQuest(quest);
         player.setCurMission(quest.getMissions().get(0));
