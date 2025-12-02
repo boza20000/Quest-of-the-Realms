@@ -334,7 +334,6 @@ public class Player implements InventoryHandler, Explorer {
 
     }
 
-    @Override
     public void openChest(GameState state) {
         try {
             Chest chest = new Chest(state);

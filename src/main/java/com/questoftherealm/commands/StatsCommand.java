@@ -24,7 +24,7 @@ public class StatsCommand extends Command {
             return;
         }
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("stats.info.header"));
-        state.getGameServices().getOutput().println(player.getPlayerCharacter().toString());
+        state.getGameServices().getOutput().println(player.getPlayerCharacter().stats(state));
     }
 
     @Override
