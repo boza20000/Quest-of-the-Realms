@@ -30,7 +30,7 @@ public class Rogue extends Characters implements Deceiver {
             Chest chest = new Chest(state);
             ItemDrop loot = chest.generateRandomItem();
             player.getInventory().addItem(loot.item(), loot.quantity(),state);
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rouge.pickpocket.successful",enemy.getClass().getSimpleName()));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.pickpocket.successful",enemy.getClass().getSimpleName()));
         } else {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.pickpocket.fail"));
         }

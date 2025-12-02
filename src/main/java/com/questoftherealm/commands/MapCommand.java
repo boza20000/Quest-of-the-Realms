@@ -20,15 +20,15 @@ public class MapCommand extends Command {
         if (!makeSafe(args, player,state)) {
             return;
         }
-        state.getGameServices().getOutput().print(state.getMessages().getBundle().get("map.display.padding"));
-        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.display.header"));
+        state.getGameServices().getOutput().print("      ");
+        state.getGameServices().getOutput().println("╔════════ MAP ══════╗");
         try {
             state.getMap().print(player,state);
         } catch (Exception e) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.error.printingFailed"));
         }
-        state.getGameServices().getOutput().print(state.getMessages().getBundle().get("map.display.padding"));
-        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.display.footer"));
+        state.getGameServices().getOutput().print("      ");
+        state.getGameServices().getOutput().println("╚═══════════════════╝");
     }
 
     @Override

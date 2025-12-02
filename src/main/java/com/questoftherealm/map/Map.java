@@ -42,7 +42,7 @@ public class Map {
         Output output = state.getGameServices().getOutput();
         for (int i = 0; i < gameMap.length; i++) {
             output.print("      ");
-            output.print(state.getMessages().getBundle().get("map.structure.symbol"));
+            output.print("║");
             for (int j = 0; j < gameMap[i].length; j++) {
                 boolean isPlayerHere = (j == player.getX() && i == player.getY());
                 Tile tile = gameMap[i][j];
@@ -53,7 +53,7 @@ public class Map {
                 }
                 output.print(symbol);
             }
-            output.print(state.getMessages().getBundle().get("map.structure.symbol"));
+            output.print("║");
             output.println();
         }
     }
