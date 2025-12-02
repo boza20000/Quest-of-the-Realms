@@ -3,31 +3,42 @@ package com.questoftherealm.game;
 import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.friendlyEntities.Entities.King;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
-import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.interaction.MissionInteractions;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Tile;
 
 public class NpcInitializer {
     public void registerAll(GameState state) {
-        MissionInteractions missionInteractions = new MissionInteractions(state);
-        Npc villager1 = new Villager(state.getMessages().getBundle().get("npc.northVillager1"), state, missionInteractions);
-        Villager villager2 = new Villager(state.getMessages().getBundle().get("npc.northVillager2"), state, missionInteractions);
-        King king = new King(state.getMessages().getBundle().get("npc.king"), state, missionInteractions);
-        Elder elder = new Elder(state.getMessages().getBundle().get("npc.elder"), state, missionInteractions);
-
+        MissionInteractions interactions = new MissionInteractions(state);
+        MessageBundle bundle = state.getMessages().getBundle();
         //castle
         Tile castleTile = state.getMap().curZone(GameConstants.Castle.x(), GameConstants.Castle.y());
-        castleTile.registerNpc(elder);
-        castleTile.registerNpc(king);
+        registerElder(state, interactions, castleTile, bundle.get("npc.elder"));
+        registerKing(state, interactions, castleTile, bundle.get("npc.king"));
 
         //north village 1
         Tile villagerTileNorth1 = state.getMap().curZone(GameConstants.NorthVillage_1.x(), GameConstants.NorthVillage_1.y());
-        villagerTileNorth1.registerNpc(villager1);
+        registerVillager(state, interactions, villagerTileNorth1, bundle.get("npc.northVillager1"));
 
         //north village 2
         Tile villagerTileNorth2 = state.getMap().curZone(GameConstants.NorthVillage_2.x(), GameConstants.NorthVillage_2.y());
-        villagerTileNorth2.registerNpc(villager2);
+        registerVillager(state, interactions, villagerTileNorth2, bundle.get("npc.northVillager2"));
+    }
 
+    private void registerVillager(GameState state, MissionInteractions m, Tile tile, String id) {
+        Villager villager = new Villager(state.getMessages().getBundle().get(id), state, m);
+        tile.registerNpc(villager);
+
+    }
+
+    private void registerKing(GameState state, MissionInteractions m, Tile tile, String id) {
+        King king = new King(id, state, m);
+        tile.registerNpc(king);
+    }
+
+    private void registerElder(GameState state, MissionInteractions m, Tile tile, String id) {
+        Elder elder = new Elder(id, state, m);
+        tile.registerNpc(elder);
     }
 
 

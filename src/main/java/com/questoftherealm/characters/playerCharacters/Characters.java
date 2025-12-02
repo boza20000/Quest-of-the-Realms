@@ -65,6 +65,10 @@ public abstract class Characters implements Combatant {
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.damage.taken", reducedDamage, health));
 
         if (isDead()) {
+            if(state.getPlayer().getPlayerCharacter() instanceof Orc){
+                ((Orc) state.getPlayer().getPlayerCharacter()).resurrect(state);
+                return;
+            }
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.dead", this.getClass().getSimpleName()));
         }
     }

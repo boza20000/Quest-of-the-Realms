@@ -28,7 +28,6 @@ public class ItemKeyDeserializer extends KeyDeserializer implements ContextualKe
 
     @Override
     public KeyDeserializer createContextual(DeserializationContext ctxt, BeanProperty property) throws JsonMappingException {
-        // Inject the ItemRegistry from InjectableValues
         ItemRegistry registry = (ItemRegistry) ctxt.findInjectableValue(ItemRegistry.class.getName(), property, null);
         return new ItemKeyDeserializer(registry);
     }

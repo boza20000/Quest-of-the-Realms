@@ -4,9 +4,6 @@ import com.questoftherealm.characters.characterInterfaces.MonsterBehavior;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemRegistry;
-import com.questoftherealm.localization.MessageBundle;
 import java.util.Random;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 

@@ -39,6 +39,13 @@ public final class TriggerRegister {
     }
 
     private void registerTriggers() {
+        registerVillageTriggers();
+        registerGoblinCampTriggers();
+        registerAssemblyArmyTriggers();
+        registerArmyFightTriggers();
+    }
+
+    private void registerVillageTriggers() {
         // Village 1
         triggers.add(new LocationTrigger(GameConstants.NorthVillage_1, player -> {
             if (player.getCurQuest() instanceof NorthExploration q && player.getCurMission() instanceof Investigate_Northern_Villages) {
@@ -56,7 +63,9 @@ public final class TriggerRegister {
                 isExecuted = true;
             }
         }));
+    }
 
+    private void registerGoblinCampTriggers() {
         // Goblin Camp
         triggers.add(new LocationTrigger(GameConstants.Goblin_Camp, player -> {
             if (player.getCurQuest() instanceof GoblinAmbush q) {
@@ -81,34 +90,41 @@ public final class TriggerRegister {
 
             }
         }));
+    }
+
+    private void registerAssemblyArmyTriggers() {
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.SouthVillage_1, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isKnightsRecruited()) {
-                recruitmentManager.talkToTheKnights(player,state);
+                recruitmentManager.talkToTheKnights(player, state);
                 isExecuted = true;
             }
         }));
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.SouthVillage_2, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isArchersRecruited()) {
-                recruitmentManager.talkToTheArchers(player,state);
+                recruitmentManager.talkToTheArchers(player, state);
                 isExecuted = true;
             }
         }));
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.MagesOutPost, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && !q.isMagesRecruited()) {
-                recruitmentManager.talkToTheMages(player,state);
+                recruitmentManager.talkToTheMages(player, state);
                 isExecuted = true;
             }
         }));
+    }
+
+    private void registerArmyFightTriggers() {
         // Army fight
         triggers.add(new LocationTrigger(GameConstants.Battlefield, player -> {
             if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && player.getCurMission() instanceof Defeat_the_Goblin_General) {
-                goblinGeneralManager.startFinalBattle(player, q,state);
+                goblinGeneralManager.startFinalBattle(player, q, state);
                 isExecuted = true;
             }
         }));
+        //Goblin Cave
         triggers.add(new LocationTrigger(GameConstants.FarNorthMountain, player -> {
             if (player.getCurQuest() instanceof FinalBattle q && player.getCurMission() instanceof March_Into_the_Far_North) {
                 goblinKingManager.goblinKingdomFound(player, q);
@@ -117,13 +133,6 @@ public final class TriggerRegister {
         }));
     }
 
-    public boolean isExecuted() {
-        return isExecuted;
-    }
-
-    public void setExecuted(boolean executed) {
-        isExecuted = executed;
-    }
 
     void pause(Output output) {
         try {

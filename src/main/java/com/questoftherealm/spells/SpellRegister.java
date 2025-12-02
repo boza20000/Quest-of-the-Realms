@@ -2,16 +2,16 @@ package com.questoftherealm.spells;
 
 import com.questoftherealm.exceptions.InvalidCommand;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.interfaces.Output;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SpellRegister {
     private final Map<String, Spell> spells = new HashMap<>();
-    private GameState state;
+    private final GameState state;
 
     public SpellRegister(GameState state) {
+        this.state = state;
         registerSpell(state.getMessages().getBundle().get("spells.register.fireball"), new Fireball(state));
         registerSpell(state.getMessages().getBundle().get("spells.register.lightning"), new LightningBolt(state));
     }

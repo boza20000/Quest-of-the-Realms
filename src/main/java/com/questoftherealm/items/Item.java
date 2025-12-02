@@ -6,7 +6,7 @@ public class Item {
     private final String name;
     private final ItemType type;
     private final boolean stackable;
-    private final int power; //damage for weapons or healing for potions
+    private final int power;
     private final int price;
     private final int mana;
     private final Rarity rarity;
