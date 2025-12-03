@@ -2,6 +2,7 @@ package com.questoftherealm.game;
 
 import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.friendlyEntities.Entities.King;
+import com.questoftherealm.friendlyEntities.Entities.Trader;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.localization.MessageBundle;
@@ -23,6 +24,11 @@ public class NpcInitializer {
         //north village 2
         Tile villagerTileNorth2 = state.getMap().curZone(GameConstants.NorthVillage_2.x(), GameConstants.NorthVillage_2.y());
         registerVillager(state, interactions, villagerTileNorth2, bundle.get("npc.northVillager2"));
+
+        RandomService randomService = state.getGameServices().getRandom();
+        Tile randomTile = state.getMap().curZone(randomService.randomInt(GameConstants.MAP_END), randomService.randomInt(GameConstants.MAP_END));
+        registerTrader(state,interactions,randomTile,bundle.get("npc.trader"));
+
     }
 
     private void registerVillager(GameState state, MissionInteractions m, Tile tile, String id) {
@@ -39,6 +45,11 @@ public class NpcInitializer {
     private void registerElder(GameState state, MissionInteractions m, Tile tile, String id) {
         Elder elder = new Elder(id, state, m);
         tile.registerNpc(elder);
+    }
+
+    private void registerTrader(GameState state, MissionInteractions m, Tile tile, String id) {
+        Trader trader = new Trader(id, state, m);
+        tile.registerNpc(trader);
     }
 
 

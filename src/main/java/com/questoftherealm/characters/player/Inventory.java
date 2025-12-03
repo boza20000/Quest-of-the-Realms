@@ -12,7 +12,7 @@ import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
+
 
 public class Inventory {
     @JsonSerialize(keyUsing = ItemKeySerializer.class)
@@ -72,6 +72,7 @@ public class Inventory {
         return items.containsKey(item);
     }
 
+
     public void clear() {
         items.clear();
     }
@@ -99,4 +100,5 @@ public class Inventory {
             output.println(bundle.get("inventory.full", item.getName()));
         }
     }
+
 }

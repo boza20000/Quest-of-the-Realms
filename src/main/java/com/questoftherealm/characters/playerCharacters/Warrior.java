@@ -5,6 +5,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.entities.SuspiciousTrader;
 
+import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
@@ -24,13 +25,33 @@ public class Warrior extends Characters implements Trader {
 
     @Override
     public void buyItem(SuspiciousTrader trader, Player player, Item item, int quantity, GameState state) {
-        // Implemented elsewhere
+        if (player.getInventory().getItems().size() == GameConstants.MAX_ITEMS_IN_INVENTORY) {
+            if (hasSpace(player, item, quantity)) {
+                state.getGameServices().getOutput().println("Not enough space in inventory");
+                return;
+            }
+        }
+
+        if (!(player.getGold() < (item.getPrice() * quantity))) {
+            state.getGameServices().getOutput().println("Not enough money");
+            return;
+        }
+
+        player.payMoney(item.getPrice() * quantity, state);
+        player.getInventory().addItem(item, quantity, state);
+    }
+
+    private boolean hasSpace(Player player, Item item, int quantity) {
+        if (item.isStackable()) {
+            return player.getInventory().getItems().get(item) + quantity <= GameConstants.MAX_ITEMS_IN_STACK;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public void sellItem(Player player, SuspiciousTrader trader, Item item, int quantity, GameState state) {
-        int money = item.getPrice();
-        player.addMoney(money,state);
+        player.addMoney(item.getPrice() * quantity, state);
         player.getInventory().removeItem(item, quantity, state);
     }
 
