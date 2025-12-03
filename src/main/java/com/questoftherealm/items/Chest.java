@@ -111,55 +111,19 @@ public class Chest {
         };
     }
 
-    public ItemDrop generateRandomHelmet(Player player) {
-        ItemType type = ItemType.ARMOR;
-        Rarity rarity = Rarity.COMMON;
-        int quantity = 1;
+    public ItemDrop generateArmorPiece(ItemType type, ItemEffect effect) {
 
-        List<Item> possibleHelmets = itemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.HELMET)
+        List<Item> possibleArmor = itemRegistry.getAllItems().stream()
+                .filter(i -> i.getType() == type && i.getRarity() == Rarity.COMMON && i.getEffect() == effect)
                 .toList();
-
-        if (possibleHelmets.isEmpty()) {
-            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.helmetNotGenerated"));
+        if (possibleArmor.isEmpty()) {
+            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.armorPieceNotGenerated", effect));
         }
 
-        Item helmet = possibleHelmets.get(random().nextInt(possibleHelmets.size()));
-        return new ItemDrop(helmet, quantity);
+        return new ItemDrop(possibleArmor.get(random().nextInt(possibleArmor.size())),1);
     }
 
-    public ItemDrop generateRandomChestplate(Player player) {
-        ItemType type = ItemType.ARMOR;
-        Rarity rarity = Rarity.COMMON;
-        int quantity = 1;
 
-        List<Item> possibleChestplates = itemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.CHESTPLATE)
-                .toList();
 
-        if (possibleChestplates.isEmpty()) {
-            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.chestplateNotGenerated"));
-        }
-
-        Item chestplate = possibleChestplates.get(random().nextInt(possibleChestplates.size()));
-        return new ItemDrop(chestplate, quantity);
-    }
-
-    public ItemDrop generateRandomBoots(Player player) {
-        ItemType type = ItemType.ARMOR;
-        Rarity rarity = Rarity.COMMON;
-        int quantity = 1;
-
-        List<Item> possibleBoots = itemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.BOOTS)
-                .toList();
-
-        if (possibleBoots.isEmpty()) {
-            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.bootsNotGenerated"));
-        }
-
-        Item boots = possibleBoots.get(random().nextInt(possibleBoots.size()));
-        return new ItemDrop(boots, quantity);
-    }
 }
 

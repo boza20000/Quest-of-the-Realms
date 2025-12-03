@@ -9,6 +9,8 @@ import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.items.ItemEffect;
+import com.questoftherealm.items.ItemType;
 
 public class Elder extends Npc {
     private final String name = "Evary";
@@ -38,9 +40,9 @@ public class Elder extends Npc {
         ItemDrop weapon = chest.generateRandomWeapon(player);
         player.getInventory().addItem(weapon.item(), weapon.quantity(), state);
         // Give armor
-        ItemDrop helmet = chest.generateRandomHelmet(player);
-        ItemDrop chestplate = chest.generateRandomChestplate(player);
-        ItemDrop boots = chest.generateRandomBoots(player);
+        ItemDrop helmet = chest.generateArmorPiece(ItemType.ARMOR, ItemEffect.HELMET);
+        ItemDrop chestplate = chest.generateArmorPiece(ItemType.ARMOR, ItemEffect.CHESTPLATE);
+        ItemDrop boots = chest.generateArmorPiece(ItemType.ARMOR, ItemEffect.BOOTS);
         player.getInventory().addItem(helmet.item(), helmet.quantity(), state);
         player.getInventory().addItem(chestplate.item(), chestplate.quantity(), state);
         player.getInventory().addItem(boots.item(), boots.quantity(), state);

@@ -115,9 +115,9 @@ public class Console {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            output.print(bundle.get("console.menu.prompt"));
+            printSymbol();
         } else {
-            output.print(bundle.get("console.menu.prompt"));
+            printSymbol();
         }
         return Integer.parseInt(state.getGameServices().getInput().nextLine());
     }
@@ -125,25 +125,30 @@ public class Console {
     public String characterCreationScreen(GameState state) {
         output.println();
         output.println(bundle.get("console.charCreate.namePrompt"));
-        output.print(bundle.get("console.menu.prompt"));
+        printSymbol();
         String name = state.getGameServices().getInput().nextLine();
         int count = 0;
         while (name.isBlank()) {
             if (count < 1) {
                 output.println(bundle.get("console.charCreate.nameEmptyError"));
             }
-            output.print(bundle.get("console.menu.prompt"));
+            printSymbol();
             name = state.getGameServices().getInput().nextLine();
             count++;
         }
+        displayCharacterOptions();
+        return name;
+    }
+
+    private void displayCharacterOptions() {
         output.println(bundle.get("console.charCreate.classPrompt"));
         output.println(bundle.get("console.charCreate.class1"));
         output.println(bundle.get("console.charCreate.class2"));
         output.println(bundle.get("console.charCreate.class3"));
         output.println(bundle.get("console.charCreate.class4"));
-        return name;
     }
 
-    private void displayModes() {
+    private void printSymbol(){
+        output.print(bundle.get("console.menu.prompt"));
     }
 }
