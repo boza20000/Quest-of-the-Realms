@@ -410,7 +410,7 @@ public class Player implements InventoryHandler, Explorer {
     }
 
     public void openInventory(GameState state) {
-        getInventory().listItems(state);
+        getInventory().listItems(state.getGameServices().getOutput(),state.getMessages().getBundle());
     }
 
     public void equipItem(Item item, GameState state) {

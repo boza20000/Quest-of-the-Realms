@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemKeyDeserializer;
 import com.questoftherealm.items.ItemKeySerializer;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 public class Inventory {
     @JsonSerialize(keyUsing = ItemKeySerializer.class)
@@ -25,27 +28,11 @@ public class Inventory {
         this.capacity = capacity;
     }
 
-    public void addItem(Item item, int quantity,GameState state) {
+    public void addItem(Item item, int quantity, GameState state) {
         if (item.isStackable()) {
-            int curItemQuantity = items.getOrDefault(item, 0);
-            int sum = curItemQuantity + quantity;
-            if (sum <= GameConstants.MAX_ITEMS_IN_STACK) {
-                items.put(item, sum);
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.added", quantity, item, sum));
-            } else {
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.cannotCarry",
-                        GameConstants.MAX_ITEMS_IN_STACK, item.getName()));
-            }
+            handleStackableItems(item, quantity, state.getGameServices().getOutput(), state.getMessages().getBundle());
         } else {
-            int curItemQuantity = items.getOrDefault(item, 0);
-            int newTotal = curItemQuantity + quantity;
-
-            if (items.size() < capacity || items.containsKey(item)) {
-                items.put(item, newTotal);
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.added", quantity, item, newTotal));
-            } else {
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.full", item.getName()));
-            }
+            handleNotStackableItems(item, quantity, state.getGameServices().getOutput(), state.getMessages().getBundle());
         }
     }
 
@@ -63,13 +50,13 @@ public class Inventory {
         }
     }
 
-    public void listItems(GameState state) {
+    public void listItems(Output output, MessageBundle bundle) {
         if (items.isEmpty()) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.isEmpty"));
+            output.println(bundle.get("inventory.isEmpty"));
         } else {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.printStart"));
+            output.println(bundle.get("inventory.printStart"));
             items.forEach((item, qty) ->
-                    state.getGameServices().getOutput().println(state.getMessages().getBundle().get("inventory.listItems", item, qty)));
+                    output.println(bundle.get("inventory.listItems", item, qty)));
         }
     }
 
@@ -87,5 +74,29 @@ public class Inventory {
 
     public void clear() {
         items.clear();
+    }
+
+    private void handleStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
+        int curItemQuantity = items.getOrDefault(item, 0);
+        int sum = curItemQuantity + quantity;
+        if (sum <= GameConstants.MAX_ITEMS_IN_STACK) {
+            items.put(item, sum);
+            output.println(bundle.get("inventory.added", quantity, item, sum));
+        } else {
+            output.println(bundle.get("inventory.cannotCarry",
+                    GameConstants.MAX_ITEMS_IN_STACK, item.getName()));
+        }
+    }
+
+    private void handleNotStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
+        int curItemQuantity = items.getOrDefault(item, 0);
+        int newTotal = curItemQuantity + quantity;
+
+        if (items.size() < capacity || items.containsKey(item)) {
+            items.put(item, newTotal);
+            output.println(bundle.get("inventory.added", quantity, item, newTotal));
+        } else {
+            output.println(bundle.get("inventory.full", item.getName()));
+        }
     }
 }
