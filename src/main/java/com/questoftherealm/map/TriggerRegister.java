@@ -29,7 +29,7 @@ public final class TriggerRegister {
         registerTriggers();
         this.state = state;
         this.recruitmentManager = new RecruitmentManager(state);
-        this.missionInteractions = new MissionInteractions(state); // inject state here
+        this.missionInteractions = new MissionInteractions(state);
         this.goblinGeneralManager = new GoblinGeneralManager(state);
         this.goblinKingManager = new GoblinKingManager(state);
     }

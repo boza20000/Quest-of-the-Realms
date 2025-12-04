@@ -1,16 +1,14 @@
 package com.questoftherealm.game;
 
-import com.questoftherealm.characters.player.WeaponFactory;
 import com.questoftherealm.exceptions.FileNotLoaded;
 import com.questoftherealm.exceptions.IntroException;
+import com.questoftherealm.exceptions.NpcInitializationFailed;
 import com.questoftherealm.exceptions.OutputServiceError;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.Console;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.interaction.MissionInteractions;
-import com.questoftherealm.items.ItemRegistry;
-import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.localization.MessageBundle;
 
 import java.io.IOException;
 
@@ -76,13 +74,17 @@ public class Game {
         output.println(gameState.getMessages().getBundle().get("game.player.choice.confirm", type));
         output.println(gameState.getMessages().getBundle().get("game.player.character.show", player.getPlayerCharacter().stats(gameState)));
 
+        sleep();
+        return player;
+    }
+
+    private void sleep() {
         try {
             Thread.sleep(6000);
         } catch (InterruptedException e) {
             output.println(gameState.getMessages().getBundle().get("game.sleep.error"));
             throw new RuntimeException(e);
         }
-        return player;
     }
 
     private Output gameType(int gameType) throws IOException {
@@ -97,6 +99,7 @@ public class Game {
     }
 
     public void start() {
+
         //single or multiplayer
         int gameRules = gameRules(new InputService(), new ConsoleOutput());
         try {
@@ -108,33 +111,25 @@ public class Game {
         console = new Console(gameState);
         console.displayTitle();
 
-        // new or load game
-        int gameMode = getGameMode();
         try {
-            switch (gameMode) {
-                case 1 -> newGame();
-                case 2 -> loadGame(gameState);
-            }
-        }
-        catch (IntroException e){
-            output.println(gameState.getMessages().getBundle().get("game.new.error.introCorrupted"));
-            return;
-        }
-        catch (FileNotLoaded e){
-            output.println(gameState.getMessages().getBundle().get("game.load.error"));
-            return;
-        }
-
-        try {
-            NpcInitializer npcInitializer = new NpcInitializer();
-            npcInitializer.registerAll(gameState);
-        } catch (Exception e) {
-            output.println(gameState.getMessages().getBundle().get("game.npc.init.error"));
+            initializeGame();
+        } catch (FileNotLoaded | NpcInitializationFailed | IntroException e) {
+            output.println(e.getMessage());
             return;
         }
 
         GameLoop loop = new GameLoop();
         loop.startLoop(this);
+    }
+
+    private void initializeGame() {
+        int gameMode = getGameMode();
+        switch (gameMode) {
+            case 1 -> newGame();
+            case 2 -> loadGame(gameState);
+        }
+        NpcInitializer npcInitializer = new NpcInitializer();
+        npcInitializer.registerAll(gameState);
     }
 
     private int getGameMode() {
@@ -154,9 +149,9 @@ public class Game {
     }
 
     public int gameRules(InputService inputService, ConsoleOutput outputService) {
-        LocalizationService temp = new LocalizationService();
-        outputService.print(temp.getBundle().get("game.rules.options"));
-        outputService.print(temp.getBundle().get("game.rules.prompt"));
+        MessageBundle temp = new MessageBundle();
+        outputService.print(temp.get("game.rules.options"));
+        outputService.print(temp.get("game.rules.prompt"));
         int mode;
         int count = 1;
         while (true) {
@@ -165,15 +160,15 @@ public class Game {
                 if (mode == 1 || mode == 2) {
                     break;
                 } else if (count <= 1) {
-                    outputService.println(temp.getBundle().get("game.rules.invalidRange"));
+                    outputService.println(temp.get("game.rules.invalidRange"));
                 }
             } catch (NumberFormatException e) {
-                outputService.println(temp.getBundle().get("game.rules.invalidInput"));
+                outputService.println(temp.get("game.rules.invalidInput"));
             }
             count++;
-            outputService.print(temp.getBundle().get("game.rules.prompt"));
+            outputService.print(temp.get("game.rules.prompt"));
             if (count >= 10) {
-                outputService.print(temp.getBundle().get("game.rules.defaultChoice"));
+                outputService.print(temp.get("game.rules.defaultChoice"));
                 return 1;
             }
         }

@@ -1,5 +1,6 @@
 package com.questoftherealm.enemyEntities.bosses;
 
+import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.GameState;
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
-public class GoblinGeneral extends Boss {
+public class GoblinGeneral extends Boss  {
     private GameState state;
     private ItemRegistry itemRegistry;
     private final String NAME = "Azok";
