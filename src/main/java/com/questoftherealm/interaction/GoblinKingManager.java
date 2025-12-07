@@ -4,7 +4,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.playerCharacters.CharacterConstants;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.bosses.GoblinKing;
-import com.questoftherealm.expeditions.quests.FinalBattle;
+import com.questoftherealm.expeditions.quest.quests.FinalBattle;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
@@ -29,9 +29,7 @@ public class GoblinKingManager {
 
     public void goblinKingdomFound(Player player, FinalBattle q) {
         printGoblinBaseIntro(q);
-
         int choice = getChoice();
-
         if (choice == 1) {
             stealthInfiltration(q);
         } else {

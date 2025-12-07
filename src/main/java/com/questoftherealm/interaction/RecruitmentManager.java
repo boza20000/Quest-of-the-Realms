@@ -1,8 +1,8 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.missions.Assemble_an_Army;
-import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
+import com.questoftherealm.expeditions.missions.Missions;
+import com.questoftherealm.expeditions.quest.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 
@@ -106,7 +106,7 @@ public class RecruitmentManager {
     }
 
     private void payForKnights(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        if (player.payMoney(50,state)) {
+        if (player.payMoney(50, state)) {
             output.println("💰 " + state.getMessages().getBundle().get("recruit.knights.pay.success"));
             q.setKnightsRecruited(true);
         } else {
@@ -150,7 +150,7 @@ public class RecruitmentManager {
         switch (input) {
             case "1" -> output.println(state.getMessages().getBundle().get("recruit.archers.promise"));
             case "2" -> {
-                if (player.payMoney(30,state)) {
+                if (player.payMoney(30, state)) {
                     output.println("💰 " + state.getMessages().getBundle().get("recruit.archers.gold.success"));
                     q.setArchersRecruited(true);
                 } else {
@@ -215,7 +215,7 @@ public class RecruitmentManager {
         String input = state.getGameServices().getInput().nextLine();
         switch (input) {
             case "1" -> {
-                if (player.payMoney(70,state)) {
+                if (player.payMoney(70, state)) {
                     output.println("💰 " + state.getMessages().getBundle().get("recruit.mages.gold.success"));
                     q.setMagesRecruited(true);
                 } else {
@@ -246,7 +246,7 @@ public class RecruitmentManager {
     }
 
     private RiseOfTheGoblinThreat checkSafe(Player player) {
-        if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && player.getCurMission() instanceof Assemble_an_Army) {
+        if (player.getCurQuest() instanceof RiseOfTheGoblinThreat q && player.getCurMission().getMissionType().equals(Missions.ASSEMBLE_ARMY)) {
             return q;
         }
         return null;

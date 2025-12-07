@@ -1,13 +1,14 @@
-package com.questoftherealm.expeditions;
+package com.questoftherealm.expeditions.quest;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.interfaces.MissionCondition;
-import com.questoftherealm.expeditions.quests.*;
+import com.questoftherealm.expeditions.missions.Mission;
+import com.questoftherealm.expeditions.quest.quests.*;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.interaction.SlowPrinter;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -16,18 +17,18 @@ public class QuestFactory {
     @JsonIgnore
     private Player player;
 
-    private void registerDefaultQuests(Player player) {
+    private void registerDefaultQuests(Player player, GameState state) {
         player.setQuestFactory(this);
-        register(new StartQuest(player));
-        register(new NorthExploration(player));
-        register(new GoblinAmbush(player));
-        register(new RiseOfTheGoblinThreat(player));
-        register(new FinalBattle(player));
+        register(new StartQuest(player, state));
+        register(new NorthExploration(player, state));
+        register(new GoblinAmbush(player, state));
+        register(new RiseOfTheGoblinThreat(player, state));
+        register(new FinalBattle(player, state));
     }
 
-    public QuestFactory(Player player) {
+    public QuestFactory(Player player, GameState state) {
         this.player = player;
-        registerDefaultQuests(player);
+        registerDefaultQuests(player, state);
     }
 
     @JsonCreator
@@ -40,7 +41,6 @@ public class QuestFactory {
         return quests;
     }
 
-
     @JsonIgnore
     public void setPlayer(Player player) {
         this.player = player;
@@ -48,6 +48,7 @@ public class QuestFactory {
             quest.setPlayer(player);
         }
     }
+
     @JsonIgnore
     public Quest getCurrentQuest() {
         return quests.peek();
@@ -63,6 +64,7 @@ public class QuestFactory {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.noMore"));
         }
     }
+
     @JsonIgnore
     public Mission getCurrentMission() {
         if (getCurrentQuest() == null) {
@@ -80,20 +82,15 @@ public class QuestFactory {
         quests.offer(quest);
     }
 
-
-    public void restoreAfterLoad(Player loadedPlayer,GameState state) {
+    public void restoreAfterLoad(Player loadedPlayer, GameState state) {
         this.player = loadedPlayer;
         for (Quest q : quests) {
             q.setPlayer(loadedPlayer);
+            q.setState(state);
             if (q.getMissions() != null) {
                 for (Mission m : q.getMissions()) {
                     m.setPlayer(loadedPlayer);
-                    MissionConditionType type = m.getConditionType();
-                    if (type != null && type != MissionConditionType.CUSTOM_CHECK_COMPLETION) {
-                        MissionCondition logic = MissionConditionFactory.getCondition(type);
-                        m.setCondition(logic);
-                        m.setState(state);
-                    }
+                    m.setState(state);
                 }
             }
         }

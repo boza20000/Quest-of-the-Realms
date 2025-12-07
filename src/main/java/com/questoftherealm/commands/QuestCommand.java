@@ -1,7 +1,7 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.missions.Mission;
 import com.questoftherealm.game.GameState;
 
 public class QuestCommand extends Command {

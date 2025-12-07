@@ -1,9 +1,9 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.Mission;
-import com.questoftherealm.expeditions.missions.Investigate_Northern_Villages;
-import com.questoftherealm.expeditions.quests.NorthExploration;
+import com.questoftherealm.expeditions.missions.Mission;
+import com.questoftherealm.expeditions.missions.Missions;
+import com.questoftherealm.expeditions.quest.quests.NorthExploration;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.*;
@@ -40,15 +40,15 @@ public class Villager extends Npc {
             return;
         }
 
-        if (mission instanceof Investigate_Northern_Villages nv) {
-            handleTalkToSurvivors(player, tile, pos, nv, q);
+        if (mission.getMissionType().equals(Missions.INVESTIGATE_VILLAGES)) {
+            handleTalkToSurvivors(player, tile, pos,q);
 
         } else {
             output.println(state.getMessages().getBundle().get("villager.nothing.to.say"));
         }
     }
 
-    private void handleTalkToSurvivors(Player player, Tile tile, Position pos, Investigate_Northern_Villages curMission, NorthExploration quest) {
+    private void handleTalkToSurvivors(Player player, Tile tile, Position pos, NorthExploration quest) {
         if (pos.equals(GameConstants.NorthVillage_1) && checkStatusVillage1(quest, tile)) {
             northVillager1(player, quest);
         } else if (pos.equals(GameConstants.NorthVillage_2) && checkStatusVillage2(quest, tile)) {

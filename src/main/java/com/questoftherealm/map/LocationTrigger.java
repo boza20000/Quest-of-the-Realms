@@ -20,8 +20,9 @@ public class LocationTrigger{
     }
 
     public void trigger(Player player){
-        setExecuted(true);
-        action.execute(player);
+        if(action.execute(player)){
+            setExecuted(true);
+        }
     }
 
     public boolean isExecuted() {
@@ -31,5 +32,6 @@ public class LocationTrigger{
     public void setExecuted(boolean executed) {
         isExecuted = executed;
     }
+
 }
 

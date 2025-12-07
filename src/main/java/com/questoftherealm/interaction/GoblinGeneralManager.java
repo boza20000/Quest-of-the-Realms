@@ -4,7 +4,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.playerCharacters.CharacterConstants;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.bosses.GoblinGeneral;
-import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
+import com.questoftherealm.expeditions.quest.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.RandomService;
 import com.questoftherealm.game.interfaces.Output;

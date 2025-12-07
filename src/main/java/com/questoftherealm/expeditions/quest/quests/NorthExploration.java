@@ -1,10 +1,9 @@
-package com.questoftherealm.expeditions.quests;
+package com.questoftherealm.expeditions.quest.quests;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.expeditions.missions.*;
-
-import java.util.List;
+import com.questoftherealm.expeditions.quest.Quest;
+import com.questoftherealm.expeditions.quest.QuestTypes;
+import com.questoftherealm.game.GameState;
 
 public class NorthExploration extends Quest {
     private boolean searchedVillage1 = false;
@@ -12,25 +11,11 @@ public class NorthExploration extends Quest {
     private boolean talkedToVillager1 = false;
     private boolean talkedToVillager2 = false;
 
-    public NorthExploration(Player player) {
-        super("Explore the North",
-                List.of(
-                        new Travel_North(player),
-                        new Investigate_Northern_Villages(player)
-                ),
-                "Explore the uncharted north and uncover the source of the growing unease.",
-                player
-        );
+    public NorthExploration(Player player, GameState state) {
+        super(QuestTypes.NORTH_EXPLORATION,player,state);
     }
-    public NorthExploration() {
-        super("Explore the North",
-                List.of(
-                        new Travel_North(null),
-                        new Investigate_Northern_Villages(null)
-                ),
-                "Explore the uncharted north and uncover the source of the growing unease.",
-                null
-        );
+    protected NorthExploration() {
+        super();
     }
 
     public void setSearchedVillage1(boolean v) {

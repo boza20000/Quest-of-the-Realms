@@ -1,8 +1,7 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.Mission;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.expeditions.missions.Mission;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.MessageBundle;

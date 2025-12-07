@@ -6,7 +6,7 @@ import com.questoftherealm.enemyEntities.EnemyFactory;
 import com.questoftherealm.enemyEntities.EnemyType;
 
 import com.questoftherealm.expeditions.missions.*;
-import com.questoftherealm.expeditions.quests.GoblinAmbush;
+import com.questoftherealm.expeditions.quest.quests.GoblinAmbush;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemDrop;
@@ -23,7 +23,7 @@ public class MissionInteractions {
     }
 
     public void worldStart(Player player) {
-        if (player.getCurMission() instanceof Meet_the_Elder && !player.getCurMission().isCompleted()) {
+        if (player.getCurMission().getMissionType().equals(Missions.MEET_ELDER) && !player.getCurMission().isCompleted()) {
             slowPrinter.slowPrint(state.getMessages().getBundle().get("mission.start.elder"));
         } else {
             output.println(state.getMessages().getBundle().get("mission.start.generic", player.getCurrentZone()));

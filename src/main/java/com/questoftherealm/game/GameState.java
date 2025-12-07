@@ -15,20 +15,21 @@ public class GameState {
     private boolean gameOver;
     private boolean isSimulation;
     private ServerClock clock;
-    private LocalizationService messages;
-    private ItemRegistry itemRegistry;
+    private final LocalizationService messages;
+    private final ItemRegistry itemRegistry;
 
     public GameState(Player player, GameServices services) {
         this.player = player;
         this.gameServices = services;
         this.gameMap = new Map(this);
+        //here can be added language in the LocalizationService constructor
+        this.messages = new LocalizationService();
+        this.itemRegistry = new ItemRegistry(messages);
         this.triggerRegister = new TriggerRegister(this);
         this.gameOver = false;
         this.isSimulation = false;
         clock = new ServerClock();
-        //here can be added language in the LocalizationService constructor
-        this.messages = new LocalizationService();
-        this.itemRegistry = new ItemRegistry(messages);
+
     }
 
     public Player getPlayer() {

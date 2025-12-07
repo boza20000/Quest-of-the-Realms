@@ -1,7 +1,7 @@
-package com.questoftherealm.expeditions.interfaces;
+package com.questoftherealm.expeditions.missions.interfaces;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.Mission;
+import com.questoftherealm.expeditions.missions.Mission;
 
 @FunctionalInterface
 public interface MissionCondition {

@@ -1,7 +1,7 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
+import com.questoftherealm.expeditions.quest.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameState;

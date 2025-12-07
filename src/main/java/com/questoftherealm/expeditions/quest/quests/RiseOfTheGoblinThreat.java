@@ -1,12 +1,9 @@
-package com.questoftherealm.expeditions.quests;
+package com.questoftherealm.expeditions.quest.quests;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.expeditions.missions.Assemble_an_Army;
-import com.questoftherealm.expeditions.missions.Defeat_the_Goblin_General;
-import com.questoftherealm.expeditions.missions.Warn_the_Castle;
-
-import java.util.List;
+import com.questoftherealm.expeditions.quest.Quest;
+import com.questoftherealm.expeditions.quest.QuestTypes;
+import com.questoftherealm.game.GameState;
 
 public class RiseOfTheGoblinThreat extends Quest {
     private boolean knightsTriedToRecruit = false;
@@ -19,30 +16,25 @@ public class RiseOfTheGoblinThreat extends Quest {
     private int armyPower = 20;
     private boolean isDefeated = false;
 
-    public RiseOfTheGoblinThreat(Player player) {
-        super("Rise of the Goblin Threat",
-                List.of(
-                        new Warn_the_Castle(player),
-                        new Assemble_an_Army(player),
-                        new Defeat_the_Goblin_General(player)
-                ),
-                "The goblin forces are preparing for war. Only by uniting the realm can you hope to stand against them.",
-                player
-        );
+    public RiseOfTheGoblinThreat(Player player, GameState state) {
+        super(QuestTypes.RISE_OF_THE_GOBLIN_THREAT,player,state);
     }
 
-    public RiseOfTheGoblinThreat() {
-        super("Rise of the Goblin Threat",
-                List.of(
-                        new Warn_the_Castle(null),
-                        new Assemble_an_Army(null),
-                        new Defeat_the_Goblin_General(null)
-                ),
-                "The goblin forces are preparing for war. Only by uniting the realm can you hope to stand against them.",
-                null
-        );
+    protected RiseOfTheGoblinThreat() {
+        super();
     }
 
+    public void updateArmyStatus() {
+        if (this.isKnightsRecruited()) {
+            this.addArmyPower(15);
+        }
+        if (this.isMagesRecruited()) {
+            this.addArmyPower(20);
+        }
+        if (this.isArchersRecruited()) {
+            this.addArmyPower(20);
+        }
+    }
 
     public boolean isDefeated() {
         return isDefeated;

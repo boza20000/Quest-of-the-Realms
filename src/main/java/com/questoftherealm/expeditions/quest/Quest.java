@@ -1,14 +1,17 @@
-package com.questoftherealm.expeditions;
+package com.questoftherealm.expeditions.quest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.expeditions.quests.*;
+import com.questoftherealm.expeditions.missions.Mission;
+import com.questoftherealm.expeditions.missions.MissionFactory;
+import com.questoftherealm.expeditions.quest.quests.*;
 import com.questoftherealm.game.GameState;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -23,19 +26,32 @@ import java.util.Objects;
         @JsonSubTypes.Type(value = FinalBattle.class, name = "FinalBattle")
 })
 
-public abstract class Quest {
+public class Quest {
     private final List<Mission> missions;
     private final String name;
     private final String description;
     private boolean completed = false;
     @JsonIgnore
     private Player player;
+    @JsonIgnore
+    private GameState state;
+    private QuestTypes questTypes;
 
-    public Quest(String name, List<Mission> missions, String description, Player player) {
-        this.missions = missions;
-        this.description = description;
-        this.name = name;
+    public Quest(QuestTypes type, Player player, GameState state) {
+        this.state = state;
         this.player = player;
+        this.missions = type.getMissions().stream()
+                .map(m -> MissionFactory.createMission(m, player, state))
+                .collect(Collectors.toList());
+        this.description = type.getDescription(state);
+        this.name = type.getName(state);
+        this.questTypes = type;
+    }
+    protected Quest() {
+        this.missions = List.of();
+        this.name = null;
+        this.description = null;
+        this.questTypes = null;
     }
 
     public boolean isCompleted() {
@@ -58,6 +74,8 @@ public abstract class Quest {
         return missions;
     }
 
+    public QuestTypes getQuestTypes() {return questTypes;}
+
     public void updateStatus(GameState state) {
         boolean isAllReady = true;
         if (this.isCompleted()) return;
@@ -76,6 +94,14 @@ public abstract class Quest {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public void setQuestTypes(QuestTypes questTypes) {
+        this.questTypes = questTypes;
     }
 
     @Override
