@@ -35,6 +35,7 @@ class EnemyTest {
         ConsoleOutput output = new ConsoleOutput();
         state = new GameState(player, new GameServices(output));
         enemy = new Goblin(state,new EnemyConstants());
+        localizationService = new LocalizationService();
     }
 
     @Test

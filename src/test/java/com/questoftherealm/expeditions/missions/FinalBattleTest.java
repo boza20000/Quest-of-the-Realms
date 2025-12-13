@@ -3,8 +3,8 @@ package com.questoftherealm.expeditions.missions;
 import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.expeditions.quests.FinalBattle;
+import com.questoftherealm.expeditions.quest.QuestFactory;
+import com.questoftherealm.expeditions.quest.quests.FinalBattle;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
@@ -12,9 +12,7 @@ import com.questoftherealm.game.interfaces.Output;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @DisplayName("Final Battle Quest — Mission & Quest Logic Tests")
 class FinalBattleTest {
@@ -44,7 +42,7 @@ class FinalBattleTest {
 
         state = new GameState(player, services);
 
-        quest = new FinalBattle(player);
+        quest = new FinalBattle(player, state);
         player.setCurQuest(quest);
         player.setCurMission(quest.getMissions().get(0));
 
@@ -60,11 +58,12 @@ class FinalBattleTest {
 
         // Not there yet
         player.move(GameConstants.PLAYER_START.x(), GameConstants.PLAYER_START.y());
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         // Move to Far North
         player.move(GameConstants.FarNorthMountain.x(), GameConstants.FarNorthMountain.y());
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
@@ -74,10 +73,11 @@ class FinalBattleTest {
         var mission = quest.getMissions().get(1);
 
         quest.setBreached(false);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         quest.setBreached(true);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
@@ -87,17 +87,18 @@ class FinalBattleTest {
         var mission = quest.getMissions().get(2);
 
         quest.setDefeated(false);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         quest.setDefeated(true);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
     @Test
     @DisplayName("FinalBattle quest completes only after all missions done")
     void questCompletesOnlyAfterAllMissionsDone() {
-        QuestFactory q = new QuestFactory(player);
+        QuestFactory q = new QuestFactory(player,state);
         player.setQuestFactory(q);
 
         for (var m : quest.getMissions()) {

@@ -21,7 +21,7 @@ public enum QuestTypes {
     GOBLIN_AMBUSH(
             "quest.goblin_ambush.name",
             "quest.goblin_ambush.description",
-            List.of(Missions.INFILTRATE_CAMP, Missions.AMBUSHED, Missions.ESCAPE_TO_SAFETY, Missions.EXPLORE_FORESTS)
+            List.of(Missions.EXPLORE_FORESTS, Missions.INFILTRATE_CAMP, Missions.AMBUSHED, Missions.ESCAPE_TO_SAFETY)
     ),
 
     RISE_OF_THE_GOBLIN_THREAT(

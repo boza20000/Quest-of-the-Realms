@@ -7,6 +7,9 @@ import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,12 +36,17 @@ class TalkCommandTest {
         output = mock(Output.class);
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
-
+        LocalizationService l = new LocalizationService();
+        when(state.getMessages()).thenReturn(l);
+        ItemRegistry registry = new ItemRegistry(l);
+        when(state.getItemRegistry()).thenReturn(registry);
         map = mock(Map.class);
         tile = mock(Tile.class);
         when(state.getMap()).thenReturn(map);
         when(map.curZone(anyInt(), anyInt())).thenReturn(tile);
         player = new Player("TestHero", PlayerTypes.Warrior, state);
+
+        state.setPlayer(player);
 
     }
 

@@ -3,10 +3,9 @@ package com.questoftherealm.expeditions.missions;
 import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.expeditions.quests.NorthExploration;
-import com.questoftherealm.expeditions.quests.StartQuest;
+import com.questoftherealm.expeditions.quest.QuestFactory;
+import com.questoftherealm.expeditions.quest.quests.NorthExploration;
+import com.questoftherealm.expeditions.quest.quests.StartQuest;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
@@ -43,7 +42,7 @@ class StartQuestTest {
 
         state = new GameState(player, services);
 
-        startQuest = new StartQuest(player);
+        startQuest = new StartQuest(player, state);
         player.setCurQuest(startQuest);
         player.setCurMission(startQuest.getMissions().get(0));
 
@@ -56,21 +55,23 @@ class StartQuestTest {
     @Test
     @DisplayName("Meet_the_Elder completes ONLY after ElderHasTalked is true")
     void meetTheElderCompletion() {
-        Meet_the_Elder mission = (Meet_the_Elder) startQuest.getMissions().get(0);
+        Mission mission = startQuest.getMissions().stream().filter(m -> m.getMissionType() == Missions.MEET_ELDER).toList().getFirst();
+        mission.checkCompletion();
         assertFalse(mission.isCompleted());
-        assertFalse(mission.checkCompletion());
+
         startQuest.setElderHasTalked(true);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
     @Test
     @DisplayName("Meet_the_Elder does not complete when player is not on StartQuest")
     void elderMissionFailsIfWrongQuest() {
-        Meet_the_Elder mission = (Meet_the_Elder) startQuest.getMissions().get(0);
+        Mission mission = startQuest.getMissions().stream().filter(m -> m.getMissionType() == Missions.MEET_ELDER).toList().getFirst();
         startQuest.setElderHasTalked(true);
         player.setCurQuest(mock(NorthExploration.class));
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
     }
 
 
@@ -78,32 +79,37 @@ class StartQuestTest {
     @DisplayName("Gather Supplies requires >=1 potion AND >=5 food")
     void gatherSuppliesLogic() {
         ItemRegistry itemRegistry = new ItemRegistry(new LocalizationService());
-        Gather_Supplies mission = (Gather_Supplies) startQuest.getMissions().get(1);
+        Mission mission = startQuest.getMissions().stream().filter(m -> m.getMissionType() == Missions.GATHER_SUPPLIES).toList().getFirst();
         var inv = player.getInventory();
         inv.clear();
 
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
         inv.addItem(itemRegistry.getItem("Health Potion"), 1, state);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
         inv.clear();
 
         inv.addItem(itemRegistry.getItem("Dried Meat"), 4, state);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
         inv.clear();
 
         inv.addItem(itemRegistry.getItem("Dried Meat"), 5, state);
-        assertFalse(mission.checkCompletion());
-
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
         inv.addItem(itemRegistry.getItem("Health Potion"), 1, state);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
     @Test
     @DisplayName("StartQuest completes when ALL missions completed and updateStatus is called")
     void questCompletesWhenAllMissionsDone() {
-        QuestFactory q = new QuestFactory(player);
+        QuestFactory q = new QuestFactory(player, state);
         player.setQuestFactory(q);
+        startQuest =(StartQuest) q.getQuests().peek();
+        assertNotNull(startQuest);
         for (var m : startQuest.getMissions()) {
             m.setCompleted(true);
         }
@@ -113,6 +119,6 @@ class StartQuestTest {
         startQuest.updateStatus(state);
 
         assertTrue(startQuest.isCompleted());
-        verify(output).println("You have completed this quest successfully");
+        verify(output).println("You have completed Start Journey successfully");
     }
 }

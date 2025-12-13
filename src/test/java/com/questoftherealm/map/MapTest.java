@@ -40,7 +40,6 @@ class MapTest {
         when(mockPlayer.getY()).thenReturn(0);
 
         map.movePlayer(mockPlayer, 0, 0);
-
         verify(mockPlayer).setCurrentZone(map.getGameMap()[0][0].getDescription());
     }
 
@@ -50,7 +49,6 @@ class MapTest {
         when(mockPlayer.getY()).thenReturn(0);
 
         map.print(mockPlayer, mockState);
-
         verify(mockOutput, atLeastOnce()).print(anyString());
         verify(mockOutput, atLeastOnce()).println();
     }

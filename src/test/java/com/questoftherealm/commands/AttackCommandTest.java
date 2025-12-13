@@ -99,7 +99,7 @@ class AttackCommandTest {
         doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
         when(curTile.getEnemy("orc")).thenReturn(null);
         command.execute(new String[]{"attack", "orc"}, player, state);
-        verify(output).println("No enemy named 'orc' here!");
+        verify(output).println("No enemy named orc here!");
     }
 
     @Test
@@ -146,7 +146,7 @@ class AttackCommandTest {
         verify(player).addMoney(5, state);
         verify(player).addExp(10);
         verify(curTile).removeEnemy(enemy);
-        verify(output).println("Successful battle! You receive 5Gold and you receive 10XP.");
+        verify(output).println("Successful battle! You receive 5 Gold and you receive 10 XP.");
     }
 }
 //given<something>_when<something>_then<something>

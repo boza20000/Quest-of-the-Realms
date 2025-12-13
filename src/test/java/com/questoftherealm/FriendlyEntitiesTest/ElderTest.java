@@ -3,14 +3,13 @@ package com.questoftherealm.FriendlyEntitiesTest;
 import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.quests.StartQuest;
+import com.questoftherealm.expeditions.quest.quests.StartQuest;
 import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
-import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.items.ItemType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,6 @@ class ElderTest {
 
     @BeforeEach
     void setup() {
-
 
         output = mock(Output.class);
         interactions = mock(MissionInteractions.class);
@@ -57,8 +55,6 @@ class ElderTest {
         when(quest.isElderHasTalked()).thenReturn(true);
 
         elder.talk(state, player, true);
-
-        // Should print the "already talked" message
         verify(output).println(contains("There is nothing else to be said"));
     }
 }

@@ -2,10 +2,8 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.MissionConditionType;
-import com.questoftherealm.expeditions.Quest;
-import com.questoftherealm.expeditions.quests.StartQuest;
-import com.questoftherealm.expeditions.missions.Meet_the_Elder;
+
+import com.questoftherealm.expeditions.quest.quests.StartQuest;
 import com.questoftherealm.game.ConsoleOutput;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.GameServices;
@@ -13,10 +11,11 @@ import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.mockito.Mockito.*;
 
 class QuestProgressTest {
@@ -24,27 +23,36 @@ class QuestProgressTest {
     private Player player;
     private CompleteQuestCommand questProgressCommand;
     private GameState state;
-    private GameServices services;
     private Output output;
+
 
     @BeforeEach
     void setup() {
-        player = new Player("TestHero", PlayerTypes.Warrior,state);
-        output = new ConsoleOutput();
-        services = new GameServices(output);
-        state = new GameState(player, services);
+
+        output = mock(Output.class);
+        GameServices services = new GameServices(output);
+        state = mock(GameState.class);
+        when(state.getGameServices()).thenReturn(services);
         questProgressCommand = new CompleteQuestCommand();
+        LocalizationService localizationService = new LocalizationService();
+        ItemRegistry itemRegistry = new ItemRegistry(localizationService);
+        when(state.getMessages()).thenReturn(localizationService);
+        when(state.getItemRegistry()).thenReturn(itemRegistry);
+        player = spy(new Player("TestHero", PlayerTypes.Warrior, state));
+        when(state.getPlayer()).thenReturn(player);
+
     }
+
 
     @Test
     void testMissionCompletion() {
         assertInstanceOf(StartQuest.class, player.getCurQuest(), "Should be Start quest instance");
         StartQuest quest = (StartQuest) player.getCurQuest();
         quest.setElderHasTalked(true);
-        quest.getMissions().forEach(m->{
-            m.setState(state);
-            m.setPlayer(player);
-        }
+        quest.getMissions().forEach(m -> {
+                    m.setState(state);
+                    m.setPlayer(player);
+                }
         );
         player.updateQuestStatus(state);
     }
@@ -55,45 +63,36 @@ class QuestProgressTest {
         assertInstanceOf(StartQuest.class, player.getCurQuest(), "Should be Start quest instance");
         StartQuest quest = (StartQuest) player.getCurQuest();
         quest.setElderHasTalked(true);
-        quest.getMissions().forEach(m->{
+        quest.getMissions().forEach(m -> {
                     m.setState(state);
                     m.setPlayer(player);
                 }
         );
-        player.getInventory().addItem(itemRegistry.getItem("Health Potion"),2,state);
-        player.getInventory().addItem(itemRegistry.getItem("Forest Berries"),5,state);
+        player.getInventory().addItem(itemRegistry.getItem("Health Potion"), 2, state);
+        player.getInventory().addItem(itemRegistry.getItem("Forest Berries"), 5, state);
         player.updateQuestStatus(state);
     }
 
 
     @Test
     void testNoQuestActive() {
-        Output mockOut = mock(Output.class);
-        GameServices mockServices = mock(GameServices.class);
-        GameState mockState = mock(GameState.class);
-        when(mockState.getGameServices()).thenReturn(mockServices);
-        when(mockServices.getOutput()).thenReturn(mockOut);
 
         player.setCurQuest(null);
         player.setCurMission(null);
 
-        questProgressCommand.execute(new String[]{"progress"}, player, mockState);
+        questProgressCommand.execute(new String[]{"progress"}, player, state);
+        verify(output).println(contains("Error: No quest loaded"));
 
-        verify(mockOut).println(contains("Error: No quest loaded"));
     }
 
     @Test
     void testNoMissionActive() {
-        Output mockOut = mock(Output.class);
-        GameServices mockServices = mock(GameServices.class);
-        GameState mockState = mock(GameState.class);
-        when(mockState.getGameServices()).thenReturn(mockServices);
-        when(mockServices.getOutput()).thenReturn(mockOut);
 
         player.setCurQuest(new StartQuest());
         player.setCurMission(null);
 
-        questProgressCommand.execute(new String[]{"progress"}, player, mockState);
-        verify(mockOut).println(contains("Error: No mission loaded"));
+        questProgressCommand.execute(new String[]{"progress"}, player, state);
+        verify(output).println(contains("Error: No mission loaded"));
+
     }
 }

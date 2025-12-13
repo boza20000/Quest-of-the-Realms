@@ -3,8 +3,8 @@ package com.questoftherealm.expeditions.missions;
 import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.expeditions.quests.NorthExploration;
+import com.questoftherealm.expeditions.quest.QuestFactory;
+import com.questoftherealm.expeditions.quest.quests.NorthExploration;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
@@ -43,7 +43,7 @@ class NorthExplorationTest {
         );
 
         state = new GameState(player, services);
-        quest = new NorthExploration(player);
+        quest = new NorthExploration(player, state);
         player.setCurQuest(quest);
         player.setCurMission(quest.getMissions().get(0));
         for (var m : quest.getMissions()) {
@@ -58,11 +58,12 @@ class NorthExplorationTest {
 
         // Player not yet at northern boundary
         player.move(player.getX(), GameConstants.North_Y + 1);
-        assertFalse(mission.checkCompletion(), "Mission should not complete before reaching north");
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted(), "Mission should not complete before reaching north");
 
         // Player reaches northern boundary
         player.move(player.getX(), GameConstants.North_Y - 1);
-        assertTrue(mission.checkCompletion(), "Mission should complete at northern boundary");
+        mission.checkCompletion();
         assertTrue(mission.isCompleted(), "Mission flag should persist after completion");
     }
 
@@ -71,24 +72,25 @@ class NorthExplorationTest {
     void investigateVillagesMissionCompletesProperly() {
         var mission = quest.getMissions().get(1);
 
-        assertFalse(mission.checkCompletion(), "Mission should not complete initially");
-
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
         // Partially done
         quest.setSearchedVillage1(true);
         quest.setSearchedVillage2(true);
         quest.setTalkedToVillager1(true);
-        assertFalse(mission.checkCompletion(), "Mission incomplete until all conditions met");
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted(), "Mission incomplete until all conditions met");
 
         // Fully done
         quest.setTalkedToVillager2(true);
-        assertTrue(mission.checkCompletion(), "Mission should complete when all conditions met");
-        assertTrue(mission.isCompleted(), "Mission flag should persist after completion");
+        mission.checkCompletion();
+        assertTrue(mission.isCompleted(), "Mission should complete when all conditions met");
     }
 
     @Test
     @DisplayName("NorthExploration quest completes only after all missions done")
     void questCompletesOnlyWhenAllMissionsCompleted() {
-        QuestFactory q = new QuestFactory(player);
+        QuestFactory q = new QuestFactory(player, state);
 
         for (var m : quest.getMissions()) {
             m.setState(state);

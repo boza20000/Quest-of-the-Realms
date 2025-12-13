@@ -5,6 +5,8 @@ import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.game.*;
 import com.questoftherealm.game.interfaces.Output;
 
+import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.*;
 import java.io.File;
 import java.nio.file.*;
@@ -37,10 +39,18 @@ class SaveLoadCommandTest {
         ServerClock clock = new ServerClock();
         when(state.getClock()).thenReturn(clock);
         state.setClock(clock);
+
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
+
+        LocalizationService localizationService = new LocalizationService();
+        ItemRegistry itemRegistry =new ItemRegistry(localizationService);
+        when(state.getMessages()).thenReturn(localizationService);
+        when(state.getItemRegistry()).thenReturn(itemRegistry);
         player = new Player("TestHero", PlayerTypes.Warrior,state);
+        when(state.getPlayer()).thenReturn(player);
     }
+
 
     @AfterEach
     void teardown() {
@@ -57,7 +67,7 @@ class SaveLoadCommandTest {
     }
 
     @Test
-    void testLoadGame_ValidInput_LoadsFile() throws Exception {
+    void testLoadGame_ValidInput_LoadsFile()  {
         SaveGame saver = new SaveGame();
         saver.createSave("slot1", player, state);
         LoadCommand cmd = new LoadCommand();

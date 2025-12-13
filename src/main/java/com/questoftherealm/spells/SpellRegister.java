@@ -21,6 +21,9 @@ public class SpellRegister {
     }
 
     public void listSpells() {
+        if(spells.isEmpty()){
+            state.getMessages().getBundle().get("spells.empty");
+        }
         for (Spell s : spells.values()) {
             state.getGameServices().getOutput().println(s.getSpellName() + ": " + s.getDescription());
         }
@@ -31,5 +34,9 @@ public class SpellRegister {
             throw new InvalidCommand(state.getMessages().getBundle().get("error.command.InvalidCommand"));
         }
         return spells.get(name);
+    }
+
+    void clear(){
+        spells.clear();
     }
 }

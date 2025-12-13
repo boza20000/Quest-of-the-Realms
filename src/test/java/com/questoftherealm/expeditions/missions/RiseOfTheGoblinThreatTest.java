@@ -3,8 +3,8 @@ package com.questoftherealm.expeditions.missions;
 import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
+import com.questoftherealm.expeditions.quest.QuestFactory;
+import com.questoftherealm.expeditions.quest.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
@@ -42,7 +42,7 @@ class RiseOfTheGoblinThreatTest {
 
         state = new GameState(player, services);
 
-        quest = new RiseOfTheGoblinThreat(player);
+        quest = new RiseOfTheGoblinThreat(player, state);
         player.setCurQuest(quest);
         player.setCurMission(quest.getMissions().get(0));
 
@@ -58,17 +58,19 @@ class RiseOfTheGoblinThreatTest {
 
         // Not reported yet
         quest.setReportedToKing(false);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         // Reported at wrong position
-        player.move(GameConstants.PLAYER_START.x(), GameConstants.PLAYER_START.y()-1);
+        player.move(GameConstants.PLAYER_START.x(), GameConstants.PLAYER_START.y() - 1);
         quest.setReportedToKing(true);
-        assertFalse(mission.checkCompletion(),"two conditions fulfilled king talked and position is not castle and quest is RiseOfTheGoblinThreat");
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted(), "two conditions fulfilled king talked and position is not castle and quest is RiseOfTheGoblinThreat");
 
         // Correct position & reported
         player.move(GameConstants.Castle.x(), GameConstants.Castle.y());
         quest.setReportedToKing(true);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
@@ -82,7 +84,8 @@ class RiseOfTheGoblinThreatTest {
         quest.setArchersTriedToRecruit(true);
         quest.setMagesTriedToRecruit(true);
         quest.setReportedToKing(true);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         // All recruitments tried
         quest.setKnightsTriedToRecruit(true);
@@ -97,7 +100,7 @@ class RiseOfTheGoblinThreatTest {
         quest.setArchersRecruited(true);
         quest.setMagesRecruited(false);
 
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
         assertEquals(beforePower + 15 + 20, quest.getArmyPower()); // Knights + Archers
     }
@@ -108,17 +111,18 @@ class RiseOfTheGoblinThreatTest {
         var mission = quest.getMissions().get(2);
 
         quest.setDefeated(false);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         quest.setDefeated(true);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
     @Test
     @DisplayName("RiseOfTheGoblinThreat quest completes only after all missions done")
     void questCompletesOnlyAfterAllMissionsDone() {
-        QuestFactory q = new QuestFactory(player);
+        QuestFactory q = new QuestFactory(player, state);
         player.setQuestFactory(q);
 
         for (var m : quest.getMissions()) {

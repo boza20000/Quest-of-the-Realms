@@ -40,11 +40,14 @@ class MoveCommandTest {
                 null,
                 false
         ));
-        state = mock(GameState.class);
+
         output = mock(Output.class);
         GameServices services = mock(GameServices.class);
-        when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
+
+        GameState s = new GameState(player,services);
+        state = spy(s);
+        when(state.getGameServices()).thenReturn(services);
 
         map = mock(Map.class);
         currentTile = mock(Tile.class);
@@ -92,6 +95,6 @@ class MoveCommandTest {
     @Test
     void execute_MissingArguments_PrintsUsage() {
         moveCommand.execute(new String[]{"move"}, player, state);
-        verify(output).println("Usage: " + moveCommand.getDescription());
+        verify(output).println("Usage: " + moveCommand.getDescription(state));
     }
 }

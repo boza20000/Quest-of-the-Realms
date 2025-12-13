@@ -29,7 +29,6 @@ public class GameState {
         this.gameOver = false;
         this.isSimulation = false;
         clock = new ServerClock();
-
     }
 
     public Player getPlayer() {

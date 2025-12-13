@@ -14,7 +14,7 @@ public class NorthExploration extends Quest {
     public NorthExploration(Player player, GameState state) {
         super(QuestTypes.NORTH_EXPLORATION,player,state);
     }
-    protected NorthExploration() {
+    public NorthExploration() {
         super();
     }
 

@@ -3,8 +3,8 @@ package com.questoftherealm.expeditions.missions;
 import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.expeditions.quests.GoblinAmbush;
+import com.questoftherealm.expeditions.quest.QuestFactory;
+import com.questoftherealm.expeditions.quest.quests.GoblinAmbush;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
@@ -42,12 +42,13 @@ class GoblinAmbushTest {
 
         state = new GameState(player, services);
 
-        quest = new GoblinAmbush(player);
+        quest = new GoblinAmbush(player,state);
         player.setCurQuest(quest);
         player.setCurMission(quest.getMissions().get(0));
 
         for (var m : quest.getMissions()) {
             m.setState(state);
+            m.setPlayer(player);
         }
     }
 
@@ -58,13 +59,15 @@ class GoblinAmbushTest {
 
         // Wrong positions
         player.move(GameConstants.Goblin_Camp.x() + 1, GameConstants.Goblin_Camp.y());
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
         player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y() + 1);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         // Correct position
         player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
@@ -76,11 +79,12 @@ class GoblinAmbushTest {
         // Camp not found yet
         quest.setCampFound(false);
         player.move(GameConstants.Goblin_Camp.x(), GameConstants.Goblin_Camp.y());
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
         // Camp found
         quest.setCampFound(true);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
@@ -88,16 +92,14 @@ class GoblinAmbushTest {
     @DisplayName("Ambushed completes only when playerAmbushed true and prior missions done")
     void ambushedMissionCompletesProperly() {
         var mission = quest.getMissions().get(2);
+        mission.setCompleted(false);
 
         quest.setPlayerAmbushed(true);
         quest.updateStatus(state);
-        assertFalse(mission.checkCompletion());
-        // Prior missions done
-        quest.getMissions().get(0).setCompleted(true);
-        quest.getMissions().get(1).setCompleted(true);
-        quest.setPlayerAmbushed(true);
-        quest.setCampFound(true);
-        assertTrue(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted(),"position should be the camp");
+        player.move(GameConstants.Goblin_Camp.x(),GameConstants.Goblin_Camp.y());
+        mission.checkCompletion();
         assertTrue(mission.isCompleted());
     }
 
@@ -106,20 +108,20 @@ class GoblinAmbushTest {
     void escapeToSafetyMissionCompletesProperly() {
         var mission = quest.getMissions().get(3);
 
-        // Ambush not escaped yet
         quest.setPlayerEscapedAmbush(false);
-        assertFalse(mission.checkCompletion());
+        mission.checkCompletion();
+        assertFalse(mission.isCompleted());
 
-        // Escape done
         quest.setPlayerEscapedAmbush(true);
-        assertTrue(mission.checkCompletion());
-        assertTrue(mission.isCompleted());
+        mission.checkCompletion();
+
+        assertTrue(mission.isCompleted(),"mission completed camp escaped");
     }
 
     @Test
     @DisplayName("GoblinAmbush quest completes only after all missions done")
     void questCompletesOnlyAfterAllMissionsDone() {
-        QuestFactory q = new QuestFactory(player);
+        QuestFactory q = new QuestFactory(player, state);
         player.setQuestFactory(q);
 
         for (var m : quest.getMissions()) {
@@ -129,7 +131,6 @@ class GoblinAmbushTest {
         quest.updateStatus(state);
         assertTrue(quest.isCompleted(), "Quest should complete when all missions done");
 
-        // Make one mission incomplete
         quest.getMissions().get(0).setCompleted(false);
         quest.setCompleted(false);
         quest.updateStatus(state);

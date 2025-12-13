@@ -13,6 +13,8 @@ import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ChestTest {
@@ -24,19 +26,18 @@ class ChestTest {
     private ItemRegistry itemRegistry;
 
     @BeforeEach
-    void setup() {
-
+    void setup() throws Exception {
         Output output = new ConsoleOutput();
         services = new GameServices(output);
         state = new GameState(player, services);
         chest = new Chest(state);
         itemRegistry = new ItemRegistry(new LocalizationService());
         player = new Player("Test", PlayerTypes.Warrior, state);
+        Field f = Chest.class.getDeclaredField("itemRegistry");
+        f.setAccessible(true);
+        f.set(chest,itemRegistry);
     }
 
-    // ---------------------------
-    // NORMAL CASES
-    // ---------------------------
 
     @Test
     void generateRandomItem_NormalCase() {
@@ -58,28 +59,24 @@ class ChestTest {
 
     @Test
     void generateRandomHelmet() {
-        ItemDrop helmet = chest.generateRandomHelmet(player);
+        ItemDrop helmet = chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.HELMET);
         assertEquals(ItemEffect.HELMET, helmet.item().getEffect());
     }
 
     @Test
     void generateRandomChestplate() {
-        ItemDrop chestplate = chest.generateRandomChestplate(player);
+        ItemDrop chestplate = chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.CHESTPLATE);
         assertEquals(ItemEffect.CHESTPLATE, chestplate.item().getEffect());
     }
 
     @Test
     void generateRandomBoots() {
-        ItemDrop boots = chest.generateRandomBoots(player);
+        ItemDrop boots = chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.BOOTS);
         assertEquals(ItemEffect.BOOTS, boots.item().getEffect());
     }
 
-    // ---------------------------
-    // EXCEPTION CASES
-    // ---------------------------
-
     @Test
-    void generateRandomItem_NoItems_Throws() {
+    void generateRandomItem_NoItems_Throws() throws Exception {
         var backup = itemRegistry.getAllItems().stream().toList();
         itemRegistry.getAllItems().clear();
         assertThrows(RandomItemNotGenerated.class, () -> chest.generateRandomItem());
@@ -98,7 +95,7 @@ class ChestTest {
     void generateRandomHelmet_NoHelmet_Throws() {
         var backup = itemRegistry.getAllItems().stream().toList();
         itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.HELMET);
-        assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateRandomHelmet(player));
+        assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.HELMET));
         itemRegistry.getAllItems().addAll(backup);
     }
 
@@ -106,7 +103,7 @@ class ChestTest {
     void generateRandomChestplate_NoChestplate_Throws() {
         var backup = itemRegistry.getAllItems().stream().toList();
         itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.CHESTPLATE);
-        assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateRandomChestplate(player));
+        assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.CHESTPLATE));
         itemRegistry.getAllItems().addAll(backup);
     }
 
@@ -114,7 +111,7 @@ class ChestTest {
     void generateRandomBoots_NoBoots_Throws() {
         var backup = itemRegistry.getAllItems().stream().toList();
         itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.BOOTS);
-        assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateRandomBoots(player));
+        assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.BOOTS));
         itemRegistry.getAllItems().addAll(backup);
     }
 }

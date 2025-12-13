@@ -33,13 +33,16 @@ class UseCommandTest {
         output = mock(Output.class);
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
+        LocalizationService localizationService = new LocalizationService();
+        ItemRegistry registry = new ItemRegistry(localizationService);
+        when(state.getItemRegistry()).thenReturn(registry);
+        when(state.getMessages()).thenReturn(localizationService);
     }
 
     @Test
     void testUseCommandValidItem() throws ItemNotFound {
         UseCommand cmd = new UseCommand();
-        ItemRegistry registry = new ItemRegistry(new LocalizationService());
-        Item potion = registry.getItem("Health Potion");
+        Item potion = state.getItemRegistry().getItem("Health Potion");
         player.getInventory().addItem(potion, 1,state);
         player.getPlayerCharacter().takeDamage(10,state);
 

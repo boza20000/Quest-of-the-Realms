@@ -1,9 +1,8 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.map.Map;
+
 
 public class MapCommand extends Command {
 

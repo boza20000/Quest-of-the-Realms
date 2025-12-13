@@ -21,9 +21,9 @@ public abstract class DamageSpell extends Spell {
         if (!player.getPlayerType().equals(PlayerTypes.Mage)) {
             output.println("🚫 " + state.getMessages().getBundle().get("spells.damageSpell.error.playerType", player.getPlayerCharacter()));
         }
-        enemy.takeDamage(spell.takePower(),state);
+        enemy.takeDamage(spell.takePower(), state);
         player.loseMana(spell.getManaCost());
-        output.println(state.getMessages().getBundle().get("spells.damageSpell.castSpell", spell.getSymbol(), spell.getSpellName()));
+        output.println(state.getMessages().getBundle().get("spells.damageSpell.castSpell", spell.getSpellName(), spell.getSymbol()));
         output.println("💥 " + spell.getDescription());
 
     }

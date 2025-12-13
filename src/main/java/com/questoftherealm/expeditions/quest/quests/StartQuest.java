@@ -11,7 +11,7 @@ public class StartQuest extends Quest {
     public StartQuest(Player player, GameState state) {
         super(QuestTypes.START_QUEST,player,state);
     }
-    protected StartQuest() {
+    public StartQuest() {
         super();
     }
 

@@ -10,6 +10,8 @@ import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.localization.MessageBundle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +35,7 @@ class TileTest {
         mockOutput = mock(Output.class);
 
 
+
         GameServices mockServices = mock(GameServices.class);
         when(mockState.getGameServices()).thenReturn(mockServices);
         when(mockServices.getOutput()).thenReturn(mockOutput);
@@ -45,6 +48,9 @@ class TileTest {
 
     @Test
     void testGenerateContentMarksContentGenerated() {
+       LocalizationService mockL =  mock(LocalizationService.class);
+       when(mockState.getMessages()).thenReturn(mockL);
+       when(mockL.getBundle()).thenReturn(new MessageBundle());
         tile.onEnter(mockPlayer, mockState);
         assertTrue(tile.isContentGenerated());
         verify(mockOutput, atLeastOnce()).println();
@@ -104,7 +110,6 @@ class TileTest {
     void testIsEmptyReturnsTrueWhenNoDropsOrEnemies() {
         tile.getDrops().clear();
         tile.getEnemies().clear();
-
         assertTrue(tile.isEmpty());
     }
 }

@@ -13,8 +13,7 @@ import com.questoftherealm.items.ItemRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class EquipCommandTest {
@@ -44,19 +43,22 @@ class EquipCommandTest {
         ));
         player.getInventory().clear();
         player.setWeapon(null);
-        state = mock(GameState.class);
+
         services = mock(GameServices.class);
         output = mock(Output.class);
+        GameState s = new GameState(player,services);
+        state = spy(s);
 
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
-       // when(state.getItemRegistry()).thenReturn(new ItemRegistry(state));
-        registry = state.getItemRegistry();
         command = new EquipCommand();
+        registry= state.getItemRegistry();
+
     }
 
     @Test
     void equipsItemSuccessfully_WhenItemExistsInInventory() throws ItemNotFound {
+
         Item sword = registry.getItem("Bronze Sword");
         player.getInventory().addItem(sword, 1, state);
         String[] args = {"equip", "Bronze Sword"};
@@ -67,11 +69,15 @@ class EquipCommandTest {
 
     @Test
     void printsError_WhenItemExistsButNotInInventory() throws ItemNotFound {
+        assertNotNull(state.getMessages().getBundle());
+
         Item sword = registry.getItem("Bronze Sword");
         player.getInventory().clear();
         command.execute(new String[]{"equip", "Bronze Sword"}, player, state);
+        String expected = state.getMessages().getBundle()
+                .get("equip.error.notInInventory", "Bronze Sword");
         assertNotSame(sword, player.getWeapon(), "Player should not equip an item not in inventory");
-        verify(output).println("You don't have 'Bronze Sword' in your inventory.");
+        verify(output).println(expected);
     }
 
     @Test
@@ -83,7 +89,7 @@ class EquipCommandTest {
     @Test
     void printsUsage_WhenMissingArguments() {
         command.execute(new String[]{"equip"}, player, state);
-        verify(output).println("Usage: " + command.getDescription());
+        verify(output).println("Usage: " + command.getDescription(state));
     }
 
     @Test

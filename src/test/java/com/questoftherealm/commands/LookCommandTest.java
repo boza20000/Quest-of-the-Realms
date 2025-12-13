@@ -5,6 +5,8 @@ import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +21,7 @@ class LookCommandTest {
 
     @BeforeEach
     void setup() {
-        player = spy(new Player("TestHero", PlayerTypes.Warrior,state));
+
         state = mock(GameState.class);
         output = mock(Output.class);
         GameServices services = mock(GameServices.class);
@@ -27,6 +29,13 @@ class LookCommandTest {
         when(services.getOutput()).thenReturn(output);
         lookCommand = new LookCommand();
         state.setSimulation(true);
+        LocalizationService localizationService = new LocalizationService();
+        ItemRegistry itemRegistry =new ItemRegistry(localizationService);
+        when(state.getMessages()).thenReturn(localizationService);
+        when(state.getItemRegistry()).thenReturn(itemRegistry);
+
+        player = spy(new Player("TestHero", PlayerTypes.Warrior,state));
+
     }
 
     @Test
@@ -39,7 +48,7 @@ class LookCommandTest {
     @Test
     void execute_PrintsUsage_WhenExtraArgumentsProvided() {
         lookCommand.execute(new String[]{"look", "extra"}, player, state);
-        verify(output).println("Usage: " + lookCommand.getDescription());
+        verify(output).println("Usage: " + lookCommand.getDescription(state));
     }
 
     @Test

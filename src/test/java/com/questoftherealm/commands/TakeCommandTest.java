@@ -10,6 +10,7 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,14 +39,18 @@ class TakeCommandTest {
         state = mock(GameState.class);
         services = mock(GameServices.class);
         output = mock(Output.class);
+        MessageBundle m  = new MessageBundle();
+        LocalizationService localizationService = new LocalizationService();
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
-
+        when(state.getMessages()).thenReturn(localizationService);
         map = mock(Map.class);
         tile = mock(Tile.class);
         when(state.getMap()).thenReturn(map);
         when(map.curZone(anyInt(), anyInt())).thenReturn(tile);
-        registry = new ItemRegistry(new LocalizationService());
+        registry = new ItemRegistry(localizationService);
+        when(state.getItemRegistry()).thenReturn(registry);
+
     }
 
     @Test

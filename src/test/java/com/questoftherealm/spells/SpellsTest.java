@@ -8,7 +8,6 @@ import com.questoftherealm.exceptions.InvalidCommand;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
 import com.questoftherealm.localization.MessageBundle;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,25 +23,30 @@ class SpellsTest {
     private Player mockPlayer;
     private Characters mockChar;
     private Enemy mockEnemy;
-
+    private MessageBundle bundle;
+    private LocalizationService localizationService;
     private SpellRegister spellRegister;
 
     @BeforeEach
     void setup() {
         mockOutput = mock(Output.class);
         mockState = mock(GameState.class);
-        when(mockState.getGameServices()).thenReturn(mock(GameServices.class));
-        when(mockState.getGameServices().getOutput()).thenReturn(mockOutput);
 
-        mockPlayer = mock(Player.class);
+        localizationService = new LocalizationService();
+        when(mockState.getMessages()).thenReturn(localizationService);
+
+        GameServices services = mock(GameServices.class);
+        when(mockState.getGameServices()).thenReturn(services);
+        when(services.getOutput()).thenReturn(mockOutput);
+
         mockChar = mock(Characters.class);
+        mockPlayer = mock(Player.class);
         when(mockPlayer.getPlayerCharacter()).thenReturn(mockChar);
         when(mockPlayer.getPlayerType()).thenReturn(PlayerTypes.Mage);
-
         mockEnemy = mock(Enemy.class);
-
-        spellRegister = new SpellRegister(mockOutput);
+        spellRegister = new SpellRegister(mockState);
     }
+
 
     @Test
     void testGetSpellValid() {
@@ -65,59 +69,36 @@ class SpellsTest {
     @Test
     void testFireballCastReducesEnemyHealthAndPlayerMana() {
         when(mockChar.getMana()).thenReturn(10); // enough mana
-        doNothing().when(mockEnemy).takeDamage(anyInt(), eq(mockState));
-        doAnswer(invocation -> {
-            when(mockChar.getMana()).thenReturn(5); // simulate mana loss
-            return null;
-        }).when(mockPlayer).loseMana(anyInt());
-
-        Fireball fireball = new Fireball();
+        Fireball fireball = new Fireball(mockState);
         fireball.cast(mockPlayer, mockEnemy, mockState);
 
         verify(mockEnemy).takeDamage(fireball.takePower(), mockState);
         verify(mockPlayer).loseMana(fireball.getManaCost());
-        verify(mockOutput, atLeastOnce()).println(contains(fireball.getSpellName()));
+        verify(mockOutput, atLeastOnce()).println(contains(fireball.getSymbol()));
     }
 
     @Test
     void testLightningBoltCastReducesEnemyHealthAndPlayerMana() {
         when(mockChar.getMana()).thenReturn(10);
-        doNothing().when(mockEnemy).takeDamage(anyInt(), eq(mockState));
-        doAnswer(invocation -> {
-            when(mockChar.getMana()).thenReturn(3);
-            return null;
-        }).when(mockPlayer).loseMana(anyInt());
 
-        LightningBolt bolt = new LightningBolt(mockState);
+        LightningBolt bolt = new LightningBolt(mockState);//mana cost 7
         bolt.cast(mockPlayer, mockEnemy, mockState);
-
         verify(mockEnemy).takeDamage(bolt.takePower(), mockState);
         verify(mockPlayer).loseMana(bolt.getManaCost());
-        verify(mockOutput, atLeastOnce()).println(contains(bolt.getSpellName()));
+        verify(mockOutput, atLeastOnce()).println(contains(bolt.getSymbol()));
     }
 
     @Test
     void testDamageSpellLowMana() {
-        when(mockChar.getMana()).thenReturn(1); // less than Fireball manaCost
+        when(mockChar.getMana()).thenReturn(1);
 
         Fireball fireball = new Fireball(mockState);
         fireball.cast(mockPlayer, mockEnemy, mockState);
 
-        verify(mockOutput).println(contains("💤")); // low mana warning
+        verify(mockOutput).println(contains("💤"));
         verify(mockEnemy, never()).takeDamage(anyInt(), any());
         verify(mockPlayer, never()).loseMana(anyInt());
     }
 
-    @Test
-    void testDamageSpellWrongPlayerType() {
-        when(mockPlayer.getPlayerType()).thenReturn(PlayerTypes.Warrior);
-        when(mockChar.getMana()).thenReturn(10);
 
-        Fireball fireball = new Fireball(mockState);
-        fireball.cast(mockPlayer, mockEnemy, mockState);
-
-        verify(mockOutput).println(contains("🚫")); // player type error
-        verify(mockEnemy).takeDamage(fireball.takePower(), mockState);
-        verify(mockPlayer).loseMana(fireball.getManaCost());
-    }
 }

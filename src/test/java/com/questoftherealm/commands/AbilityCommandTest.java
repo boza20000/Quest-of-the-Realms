@@ -10,6 +10,8 @@ import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +31,7 @@ class AbilityCommandTest {
 
     @BeforeEach
     void setup() {
-        command = spy(new AbilityCommand()); // IMPORTANT
+        command = spy(new AbilityCommand());
 
         player = spy(new Player(
                 "TestHero",
@@ -100,7 +102,7 @@ class AbilityCommandTest {
         when(state.getMap().curZone(5, 7)).thenReturn(curTile);
         when(curTile.getEnemy("goblin")).thenReturn(null);
         command.execute(new String[]{"super", "goblin"}, player, state);
-        verify(output).println("No enemy named 'goblin' here!");
+        verify(output).println("No enemy named goblin here!");
     }
 
     @Test

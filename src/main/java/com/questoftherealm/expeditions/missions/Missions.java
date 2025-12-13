@@ -48,7 +48,7 @@ public enum Missions {
 
     INFILTRATE_CAMP((p, m) -> p.getCurQuest() instanceof GoblinAmbush q && p.getPosition().equals(GameConstants.Goblin_Camp) && q.isCampFound()),
 
-    AMBUSHED((p, m) -> (p.getCurQuest() instanceof GoblinAmbush q && q.isPlayerAmbushed())),
+    AMBUSHED((p, m) -> (p.getCurQuest() instanceof GoblinAmbush q && p.getPosition().equals(GameConstants.Goblin_Camp) && q.isPlayerAmbushed())),
 
     ESCAPE_TO_SAFETY((p, m) -> p.getCurQuest() instanceof GoblinAmbush q && q.isPlayerEscapedAmbush()),
 

@@ -3,9 +3,9 @@ package com.questoftherealm.FriendlyEntitiesTest;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.expeditions.missions.Investigate_Northern_Villages;
-import com.questoftherealm.expeditions.missions.Travel_North;
-import com.questoftherealm.expeditions.quests.NorthExploration;
+import com.questoftherealm.expeditions.missions.MissionFactory;
+import com.questoftherealm.expeditions.missions.Missions;
+import com.questoftherealm.expeditions.quest.quests.NorthExploration;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.game.*;
@@ -30,7 +30,7 @@ public class VillagerTest {
     private static final String VILLAGER_EXPLORED1 = "✅ The Villager sadly nods. \"We saw them march through... they took everything and headed North.\"";
     private static final String VILLAGER_EXPLORED2 = "✅ Another survivor whispers, \"They were Goblins. They were looking for something.\"";
     private static final String VILLAGER_AVOIDS = "The second survivor avoids eye contact. \"I cannot help you further.\"";
-    private static final String VILLAGER_NOT_KNOWN = "The villager doesn’t seem to know you.";
+    private static final String VILLAGER_NOT_KNOWN = "The villager doesn't seem to know you.";
     private static final String VILLAGER_HAS_NOTHING = "The villager has nothing to say right now.";
 
     @BeforeEach
@@ -60,8 +60,7 @@ public class VillagerTest {
     void talkingWithVillagerOutsideOfVillage() {
         player.setPosition(GameConstants.NorthVillage_1);
         when(player.getCurQuest()).thenReturn(new NorthExploration());
-        when(player.getCurMission()).thenReturn(new Travel_North());
-
+        when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.TRAVEL_NORTH,player,state));
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         villager = (Villager) curTile.getNpcByType(NpcType.VILLAGER);
         villager.talk(state, player, true);
@@ -73,7 +72,7 @@ public class VillagerTest {
         player.setPosition(GameConstants.NorthVillage_1);
         NorthExploration q = new NorthExploration();
         when(player.getCurQuest()).thenReturn(q);
-        when(player.getCurMission()).thenReturn(new Investigate_Northern_Villages());
+        when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.INVESTIGATE_VILLAGES,player,state));
         q.setSearchedVillage1(true);
 
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
@@ -87,7 +86,7 @@ public class VillagerTest {
         player.setPosition(GameConstants.NorthVillage_2);
         NorthExploration quest = new NorthExploration();
         when(player.getCurQuest()).thenReturn(quest);
-        when(player.getCurMission()).thenReturn(new Investigate_Northern_Villages());
+        when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.INVESTIGATE_VILLAGES,player,state));
 
         quest.setSearchedVillage2(false);
 
@@ -103,8 +102,7 @@ public class VillagerTest {
         player.setPosition(GameConstants.NorthVillage_2);
         NorthExploration quest = new NorthExploration();
         when(player.getCurQuest()).thenReturn(quest);
-        when(player.getCurMission()).thenReturn(new Investigate_Northern_Villages());
-
+        when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.INVESTIGATE_VILLAGES,player,state));
         quest.setSearchedVillage2(true);
 
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
@@ -121,8 +119,7 @@ public class VillagerTest {
         player.setPosition(GameConstants.NorthVillage_2);
         NorthExploration quest = new NorthExploration();
         when(player.getCurQuest()).thenReturn(quest);
-        when(player.getCurMission()).thenReturn(new Investigate_Northern_Villages());
-
+        when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.INVESTIGATE_VILLAGES,player,state));
         quest.setSearchedVillage2(true);
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         curTile.getEnemies().clear();
@@ -142,7 +139,7 @@ public class VillagerTest {
         q.setTalkedToVillager2(true);
 
         when(player.getCurQuest()).thenReturn(q);
-        when(player.getCurMission()).thenReturn(new Investigate_Northern_Villages());
+        when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.INVESTIGATE_VILLAGES,player,state));
 
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         villager = (Villager) curTile.getNpcByType(NpcType.VILLAGER);

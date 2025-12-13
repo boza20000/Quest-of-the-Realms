@@ -2,7 +2,7 @@ package com.questoftherealm.FriendlyEntitiesTest;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
+import com.questoftherealm.expeditions.quest.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.friendlyEntities.Entities.King;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.GameServices;
@@ -40,11 +40,8 @@ class KingTest {
         when(player.getCurQuest()).thenReturn(quest);
         when(quest.isReportedToKing()).thenReturn(false);
 
-        king.talk(state, player, true); // simulation = true
-
-        // Should mark quest as reported
+        king.talk(state, player, true);
         verify(quest).setReportedToKing(true);
-        // No output because simulation
         verifyNoInteractions(output);
     }
 
@@ -55,8 +52,6 @@ class KingTest {
         when(quest.isReportedToKing()).thenReturn(true);
 
         king.talk(state, player, true);
-
-        // Should print the "already talked" message
         verify(output).println(contains("The king urges you to go on you way!"));
     }
 }

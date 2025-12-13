@@ -58,8 +58,7 @@ public class QuestFactory {
         if (!quests.isEmpty() && quests.peek().isCompleted()) {
             quests.poll();
         } else if (!quests.isEmpty() && !quests.peek().isCompleted()) {
-            SlowPrinter slowPrinter = new SlowPrinter(state);
-            slowPrinter.slowPrint(state.getMessages().getBundle().get("quest.notReady"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.notReady"));
         } else {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.noMore"));
         }
