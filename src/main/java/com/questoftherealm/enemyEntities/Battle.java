@@ -11,14 +11,14 @@ public class Battle {
     private final Enemy enemy;
     private GameState state;
     private Output output;
-    private CommandFactory commandFactory ;
+    private CommandFactory commandFactory;
 
-    public Battle(Player player, Enemy enemy,GameState state) {
+    public Battle(Player player, Enemy enemy, GameState state) {
         this.player = player;
         this.enemy = enemy;
         this.state = state;
         this.output = state.getGameServices().getOutput();
-        this. commandFactory = new CommandFactory();
+        this.commandFactory = new CommandFactory();
     }
 
     public boolean simulate() {
@@ -27,52 +27,66 @@ public class Battle {
         int escapeCount = 0;
 
         while (!player.getPlayerCharacter().isDead() && enemy.isAlive()) {
-            output.println();
-            output.println(state.getMessages().getBundle().get("battle.status",
-                    player.getPlayerCharacter().getHealth(),
-                    enemy.getHealth()));
-
-            output.println(state.getMessages().getBundle().get("battle.chooseAction"));
-
+            printIntro();
             String choice = state.getGameServices().getInput().nextLine();
 
             switch (choice) {
-                case "1" -> player.getPlayerCharacter().attack(enemy, player,state);
+                case "1" -> player.getPlayerCharacter().attack(enemy, player, state);
 
-                case "2" -> {
-                    player.openInventory(state);
-                    output.println(state.getMessages().getBundle().get("battle.enterItem"));
-                    String[] useCommand = new String[]{state.getGameServices().getInput().nextLine()};
-                    while(true) {
-                        try {
-                            Command cmd = commandFactory.getCommand("use",state);
-                            cmd.execute(useCommand, player, state);
-                        }
-                        catch(Exception e){
-                            continue;
-                        }
-                        break;
-                    }
-                }
+                case "2" -> Choice2();
 
                 case "3" -> {
-                    escapeCount++;
-                    if (Math.random() < 0.5 && escapeCount <= 1) {
-                        output.println(state.getMessages().getBundle().get("battle.escape.success"));
-                        return false;
-                    } else {
-                        output.println(state.getMessages().getBundle().get("battle.escape.fail"));
-                    }
+                    return Choice3(escapeCount);
                 }
 
                 default -> output.println(state.getMessages().getBundle().get("battle.invalidChoice"));
             }
 
             if (enemy.isAlive()) {
-                enemy.attack(player,state);
+                enemy.attack(player, state);
             }
         }
 
+        return handleDead();
+    }
+
+    private void printIntro() {
+        output.println();
+        output.println(state.getMessages().getBundle().get("battle.status",
+                player.getPlayerCharacter().getHealth(),
+                enemy.getHealth()));
+
+        output.println(state.getMessages().getBundle().get("battle.chooseAction"));
+
+    }
+
+    private void Choice2() {
+        player.openInventory(state);
+        output.println(state.getMessages().getBundle().get("battle.enterItem"));
+        String[] useCommand = new String[]{state.getGameServices().getInput().nextLine()};
+        while (true) {
+            try {
+                Command cmd = commandFactory.getCommand("use", state);
+                cmd.execute(useCommand, player, state);
+            } catch (Exception e) {
+                continue;
+            }
+            break;
+        }
+    }
+
+    private boolean Choice3(int escapeCount) {
+        escapeCount++;
+        if (Math.random() < 0.5 && escapeCount <= 1) {
+            output.println(state.getMessages().getBundle().get("battle.escape.success"));
+            return false;
+        } else {
+            output.println(state.getMessages().getBundle().get("battle.escape.fail"));
+        }
+        return true;
+    }
+
+    private boolean handleDead() {
         if (player.getPlayerCharacter().isDead()) {
             output.println(state.getMessages().getBundle().get("battle.player.defeated"));
             return false;

@@ -15,11 +15,11 @@ import java.util.List;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class GoblinGeneral extends Boss  {
-    private GameState state;
     private ItemRegistry itemRegistry;
     private final String NAME = "Azok";
 
     public GoblinGeneral(GameState state) {
+        this.itemRegistry = state.getItemRegistry();
         super(GoblinGeneral_HEALTH,
                 GoblinGeneral_MANA,
                 GoblinGeneral_ATTACK,
@@ -33,10 +33,10 @@ public class GoblinGeneral extends Boss  {
                 null,
                 null,
                 false);
-        this.state = state;
-        this.itemRegistry = state.getItemRegistry();
-        createArmor();
-        createLoot();
+
+
+        this.armor = createArmor();
+        this.loot = createLoot();
         this.weapon = itemRegistry.getItem("Big Battle Axe");
         this.name = NAME;
     }

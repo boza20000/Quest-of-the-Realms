@@ -17,7 +17,6 @@ import java.util.Random;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class GoblinKing extends Boss {
-    private GameState state;
     private ItemRegistry itemRegistry;
     private final String NAME = "Azok";
 
@@ -35,8 +34,10 @@ public class GoblinKing extends Boss {
                 null,
                 null,
                 false);
-        this.state = state;
         itemRegistry = state.getItemRegistry();
+        this.armor = createArmor();
+        this.loot = createLoot();
+        this.weapon = itemRegistry.getItem("Goblin King Sword");
     }
 
     private HashMap<ItemEffect, Item> createArmor() {
