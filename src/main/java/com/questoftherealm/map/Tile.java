@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Loot;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.exceptions.StructureNotGenerated;
 import com.questoftherealm.friendlyEntities.NpcType;
@@ -15,10 +16,9 @@ import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.*;
 import java.util.Map;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Tile {
@@ -27,10 +27,10 @@ public class Tile {
     private final boolean walkable;
     private Locations structure;
     private List<Enemy> enemies = new ArrayList<>();
-    private List<ItemDrop> drops = new ArrayList<>();
+    private final List<ItemDrop> drops = new ArrayList<>();
     private boolean contentGenerated = false;
     private final Map<String, Npc> npcRegister = new HashMap<>();
-    private TravelManger travelManger ;
+    private TravelManger travelManger;
     private Output output;
 
     @JsonCreator
@@ -96,7 +96,7 @@ public class Tile {
             if (structure == null) {
                 this.structure = Locations.generateLocation(type);
             }
-            this.enemies = Enemy.generateEnemies(type,state);
+            this.enemies = Enemy.generateEnemies(type, state);
             this.drops.clear();
             generateItems(state);
         } catch (RandomItemNotGenerated e) {
@@ -109,23 +109,23 @@ public class Tile {
         contentGenerated = true;
     }
 
-    public void onEnter(Player player,GameState state) {
+    public void onEnter(Player player, GameState state) {
         this.output = state.getGameServices().getOutput();
         generateContent(state);
         listContent(state);
     }
 
     private void listContent(GameState state) {
-        displayLocation(state);
         displayItems(state);
+        displayLocation(state);
         displayEnemies(state);
         displayNpc(state);
     }
 
     private void displayNpc(GameState state) {
-        if(!this.npcRegister.isEmpty()){
+        if (!this.npcRegister.isEmpty()) {
             output.println(state.getMessages().getBundle().get("player.see.npc"));
-            for(Npc n : npcRegister.values()){
+            for (Npc n : npcRegister.values()) {
                 output.println("-" + n.getType());
             }
         }
@@ -134,9 +134,9 @@ public class Tile {
     private void displayLocation(GameState state) {
         if (structure == null) return;
         output.println();
-        String structureName= state.getMessages().getBundle().get(structure.getName());
+        String structureName = state.getMessages().getBundle().get(structure.getName());
         output.println(travelManger.getRandomSpotting(structureName));
-        output.println(structureName + state.getMessages().getBundle().get(structure.getDescription()));
+        output.println(structureName + " " + state.getMessages().getBundle().get(structure.getDescription()));
     }
 
     private void displayItems(GameState state) {
@@ -152,7 +152,7 @@ public class Tile {
             return;
         }
         for (Enemy e : enemies) {
-            output.println(state.getMessages().getBundle().get("tile.enemies.spotted", e.getClass().getSimpleName(), e.getDescription()));
+            output.println(state.getMessages().getBundle().get("tile.enemies.spotted", e.getClass().getSimpleName()));
         }
     }
 
@@ -173,7 +173,7 @@ public class Tile {
         }
     }
 
-    public void removeDrop(Item drop, int quantity,GameState state) {
+    public void removeDrop(Item drop, int quantity, GameState state) {
         if (drop == null || quantity <= 0) {
             throw new IllegalArgumentException(state.getMessages().getBundle().get("tile.items.invalid"));
         }
@@ -213,5 +213,17 @@ public class Tile {
                 .filter(n -> n.getType() == type)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void addEnemyLoot(Enemy enemy, GameState state) {
+        List<ItemDrop> enemyItems = new ArrayList<>();
+        for (Loot l : enemy.getLoot()) {
+            Random roll = state.getGameServices().getRandom().random();
+            if (roll.nextDouble() > l.chance()) {
+                int quantity = roll.nextInt(l.min(), l.max());
+                enemyItems.add(new ItemDrop(l.item(), quantity));
+            }
+        }
+        this.drops.addAll(enemyItems);
     }
 }

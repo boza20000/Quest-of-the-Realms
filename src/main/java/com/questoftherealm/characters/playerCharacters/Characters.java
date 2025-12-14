@@ -3,6 +3,7 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.characterInterfaces.Combatant;
+import com.questoftherealm.exceptions.NotEnoughManaException;
 import com.questoftherealm.exceptions.TargetNotFound;
 import com.questoftherealm.game.GameState;
 
@@ -49,11 +50,10 @@ public abstract class Characters implements Combatant {
             return;
         }
         try {
-            int damageDealt = player.getWeapon().getPower() + this.getAttack();
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.attack.hit", target.getClass().getSimpleName(), damageDealt));
-            target.takeDamage(damageDealt, state);
             useMana(player.getWeapon().getMana());
-        } catch (TargetNotFound e) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.attack.hit", target.getClass().getSimpleName(), this.getAttack()));
+            target.takeDamage(this.getAttack(), state);
+        } catch (TargetNotFound | NotEnoughManaException e) {
             state.getGameServices().getOutput().println(e.getMessage());
         }
     }
@@ -165,7 +165,10 @@ public abstract class Characters implements Combatant {
     }
 
     public void useMana(int mana) {
-        setMana(Math.max(0, getMana() - mana));
+        if( getMana() >=mana) {
+            setMana(Math.max(0, getMana() - mana));
+        }
+        throw new NotEnoughManaException("You don't have enough Mana");
     }
 
     public abstract void activateAbility(Player player, Enemy enemy, GameState state);

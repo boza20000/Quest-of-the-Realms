@@ -113,7 +113,7 @@ class AttackCommandTest {
 
         command.execute(new String[]{"attack", "goblin"}, player, state);
 
-        verify(output).println("Battle was unavailable");
+        verify(output).println("Battle with goblin was unavailable");
     }
 
     @Test

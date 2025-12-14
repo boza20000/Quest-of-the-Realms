@@ -15,7 +15,6 @@ public class EnemyFactory {
             case DARK_MAGE -> new DarkMage(state, ENEMY_CONSTANTS_FACTORY);
             case GIANT_SPIDER -> new GiantSpider(state, ENEMY_CONSTANTS_FACTORY);
             case LOST_SPIRIT -> new Spirit(state, ENEMY_CONSTANTS_FACTORY);
-            case SUSPICIOUS_TRADER -> new SuspiciousTrader(state, ENEMY_CONSTANTS_FACTORY);
         };
     }
 }

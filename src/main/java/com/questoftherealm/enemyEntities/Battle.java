@@ -5,6 +5,7 @@ import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.map.Tile;
 
 public class Battle {
     private Player player;
@@ -23,7 +24,6 @@ public class Battle {
 
     public boolean simulate() {
         output.println(state.getMessages().getBundle().get("battle.start", enemy.getType()));
-
         int escapeCount = 0;
 
         while (!player.getPlayerCharacter().isDead() && enemy.isAlive()) {
@@ -32,11 +32,12 @@ public class Battle {
 
             switch (choice) {
                 case "1" -> player.getPlayerCharacter().attack(enemy, player, state);
-
                 case "2" -> Choice2();
-
                 case "3" -> {
-                    return Choice3(escapeCount);
+                    if(Choice3(escapeCount)){
+                        return false;
+                    }
+
                 }
 
                 default -> output.println(state.getMessages().getBundle().get("battle.invalidChoice"));
@@ -77,13 +78,14 @@ public class Battle {
 
     private boolean Choice3(int escapeCount) {
         escapeCount++;
-        if (Math.random() < 0.5 && escapeCount <= 1) {
+        double roll = state.getGameServices().getRandom().randomDouble(1);
+        if (roll < 0.4 && escapeCount <= 1) {
             output.println(state.getMessages().getBundle().get("battle.escape.success"));
-            return false;
+            return true;
         } else {
             output.println(state.getMessages().getBundle().get("battle.escape.fail"));
         }
-        return true;
+        return false;
     }
 
     private boolean handleDead() {
@@ -92,6 +94,10 @@ public class Battle {
             return false;
         } else {
             output.println(state.getMessages().getBundle().get("battle.enemy.defeated", enemy.getType()));
+            Tile curTile = state.getMap().curZone(player.getX(),player.getY());
+            if(curTile!=null){
+                curTile.addEnemyLoot(enemy,state);
+            }
             return true;
         }
     }

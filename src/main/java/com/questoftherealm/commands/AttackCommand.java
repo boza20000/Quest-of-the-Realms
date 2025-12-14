@@ -28,10 +28,14 @@ public class AttackCommand extends Command {
             return;
         }
         boolean isKilled = false;
+        if(chosenEnemy.isDead()){
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.enemyDead", enemyName));
+            return;
+        }
         try {
             isKilled = chosenEnemy.interact(player,state);
         } catch (Exception e) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable",enemyName));
         }
         if (isKilled) {
             int gold = 5;

@@ -12,9 +12,4 @@ public class GiantSpider extends Enemy {
     public GiantSpider(GameState state, EnemyConstants constants){
         super(constants.createEnemy(EnemyType.GIANT_SPIDER,state));
     }
-
-    @Override
-    public List<ItemDrop> dropLoot() {
-        return List.of();
-    }
 }

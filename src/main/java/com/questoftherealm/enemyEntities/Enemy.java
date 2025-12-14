@@ -1,20 +1,20 @@
 package com.questoftherealm.enemyEntities;
 
-import com.questoftherealm.enemyEntities.EnemiesInterfaces.Fightable;
-import com.questoftherealm.enemyEntities.EnemiesInterfaces.Lootable;
+
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.EnemiesInterfaces.Fightable;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.RandomService;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.map.TileTypes;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.questoftherealm.enemyEntities.EnemyFactory.createEnemy;
 
-public abstract class Enemy implements Fightable, Lootable {
+public abstract class Enemy implements Fightable {
     private final String description;
     private final EnemyType type;
     private int health;
@@ -41,7 +41,7 @@ public abstract class Enemy implements Fightable, Lootable {
     @Override
     public void attack(Player player, GameState state) {
         int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
-        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.attack.player"));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.attack.player",this.getClass().getSimpleName(),damage));
         player.getPlayerCharacter().takeDamage(damage, state);
     }
 
@@ -68,14 +68,14 @@ public abstract class Enemy implements Fightable, Lootable {
 
     public static List<Enemy> generateEnemies(TileTypes type, GameState state) {
         List<EnemyType> chosenEnemies = new ArrayList<>();
-        ThreadLocalRandom rand = ThreadLocalRandom.current();
+        RandomService rand = state.getGameServices().getRandom();
 
         // Chance of enemies appearing at all
-        int spawnChance = rand.nextInt(100); // 0–99
-        if (spawnChance < 60) { // 60% chance no enemies
+        int spawnChance = rand.randomInt(100); // 0–99
+        if (spawnChance > 80) { // 20% chance no enemies
             return toEnemyObj(chosenEnemies, state); // empty list
         }
-        int countRoll = ThreadLocalRandom.current().nextInt(100);
+        int countRoll = rand.randomInt(100);
         int enemyCount = 0;
 
         if (countRoll < GameConstants.THREE_ENEMY_CHANCE) {
@@ -87,7 +87,7 @@ public abstract class Enemy implements Fightable, Lootable {
         }
         List<EnemyType> pool = enemyPoolForTile(type);
         for (int i = 0; i < enemyCount; i++) {
-            EnemyType picked = pool.get(rand.nextInt(pool.size()));
+            EnemyType picked = pool.get(rand.randomInt(pool.size()));
             chosenEnemies.add(picked);
         }
         return toEnemyObj(chosenEnemies, state);
@@ -104,12 +104,12 @@ public abstract class Enemy implements Fightable, Lootable {
 
     private static List<EnemyType> enemyPoolForTile(TileTypes type) {
         return switch (type) {
-            case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT, EnemyType.SUSPICIOUS_TRADER);
+            case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT);
             case FOREST -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
             case SWAMP -> List.of(EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON);
             case MOUNTAIN -> List.of(EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF);
             case WATER -> List.of(EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN);
-            case VILLAGE -> List.of(EnemyType.BANDIT, EnemyType.WOLF, EnemyType.SUSPICIOUS_TRADER);
+            case VILLAGE -> List.of(EnemyType.BANDIT, EnemyType.WOLF);
             case CASTLE -> List.of(EnemyType.DARK_MAGE, EnemyType.SKELETON);
         };
     }

@@ -37,12 +37,6 @@ public enum Event {
             EnemyType.WOLF
     )),
 
-    TRAVELING_TRADER(new EventData(
-            "event.travelingTrader.name",
-            "event.travelingTrader.desc",
-            EnemyType.SUSPICIOUS_TRADER
-    )),
-
     LOST_SPIRIT(new EventData(
             "event.lostSpirit.name",
             "event.lostSpirit.desc",
@@ -75,13 +69,13 @@ public enum Event {
 
     public static Event generateEvent(TileTypes type, GameState state) {
         return switch (type) {
-            case GRASS -> randomOf(state, BANDIT_AMBUSH, WOLF_PACK, TRAVELING_TRADER, LOST_SPIRIT);
+            case GRASS -> randomOf(state, BANDIT_AMBUSH, WOLF_PACK, LOST_SPIRIT);
             case FOREST -> randomOf(state, WOLF_PACK, CURSED_GRAVEYARD, GIANT_SPIDER_NEST);
             case SWAMP -> randomOf(state, DARK_RITUAL, LOST_SPIRIT, GIANT_SPIDER_NEST);
-            case VILLAGE -> randomOf(state, TRAVELING_TRADER, LOST_SPIRIT);
+            case VILLAGE -> randomOf(state, LOST_SPIRIT);
             case CASTLE -> randomOf(state, BANDIT_AMBUSH);
             case MOUNTAIN -> randomOf(state, WOLF_PACK, LOST_SPIRIT);
-            case WATER -> randomOf(state, TRAVELING_TRADER, GOBLIN_CAMP, LOST_SPIRIT);
+            case WATER -> randomOf(state, GOBLIN_CAMP, LOST_SPIRIT);
         };
     }
 

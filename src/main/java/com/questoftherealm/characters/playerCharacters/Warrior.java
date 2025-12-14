@@ -1,19 +1,17 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.characterInterfaces.Trader;
+import com.questoftherealm.characters.characterInterfaces.Trading;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.enemyEntities.entities.SuspiciousTrader;
 
+import com.questoftherealm.friendlyEntities.Entities.Trader;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemRegistry;
-import com.questoftherealm.localization.MessageBundle;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
-public class Warrior extends Characters implements Trader {
+public class Warrior extends Characters implements Trading {
 
     public Warrior() {
         super(WARRIOR_HEALTH, WARRIOR_MANA, WARRIOR_ATTACK, WARRIOR_DEFENCE, WARRIOR_ARMOR, WARRIOR_CHARISMA, WARRIOR_SPELLS, WARRIOR_INTELLIGENCE);
@@ -24,7 +22,7 @@ public class Warrior extends Characters implements Trader {
     }
 
     @Override
-    public void buyItem(SuspiciousTrader trader, Player player, Item item, int quantity, GameState state) {
+    public void buyItem(Trader trader, Player player, Item item, int quantity, GameState state) {
         if (player.getInventory().getItems().size() == GameConstants.MAX_ITEMS_IN_INVENTORY) {
             if (hasSpace(player, item, quantity)) {
                 state.getGameServices().getOutput().println("Not enough space in inventory");
@@ -50,7 +48,7 @@ public class Warrior extends Characters implements Trader {
     }
 
     @Override
-    public void sellItem(Player player, SuspiciousTrader trader, Item item, int quantity, GameState state) {
+    public void sellItem(Player player, Trader trader, Item item, int quantity, GameState state) {
         player.addMoney(item.getPrice() * quantity, state);
         player.getInventory().removeItem(item, quantity, state);
     }

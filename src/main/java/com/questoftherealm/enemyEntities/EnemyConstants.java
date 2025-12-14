@@ -15,7 +15,6 @@ public class EnemyConstants {
             case DARK_MAGE -> DARK_MAGE(state, state.getItemRegistry());
             case GIANT_SPIDER -> GIANT_SPIDER(state, state.getItemRegistry());
             case LOST_SPIRIT -> SPIRIT(state, state.getItemRegistry());
-            case SUSPICIOUS_TRADER -> TRAVELING_TRADER(state, state.getItemRegistry());
         };
     }
 
@@ -134,20 +133,4 @@ public class EnemyConstants {
         );
     }
 
-    public EnemyData TRAVELING_TRADER(GameState state, ItemRegistry registry) {
-        return new EnemyData(
-                state.getMessages().getBundle().get("enemy.trader.desc"),
-                EnemyType.SUSPICIOUS_TRADER,
-                40,
-                2,
-                1,
-                List.of(),
-                null,
-                List.of(
-                        new Loot(registry.getItem("Health Potion"), 0.5, 1, 2),
-                        new Loot(registry.getItem("Mana Potion"), 0.4, 1, 2)
-                ),
-                false
-        );
-    }
 }

@@ -7,7 +7,6 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemDrop;
 
 import java.util.HashMap;
 

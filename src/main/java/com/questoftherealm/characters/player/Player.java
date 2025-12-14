@@ -393,7 +393,7 @@ public class Player implements InventoryHandler, Explorer {
             case RESTORE_MANA ->
                     playerCharacter.setMana(Math.min(item.getPower() + playerCharacter.getMana(), MAX_MANA));
             case BUFF_STRENGTH ->
-                    playerCharacter.setAttack(Math.min(playerCharacter.getAttack() + item.getPower(), MAX_ATTACK));
+                    playerCharacter.setAttack(Math.min(playerCharacter.getAttack() + item.getPower(), MAX_ATTACK/2));
             case RESTORE_HP ->
                     playerCharacter.setHealth(Math.min(playerCharacter.getHealth() + item.getPower(), MAX_HEALTH));
 //                case SPELL_FIRE -> curCharacter.castSpell("fireball", item.getPower());
