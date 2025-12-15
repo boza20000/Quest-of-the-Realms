@@ -87,7 +87,7 @@ public enum Locations {
         if (structure == null || structure.isBlank()) {
             return null;
         }
-        String formatted = structure.trim().toLowerCase();
+        String formatted = String.join("_",structure.toUpperCase().split("\\s+"));
 
         for (Locations l : Locations.values()) {
             if (l.name().equalsIgnoreCase(formatted) || l.data.name().equalsIgnoreCase(formatted)) {

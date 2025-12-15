@@ -6,10 +6,8 @@ import com.questoftherealm.game.InputService;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.ArtLocalization;
 import com.questoftherealm.localization.MessageBundle;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import static com.questoftherealm.game.GameConstants.RED;
 import static com.questoftherealm.game.GameConstants.RESET;
 

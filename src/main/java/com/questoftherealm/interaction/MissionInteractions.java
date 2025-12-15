@@ -4,7 +4,6 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.BattleFactory;
 import com.questoftherealm.enemyEntities.EnemyFactory;
 import com.questoftherealm.enemyEntities.EnemyType;
-
 import com.questoftherealm.expeditions.missions.*;
 import com.questoftherealm.expeditions.quest.quests.GoblinAmbush;
 import com.questoftherealm.game.GameState;

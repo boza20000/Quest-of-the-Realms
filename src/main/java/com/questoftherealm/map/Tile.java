@@ -115,7 +115,7 @@ public class Tile {
         listContent(state);
     }
 
-    private void listContent(GameState state) {
+    public void listContent(GameState state) {
         displayItems(state);
         displayLocation(state);
         displayEnemies(state);

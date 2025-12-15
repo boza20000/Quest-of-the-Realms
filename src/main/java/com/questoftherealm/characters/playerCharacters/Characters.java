@@ -168,7 +168,9 @@ public abstract class Characters implements Combatant {
         if( getMana() >=mana) {
             setMana(Math.max(0, getMana() - mana));
         }
-        throw new NotEnoughManaException("You don't have enough Mana");
+        else {
+            throw new NotEnoughManaException("You don't have enough Mana");
+        }
     }
 
     public abstract void activateAbility(Player player, Enemy enemy, GameState state);

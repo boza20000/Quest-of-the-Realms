@@ -1,7 +1,6 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
 import com.questoftherealm.map.Map;

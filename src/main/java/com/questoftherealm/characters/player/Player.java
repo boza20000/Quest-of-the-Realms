@@ -13,8 +13,10 @@ import com.questoftherealm.expeditions.quest.QuestFactory;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.Position;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.ExploreManager;
 import com.questoftherealm.items.*;
+import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Locations;
 import com.questoftherealm.map.Tile;
@@ -302,32 +304,35 @@ public class Player implements InventoryHandler, Explorer {
             curTile.onEnter(this, state);
         } else {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.tile.empty"));
+            curTile.listContent(state);
         }
+
     }
 
     @Override
     public void exploreStructure(String structure, GameState state) {
         Locations location = Locations.getStructure(structure);
+        MessageBundle bundle = state.getMessages().getBundle();
+        Output output =  state.getGameServices().getOutput();
         if (location == null) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("structure.no.exist"));
+            output.println(bundle.get("structure.no.exist"));
             return;
         }
-        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.approach.structure", location.getName()));
-        state.getGameServices().getOutput().println(location.getDescription());
-        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.decision.structure"));
-        state.getGameServices().getOutput().print(state.getMessages().getBundle().get("console.enter.command.symbol"));
-        String line = state.getGameServices().getInput().nextLine();
+        output.println(bundle.get("player.approach.structure",bundle.get(location.getName())));
+        output.println(bundle.get("player.decision.structure"));
+        output.print(bundle.get("console.enter.command.symbol"));
+        String line = state.getGameServices().getInput().nextLine().toUpperCase();
         switch (line.toUpperCase()) {
             case "ENTER" -> {
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.enter.structure"));
+                output.println(bundle.get("player.enter.structure"));
                 ExploreManager interaction = new ExploreManager();
                 interaction.exploreStructure(location, this, state);
             }
             case "LEAVE" -> {
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.default.structure"));
+                output.println(bundle.get("player.default.structure"));
             }
             default -> {
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.leave.structure"));
+                output.println(bundle.get("player.leave.structure"));
             }
         }
 

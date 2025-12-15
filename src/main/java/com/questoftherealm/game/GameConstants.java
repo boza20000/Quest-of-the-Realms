@@ -1,12 +1,11 @@
 package com.questoftherealm.game;
 
-import com.questoftherealm.localization.MessageBundle;
-
 import java.util.List;
 import java.util.Random;
 
 public final class GameConstants {
     public static final String PLAYER_SPAWN = "Castle";
+    public static final int MANA_PER_MOVE = 5;
     private static final Random random = new Random();
     private GameConstants() {
     }

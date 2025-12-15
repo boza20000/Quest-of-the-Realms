@@ -34,7 +34,6 @@ public class GameLoop {
         }
 
         endGame(game);
-
     }
 
     private void endGame(Game game) {

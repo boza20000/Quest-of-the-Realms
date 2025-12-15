@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.SaveError;
-
 import java.io.File;
 import java.io.IOException;
 

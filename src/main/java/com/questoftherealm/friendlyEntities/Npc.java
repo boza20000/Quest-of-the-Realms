@@ -3,7 +3,6 @@ package com.questoftherealm.friendlyEntities;
 import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.interaction.MissionInteractions;
-
 import java.util.Objects;
 
 public abstract class Npc implements Friendly {
