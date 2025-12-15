@@ -4,9 +4,12 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.Position;
 import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.map.TileTypes;
+
+import java.util.Arrays;
 
 public class MoveCommand extends Command {
 
@@ -30,27 +33,52 @@ public class MoveCommand extends Command {
 
     @Override
     public void execute(String[] args, Player player, GameState state) {
+
         TravelManger travelManger = new TravelManger(state);
         SlowPrinter slowPrinter = new SlowPrinter(state);
+
         if (!makeSafe(args, player, state)) {
             return;
         }
+
         if (state.getMap().curZone(player.getX(), player.getY()) == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.error.undefinedArea"));
             return;
         }
 
         String direction = args[1].toLowerCase();
-        int x = player.getX();
-        int y = player.getY();
+        Position current = new Position(player.getX(), player.getY());
+        Position next = handleMoving(direction, current.x(), current.y(), slowPrinter, state);
 
+        if (next.equals(current)) {
+            return;
+        }
+
+        if (state.isSimulation()) {
+            handleSimulation(state, player, next.x(), next.y());
+            return;
+        }
+
+        TileTypes start = state.getMap().curZone(player.getX(), player.getY()).getType();
+        handleStartTile(player, state, direction, next.x(), next.y(), travelManger);
+
+        if (state.getMap().curZone(player.getX(), player.getY()) == null) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.info.undefinedDestination"));
+            return;
+        }
+
+        TileTypes end = state.getMap().curZone(player.getX(), player.getY()).getType();
+        handleEndTile(player, state, start, travelManger, end, slowPrinter);
+
+    }
+
+    private Position handleMoving(String direction, int x, int y, SlowPrinter slowPrinter, GameState state) {
         switch (direction) {
             case "north" -> {
                 if (y - 1 >= GameConstants.MAP_START) {
                     y -= 1;
                 } else {
                     slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherNorth"));
-                    return;
                 }
             }
             case "south" -> {
@@ -58,7 +86,6 @@ public class MoveCommand extends Command {
                     y += 1;
                 } else {
                     slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherSouth"));
-                    return;
                 }
             }
             case "east" -> {
@@ -66,7 +93,6 @@ public class MoveCommand extends Command {
                     x += 1;
                 } else {
                     slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherEast"));
-                    return;
                 }
             }
             case "west" -> {
@@ -74,30 +100,29 @@ public class MoveCommand extends Command {
                     x -= 1;
                 } else {
                     slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.furtherWest"));
-                    return;
                 }
             }
-            default -> {
-                slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.invalidDirection"));
-                return;
-            }
+            default -> slowPrinter.slowPrint(state.getMessages().getBundle().get("move.error.invalidDirection"));
         }
-        if (state.isSimulation()) {
-            player.move(x, y);
-            state.getMap().movePlayer(player, player.getX(), player.getY());
-            return;
-        }
-        TileTypes start = state.getMap().curZone(player.getX(), player.getY()).getType();
+        return new Position(x, y);
+    }
+
+    private void handleEndTile(Player player, GameState state, TileTypes start, TravelManger travelManger, TileTypes end, SlowPrinter slowPrinter) {
+        slowPrinter.slowPrint(travelManger.getTransition(start, end));
+        slowPrinter.slowPrint(state.getMessages().getBundle().get("move.info.enteredZone", end.toString().toUpperCase()));
+        increasePlayerManaPerMove(player);
+    }
+
+    private void handleStartTile(Player player, GameState state, String direction, int x, int y, TravelManger travelManger) {
         pathToDestination(direction, player, state, travelManger);
         player.move(x, y);
         state.getMap().movePlayer(player, player.getX(), player.getY());
-        if (state.getMap().curZone(player.getX(), player.getY()) == null) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.info.undefinedDestination"));
-            return;
-        }
-        TileTypes end = state.getMap().curZone(player.getX(), player.getY()).getType();
-        slowPrinter.slowPrint(travelManger.getTransition(start, end));
-        slowPrinter.slowPrint(state.getMessages().getBundle().get("move.info.enteredZone", end.toString().toUpperCase()));
+    }
+
+    private void handleSimulation(GameState state, Player player, int x, int y) {
+        player.move(x, y);
+        state.getMap().movePlayer(player, player.getX(), player.getY());
+        increasePlayerManaPerMove(player);
     }
 
 
@@ -113,6 +138,11 @@ public class MoveCommand extends Command {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.error.walkingFailed"));
         }
 
+    }
+
+    private void increasePlayerManaPerMove(Player player) {
+        int manaPerMove = GameConstants.MANA_PER_MOVE;
+        player.getPlayerCharacter().setMana(player.getPlayerCharacter().getMana() + manaPerMove);
     }
 
 }
