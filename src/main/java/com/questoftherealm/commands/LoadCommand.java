@@ -2,7 +2,9 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.LoadGame;
+import com.questoftherealm.interaction.MissionInteractions;
 
 public class LoadCommand extends Command {
 
@@ -11,25 +13,27 @@ public class LoadCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "load [save name] — loads a saved game by its name";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("load.description");
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("load.usage", getDescription(state)));
             return false;
         }
         return true;
     }
+
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
         LoadGame loadGame = new LoadGame();
-        loadGame.loadGameSave(args[1]);
+        loadGame.loadGameSave(args[1],state);
+        MissionInteractions missionInteractions = new MissionInteractions(state);
+        missionInteractions.worldStart(state.getPlayer());
     }
 }

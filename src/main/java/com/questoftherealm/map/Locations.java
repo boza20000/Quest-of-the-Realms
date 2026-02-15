@@ -1,85 +1,99 @@
 package com.questoftherealm.map;
 
+import com.questoftherealm.game.GameState;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public enum Locations {
-    ABANDONED_TOWER("Abandoned Tower", "A crumbling tower that once served as a lookout, now eerily silent."),
-    FORGOTTEN_RUINS("Forgotten Ruins", "The remains of a lost civilization, swallowed by time."),
-    CRUMBLING_WATCHTOWER("Crumbling Watchtower", "Once a proud guard post, now reduced to rubble."),
-    MAGES_TOWER("Mage’s Tower", "A spire where a sorcerer once dwelled, filled with lingering magic."),
-    IRON_MINE("Iron Mine", "A mine carved into the earth, rich in ore but plagued with danger."),
-    SHADOW_CAVERN("Shadow Cavern", "A yawning cave said to shelter creatures of the dark."),
-    SACRED_GROVE("Sacred Grove", "An ancient place, protected by nature’s magic."),
-    CRYSTAL_LAKE("Crystal Lake", "Shimmering waters that seem to hum with magical energy."),
-    BANDIT_CAMP("Bandit Camp", "A rough encampment of outlaws and thieves."),
-    SUNKEN_SWAMP("Sunken Swamp", "Rotting wetlands where the unwary often vanish."),
-    ANCIENT_ALTAR("Ancient Altar", "A stone altar covered in strange markings, radiating mystery."),
-    ABANDONED_HUT("Abandoned Hut", "A decrepit shack, its walls sagging with secrets long forgotten.");
+    ABANDONED_TOWER(new LocationData(
+            "location.abandonedTower.name",
+            "location.abandonedTower.desc"
+    )),
+    FORGOTTEN_RUINS(new LocationData(
+            "location.forgottenRuins.name",
+            "location.forgottenRuins.desc"
+    )),
+    CRUMBLING_WATCHTOWER(new LocationData(
+            "location.crumblingWatchtower.name",
+            "location.crumblingWatchtower.desc"
+    )),
+    MAGES_TOWER(new LocationData(
+            "location.magesTower.name",
+            "location.magesTower.desc"
+    )),
+    IRON_MINE(new LocationData(
+            "location.ironMine.name",
+            "location.ironMine.desc"
+    )),
+    SHADOW_CAVERN(new LocationData(
+            "location.shadowCavern.name",
+            "location.shadowCavern.desc"
+    )),
+    SACRED_GROVE(new LocationData(
+            "location.sacredGrove.name",
+            "location.sacredGrove.desc"
+    )),
+    CRYSTAL_LAKE(new LocationData(
+            "location.crystalLake.name",
+            "location.crystalLake.desc"
+    )),
+    BANDIT_CAMP(new LocationData(
+            "location.banditCamp.name",
+            "location.banditCamp.desc"
+    )),
+    SUNKEN_SWAMP(new LocationData(
+            "location.sunkenSwamp.name",
+            "location.sunkenSwamp.desc"
+    )),
+    ANCIENT_ALTAR(new LocationData(
+            "location.ancientAltar.name",
+            "location.ancientAltar.desc"
+    )),
+    ABANDONED_HUT(new LocationData(
+            "location.abandonedHut.name",
+            "location.abandonedHut.desc"
+    ));
 
-    //add Goblin Locations for the quest
+    private final LocationData data;
 
-    private final String name;
-    private final String description;
+    Locations(final LocationData data) {
+        this.data = data;
+    }
 
-    Locations(String name, String description) {
-        this.name = name;
-        this.description = description;
+    public String getName() {
+        return data.name();
+    }
+
+    public String getDescription() {
+        return data.description();
     }
 
     public static Locations generateLocation(TileTypes type) {
         return switch (type) {
-            case GRASS -> randomOf(
-                    Locations.SACRED_GROVE,
-                    Locations.ABANDONED_HUT,
-                    Locations.ANCIENT_ALTAR
-            );
-            case FOREST -> randomOf(
-                    Locations.FORGOTTEN_RUINS,
-                    Locations.CRUMBLING_WATCHTOWER,
-                    Locations.ABANDONED_TOWER
-            );
-            case SWAMP -> randomOf(
-                    Locations.SUNKEN_SWAMP,
-                    Locations.SHADOW_CAVERN,
-                    Locations.BANDIT_CAMP
-            );
-            case VILLAGE -> null;
-            case CASTLE -> null;
-            case MOUNTAIN -> randomOf(
-                    Locations.IRON_MINE,
-                    Locations.ABANDONED_TOWER,
-                    Locations.CRUMBLING_WATCHTOWER
-            );
-            case WATER -> randomOf(
-                    Locations.CRYSTAL_LAKE
-            );
+            case GRASS -> randomOf(SACRED_GROVE, ABANDONED_HUT, ANCIENT_ALTAR);
+            case FOREST -> randomOf(FORGOTTEN_RUINS, CRUMBLING_WATCHTOWER, ABANDONED_TOWER);
+            case SWAMP -> randomOf(SUNKEN_SWAMP, SHADOW_CAVERN, BANDIT_CAMP);
+            case VILLAGE, CASTLE -> null;
+            case MOUNTAIN -> randomOf(IRON_MINE, ABANDONED_TOWER, CRUMBLING_WATCHTOWER);
+            case WATER -> randomOf(CRYSTAL_LAKE);
         };
     }
 
-
     private static Locations randomOf(Locations... options) {
-        return options[ThreadLocalRandom.current().nextInt(options.length)];//returns random location
+        return options[ThreadLocalRandom.current().nextInt(options.length)];
     }
 
     public static Locations getStructure(String structure) {
         if (structure == null || structure.isBlank()) {
             return null;
         }
-        String formatted = structure.trim().toLowerCase();
+        String formatted = String.join("_",structure.toUpperCase().split("\\s+"));
 
         for (Locations l : Locations.values()) {
-            if (l.name().equalsIgnoreCase(formatted) || l.getName().equalsIgnoreCase(formatted)) {
+            if (l.name().equalsIgnoreCase(formatted) || l.data.name().equalsIgnoreCase(formatted)) {
                 return l;
             }
         }
         return null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }

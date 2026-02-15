@@ -2,17 +2,11 @@ package com.questoftherealm.enemyEntities.entities;
 
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.enemyEntities.EnemyConstants;
-import com.questoftherealm.items.ItemDrop;
-
-import java.util.List;
+import com.questoftherealm.enemyEntities.EnemyType;
+import com.questoftherealm.game.GameState;
 
 public class Skeleton extends Enemy {
-    public Skeleton() {
-        super(EnemyConstants.SKELETON);
-    }
-
-    @Override
-    public List<ItemDrop> dropLoot() {
-        return List.of();
+    public Skeleton(GameState state, EnemyConstants constants) {
+        super(constants.createEnemy(EnemyType.SKELETON, state));
     }
 }

@@ -1,17 +1,26 @@
 package com.questoftherealm.interaction;
 
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
+
 import static com.questoftherealm.game.GameConstants.DELAY_MS;
 
 public class SlowPrinter {
-    public static void slowPrint(String text) {
+    private Output output;
+
+    public SlowPrinter(GameState state) {
+        this.output = state.getGameServices().getOutput();
+    }
+
+    public void slowPrint(String text) {
         for (char c : text.toCharArray()) {
-            System.out.print(c);
+            output.print(String.valueOf(c));
             try {
                 Thread.sleep(DELAY_MS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
-        System.out.println();
+        output.println();
     }
 }

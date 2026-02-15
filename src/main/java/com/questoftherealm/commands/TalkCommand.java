@@ -1,69 +1,60 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.enemyEntities.entities.TraderNPC;
-import com.questoftherealm.friendlyEntities.Entities.Elder;
-import com.questoftherealm.friendlyEntities.Entities.Villager;
-import com.questoftherealm.game.Game;
-import com.questoftherealm.game.GameConstants;
-import com.questoftherealm.game.Position;
+import com.questoftherealm.friendlyEntities.Npc;
+import com.questoftherealm.friendlyEntities.NpcType;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
 
+import java.util.Locale;
+
 public class TalkCommand extends Command {
+
     public TalkCommand() {
         super("talk");
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if (!makeSafe(args, player)) {
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player, state)) {
             return;
         }
+        String target = args[1].toLowerCase(Locale.ROOT);
+        Tile curTile = state.getMap().curZone(player.getX(), player.getY());
+        NpcType npcType = parseNpcType(target);
 
-        String target = args[1].toLowerCase();
-        Position curPos = new Position(player.getX(), player.getY());
-        switch (target) {
-            case "elder" -> {
-                if (!Elder.isHasTalked() && curPos.equals(GameConstants.Castle)) {
-                    Elder elder = new Elder();
-                    elder.talk(player);
-                } else if (!Elder.isHasTalked()) {
-                    System.out.println("In order to talk to the Elder go to the castle.");
-                } else {
-                    System.out.println("You have already done that.");
-                }
-            }
-            case "trader" -> {
-                TraderNPC trader = new TraderNPC();
-                Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
-                if (curTile.getEnemies().contains(trader)) {
-                    trader.talk(player);
-                } else {
-                    System.out.println("No trader spotted in this zone");
-                }
+        if (npcType == null) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.unknownNpc", target));
+            return;
+        }
+        Npc npc = curTile.getNpcByType(npcType);
 
-            }
-            case "villager" -> {
-                Villager villager = new Villager();
-                villager.talk(player);
-            }
-            default -> throw new IllegalArgumentException("No such Target to talk to");
+        if (npc == null) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.noNpcNearby", npcType.name().toLowerCase(Locale.ROOT)));
+            return;
+        }
+        npc.talk(state, player, false);
+    }
+
+    private NpcType parseNpcType(String name) {
+        try {
+            return NpcType.valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 
     @Override
-    public String getDescription() {
-        return "you talk with NPC in order to trade or exchange information";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("talk.description");
     }
 }

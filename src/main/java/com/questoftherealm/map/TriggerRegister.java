@@ -1,96 +1,147 @@
 package com.questoftherealm.map;
 
-import com.questoftherealm.expeditions.missions.*;
-import com.questoftherealm.expeditions.quests.FinalBattle;
-import com.questoftherealm.expeditions.quests.GoblinAmbush;
-import com.questoftherealm.expeditions.quests.NorthExploration;
-import com.questoftherealm.expeditions.quests.RiseOfTheGoblinThreat;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.expeditions.quest.quests.FinalBattle;
+import com.questoftherealm.expeditions.quest.quests.GoblinAmbush;
+import com.questoftherealm.expeditions.quest.quests.NorthExploration;
+import com.questoftherealm.expeditions.quest.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.GameConstants;
-import com.questoftherealm.game.Position;
-import com.questoftherealm.interaction.Interactions;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.interaction.GoblinGeneralManager;
+import com.questoftherealm.interaction.GoblinKingManager;
+import com.questoftherealm.interaction.MissionInteractions;
+import com.questoftherealm.interaction.RecruitmentManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.questoftherealm.expeditions.missions.Ambushed.playerAmbushed;
-import static com.questoftherealm.expeditions.missions.Assemble_an_Army.*;
-import static com.questoftherealm.friendlyEntities.Entities.King.hasTalkedToTheKing;
-
 public final class TriggerRegister {
-    public static final List<LocationTrigger> triggers = new ArrayList<>();
+    private final List<LocationTrigger> triggers = new ArrayList<>();
+    private final RecruitmentManager recruitmentManager;
+    private final MissionInteractions missionInteractions;
+    private final GoblinGeneralManager goblinGeneralManager;
+    private final GoblinKingManager goblinKingManager;
+    private final GameState state;
 
-    static {
+    public TriggerRegister(GameState state) {
+        this.state = state;
+        this.recruitmentManager = new RecruitmentManager(state);
+        this.missionInteractions = new MissionInteractions(state);
+        this.goblinGeneralManager = new GoblinGeneralManager(state);
+        this.goblinKingManager = new GoblinKingManager(state);
+        registerTriggers();
+    }
+
+    public List<LocationTrigger> getTriggers() {
+        return triggers;
+    }
+
+    private void registerTriggers() {
+        registerVillageTriggers();
+        registerGoblinCampTriggers();
+        registerAssemblyArmyTriggers();
+        registerArmyFightTriggers();
+    }
+
+    private void registerVillageTriggers() {
         // Village 1
         triggers.add(new LocationTrigger(GameConstants.NorthVillage_1, player -> {
-            if (player.getCurQuest() instanceof NorthExploration) {
-                Interactions.villageIntro_1();
-                Explore_the_Village.setSearched_1(true);
+            if (TriggerConditions.NORTH_VILLAGE.matches(player)) {
+                missionInteractions.villageIntro_1();
+                ((NorthExploration) player.getCurQuest()).setSearchedVillage1(true);
+                return true;
             }
+            return false;
         }));
 
         // Village 2
         triggers.add(new LocationTrigger(GameConstants.NorthVillage_2, player -> {
-            if (player.getCurQuest() instanceof NorthExploration) {
-                Interactions.villageIntro_2();
-                Explore_the_Village.setSearched_2(true);
+            if (TriggerConditions.NORTH_VILLAGE.matches(player)) {
+                missionInteractions.villageIntro_2();
+                ((NorthExploration) player.getCurQuest()).setSearchedVillage2(true);
+                return true;
             }
+            return false;
         }));
+    }
 
-        // Goblin Camp
+    private void registerGoblinCampTriggers() {
+        // Goblin Camp Search
         triggers.add(new LocationTrigger(GameConstants.Goblin_Camp, player -> {
-            if (player.getCurQuest() instanceof GoblinAmbush) {
-                Interactions.goblinCampSpotted();
-                Explore_Nearby_Forests.campFound = true;
-                player.updateQuestStatus();
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    System.out.println("Sleep problem");
-                    e.getSuppressed();//Make custom exception
-                }
-                Interactions.goblinsTalkingOverheard();
-                playerAmbushed = true;
+            if (TriggerConditions.GOBLIN_CAMP_SEARCH.matches(player)) {
+                missionInteractions.goblinCampSpotted();
+                ((GoblinAmbush) player.getCurQuest()).setCampFound(true);
+                player.updateQuestStatus(state);
+                return true;
+            }
+            return false;
+        }));
 
-                player.updateQuestStatus();
-                Interactions.makeDecision(Game.getPlayer());
+        // Goblin Camp Listening
+        triggers.add(new LocationTrigger(GameConstants.Goblin_Camp, player -> {
+            if (TriggerConditions.GOBLIN_CAMP_INFILTRATION.matches(player)) {
+                missionInteractions.goblinsTalkingOverheard();
+                ((GoblinAmbush) player.getCurQuest()).setPlayerAmbushed(true);
+                player.updateQuestStatus(state);
+                return true;
             }
+            return false;
         }));
-        // Report findings to Castle
-        triggers.add(new LocationTrigger(GameConstants.Castle, player -> {
-            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && !hasTalkedToTheKing) {
-                Interactions.reportToKing();
-                reportedToKing = true;
+
+        // Goblin Camp Escape
+        triggers.add(new LocationTrigger(GameConstants.Goblin_Camp, player -> {
+            if (TriggerConditions.GOBLIN_CAMP_ESCAPE.matches(player)) {
+                missionInteractions.makeDecision(player);
+                player.updateQuestStatus(state);
+                return true;
             }
+            return false;
         }));
+    }
+
+    private void registerAssemblyArmyTriggers() {
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.SouthVillage_1, player -> {
-            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && !knightsRecruited) {
-                Interactions.talkToTheKnights();
+            if (TriggerConditions.ARMY_ASSEMBLING_KNIGHTS.matches(player) && !((RiseOfTheGoblinThreat)player.getCurQuest()).isKnightsRecruited()) {
+                recruitmentManager.talkToTheKnights(player, state);
+                return true;
             }
+            return false;
         }));
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.SouthVillage_2, player -> {
-            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && !archersRecruited) {
-                Interactions.talkToTheArchers();
+            if (TriggerConditions.ARMY_ASSEMBLING_ARCHERS.matches(player) && !((RiseOfTheGoblinThreat)player.getCurQuest()).isArchersRecruited()) {
+                recruitmentManager.talkToTheArchers(player, state);
+                return true;
             }
+            return false;
         }));
         // Army assembling
         triggers.add(new LocationTrigger(GameConstants.MagesOutPost, player -> {
-            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && !magesRecruited) {
-                Interactions.talkToTheMages();
+            if (TriggerConditions.ARMY_ASSEMBLING_MAGES.matches(player) && !((RiseOfTheGoblinThreat)player.getCurQuest()).isMagesRecruited()) {
+                recruitmentManager.talkToTheMages(player, state);
+                return true;
             }
-        }));
-        // Army fight
-        triggers.add(new LocationTrigger(GameConstants.Battlefield, player -> {
-            if (player.getCurQuest() instanceof RiseOfTheGoblinThreat && player.getCurMission() instanceof Defeat_the_Goblin_General) {
-                Interactions.startFinalBattle();
-            }
-        }));
-        triggers.add(new LocationTrigger(GameConstants.FarNorthMountain, player -> {
-            if (player.getCurQuest() instanceof FinalBattle && player.getCurMission() instanceof March_Into_the_Far_North){
-                Interactions.goblinKingdomFound();
-            }
+            return false;
         }));
     }
+
+    private void registerArmyFightTriggers() {
+        // Army fight
+        triggers.add(new LocationTrigger(GameConstants.Battlefield, player -> {
+            if (TriggerConditions.ARMY_FIGHT.matches(player)) {
+                goblinGeneralManager.startFinalBattle(player, ((RiseOfTheGoblinThreat)player.getCurQuest()), state);
+                return true;
+            }
+            return false;
+        }));
+        //Goblin Cave
+        triggers.add(new LocationTrigger(GameConstants.FarNorthMountain, player -> {
+            if (TriggerConditions.GOBLIN_CAVE.matches(player)) {
+                goblinKingManager.goblinKingdomFound(player, ((FinalBattle)player.getCurQuest()));
+                return true;
+            }
+            return false;
+        }));
+    }
+
 }

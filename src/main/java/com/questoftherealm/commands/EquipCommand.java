@@ -3,12 +3,11 @@ package com.questoftherealm.commands;
 import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.ItemNotFound;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemRegistry;
 
 import java.util.Arrays;
-
-import static com.questoftherealm.items.ItemRegistry.getItem;
 
 public class EquipCommand extends Command {
     public EquipCommand() {
@@ -16,40 +15,40 @@ public class EquipCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "equip [item name] — equips an item from your inventory if available";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("equip.description");
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if(!makeSafe(args,player)){
+    public void execute(String[] args,Player player, GameState state) {
+        if(!makeSafe(args,player,state)){
             return;
         }
         String itemName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         try {
-            Item item = getItem(itemName);
+            Item item = state.getItemRegistry().getItem(itemName);
             Inventory inventory = player.getInventory();
             if (!inventory.containsItem(item)) {
-                System.out.println("You don't have '" + itemName + "' in your inventory.");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.error.notInInventory", itemName));
                 return;
             }
-            player.equipItem(item);
-            System.out.println(item.getName() + " has been equipped successfully!");
+            player.equipItem(item,state);
+            inventory.removeItem(item,1,state);
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.success", item.getName()));
         } catch (ItemNotFound e) {
-            System.out.println("This item doesn't exist.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.error.itemDoesNotExist"));
         } catch (Exception e) {
-            System.out.println("An unexpected error occurred while equipping the item.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.error.unexpected"));
         }
 
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length < 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 }

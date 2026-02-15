@@ -3,6 +3,7 @@ package com.questoftherealm.commands;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
 
 public class AttackCommand extends Command {
@@ -11,48 +12,53 @@ public class AttackCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if(!makeSafe(args, player)){
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
         String enemyName = args[1];
-        Tile curTile = Game.getGameMap().curZone(player.getX(), player.getY());
+        Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
-            System.out.println("You are in an undefined area.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.undefinedArea"));
             return;
         }
         Enemy chosenEnemy = curTile.getEnemy(enemyName);
         if (chosenEnemy == null) {
-            System.out.println("No enemy named '" + enemyName + "' here!");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.noEnemy", enemyName));
             return;
         }
         boolean isKilled = false;
+        if(chosenEnemy.isDead()){
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.enemyDead", enemyName));
+            return;
+        }
         try {
-            isKilled = chosenEnemy.interact(player);
+            isKilled = chosenEnemy.interact(player,state);
         } catch (Exception e) {
-            System.out.println("Battle was unavailable");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable",enemyName));
         }
         if (isKilled) {
-            int gold = 5;//improve
-            int exp = 10;//improve
+            int gold = 5;
+            int exp = 10;
+            player.addMoney(gold,state);
+            player.addExp(exp);
             curTile.removeEnemy(chosenEnemy);
-            System.out.println("Successful battle! You receive " + gold + "Gold" + " and you receive " + exp + "XP.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.success.reward", gold, exp));
         }
+        // state.getGameServices().getOutput().println(player.getName() + " attacked " + enemyName + " at " + player.getPosition());
     }
 
     @Override
-    public String getDescription() {
-        return "attack [enemy name] — engage an enemy in combat at your current location";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("attack.description");
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
-
 }

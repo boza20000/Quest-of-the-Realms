@@ -1,7 +1,7 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 
 public class StatsCommand extends Command {
 
@@ -10,26 +10,25 @@ public class StatsCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 1) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("stats.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if(!makeSafe(args, player)){
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player, state)) {
             return;
         }
-        System.out.println("Player current stats:");
-        System.out.println(player.getPlayerCharacter().toString());
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("stats.info.header"));
+        state.getGameServices().getOutput().println(player.getPlayerCharacter().stats(state));
     }
 
     @Override
-    public String getDescription() {
-        return "stats — displays your character’s current stats and attributes";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("stats.description");
     }
 }

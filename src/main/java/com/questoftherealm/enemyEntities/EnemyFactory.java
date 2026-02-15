@@ -1,20 +1,20 @@
 package com.questoftherealm.enemyEntities;
 
 import com.questoftherealm.enemyEntities.entities.*;
+import com.questoftherealm.game.GameState;
 
 public class EnemyFactory {
-    public static Enemy createEnemy(EnemyType type) {
-       return switch (type) {
-            case GOBLIN -> new Goblin();
-            case BANDIT -> new Bandit();
-            case SKELETON -> new Skeleton();
-            case WOLF -> new Wolf();
-            case GOBLIN_HORDE -> new GoblinHorde();
-            case DARK_MAGE -> new DarkMage();
-            //case GOBLIN_GENERAL -> new GoblinGeneral();
-            case GIANT_SPIDER -> new GiantSpider();
-            case LOST_SPIRIT -> new Spirit();
-            case TRAVELING_TRADER -> new TraderNPC();
+    private static final EnemyConstants ENEMY_CONSTANTS_FACTORY = new EnemyConstants();
+
+    public static Enemy createEnemy(EnemyType type, GameState state) {
+        return switch (type) {
+            case GOBLIN -> new Goblin(state, ENEMY_CONSTANTS_FACTORY);
+            case BANDIT -> new Bandit(state, ENEMY_CONSTANTS_FACTORY);
+            case SKELETON -> new Skeleton(state, ENEMY_CONSTANTS_FACTORY);
+            case WOLF -> new Wolf(state, ENEMY_CONSTANTS_FACTORY);
+            case DARK_MAGE -> new DarkMage(state, ENEMY_CONSTANTS_FACTORY);
+            case GIANT_SPIDER -> new GiantSpider(state, ENEMY_CONSTANTS_FACTORY);
+            case LOST_SPIRIT -> new Spirit(state, ENEMY_CONSTANTS_FACTORY);
         };
     }
 }

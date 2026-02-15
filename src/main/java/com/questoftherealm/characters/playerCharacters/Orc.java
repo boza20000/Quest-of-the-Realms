@@ -3,26 +3,14 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.MonsterBehavior;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.items.Chest;
-import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.items.ItemRegistry;
-
+import com.questoftherealm.game.GameState;
 import java.util.Random;
-
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Orc extends Characters implements MonsterBehavior {
 
     public Orc() {
-        super(ORC_HEALTH,
-                ORC_MANA,
-                ORC_ATTACK,
-                ORC_DEFENCE,
-                ORC_ARMOR,
-                ORC_CHARISMA,
-                ORC_SPELLS,
-                ORC_INTELLIGENCE);
+        super(ORC_HEALTH, ORC_MANA, ORC_ATTACK, ORC_DEFENCE, ORC_ARMOR, ORC_CHARISMA, ORC_SPELLS, ORC_INTELLIGENCE);
     }
 
     public Orc(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
@@ -30,26 +18,26 @@ public class Orc extends Characters implements MonsterBehavior {
     }
 
     @Override
-    public void resurrect() {
+    public void resurrect(GameState state) {
         if (isDead()) {
-            System.out.println("You close your eyes, calling upon the spirits of your ancestors...");
-            System.out.println("💀 Ancient orc spirits answer your plea for resurrection!");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.call"));
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.spiritsSummoned"));
 
             int roll = new Random().nextInt(10);
-            if (roll < 4) { // 60% chance
+            if (roll < 4) {
                 setHealth(getMaxHealth());
-                System.out.println("👹 The spirits restore your wounds and bring you back to life!");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.success"));
             } else {
-                System.out.println("⚠️ The spirits ignore your call. Be careful, resurrection failed!");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.fail"));
             }
         } else {
-            System.out.println("You are still alive. No need to call upon the spirits.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.notDead"));
         }
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Iron Axe");
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get("orc.weapon.default");
     }
 
     @Override
@@ -68,8 +56,8 @@ public class Orc extends Characters implements MonsterBehavior {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        System.out.println("🪓 You attack with full force head on and strike your enemy with your " + player.getWeapon().getName() + " dealing: ");
-        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2);
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.ability.attack", player.getWeapon().getName()));
+        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2,state);
     }
 }

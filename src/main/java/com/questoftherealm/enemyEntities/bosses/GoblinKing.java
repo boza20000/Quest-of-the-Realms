@@ -2,11 +2,8 @@ package com.questoftherealm.enemyEntities.bosses;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
-import com.questoftherealm.game.GameLoop;
-import com.questoftherealm.interaction.Console;
-import com.questoftherealm.interaction.Interactions;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -20,10 +17,10 @@ import java.util.Random;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class GoblinKing extends Boss {
-    private static final String name = "Tot";
-    private static final Item weapon = ItemRegistry.getItem("Goblin King Sword");
+    private ItemRegistry itemRegistry;
+    private final String NAME = "Azok";
 
-    public GoblinKing() {
+    public GoblinKing(GameState state) {
         super(GoblinKing_HEALTH,
                 GoblinKing_MANA,
                 GoblinKing_ATTACK,
@@ -32,48 +29,51 @@ public class GoblinKing extends Boss {
                 GoblinKing_CHARISMA,
                 GoblinKing_SPELLS,
                 GoblinKing_INTELLIGENCE,
-                name,
-                createArmor(),
-                weapon,
-                createLoot());
+                null,
+                null,
+                null,
+                null,
+                false);
+        itemRegistry = state.getItemRegistry();
+        this.armor = createArmor();
+        this.loot = createLoot();
+        this.weapon = itemRegistry.getItem("Goblin King Sword");
     }
 
-    private static HashMap<ItemEffect, Item> createArmor() {
+    private HashMap<ItemEffect, Item> createArmor() {
         HashMap<ItemEffect, Item> armor = new HashMap<>();
-        armor.put(ItemEffect.HELMET, ItemRegistry.getItem("Goblin king’s Crown"));
-        armor.put(ItemEffect.CHESTPLATE, ItemRegistry.getItem("Goblin king’s Steel Chestplate"));
+        armor.put(ItemEffect.HELMET, itemRegistry.getItem("Goblin king’s Crown"));
+        armor.put(ItemEffect.CHESTPLATE, itemRegistry.getItem("Goblin king’s Steel Chestplate"));
         armor.put(ItemEffect.BOOTS, null);
         return armor;
     }
 
-    private static List<ItemDrop> createLoot() {
+    private List<ItemDrop> createLoot() {
         return List.of(
-                new ItemDrop(ItemRegistry.getItem("Goblin king’s Crown"), 1),
-                new ItemDrop(ItemRegistry.getItem("Goblin King Sword"), 1)
+                new ItemDrop(itemRegistry.getItem("Goblin king’s Crown"), 1),
+                new ItemDrop(itemRegistry.getItem("Goblin King Sword"), 1)
         );
     }
 
-
     @Override
-    //29% instant kill
-    public void superMove() {
+    public void superMove(Player player, GameState state) {
+        SlowPrinter slowPrinter = new SlowPrinter(state);
         Random random = new Random();
         int roll = random.nextInt(100);
+        slowPrinter.slowPrint(state.getMessages().getBundle().get("boss.goblinKing.attack.start"));
+
         if (GameConstants.GoblinKing_Percent_INSTAKILL <= roll) {
-            SlowPrinter.slowPrint("The Goblin king swing his sword with a huge strength.");
-            SlowPrinter.slowPrint("You try to doge.. but unsuccessful...You get sliced");
-            Game.getPlayer().getPlayerCharacter().setHealth(0);
+            slowPrinter.slowPrint(state.getMessages().getBundle().get("boss.goblinKing.attack.success"));
+            player.getPlayerCharacter().setHealth(0);
         } else {
-            SlowPrinter.slowPrint("The Goblin king swing his sword with a huge strength.");
-            SlowPrinter.slowPrint("You almost get killed but you doge it");
+            slowPrinter.slowPrint(state.getMessages().getBundle().get("boss.goblinKing.attack.fail"));
         }
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Goblin King Sword");
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get(this.weapon.getName());
     }
-
     @Override
     public int getBaseAttack() {
         return GoblinKing_ATTACK;
@@ -90,11 +90,11 @@ public class GoblinKing extends Boss {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        superMove();
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        superMove(player, state);
     }
 
     public String getName() {
-        return name;
+        return NAME;
     }
 }

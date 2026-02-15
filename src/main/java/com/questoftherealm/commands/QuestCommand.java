@@ -1,11 +1,8 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.expeditions.Mission;
-import com.questoftherealm.expeditions.QuestFactory;
-import com.questoftherealm.game.Game;
-import com.questoftherealm.map.Tile;
+import com.questoftherealm.expeditions.missions.Mission;
+import com.questoftherealm.game.GameState;
 
 public class QuestCommand extends Command {
 
@@ -14,40 +11,39 @@ public class QuestCommand extends Command {
     }
 
     @Override
-    public String getDescription() {
-        return "quest — shows your active quest and its list of missions";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("quest.description");
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if(!makeSafe(args, player)){
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
 
         if (player.getCurQuest() == null) {
-            System.out.println("Error: No quest loaded.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.error.noQuestLoaded"));
             return;
         }
         if (player.getCurMission() == null) {
-            System.out.println("Error: No mission loaded.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.error.noMissionLoaded"));
             return;
         }
-        if(QuestFactory.getCurrentQuest() == null){
-            System.out.println("Error: No quest loaded.");
+        if (player.getQuestFactory().getCurrentQuest() == null) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.error.noQuestLoaded"));
         }
 
-        for (Mission m : QuestFactory.getCurrentQuest().getMissions()) {
-            System.out.println(m.getTask());
+        for (Mission m : player.getQuestFactory().getCurrentQuest().getMissions()) {
+            state.getGameServices().getOutput().println(m.getTask());
         }
     }
 

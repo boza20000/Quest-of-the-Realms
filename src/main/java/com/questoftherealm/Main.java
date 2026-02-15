@@ -12,6 +12,7 @@ public class Main {
     public static void main(String[] args) {
       Game game = new Game();
       game.start();
+
 //        Player player = new Player(
 //                "TestHero",
 //                PlayerTypes.Warrior,
@@ -28,5 +29,6 @@ public class Main {
 //        );
 //        Console console = new Console();
 //        console.displayEnd(player);
+
     }
 }

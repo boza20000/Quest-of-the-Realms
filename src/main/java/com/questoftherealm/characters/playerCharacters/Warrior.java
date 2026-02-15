@@ -1,26 +1,20 @@
 package com.questoftherealm.characters.playerCharacters;
 
-import com.questoftherealm.characters.characterInterfaces.Trader;
+import com.questoftherealm.characters.characterInterfaces.Trading;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.enemyEntities.entities.TraderNPC;
-import com.questoftherealm.game.Game;
+
+import com.questoftherealm.friendlyEntities.Entities.Trader;
+import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemRegistry;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
-public class Warrior extends Characters implements Trader {
+public class Warrior extends Characters implements Trading {
 
     public Warrior() {
-        super(WARRIOR_HEALTH,
-                WARRIOR_MANA,
-                WARRIOR_ATTACK,
-                WARRIOR_DEFENCE,
-                WARRIOR_ARMOR,
-                WARRIOR_CHARISMA,
-                WARRIOR_SPELLS,
-                WARRIOR_INTELLIGENCE);
+        super(WARRIOR_HEALTH, WARRIOR_MANA, WARRIOR_ATTACK, WARRIOR_DEFENCE, WARRIOR_ARMOR, WARRIOR_CHARISMA, WARRIOR_SPELLS, WARRIOR_INTELLIGENCE);
     }
 
     public Warrior(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
@@ -28,20 +22,40 @@ public class Warrior extends Characters implements Trader {
     }
 
     @Override
-    public void buyItem(TraderNPC trader, Item item, int quantity) {
+    public void buyItem(Trader trader, Player player, Item item, int quantity, GameState state) {
+        if (player.getInventory().getItems().size() == GameConstants.MAX_ITEMS_IN_INVENTORY) {
+            if (hasSpace(player, item, quantity)) {
+                state.getGameServices().getOutput().println("Not enough space in inventory");
+                return;
+            }
+        }
 
+        if (!(player.getGold() < (item.getPrice() * quantity))) {
+            state.getGameServices().getOutput().println("Not enough money");
+            return;
+        }
+
+        player.payMoney(item.getPrice() * quantity, state);
+        player.getInventory().addItem(item, quantity, state);
+    }
+
+    private boolean hasSpace(Player player, Item item, int quantity) {
+        if (item.isStackable()) {
+            return player.getInventory().getItems().get(item) + quantity <= GameConstants.MAX_ITEMS_IN_STACK;
+        } else {
+            return false;
+        }
     }
 
     @Override
-    public void sellItem(Item item, int quantity) {
-        int money = item.getPrice();
-        Game.getPlayer().addMoney(money);
-        Game.getPlayer().getInventory().removeItem(item, quantity);
+    public void sellItem(Player player, Trader trader, Item item, int quantity, GameState state) {
+        player.addMoney(item.getPrice() * quantity, state);
+        player.getInventory().removeItem(item, quantity, state);
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Bronze Sword");
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get("warrior.weapon.default");
     }
 
     @Override
@@ -60,9 +74,8 @@ public class Warrior extends Characters implements Trader {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        System.out.println("🗡️You use your special move and swing you " + player.getWeapon().getName() + " with full force");
-        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2);
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.ability.use", player.getWeapon().getName()));
+        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2, state);
     }
-
 }

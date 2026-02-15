@@ -1,8 +1,8 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
-import com.questoftherealm.map.Map;
+import com.questoftherealm.game.GameState;
+
 
 public class MapCommand extends Command {
 
@@ -11,38 +11,36 @@ public class MapCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        Map map = Game.getGameMap();
-        if (map == null) {
-            System.out.println("Game map unavailable");
+    public void execute(String[] args,Player player, GameState state) {
+        if (state.getMap() == null) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.error.unavailable"));
             return;
         }
-        if (!makeSafe(args, player)) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
-        System.out.print("      ");
-        System.out.println("╔════════ MAP ══════╗");
+        state.getGameServices().getOutput().print("      ");
+        state.getGameServices().getOutput().println("╔════════ MAP ══════╗");
         try {
-            map.print();
+            state.getMap().print(player,state);
         } catch (Exception e) {
-            System.out.println("Something went wrong while printing the map");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.error.printingFailed"));
         }
-        System.out.print("      ");
-        System.out.println("╚═══════════════════╝");
+        state.getGameServices().getOutput().print("      ");
+        state.getGameServices().getOutput().println("╚═══════════════════╝");
     }
 
     @Override
-    public String getDescription() {
-        return "map — displays the current map layout and your position";
+    public String getDescription(GameState state)  {
+        return state.getMessages().getBundle().get("map.description");
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 1) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 }

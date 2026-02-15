@@ -2,6 +2,7 @@ package com.questoftherealm.spells;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.game.GameState;
 
 public abstract class Spell {
     private final String spellName;
@@ -32,7 +33,7 @@ public abstract class Spell {
         return description;
     }
 
-    public abstract void cast(Player player, Enemy enemy);
+    public abstract void cast(Player player, Enemy enemy, GameState state);
 
     public abstract String getSymbol();
 }

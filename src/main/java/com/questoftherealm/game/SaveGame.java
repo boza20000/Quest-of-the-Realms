@@ -3,18 +3,18 @@ package com.questoftherealm.game;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.questoftherealm.characters.player.Player;
-
+import com.questoftherealm.exceptions.SaveError;
 import java.io.File;
 import java.io.IOException;
 
 public class SaveGame {
     public SaveGame() {}
 
-    public void createSave(String saveName) {
+    public void createSave(String saveName,Player player,GameState state) {
         try {
             File saveDir = new File("saves");
             if (!saveDir.exists() && !saveDir.mkdirs()) {
-                System.err.println("❌ Could not create save directory");
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("saveGame.error.notCreated"));
                 return;
             }
 
@@ -23,16 +23,15 @@ public class SaveGame {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            Player player = Game.getPlayer();
-            player.trackPlayTime();
+            player.trackPlayTime(state);
             mapper.writeValue(fileSave, player);
 
-            System.out.println("✅ Game saved successfully → " + fileSave.getAbsolutePath());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("saveGame.save.successful",fileSave.getAbsolutePath()));
 
         } catch (IOException e) {
-            System.err.println("❌ Failed to save game: " + e.getMessage());
+            throw new SaveError(state.getMessages().getBundle().get("saveGame.save.failed",saveName));
         } catch (Exception e) {
-            System.err.println("❌ Unexpected error while saving: " + e);
+            throw new SaveError(state.getMessages().getBundle().get("saveGame.save.unexpectedly.failed",saveName));
         }
     }
 }

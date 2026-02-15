@@ -1,13 +1,13 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 
-import static com.questoftherealm.items.ItemRegistry.getItem;
 
 public class TakeCommand extends Command {
     public TakeCommand() {
@@ -15,18 +15,17 @@ public class TakeCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player) {
+    public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length < 2) {
-            System.out.println("Usage: " + getDescription());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player);
+        return playerBaseCheck(player,state);
     }
 
     @Override
-    public void execute(String[] args) {
-        Player player = Game.getPlayer();
-        if(!makeSafe(args, player)){
+    public void execute(String[] args, Player player, GameState state) {
+        if (!makeSafe(args, player, state)) {
             return;
         }
 
@@ -35,7 +34,7 @@ public class TakeCommand extends Command {
         String rest = input.substring(command.length()).trim();
         int lastSpace = rest.lastIndexOf(" ");
         if (lastSpace == -1) {
-            System.out.println("You must specify a quantity.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.specifyQuantity"));
             return;
         }
         String itemName = rest.substring(0, lastSpace).trim();
@@ -43,25 +42,24 @@ public class TakeCommand extends Command {
         try {
             quantity = Integer.parseInt(rest.substring(lastSpace + 1));
         } catch (NumberFormatException e) {
-            System.out.println("Quantity must be a number.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.quantityNotNumber"));
             return;
         }
         Item newItem;
         try {
-            newItem = getItem(itemName);
+            newItem = state.getItemRegistry().getItem(itemName);
         } catch (Exception e) {
-            System.out.println("Item unknown");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.itemUnknown"));
             return;
         }
-        Map map = Game.getGameMap();
+        Map map = state.getMap();
+        if (map == null) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.mapNotLoaded"));
+            return;
+        }
         Tile curZone = map.curZone(player.getX(), player.getY());
-
-        if (Game.getGameMap() == null) {
-            System.out.println("Map was not loaded");
-            return;
-        }
         if (curZone == null) {
-            System.out.println("unknown zone");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.unknownZone"));
             return;
         }
 
@@ -71,16 +69,16 @@ public class TakeCommand extends Command {
                 .orElse(null);
 
         if (drop != null && drop.quantity() >= quantity) {
-            player.getInventory().addItem(newItem, quantity);
-            curZone.removeDrop(newItem, quantity);
-            System.out.println("You picked up " + quantity + "x " + newItem.getName());
+            player.getInventory().addItem(newItem, quantity,state);
+            curZone.removeDrop(newItem, quantity,state);
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.success", quantity, newItem.getName()));
         } else {
-            System.out.println("No such item or not enough quantity.");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.noItemOrQuantity"));
         }
     }
 
     @Override
-    public String getDescription() {
-        return "take [item name] [quantity] — picks up the specified number of an item from the ground";
+    public String getDescription(GameState state) {
+        return state.getMessages().getBundle().get("take.description");
     }
 }

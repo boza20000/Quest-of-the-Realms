@@ -2,38 +2,30 @@ package com.questoftherealm.map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
+import com.questoftherealm.exceptions.MapNotLoaded;
 import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 
 import java.io.InputStream;
 
 
 public class Map {
+    private Tile[][] gameMap;
 
-    private static Map instance;       // Singleton instance
-    private Tile[][] gameMap;          // The map grid
-
-    private Map() {
-        loadMap();
+    public Map(GameState state) {
+        loadMap(state);
     }
 
-    public static Map getInstance() {
-        if (instance == null) {
-            instance = new Map();
-        }
-        return instance;
-    }
-
-    private void loadMap() {
+    private void loadMap(GameState state) {
         try (InputStream is = Map.class.getResourceAsStream("/map.json")) {
             if (is == null) {
-                System.out.println("map.json not found. Generating random map instead.");
-                return;
+                throw new MapNotLoaded(state.getMessages().getBundle().get("map.notFound.error"));
             }
             ObjectMapper mapper = new ObjectMapper();
             gameMap = mapper.readValue(is, Tile[][].class);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new MapNotLoaded(state.getMessages().getBundle().get("map.load.error"));
         }
     }
 
@@ -46,22 +38,23 @@ public class Map {
 
     }
 
-    public void print() {
+    public void print(Player player, GameState state) {
+        Output output = state.getGameServices().getOutput();
         for (int i = 0; i < gameMap.length; i++) {
-            System.out.print("      ");
-            System.out.print("║");
+            output.print("      ");
+            output.print("║");
             for (int j = 0; j < gameMap[i].length; j++) {
-                boolean isPlayerHere = (j == Game.getPlayer().getX() && i == Game.getPlayer().getY());
+                boolean isPlayerHere = (j == player.getX() && i == player.getY());
                 Tile tile = gameMap[i][j];
                 String symbol = getTileSymbol(tile);
 
                 if (isPlayerHere) {
                     symbol = GameConstants.RED + "🧙" + GameConstants.RESET; // overlay
                 }
-                System.out.print(symbol);
+                output.print(symbol);
             }
-            System.out.print("║");
-            System.out.println();
+            output.print("║");
+            output.println();
         }
     }
 
@@ -74,10 +67,9 @@ public class Map {
             case CASTLE -> GameConstants.CYAN + "\uD83C\uDFF0" + GameConstants.RESET;
             case SWAMP -> GameConstants.MAGENTA + "\uD83D\uDFEB" + GameConstants.RESET;
             case WATER -> GameConstants.BLUE + "\uD83D\uDFE6" + GameConstants.RESET;
-            //case QUEST_LOCATION -> GameConstants.RED + "❓" + GameConstants.RESET;
-            default -> " ";
         };
     }
+
 
     public Tile curZone(int x, int y) {
         return gameMap[y][x];

@@ -1,26 +1,24 @@
 package com.questoftherealm.characters.playerCharacters;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.commands.Command;
-import com.questoftherealm.commands.ExitCommand;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.characterInterfaces.Combatant;
+import com.questoftherealm.exceptions.NotEnoughManaException;
 import com.questoftherealm.exceptions.TargetNotFound;
-import com.questoftherealm.items.Item;
+import com.questoftherealm.game.GameState;
 
 import static com.questoftherealm.game.GameConstants.*;
 
 public abstract class Characters implements Combatant {
 
-    // Stat from GameConstants
-    private int health;        // 0 - MAX_HEALTH
-    private int mana;          // 0 - MAX_MANA
-    private int attack;        // 0 - MAX_ATTACK
-    private int defence;       // 0 - MAX_DEFENCE
-    private int armor;         // 0 - MAX_ARMOR
-    private int charisma;      // 0 - MAX_CHARISMA
-    private int spells;        // 0 - MAX_SPELLS
-    private int intelligence;  // 0 - MAX_INTELLIGENCE
+    private int health;
+    private int mana;
+    private int attack;
+    private int defence;
+    private int armor;
+    private int charisma;
+    private int spells;
+    private int intelligence;
 
     public Characters(Characters other) {
         setHealth(other.getHealth());
@@ -46,31 +44,32 @@ public abstract class Characters implements Combatant {
     }
 
     @Override
-    public void attack(Enemy target, Player player) {
+    public void attack(Enemy target, Player player, GameState state) {
         if (target.isDead()) {
-            System.out.println(target.getClass().getSimpleName() + " is already dead!");
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.target.alreadyDead", target.getClass().getSimpleName()));
             return;
         }
         try {
-            int damageDealt = player.getWeapon().getPower() + this.getAttack();
-            System.out.println("You attack " + target.getClass().getSimpleName() + " for " + damageDealt + "HP!");
-            target.takeDamage(damageDealt);
             useMana(player.getWeapon().getMana());
-        } catch (TargetNotFound e) {
-            System.out.println(e.getMessage());
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.attack.hit", target.getClass().getSimpleName(), this.getAttack()));
+            target.takeDamage(this.getAttack(), state);
+        } catch (TargetNotFound | NotEnoughManaException e) {
+            state.getGameServices().getOutput().println(e.getMessage());
         }
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, GameState state) {
         int mitigation = defence * 5 + armor;
         int reducedDamage = damage * 100 / (100 + mitigation);
-        setHealth(health - reducedDamage);  // uses setter now
-        System.out.println("Only " + reducedDamage + "HP taken.Your armor reduces some of the damage! Health now: " + health + "HP");
+        setHealth(health - reducedDamage);
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.damage.taken", reducedDamage, health));
 
         if (isDead()) {
-            System.out.println(this.getClass().getSimpleName() + " has died!");
-            Command c = new ExitCommand();
-            c.execute(new String[]{});
+            if(state.getPlayer().getPlayerCharacter() instanceof Orc){
+                ((Orc) state.getPlayer().getPlayerCharacter()).resurrect(state);
+                return;
+            }
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.dead", this.getClass().getSimpleName()));
         }
     }
 
@@ -79,7 +78,7 @@ public abstract class Characters implements Combatant {
     }
 
     // ===== Abstract Weapon =====
-    public abstract Item getDefaultWeapon();
+    public abstract String getDefaultWeapon(GameState state);
 
     public abstract int getBaseAttack();
 
@@ -152,23 +151,27 @@ public abstract class Characters implements Combatant {
         this.intelligence = Math.max(0, Math.min(intelligence, MAX_INTELLIGENCE));
     }
 
-    @Override
-    public String toString() {
-        return "===== " + this.getClass().getSimpleName() + " Stats =====\n" +
-                "Health      : " + getHealth() + "\n" +
-                "Mana        : " + getMana() + "\n" +
-                "Attack      : " + getAttack() + "\n" +
-                "Defence     : " + getDefence() + "\n" +
-                "Armor       : " + getArmor() + "\n" +
-                "Charisma    : " + getCharisma() + "\n" +
-                "Spells      : " + getSpells() + "\n" +
-                "Intelligence: " + getIntelligence() + "\n" +
-                "==========================";
+    public String stats(GameState state) {
+        return state.getMessages().getBundle().get("character.stats.header", this.getClass().getSimpleName()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.health", getHealth()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.mana", getMana()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.attack", getAttack()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.defence", getDefence()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.armor", getArmor()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.charisma", getCharisma()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.spells", getSpells()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.intelligence", getIntelligence()) + "\n" +
+                state.getMessages().getBundle().get("character.stats.footer");
     }
 
     public void useMana(int mana) {
-        setMana(Math.max(0, getMana() - mana));
+        if( getMana() >=mana) {
+            setMana(Math.max(0, getMana() - mana));
+        }
+        else {
+            throw new NotEnoughManaException("You don't have enough Mana");
+        }
     }
 
-    public abstract void activateAbility(Player player, Enemy enemy);
+    public abstract void activateAbility(Player player, Enemy enemy, GameState state);
 }

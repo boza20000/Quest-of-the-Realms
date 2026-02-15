@@ -1,43 +1,54 @@
 package com.questoftherealm.items;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.ArmorPieceNotGenerated;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
+import com.questoftherealm.exceptions.RandomWeaponNotGenerated;
+import com.questoftherealm.game.GameState;
 
 import java.util.List;
 import java.util.Random;
 
-
 public class Chest {
+    private final GameState state;
+    private final ItemRegistry itemRegistry;
 
-    private final static Random random = new Random();
+    private Random random() {
+        return state.getGameServices().getRandom().random();
+    }
 
-    public static ItemDrop generateRandomItem() {
+    public Chest(GameState state) {
+        this.state = state;
+        itemRegistry = state.getItemRegistry();
+    }
+
+    public ItemDrop generateRandomItem() {
         try {
             ItemType type = randomType();
             Rarity rarity = randomRarity();
             return randomItemFrom(type, rarity);
         } catch (Exception e) {
-            throw new RandomItemNotGenerated("Generated Item not found");
+            throw new RandomItemNotGenerated(state.getMessages().getBundle().get("error.message.itemNotGenerated"));
         }
     }
 
-    private static ItemType randomType() {
+    private ItemType randomType() {
         ItemType[] category = {ItemType.ARMOR, ItemType.WEAPON, ItemType.POTION, ItemType.CONSUMABLES};
-        return category[random.nextInt(category.length)];
+        return category[random().nextInt(category.length)];
     }
 
-    private static int randomQuantity(Item item) {
+    private int randomQuantity(Item item) {
         if (!item.isStackable()) return 1;
 
         switch (item.getRarity()) {
             case COMMON -> {
-                return random.nextInt(1, 6);
+                return random().nextInt(1, 6);
             }
             case UNCOMMON -> {
-                return random.nextInt(1, 4);
+                return random().nextInt(1, 4);
             }
             case RARE, EPIC -> {
-                return random.nextInt(1, 3);
+                return random().nextInt(1, 3);
             }
             default -> {
                 return 1;
@@ -45,8 +56,8 @@ public class Chest {
         }
     }
 
-    private static Rarity randomRarity() {
-        int rand = random.nextInt(100) + 1;
+    private Rarity randomRarity() {
+        int rand = random().nextInt(100) + 1;
         if (rand <= 50) return Rarity.COMMON;
         if (rand <= 75) return Rarity.UNCOMMON;
         if (rand <= 90) return Rarity.RARE;
@@ -54,8 +65,8 @@ public class Chest {
         return Rarity.LEGENDARY;
     }
 
-    private static ItemDrop randomItemFrom(ItemType type, Rarity rarity) {
-        List<Item> possibleItems = ItemRegistry.getAllItems().stream()
+    private ItemDrop randomItemFrom(ItemType type, Rarity rarity) {
+        List<Item> possibleItems = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getRarity() == rarity && i.getType() == type)
                 .toList();
 
@@ -66,32 +77,32 @@ public class Chest {
                 case RARE -> Rarity.UNCOMMON;
                 default -> Rarity.COMMON;
             };
-            possibleItems = ItemRegistry.getAllItems().stream()
+            possibleItems = itemRegistry.getAllItems().stream()
                     .filter(i -> i.getType() == type && i.getRarity() == fallback)
                     .toList();
         }
-        Item selectedItem = possibleItems.get(random.nextInt(possibleItems.size()));
+        Item selectedItem = possibleItems.get(random().nextInt(possibleItems.size()));
         int quantity = randomQuantity(selectedItem);
         return new ItemDrop(selectedItem, quantity);
     }
 
-    public static ItemDrop generateRandomWeapon(Player player) {
+    public ItemDrop generateRandomWeapon(Player player) {
 
         ItemEffect effect = getWeaponType(player);
         ItemType type = ItemType.WEAPON;
         Rarity rarity = Rarity.COMMON;
         int quantity = 1;
-        List<Item> possibleWeapons = ItemRegistry.getAllItems().stream()
+        List<Item> possibleWeapons = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == effect)
                 .toList();
-        if (possibleWeapons.isEmpty()){
-            throw new RandomItemNotGenerated("No weapons available for generation.");
+        if (possibleWeapons.isEmpty()) {
+            throw new RandomWeaponNotGenerated(state.getMessages().getBundle().get("error.message.weaponNotGenerated"));
         }
-        Item weapon = possibleWeapons.get(random.nextInt(possibleWeapons.size()));
+        Item weapon = possibleWeapons.get(random().nextInt(possibleWeapons.size()));
         return new ItemDrop(weapon, quantity);
     }
 
-    private static ItemEffect getWeaponType(Player player) {
+    private ItemEffect getWeaponType(Player player) {
         return switch (player.getPlayerType()) {
             case Mage -> ItemEffect.STAFF;
             case Warrior -> ItemEffect.SWORD;
@@ -100,55 +111,19 @@ public class Chest {
         };
     }
 
-    public static ItemDrop generateRandomHelmet(Player player) {
-        ItemType type = ItemType.ARMOR;
-        Rarity rarity = Rarity.COMMON;
-        int quantity = 1;
+    public ItemDrop generateArmorPiece(ItemType type, ItemEffect effect) {
 
-        List<Item> possibleHelmets = ItemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.HELMET)
+        List<Item> possibleArmor = itemRegistry.getAllItems().stream()
+                .filter(i -> i.getType() == type && i.getRarity() == Rarity.COMMON && i.getEffect() == effect)
                 .toList();
-
-        if (possibleHelmets.isEmpty()) {
-            throw new RandomItemNotGenerated("No helmets available for generation.");
+        if (possibleArmor.isEmpty()) {
+            throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.armorPieceNotGenerated", effect));
         }
 
-        Item helmet = possibleHelmets.get(random.nextInt(possibleHelmets.size()));
-        return new ItemDrop(helmet, quantity);
+        return new ItemDrop(possibleArmor.get(random().nextInt(possibleArmor.size())),1);
     }
 
-    public static ItemDrop generateRandomChestplate(Player player) {
-        ItemType type = ItemType.ARMOR;
-        Rarity rarity = Rarity.COMMON;
-        int quantity = 1;
 
-        List<Item> possibleChestplates = ItemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.CHESTPLATE)
-                .toList();
 
-        if (possibleChestplates.isEmpty()) {
-            throw new RandomItemNotGenerated("No chestplates available for generation.");
-        }
-
-        Item chestplate = possibleChestplates.get(random.nextInt(possibleChestplates.size()));
-        return new ItemDrop(chestplate, quantity);
-    }
-
-    public static ItemDrop generateRandomBoots(Player player) {
-        ItemType type = ItemType.ARMOR;
-        Rarity rarity = Rarity.COMMON;
-        int quantity = 1;
-
-        List<Item> possibleBoots = ItemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == ItemEffect.BOOTS)
-                .toList();
-
-        if (possibleBoots.isEmpty()) {
-            throw new RandomItemNotGenerated("No boots available for generation.");
-        }
-
-        Item boots = possibleBoots.get(random.nextInt(possibleBoots.size()));
-        return new ItemDrop(boots, quantity);
-    }
 }
 

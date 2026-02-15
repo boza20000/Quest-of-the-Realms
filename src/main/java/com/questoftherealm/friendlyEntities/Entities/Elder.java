@@ -1,41 +1,54 @@
 package com.questoftherealm.friendlyEntities.Entities;
 
-import com.questoftherealm.friendlyEntities.FriendInterfaces.Friendly;
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.expeditions.quest.quests.StartQuest;
+import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
-import com.questoftherealm.interaction.Interactions;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.items.ItemEffect;
+import com.questoftherealm.items.ItemType;
 
-public class Elder extends Npc implements Friendly {
-    private final String name = "Evaery";
-    private static boolean hasTalked = false;
+public class Elder extends Npc {
+    private final String name = "Evary";
+    private Output output;
 
-    public Elder() {
-    }
-
-    public static boolean isHasTalked() {
-        return hasTalked;
+    public Elder(String id, GameState state, MissionInteractions missionInteractions) {
+        super(NpcType.ELDER, id, state, missionInteractions);
+        this.output = state.getGameServices().getOutput();
     }
 
     @Override
-    public void talk(Player player) {
-        if (!hasTalked) {
-            hasTalked = true;
-            // Give weapon
-            ItemDrop weapon = Chest.generateRandomWeapon(player);
-            player.equipWeapon(weapon.item());
-            // Give armor
-            ItemDrop helmet = Chest.generateRandomHelmet(player);
-            ItemDrop chestplate = Chest.generateRandomChestplate(player);
-            ItemDrop boots = Chest.generateRandomBoots(player);
-            player.equipArmorPiece(helmet.item());
-            player.equipArmorPiece(chestplate.item());
-            player.equipArmorPiece(boots.item());
-            Interactions.elderDialogue(name,weapon,helmet,chestplate,boots);
-
+    public void talk(GameState state, Player player, boolean isSimulation) {
+        if (!(player.getCurQuest() instanceof StartQuest q)) {
+            output.println(state.getMessages().getBundle().get("elder.confused"));
+            return;
+        }
+        if (!q.isElderHasTalked()) {
+            q.setElderHasTalked(true);
+            giveRewards(player, isSimulation, state);
         } else {
-            System.out.println("There is nothing else to be said");
+            output.println(state.getMessages().getBundle().get("elder.has.talked"));
         }
     }
+
+    private void giveRewards(Player player, boolean simulate, GameState state) {
+        Chest chest = new Chest(state);
+        ItemDrop weapon = chest.generateRandomWeapon(player);
+        player.getInventory().addItem(weapon.item(), weapon.quantity(), state);
+        // Give armor
+        ItemDrop helmet = chest.generateArmorPiece(ItemType.ARMOR, ItemEffect.HELMET);
+        ItemDrop chestplate = chest.generateArmorPiece(ItemType.ARMOR, ItemEffect.CHESTPLATE);
+        ItemDrop boots = chest.generateArmorPiece(ItemType.ARMOR, ItemEffect.BOOTS);
+        player.getInventory().addItem(helmet.item(), helmet.quantity(), state);
+        player.getInventory().addItem(chestplate.item(), chestplate.quantity(), state);
+        player.getInventory().addItem(boots.item(), boots.quantity(), state);
+        if (!simulate) {
+            getMissionInteractions().elderDialogue(name, weapon, helmet, chestplate, boots);
+        }
+    }
+
 }

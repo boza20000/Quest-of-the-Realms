@@ -3,26 +3,21 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.SpellCaster;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.exceptions.NoSuchSpell;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.spells.Spell;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.spells.SpellRegister;
-
-import java.util.Scanner;
+import com.questoftherealm.localization.MessageBundle;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Mage extends Characters implements SpellCaster {
 
     public Mage() {
-        super(MAGE_HEALTH,
-                MAGE_MANA,
-                MAGE_ATTACK,
-                MAGE_DEFENCE,
-                MAGE_ARMOR,
-                MAGE_CHARISMA,
-                MAGE_SPELLS,
-                MAGE_INTELLIGENCE);
+        super(MAGE_HEALTH, MAGE_MANA, MAGE_ATTACK, MAGE_DEFENCE, MAGE_ARMOR, MAGE_CHARISMA, MAGE_SPELLS, MAGE_INTELLIGENCE);
     }
 
     public Mage(int health, int mana, int attack, int defence, int armor, int charisma, int spells, int intelligence) {
@@ -30,13 +25,13 @@ public class Mage extends Characters implements SpellCaster {
     }
 
     @Override
-    public void castSpell(Player player, Spell spell, Enemy target) {
-        spell.cast(player, target);
+    public void castSpell(Player player, Spell spell, Enemy target, GameState state) {
+        spell.cast(player, target, state);
     }
 
     @Override
-    public Item getDefaultWeapon() {
-        return ItemRegistry.getItem("Wooden Staff");
+    public String getDefaultWeapon(GameState state) {
+        return state.getMessages().getBundle().get("mage.weapon.default");
     }
 
     @Override
@@ -55,20 +50,19 @@ public class Mage extends Characters implements SpellCaster {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy) {
-        SpellRegister spellRegister = new SpellRegister();
+    public void activateAbility(Player player, Enemy enemy, GameState state) {
+        Output output = state.getGameServices().getOutput();
+        SpellRegister spellRegister = new SpellRegister(state);
         spellRegister.listSpells();
-        System.out.println("Choose a spell to cast: ");
-        System.out.print(">");
-        Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
+        output.println(state.getMessages().getBundle().get("mage.spell.choose"));
+        output.print(">");
+        String line = state.getGameServices().getInput().nextLine();
         Spell choice;
         try {
             choice = spellRegister.getSpell(line);
         } catch (Exception e) {
-            System.out.println("No such spell");
-            return;
+            throw new NoSuchSpell(state.getMessages().getBundle().get("mage.spell.notFound"));
         }
-        castSpell(player, choice, enemy);
+        castSpell(player, choice, enemy, state);
     }
 }

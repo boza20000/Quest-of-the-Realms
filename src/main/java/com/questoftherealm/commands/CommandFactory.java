@@ -2,6 +2,7 @@ package com.questoftherealm.commands;
 
 
 import com.questoftherealm.exceptions.InvalidCommand;
+import com.questoftherealm.game.GameState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +35,9 @@ public class CommandFactory {
         commands.put(name, command);
     }
 
-    public Command getCommand(String name) {
+    public Command getCommand(String name, GameState state) {
         if (commands.get(name) == null) {
-            throw new InvalidCommand("Command not recognised");
+            throw new InvalidCommand(state.getMessages().getBundle().get("command.not.recognised"));
         }
         return commands.get(name);
     }

@@ -5,6 +5,7 @@ import java.util.Random;
 
 public final class GameConstants {
     public static final String PLAYER_SPAWN = "Castle";
+    public static final int MANA_PER_MOVE = 5;
     private static final Random random = new Random();
     private GameConstants() {
     }
@@ -27,8 +28,8 @@ public final class GameConstants {
     public static final String BLUE = "\u001B[34m";    // Water/Lake
     public static final String RED = "\u001B[31m";     // Quest
 
-    public static final int ONE_ENEMY_CHANCE = 65;
-    public static final int TWO_ENEMY_CHANCE = 35;
+    public static final int ONE_ENEMY_CHANCE = 80;
+    public static final int TWO_ENEMY_CHANCE = 40;
     public static final int THREE_ENEMY_CHANCE = 15;
     public static final int MAX_ENEMIES = 3;
     public static final int MAX_ITEM_DROPS = 4;
