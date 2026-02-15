@@ -52,8 +52,8 @@ class ChestTest {
     void generateRandomWeapon_Warrior() {
         ItemDrop weapon = chest.generateRandomWeapon(player);
         assertNotNull(weapon.item());
-        assertEquals(weapon.item().getType(), ItemType.WEAPON);
-        assertEquals(weapon.item().getEffect(), ItemEffect.SWORD);
+        assertEquals(ItemType.WEAPON, weapon.item().getType());
+        assertEquals(ItemEffect.SWORD, weapon.item().getEffect());
         assertEquals(1, weapon.quantity());
     }
 
