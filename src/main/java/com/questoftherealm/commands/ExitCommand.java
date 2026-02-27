@@ -1,13 +1,8 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
-import com.questoftherealm.game.GameLoop;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.SaveGame;
-import com.questoftherealm.interaction.Console;
-
-import java.util.Scanner;
 
 public class ExitCommand extends Command {
     public ExitCommand() {

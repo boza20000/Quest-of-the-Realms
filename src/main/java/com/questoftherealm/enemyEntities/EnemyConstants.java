@@ -31,7 +31,7 @@ public class EnemyConstants {
                         new Loot(registry.getItem("Health Potion"), 0.3, 1, 1),
                         new Loot(registry.getItem("Iron Dagger"), 0.15, 1, 1)
                 ),
-                false
+                false,15,3
         );
     }
 
@@ -48,7 +48,7 @@ public class EnemyConstants {
                         new Loot(registry.getItem("Health Potion"), 0.25, 1, 1),
                         new Loot(registry.getItem("Iron Dagger"), 0.2, 1, 1)
                 ),
-                false
+                false,25,6
         );
     }
 
@@ -64,7 +64,7 @@ public class EnemyConstants {
                 List.of(
                         new Loot(registry.getItem("Bronze Sword"), 0.1, 1, 1)
                 ),
-                false
+                false,20,5
         );
     }
 
@@ -80,7 +80,7 @@ public class EnemyConstants {
                 List.of(
                         new Loot(registry.getItem("Bronze Sword"), 0.1, 1, 1)
                 ),
-                false
+                false,15,4
         );
     }
 
@@ -97,7 +97,7 @@ public class EnemyConstants {
                         new Loot(registry.getItem("Mana Potion"), 0.4, 1, 2),
                         new Loot(registry.getItem("Bronze Sword"), 0.1, 1, 1)
                 ),
-                false
+                false,35,8
         );
     }
 
@@ -113,7 +113,7 @@ public class EnemyConstants {
                 List.of(
                         new Loot(registry.getItem("Bronze Sword"), 0.1, 1, 1)
                 ),
-                false
+                false,80,15
         );
     }
 
@@ -129,7 +129,7 @@ public class EnemyConstants {
                 List.of(
                         new Loot(registry.getItem("Bronze Sword"), 0.1, 1, 1)
                 ),
-                false
+                false,50,12
         );
     }
 

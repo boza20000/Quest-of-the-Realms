@@ -40,7 +40,6 @@ public class NpcInitializer {
     private void registerVillager(GameState state, MissionInteractions m, Tile tile, String id) {
         Villager villager = new Villager(state.getMessages().getBundle().get(id), state, m);
         tile.registerNpc(villager);
-
     }
 
     private void registerKing(GameState state, MissionInteractions m, Tile tile, String id) {

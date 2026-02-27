@@ -5,7 +5,6 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemRegistry;
 
 import java.util.Arrays;
 

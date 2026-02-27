@@ -31,11 +31,13 @@ public class LookCommand extends Command {
         }
         try {
             state.getGameServices().getOutput().print(state.getMessages().getBundle().get("look.info.looking"));
+            state.getGameServices().getOutput().flush();
             for (int i = 0; i < 3; i++) {
                 if(!state.isSimulation()) {
                     Thread.sleep(1000);
                 }
                 state.getGameServices().getOutput().print(state.getMessages().getBundle().get("look.info.dot"));
+                state.getGameServices().getOutput().flush();
             }
             player.look(state);
         } catch (Exception e) {

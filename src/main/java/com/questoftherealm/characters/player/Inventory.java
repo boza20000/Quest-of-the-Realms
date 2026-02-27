@@ -12,12 +12,13 @@ import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Inventory {
     @JsonSerialize(keyUsing = ItemKeySerializer.class)
     @JsonDeserialize(keyUsing = ItemKeyDeserializer.class)
-    private Map<Item, Integer> items = new HashMap<>();
+    private Map<Item, Integer> items = new ConcurrentHashMap<>();
     private final int capacity;
 
     public Inventory() {
@@ -50,7 +51,7 @@ public class Inventory {
         }
     }
 
-    public void listItems(Output output, MessageBundle bundle) {
+    public  void listItems(Output output, MessageBundle bundle) {
         if (items.isEmpty()) {
             output.println(bundle.get("inventory.isEmpty"));
         } else {
@@ -77,7 +78,7 @@ public class Inventory {
         items.clear();
     }
 
-    private void handleStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
+    private  void handleStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
         int curItemQuantity = items.getOrDefault(item, 0);
         int sum = curItemQuantity + quantity;
         if (sum <= GameConstants.MAX_ITEMS_IN_STACK) {
@@ -89,7 +90,7 @@ public class Inventory {
         }
     }
 
-    private void handleNotStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
+    private  void handleNotStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
         int curItemQuantity = items.getOrDefault(item, 0);
         int newTotal = curItemQuantity + quantity;
 

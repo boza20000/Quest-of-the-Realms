@@ -1,7 +1,6 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
 
 public class HelpCommand extends Command {

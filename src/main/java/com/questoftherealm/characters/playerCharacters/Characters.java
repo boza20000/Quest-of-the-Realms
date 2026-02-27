@@ -44,7 +44,7 @@ public abstract class Characters implements Combatant {
     }
 
     @Override
-    public void attack(Enemy target, Player player, GameState state) {
+    public  void attack(Enemy target, Player player, GameState state) {
         if (target.isDead()) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.target.alreadyDead", target.getClass().getSimpleName()));
             return;
@@ -58,26 +58,25 @@ public abstract class Characters implements Combatant {
         }
     }
 
-    public void takeDamage(int damage, GameState state) {
+    public synchronized void takeDamage(int damage, GameState state,Player player) {
         int mitigation = defence * 5 + armor;
         int reducedDamage = damage * 100 / (100 + mitigation);
         setHealth(health - reducedDamage);
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.damage.taken", reducedDamage, health));
 
         if (isDead()) {
-            if(state.getPlayer().getPlayerCharacter() instanceof Orc){
-                ((Orc) state.getPlayer().getPlayerCharacter()).resurrect(state);
+            if(player.getPlayerCharacter() instanceof Orc){
+                ((Orc) player.getPlayerCharacter()).resurrect(state);
                 return;
             }
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.dead", this.getClass().getSimpleName()));
         }
     }
 
-    public boolean isDead() {
+    public synchronized boolean isDead() {
         return health == 0;
     }
 
-    // ===== Abstract Weapon =====
     public abstract String getDefaultWeapon(GameState state);
 
     public abstract int getBaseAttack();
@@ -86,7 +85,6 @@ public abstract class Characters implements Combatant {
 
     public abstract int getMaxHealth();
 
-    // ===== Getters & Setters =====
     public int getHealth() {
         return health;
     }
@@ -152,19 +150,19 @@ public abstract class Characters implements Combatant {
     }
 
     public String stats(GameState state) {
-        return state.getMessages().getBundle().get("character.stats.header", this.getClass().getSimpleName()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.health", getHealth()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.mana", getMana()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.attack", getAttack()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.defence", getDefence()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.armor", getArmor()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.charisma", getCharisma()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.spells", getSpells()) + "\n" +
-                state.getMessages().getBundle().get("character.stats.intelligence", getIntelligence()) + "\n" +
+        return state.getMessages().getBundle().get("character.stats.header", this.getClass().getSimpleName()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.health", getHealth()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.mana", getMana()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.attack", getAttack()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.defence", getDefence()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.armor", getArmor()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.charisma", getCharisma()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.spells", getSpells()) + System.lineSeparator() +
+                state.getMessages().getBundle().get("character.stats.intelligence", getIntelligence()) + System.lineSeparator() +
                 state.getMessages().getBundle().get("character.stats.footer");
     }
 
-    public void useMana(int mana) {
+    public synchronized void useMana(int mana) {
         if( getMana() >=mana) {
             setMana(Math.max(0, getMana() - mana));
         }
@@ -174,4 +172,12 @@ public abstract class Characters implements Combatant {
     }
 
     public abstract void activateAbility(Player player, Enemy enemy, GameState state);
+
+    public void block( Enemy enemy, Player player, GameState state) {
+        useMana(player.getWeapon().getMana()/3);
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.block.start", enemy.getClass().getSimpleName()));
+        int blockAmount = (int) (getDefence() * 1.5);
+        int damage = Math.max(enemy.getBaseAttack() - blockAmount, 0);
+        takeDamage(damage, state, player);
+    }
 }

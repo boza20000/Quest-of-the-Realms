@@ -15,6 +15,7 @@ public class SlowPrinter {
     public void slowPrint(String text) {
         for (char c : text.toCharArray()) {
             output.print(String.valueOf(c));
+            output.flush();
             try {
                 Thread.sleep(DELAY_MS);
             } catch (InterruptedException e) {

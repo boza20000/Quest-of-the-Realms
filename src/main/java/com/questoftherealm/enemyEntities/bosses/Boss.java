@@ -3,11 +3,9 @@ package com.questoftherealm.enemyEntities.bosses;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.items.ItemEffect;
-import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,12 +41,21 @@ public abstract class Boss extends Characters {
 
     public abstract void superMove(Player player, GameState state);
 
-    @Override
-    public void takeDamage(int damageToBoss, GameState state) {
+
+    public synchronized void takeDamage(int damageToBoss, GameState state) {
+        if (isDefeated()) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("boss.already.defeated", this.name));
+            return;
+        }
         if (damageToBoss > 0) {
             setHealth(Math.max(getHealth() - damageToBoss, 0));
             state.getGameServices().getOutput().println("💥 "
-                    + state.getMessages().getBundle().get("boss.take.damage", this.getClass().getSimpleName(),damageToBoss));
+                    + state.getMessages().getBundle().get("boss.take.damage", this.getClass().getSimpleName(), damageToBoss));
+        }
+        if (getHealth() == 0) {
+            setDefeated(true);
+            state.getGameServices().getOutput().println("🏆 "
+                    + state.getMessages().getBundle().get("boss.defeated", this.name, this.getClass().getSimpleName()));
         }
     }
 

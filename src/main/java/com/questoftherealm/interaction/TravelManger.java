@@ -1,6 +1,7 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.map.Event;
@@ -50,18 +51,25 @@ public class TravelManger {
         slowPrinter.slowPrint("⚠️ " + state.getMessages().getBundle().get("travel.event.encounter", name));
         slowPrinter.slowPrint(description);
         boolean investigate = promptYesNo(state.getMessages().getBundle().get("travel.event.investigate.question"));
+        Enemy enemy = event.createEnemy(event, state);
         if (investigate) {
             slowPrinter.slowPrint("👉 " + state.getMessages().getBundle().get("travel.event.investigate.accept"));
-            event.createEnemy(event,state).interact(player, state);
-        } else {
-            slowPrinter.slowPrint("➡️ " + state.getMessages().getBundle().get("travel.event.investigate.decline"));
+            enemy.interact(player, state);
         }
+        int roll = random().nextInt(10);
+        if (roll < 6) {
+            slowPrinter.slowPrint("👻 " + state.getMessages().getBundle().get("travel.event.investigate.forced",enemy.getClass().getSimpleName()));
+            enemy.interact(player, state);
+        }
+        slowPrinter.slowPrint("➡️ " + state.getMessages().getBundle().get("travel.event.investigate.decline"));
+
     }
 
     private boolean promptYesNo(String question) {
         slowPrinter.slowPrint(question + " " + state.getMessages().getBundle().get("travel.prompt.yesno"));
         while (true) {
             output.print(">");
+            output.flush();
             String input = state.getGameServices().getInput().nextLine().trim().toLowerCase();
             if (input.equals("yes") || input.equals("y")) return true;
             if (input.equals("no") || input.equals("n")) return false;

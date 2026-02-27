@@ -39,6 +39,7 @@ public class RecruitmentManager {
             output.println("2️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.2"));
             output.println("3️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.3"));
             output.print("> ");
+            output.flush();
             String choice = state.getGameServices().getInput().nextLine();
 
             switch (choice) {
@@ -64,6 +65,7 @@ public class RecruitmentManager {
             output.println(state.getMessages().getBundle().get("recruit.knights.persuade.fail"));
             output.println(state.getMessages().getBundle().get("recruit.knights.persuade.options"));
             output.print("> ");
+            output.flush();
             String choice = state.getGameServices().getInput().nextLine();
             switch (choice) {
                 case "1" -> payForKnights(player, q, state);
@@ -89,6 +91,7 @@ public class RecruitmentManager {
             output.println(state.getMessages().getBundle().get("recruit.knights.intimidate.fail"));
             output.println(state.getMessages().getBundle().get("recruit.knights.intimidate.options"));
             output.print("> ");
+            output.flush();
             String choice = state.getGameServices().getInput().nextLine();
             switch (choice) {
                 case "1" -> persuasionBranch(player, q, state);

@@ -7,5 +7,4 @@ import com.questoftherealm.friendlyEntities.Entities.Trader;
 
 public interface Trading {
     void buyItem(Trader trader, Player player, Item item, int quantity, GameState state);
-    void sellItem(Player player,Trader trader, Item item, int quantity,GameState state);
 }

@@ -18,7 +18,7 @@ public class Orc extends Characters implements MonsterBehavior {
     }
 
     @Override
-    public void resurrect(GameState state) {
+    public synchronized void resurrect(GameState state) {
         if (isDead()) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.call"));
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.spiritsSummoned"));
@@ -56,7 +56,7 @@ public class Orc extends Characters implements MonsterBehavior {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy, GameState state) {
+    public synchronized void activateAbility(Player player, Enemy enemy, GameState state) {
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.ability.attack", player.getWeapon().getName()));
         enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2,state);
     }

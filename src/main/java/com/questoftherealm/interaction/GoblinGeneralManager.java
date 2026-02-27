@@ -151,10 +151,10 @@ public class GoblinGeneralManager {
             String input = state.getGameServices().getInput().nextLine();
 
             switch (input) {
-                case "1" -> changePlayerHealth(character, playerChoice1(character, general));
-                case "2" -> changePlayerHealth(character, playerChoice2(character, general));
-                case "3" -> changePlayerHealth(character, playerChoice3(character, general));
-                default -> changePlayerHealth(character, playerNoChoice(general));
+                case "1" -> changePlayerHealth(player, playerChoice1(character, general));
+                case "2" -> changePlayerHealth(player, playerChoice2(character, general));
+                case "3" -> changePlayerHealth(player, playerChoice3(character, general));
+                default -> changePlayerHealth(player, playerNoChoice(general));
             }
 
             double bossHpPercent = (double) general.getHealth() / CharacterConstants.GoblinGeneral_HEALTH;
@@ -172,9 +172,9 @@ public class GoblinGeneralManager {
         slowPrinter.slowPrint("\n⚡ " + bundle.get("goblinGeneral.duel.boss.heal"));
     }
 
-    private void changePlayerHealth(Characters character, int damageToPlayer) {
+    private void changePlayerHealth(Player player, int damageToPlayer) {
         if (damageToPlayer > 0) {
-            character.takeDamage(damageToPlayer, state);
+            player.getPlayerCharacter().takeDamage(damageToPlayer, state,player);
             output.println("😖 " + bundle.get("goblinGeneral.duel.take.damage") + damageToPlayer);
         }
     }
@@ -227,6 +227,7 @@ public class GoblinGeneralManager {
         output.println("2️⃣ " + bundle.get("goblinGeneral.duel.option.block"));
         output.println("3️⃣ " + bundle.get("goblinGeneral.duel.option.counter"));
         output.print(bundle.get("goblinGeneral.duel.choose"));
+        output.flush();
     }
 
     private void makeBossMove(int bossMove) {

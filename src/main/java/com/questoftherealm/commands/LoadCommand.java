@@ -1,7 +1,6 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.LoadGame;
 import com.questoftherealm.interaction.MissionInteractions;
@@ -34,6 +33,6 @@ public class LoadCommand extends Command {
         LoadGame loadGame = new LoadGame();
         loadGame.loadGameSave(args[1],state);
         MissionInteractions missionInteractions = new MissionInteractions(state);
-        missionInteractions.worldStart(state.getPlayer());
+        missionInteractions.worldStart(player);
     }
 }

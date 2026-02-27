@@ -76,7 +76,7 @@ public class Quest {
 
     public QuestTypes getQuestTypes() {return questTypes;}
 
-    public void updateStatus(GameState state) {
+    public synchronized void updateStatus(GameState state) {
         boolean isAllReady = true;
         if (this.isCompleted()) return;
         for (Mission m : this.getMissions()) {
@@ -116,7 +116,7 @@ public class Quest {
         return Objects.hash(name);
     }
 
-    public void setPlayer(Player player) {
+    public synchronized void setPlayer(Player player) {
         this.player = player;
         for (Mission m : getMissions()) {
             m.setPlayer(player);

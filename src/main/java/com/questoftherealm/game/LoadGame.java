@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class LoadGame {
-    public LoadGame() {}
+    public LoadGame() {
+    }
 
     public void loadGameSave(String filename, GameState state) {
         try {
@@ -44,8 +45,10 @@ public class LoadGame {
                 if (loaded.getQuestFactory() != null) {
                     loaded.getQuestFactory().restoreAfterLoad(loaded, state);
                 }
-                state.setPlayer(loaded);
-                state.getPlayer().move(state.getPlayer().getX(),state.getPlayer().getY());
+                state.addPlayer(loaded);
+                for (Player player : state.getActivePlayers()) {
+                    player.move(player.getX(), player.getY());
+                }
 
             } else {
                 throw new FileNotFoundException(state.getMessages().getBundle().get("loadGame.file.notFound"));

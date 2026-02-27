@@ -1,85 +1,59 @@
 package com.questoftherealm.client;
 
+import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.characters.player.PlayerTypes;
+import com.questoftherealm.game.ConsoleInput;
+import com.questoftherealm.game.ConsoleOutput;
+import com.questoftherealm.game.GameServices;
+import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.interaction.ConsoleController;
+import com.questoftherealm.localization.MessageBundle;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.channels.Channels;
-import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Client {
-    private static BufferedReader reader;
-    private static PrintWriter writer;
-    private static int SERVER_PORT = 2020;
-    private static SocketChannel clientChannel;
 
+    private static final int SERVER_PORT = 2020;
+    private static MessageBundle bundle;
 
     static void main() {
-        startClient();
-    }
 
-    private static void startClient() {
-        try(SocketChannel socketChannel = SocketChannel.open();
-            Scanner scanner = new Scanner(System.in);) {
-            initializeConnection(socketChannel);
+        try (Socket socket = new Socket("localhost", SERVER_PORT);
+             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+             Scanner scanner = new Scanner(System.in)) {
+             bundle = new  MessageBundle();
 
-            while(true){
-                System.out.print("Enter message: ");
-                String message = scanner.nextLine();
-
-
-                System.out.println("Sending message <" + message + "> to the server...");
-                writer.println(message);
-
-                if (message.contains("disconnect")) {
-                    handleDisconnect();
-                }
-                else{
-                    if(processCommand()){
-                        return;
+            Thread listener = new Thread(() -> {
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                    int serverCharacter;
+                    while ((serverCharacter = in.read()) != -1) {
+                        System.out.print((char)serverCharacter);
+                        System.out.flush();
                     }
+                } catch (IOException e) {
+                    System.out.println("Disconnected from server.");
                 }
+            });
+            listener.start();
 
+            while (scanner.hasNextLine()) {
+                String input = scanner.nextLine();
+                out.println(input);
+                if (input.equalsIgnoreCase("quit")) break;
             }
 
-        }catch (IOException e){
-            //
+        } catch (IOException e) {
+            throw new RuntimeException("There is a problem with the network communication", e);
         }
-
-
-    }
-
-    private static boolean processCommand() {
-        try{
-            String reply = reader.readLine();
-            if (reply == null) {
-                System.out.println("Connection closed by server.");
-                return true;
-            }
-
-        }
-        catch (IOException e){
-
-        }
-        return false;
-    }
-
-    private static void handleDisconnect() throws IOException {
-        clientChannel.close();
-
-    }
-
-
-    private static void initializeConnection(SocketChannel socketChannel) throws IOException {
-        socketChannel.connect(new InetSocketAddress("localhost", SERVER_PORT));
-        System.out.println("Connected to the Game server.");
-        refreshStreams(socketChannel);
-    }
-
-    private static void refreshStreams(SocketChannel socketChannel) {
-        reader = new BufferedReader(Channels.newReader(socketChannel, "UTF-8"));
-        writer = new PrintWriter(Channels.newWriter(socketChannel, "UTF-8"), true);
     }
 }
+
+

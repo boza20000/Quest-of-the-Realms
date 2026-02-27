@@ -1,15 +1,12 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.Position;
 import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.map.TileTypes;
-
-import java.util.Arrays;
 
 public class MoveCommand extends Command {
 
@@ -129,9 +126,11 @@ public class MoveCommand extends Command {
     private void pathToDestination(String direction, Player player, GameState state, TravelManger travelManger) {
         try {
             state.getGameServices().getOutput().print(state.getMessages().getBundle().get("move.info.walking"));
+            state.getGameServices().getOutput().flush();
             for (int i = 0; i < 3; i++) {
                 Thread.sleep(600);
                 state.getGameServices().getOutput().print(state.getMessages().getBundle().get("move.info.dot"));
+                state.getGameServices().getOutput().flush();
             }
             travelManger.pathInteraction(state.getMap().curZone(player.getX(), player.getY()).getType(), direction, player, state);
         } catch (Exception e) {

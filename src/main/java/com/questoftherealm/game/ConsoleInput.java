@@ -1,9 +1,11 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.game.interfaces.Input;
+
 import java.io.IOException;
 import java.util.Scanner;
 
-public class InputService  {
+public class ConsoleInput implements Input {
     private final Scanner scanner = new Scanner(System.in);
 
 

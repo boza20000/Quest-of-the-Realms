@@ -2,7 +2,7 @@ package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.InputService;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.ArtLocalization;
 import com.questoftherealm.localization.MessageBundle;
@@ -12,15 +12,15 @@ import static com.questoftherealm.game.GameConstants.RED;
 import static com.questoftherealm.game.GameConstants.RESET;
 
 
-public class Console {
+public class ConsoleController {
     private final GameState state;
     private final Output output;
-    private final InputService input;
+    private final Input input;
     private final SlowPrinter slowPrinter;
     private final ArtLocalization artLocalization;
     private final MessageBundle bundle;
 
-    public Console(GameState state) {
+    public ConsoleController(GameState state) {
         this.state = state;
         this.output = state.getGameServices().getOutput();
         this.input = state.getGameServices().getInput();
@@ -47,7 +47,7 @@ public class Console {
 
     public void worldIntro() {
         slowPrinter.slowPrint(bundle.get("console.worldIntro"));
-        state.getGameServices().getInput().nextLine();
+        input.nextLine();
         output.println();
     }
 
@@ -87,6 +87,7 @@ public class Console {
 
         for (char c : story.getStory(state).toCharArray()) {
             output.print(String.valueOf(c));
+            output.flush();
             count++;
             try {
                 Thread.sleep(delay);
@@ -100,13 +101,14 @@ public class Console {
                     input.read();
                 }
                 output.print(story.getStory(state).substring(count));
+                output.flush();
                 break;
             }
         }
         input.read();
     }
 
-    public int showMainMenu(int count, GameState state) {
+    public int showMainMenu(int count) {
         if (count <= 1) {
             try {
                 output.println(artLocalization.getArt("start_menu"));
@@ -117,21 +119,20 @@ public class Console {
         } else {
             printSymbol();
         }
-        return Integer.parseInt(state.getGameServices().getInput().nextLine());
+        return Integer.parseInt(input.nextLine());
     }
 
-    public String characterCreationScreen(GameState state) {
-        output.println();
+    public String characterCreationScreen() {
         output.println(bundle.get("console.charCreate.namePrompt"));
         printSymbol();
-        String name = state.getGameServices().getInput().nextLine();
+        String name = input.nextLine();
         int count = 0;
         while (name.isBlank()) {
             if (count < 1) {
                 output.println(bundle.get("console.charCreate.nameEmptyError"));
             }
             printSymbol();
-            name = state.getGameServices().getInput().nextLine();
+            name = input.nextLine();
             count++;
         }
         displayCharacterOptions();
@@ -148,5 +149,6 @@ public class Console {
 
     private void printSymbol(){
         output.print(bundle.get("console.menu.prompt"));
+        output.flush();
     }
 }

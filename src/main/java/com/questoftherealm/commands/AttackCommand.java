@@ -2,7 +2,6 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
 
@@ -17,7 +16,7 @@ public class AttackCommand extends Command {
             return;
         }
         String enemyName = args[1];
-        Tile curTile = state.getMap().curZone(player.getX(), player.getY());
+        Tile curTile = player.curTile(state);
         if (curTile == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.undefinedArea"));
             return;
@@ -39,7 +38,7 @@ public class AttackCommand extends Command {
         }
         if (isKilled) {
             int gold = 5;
-            int exp = 10;
+            int exp = 20;
             player.addMoney(gold,state);
             player.addExp(exp);
             curTile.removeEnemy(chosenEnemy);

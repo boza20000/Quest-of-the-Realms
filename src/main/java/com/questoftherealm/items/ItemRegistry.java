@@ -49,7 +49,7 @@ public class ItemRegistry {
         throw new ItemNotFound(service.getBundle().get("itemRegistry.notFound", name));
     }
 
-    public synchronized List<Item> getAllItems(){
+    public List<Item> getAllItems(){
         return allItems;
     }
 }

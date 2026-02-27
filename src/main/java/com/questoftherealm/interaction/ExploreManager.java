@@ -81,7 +81,7 @@ public class ExploreManager {
     private void exploreRuins(Player player, int outcome) {
         if (outcome < 35) {
             slowPrinter.slowPrint(bundle.get("explore.ruins.trap"));
-            player.getPlayerCharacter().takeDamage(10, state);
+            player.getPlayerCharacter().takeDamage(10, state,player);
         } else if (outcome < 65) {
             slowPrinter.slowPrint(bundle.get("explore.ruins.relic"));
             findLoot(player);
@@ -94,7 +94,7 @@ public class ExploreManager {
         Characters character = player.getPlayerCharacter();
         if (outcome < 25) {
             slowPrinter.slowPrint(bundle.get("explore.sacred.attack"));
-            character.takeDamage(8, state);
+            character.takeDamage(8, state,player);
         } else if (outcome < 55) {
             slowPrinter.slowPrint(bundle.get("explore.sacred.heal"));
             character.setHealth(character.getHealth() + 10);
@@ -131,6 +131,7 @@ public class ExploreManager {
 
     private int getChoice() {
         output.print("> ");
+        output.flush();
         try {
             int choice = Integer.parseInt(state.getGameServices().getInput().nextLine());
             return Math.max(1, Math.min(choice, 3));

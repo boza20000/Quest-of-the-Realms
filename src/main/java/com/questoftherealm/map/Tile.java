@@ -17,8 +17,11 @@ import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Tile {
@@ -26,6 +29,7 @@ public class Tile {
     private final String description;
     private final boolean walkable;
     private Locations structure;
+    private boolean isStructureVisited = false;
     private List<Enemy> enemies = new ArrayList<>();
     private final List<ItemDrop> drops = new ArrayList<>();
     private boolean contentGenerated = false;
@@ -64,6 +68,14 @@ public class Tile {
 
     public List<ItemDrop> getDrops() {
         return drops;
+    }
+
+    public boolean isStructureVisited() {
+        return isStructureVisited;
+    }
+
+    public void setStructureVisited(boolean structureVisited) {
+        isStructureVisited = structureVisited;
     }
 
     public Enemy getEnemy(String name) {

@@ -1,19 +1,20 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 
 public class GameServices {
-    private final InputService input;
+    private final Input input;
     private final RandomService random;
     private final Output output;
 
-    public GameServices(Output type) {
-        this.input = new InputService();
+    public GameServices(Output output, Input input) {
+        this.input = input;
         this.random = new RandomService();
-        this.output = type;
+        this.output = output;
     }
 
-    public InputService getInput() {
+    public Input getInput() {
         return input;
     }
 

@@ -19,7 +19,7 @@ public class AbilityCommand extends Command {
             return;
         }
         String enemyName = args[1];
-        Tile curTile = state.getMap().curZone(player.getX(), player.getY());
+        Tile curTile = player.curTile(state);
         if (curTile == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.error.undefinedArea"));
             return;
@@ -29,10 +29,15 @@ public class AbilityCommand extends Command {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.error.noEnemy", enemyName));
             return;
         }
-        try {
-            player.getPlayerCharacter().activateAbility(player, chosenEnemy,state);
-        } catch (Exception e) {
-            throw new AbilityException(player.getPlayerCharacter() + state.getMessages().getBundle().get("ability.error.abilityFailed"));
+        synchronized (chosenEnemy) {
+            try {
+                player.getPlayerCharacter().activateAbility(player, chosenEnemy, state);
+                if(chosenEnemy.isDead()){
+                    curTile.removeEnemy(chosenEnemy);
+                }
+            } catch (Exception e) {
+                throw new AbilityException(player.getPlayerCharacter() + state.getMessages().getBundle().get("ability.error.abilityFailed"));
+            }
         }
     }
 

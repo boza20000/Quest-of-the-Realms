@@ -11,15 +11,17 @@ import com.questoftherealm.localization.MessageBundle;
 public class GameLoop {
     private final CommandFactory factory = new CommandFactory();
 
-    public void startLoop(Game game) {
+    public void startLoop(Game game, String username) {
         MissionInteractions m = new MissionInteractions(game.getGameState());
-        displayGameIntro(m, game);
-        startClock(game);
+        Player curPlayer = game.getGameState().getPlayer(username);
+
+        displayGameIntro(m, game, curPlayer);
+        startClock(game, curPlayer);
 
         Output output = game.getGameState().getGameServices().getOutput();
         MessageBundle bundle = game.getGameState().getMessages().getBundle();
 
-        while (!game.getGameState().isGameOver() || game.getGameState().getPlayer().isDead()) {
+        while (!game.getGameState().isGameOver()) {
             printSymbol(output, bundle);
             String command = game.getGameState().getGameServices().getInput().nextLine().trim();
 
@@ -29,7 +31,9 @@ public class GameLoop {
 
             String[] parts = command.trim().split("\\s+");
             String commandName = parts[0];
-            processCommand(parts, commandName, output, game.getGameState(), bundle, game.getGameState().getPlayer());
+            processCommand(parts, commandName, output, game.getGameState(), bundle, curPlayer);
+
+            //process map changes
 
         }
 
@@ -37,18 +41,19 @@ public class GameLoop {
     }
 
     private void endGame(Game game) {
-        game.getGameState().getPlayer().trackPlayTime(game.getGameState());
-        game.getConsole().displayEnd(game.getGameState().getPlayer());
+        for (Player player : game.getGameState().getActivePlayers()) {
+            player.trackPlayTime(game.getGameState());
+            game.getConsole().displayEnd(player);
+        }
     }
 
-    private void displayGameIntro(MissionInteractions m, Game game) {
-        m.worldStart(game.getGameState().getPlayer());
+    private void displayGameIntro(MissionInteractions m, Game game, Player player) {
+        m.worldStart(player);
     }
 
-    private void startClock(Game game) {
-        game.getGameState().getPlayer().setStartTime(game.getGameState().getClock().now());
+    private void startClock(Game game, Player player) {
+        player.setStartTime(game.getGameState().getClock().now());
     }
-
 
     private void processCommand(String[] parts, String commandName, Output output, GameState state, MessageBundle bundle, Player player) {
         Command cmd = createCommand(commandName, state, output, bundle);
@@ -68,6 +73,7 @@ public class GameLoop {
         } catch (Exception e) {
             output.println(bundle.get("gameLoop.command.syntax"));
             output.print(cmd.getDescription(state));
+            output.flush();
         }
     }
 
@@ -89,7 +95,8 @@ public class GameLoop {
     }
 
     private void printSymbol(Output output, MessageBundle bundle) {
-        output.print(bundle.get("console.enter.command.symbol"));
+      output.print(bundle.get("console.menu.prompt"));
+        output.flush();
     }
 
 }

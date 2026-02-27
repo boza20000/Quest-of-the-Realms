@@ -10,20 +10,20 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.map.TileTypes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
 import static com.questoftherealm.enemyEntities.EnemyFactory.createEnemy;
 
 public abstract class Enemy implements Fightable {
     private final String description;
     private final EnemyType type;
-    private int health;
+    private volatile int health;
     private final int baseAttack;
     private final int baseDefense;
     private List<Item> armor;
     private Item weapon;
-    private boolean isDead;
+    private volatile boolean isDead;
     private List<Loot> loot;
+    private int xpReward;
+    private int goldReward;
 
     public Enemy(EnemyData data) {
         this.description = data.description();
@@ -35,6 +35,8 @@ public abstract class Enemy implements Fightable {
         this.weapon = data.weapon();
         this.loot = new ArrayList<>(data.loot());
         this.isDead = data.isDead();
+        this.xpReward = data.xpReward();
+        this.goldReward = data.goldReward();
     }
 
 
@@ -42,7 +44,7 @@ public abstract class Enemy implements Fightable {
     public void attack(Player player, GameState state) {
         int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.attack.player",this.getClass().getSimpleName(),damage));
-        player.getPlayerCharacter().takeDamage(damage, state);
+        player.getPlayerCharacter().takeDamage(damage, state,player);
     }
 
     public int getBaseAttack() {
@@ -68,12 +70,11 @@ public abstract class Enemy implements Fightable {
 
     public static List<Enemy> generateEnemies(TileTypes type, GameState state) {
         List<EnemyType> chosenEnemies = new ArrayList<>();
-        RandomService rand = state.getGameServices().getRandom();
 
-        // Chance of enemies appearing at all
-        int spawnChance = rand.randomInt(100); // 0–99
-        if (spawnChance > 80) { // 20% chance no enemies
-            return toEnemyObj(chosenEnemies, state); // empty list
+        RandomService rand = state.getGameServices().getRandom();
+        int spawnChance = rand.randomInt(100);
+        if (spawnChance > 80) {
+            return toEnemyObj(chosenEnemies, state);
         }
         int countRoll = rand.randomInt(100);
         int enemyCount = 0;
@@ -154,10 +155,6 @@ public abstract class Enemy implements Fightable {
         return isDead;
     }
 
-    public static Item getDefaultWeapon() {
-        return null;
-    }
-
     public List<Loot> getLoot() {
         return loot;
     }
@@ -166,8 +163,16 @@ public abstract class Enemy implements Fightable {
         return baseDefense;
     }
 
-    public boolean interact(Player player, GameState state) {
+    public int getXpReward() {
+        return xpReward;
+    }
+
+    public synchronized boolean interact(Player player, GameState state) {
         Battle newBattle = BattleFactory.createBattle(player, this, state);
         return newBattle.simulate();
+    }
+
+    public int getGoldReward() {
+        return goldReward;
     }
 }

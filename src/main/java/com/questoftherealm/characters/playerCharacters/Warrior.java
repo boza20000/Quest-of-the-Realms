@@ -48,12 +48,6 @@ public class Warrior extends Characters implements Trading {
     }
 
     @Override
-    public void sellItem(Player player, Trader trader, Item item, int quantity, GameState state) {
-        player.addMoney(item.getPrice() * quantity, state);
-        player.getInventory().removeItem(item, quantity, state);
-    }
-
-    @Override
     public String getDefaultWeapon(GameState state) {
         return state.getMessages().getBundle().get("warrior.weapon.default");
     }
@@ -74,7 +68,7 @@ public class Warrior extends Characters implements Trading {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy, GameState state) {
+    public synchronized void activateAbility(Player player, Enemy enemy, GameState state) {
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.ability.use", player.getWeapon().getName()));
         enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2, state);
     }

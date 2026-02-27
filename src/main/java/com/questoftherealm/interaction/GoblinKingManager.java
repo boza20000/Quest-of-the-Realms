@@ -113,22 +113,22 @@ public class GoblinKingManager {
             int choice = getPlayerChoice(input);
 
             switch (choice) {
-                case 1 -> character.takeDamage(playerDodge(character, king), state);
-                case 2 -> character.takeDamage(playerBlock(character, king), state);
-                case 3 -> character.takeDamage(playerCounterAttack(character, king), state);
-                case 4 -> character.takeDamage(playerHide(character, king), state);
-                case 5 -> character.takeDamage(playerUseItem(player, king), state);
-                default -> playerHesitates(king, character);
+                case 1 -> character.takeDamage(playerDodge(character, king), state, player);
+                case 2 -> character.takeDamage(playerBlock(character, king), state, player);
+                case 3 -> character.takeDamage(playerCounterAttack(character, king), state, player);
+                case 4 -> character.takeDamage(playerHide(character, king), state, player);
+                case 5 -> character.takeDamage(playerUseItem(player, king), state, player);
+                default -> playerHesitates(king, player);
             }
-            handleGoblinKingSuperPowers(bossMove, character, king);
+            handleGoblinKingSuperPowers(bossMove, player, king);
             if (!king.isDead() && !character.isDead()) pause();
         }
         endBattle(king, character, q);
     }
 
-    private void playerHesitates(GoblinKing king, Characters character) {
+    private void playerHesitates(GoblinKing king, Player player) {
         output.println("😨 " + bundle.get("goblinking.player.hesitate"));
-        character.takeDamage(king.getBaseAttack(), state);
+        player.getPlayerCharacter().takeDamage(king.getBaseAttack(), state,player);
     }
 
     private void endBattle(GoblinKing king, Characters character, FinalBattle q) {
@@ -141,10 +141,10 @@ public class GoblinKingManager {
         }
     }
 
-    private void handleGoblinKingSuperPowers(int bossMove, Characters character, GoblinKing king) {
+    private void handleGoblinKingSuperPowers(int bossMove, Player player, GoblinKing king) {
         if (bossMove == 4 && state.getGameServices().getRandom().random().nextInt(100) < 60) {
             output.println("🌪️ " + bundle.get("goblinking.boss.super"));
-            character.takeDamage((int) (king.getBaseAttack() * 1.5), state);
+            player.getPlayerCharacter().takeDamage((int) (king.getBaseAttack() * 1.5), state,player);
         }
 
         if ((double) king.getHealth() / CharacterConstants.GoblinKing_HEALTH <= 0.2 && state.getGameServices().getRandom().random().nextInt(100) < 40) {
@@ -234,6 +234,7 @@ public class GoblinKingManager {
     private void printPlayerMenu() {
         output.println(bundle.get("goblinking.player.menu"));
         output.print("> ");
+        output.flush();
     }
 
     private int getBossMove(int choice) {

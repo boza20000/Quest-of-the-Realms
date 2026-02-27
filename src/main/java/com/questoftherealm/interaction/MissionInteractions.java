@@ -1,10 +1,9 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.enemyEntities.BattleFactory;
 import com.questoftherealm.enemyEntities.EnemyFactory;
 import com.questoftherealm.enemyEntities.EnemyType;
-import com.questoftherealm.expeditions.missions.*;
+import com.questoftherealm.expeditions.missions.Missions;
 import com.questoftherealm.expeditions.quest.quests.GoblinAmbush;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
@@ -90,12 +89,12 @@ public class MissionInteractions {
             }
             case 1 -> {
                 output.println(state.getMessages().getBundle().get("mission.escape.partial"));
-                player.getPlayerCharacter().takeDamage(10, state);
+                player.getPlayerCharacter().takeDamage(10, state,player);
                 q.setPlayerEscapedAmbush(true);
             }
             case 2 -> {
                 output.println(state.getMessages().getBundle().get("mission.escape.fail"));
-                BattleFactory.createBattle(player, EnemyFactory.createEnemy(EnemyType.GOBLIN, state), state).simulate();
+                EnemyFactory.createEnemy(EnemyType.GOBLIN, state).interact(player,state);
             }
         }
     }
@@ -109,12 +108,12 @@ public class MissionInteractions {
             }
             case 1 -> {
                 output.println(state.getMessages().getBundle().get("mission.fight.partial"));
-                player.getPlayerCharacter().takeDamage(15, state);
+                player.getPlayerCharacter().takeDamage(15, state,player);
                 q.setPlayerEscapedAmbush(true);
             }
             case 2 -> {
                 output.println(state.getMessages().getBundle().get("mission.fight.fail"));
-                BattleFactory.createBattle(player, EnemyFactory.createEnemy(EnemyType.GOBLIN, state), state).simulate();
+                EnemyFactory.createEnemy(EnemyType.GOBLIN, state).interact(player,state);
             }
         }
     }
@@ -132,7 +131,7 @@ public class MissionInteractions {
             }
             case 2 -> {
                 output.println(state.getMessages().getBundle().get("mission.talk.fail"));
-                BattleFactory.createBattle(player, EnemyFactory.createEnemy(EnemyType.GOBLIN, state), state).simulate();
+                EnemyFactory.createEnemy(EnemyType.GOBLIN, state).interact(player,state);
             }
         }
     }

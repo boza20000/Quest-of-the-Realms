@@ -6,11 +6,8 @@ import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.exceptions.NoSuchSpell;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.spells.Spell;
-import com.questoftherealm.items.Item;
 import com.questoftherealm.spells.SpellRegister;
-import com.questoftherealm.localization.MessageBundle;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
@@ -54,8 +51,7 @@ public class Mage extends Characters implements SpellCaster {
         Output output = state.getGameServices().getOutput();
         SpellRegister spellRegister = new SpellRegister(state);
         spellRegister.listSpells();
-        output.println(state.getMessages().getBundle().get("mage.spell.choose"));
-        output.print(">");
+        printMessage(output,state.getMessages().getBundle().get("mage.spell.choose"));
         String line = state.getGameServices().getInput().nextLine();
         Spell choice;
         try {
@@ -65,4 +61,11 @@ public class Mage extends Characters implements SpellCaster {
         }
         castSpell(player, choice, enemy, state);
     }
+
+    private void printMessage(Output output,String message) {
+        output.println(message);
+        output.print(">");
+        output.flush();
+    }
+
 }

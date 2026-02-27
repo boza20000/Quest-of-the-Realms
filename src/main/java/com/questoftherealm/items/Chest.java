@@ -9,6 +9,10 @@ import com.questoftherealm.game.GameState;
 import java.util.List;
 import java.util.Random;
 
+import static com.questoftherealm.items.Rarity.COMMON;
+import static com.questoftherealm.items.Rarity.UNCOMMON;
+import static com.questoftherealm.items.Rarity.RARE;
+
 public class Chest {
     private final GameState state;
     private final ItemRegistry itemRegistry;
@@ -58,9 +62,9 @@ public class Chest {
 
     private Rarity randomRarity() {
         int rand = random().nextInt(100) + 1;
-        if (rand <= 50) return Rarity.COMMON;
-        if (rand <= 75) return Rarity.UNCOMMON;
-        if (rand <= 90) return Rarity.RARE;
+        if (rand <= 50) return COMMON;
+        if (rand <= 75) return UNCOMMON;
+        if (rand <= 90) return RARE;
         if (rand <= 98) return Rarity.EPIC;
         return Rarity.LEGENDARY;
     }
@@ -73,9 +77,9 @@ public class Chest {
         if (possibleItems.isEmpty()) {
             Rarity fallback = switch (rarity) {
                 case LEGENDARY -> Rarity.EPIC;
-                case EPIC -> Rarity.RARE;
-                case RARE -> Rarity.UNCOMMON;
-                default -> Rarity.COMMON;
+                case EPIC -> RARE;
+                case RARE -> UNCOMMON;
+                default -> COMMON;
             };
             possibleItems = itemRegistry.getAllItems().stream()
                     .filter(i -> i.getType() == type && i.getRarity() == fallback)
@@ -90,7 +94,7 @@ public class Chest {
 
         ItemEffect effect = getWeaponType(player);
         ItemType type = ItemType.WEAPON;
-        Rarity rarity = Rarity.COMMON;
+        Rarity rarity = COMMON;
         int quantity = 1;
         List<Item> possibleWeapons = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == effect)
@@ -114,7 +118,7 @@ public class Chest {
     public ItemDrop generateArmorPiece(ItemType type, ItemEffect effect) {
 
         List<Item> possibleArmor = itemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == Rarity.COMMON && i.getEffect() == effect)
+                .filter(i -> i.getType() == type && i.getRarity() == COMMON && i.getEffect() == effect)
                 .toList();
         if (possibleArmor.isEmpty()) {
             throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.armorPieceNotGenerated", effect));

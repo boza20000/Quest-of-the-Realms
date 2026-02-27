@@ -5,7 +5,6 @@ import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.map.Tile;
 
 public class Battle {
     private Player player;
@@ -32,12 +31,12 @@ public class Battle {
 
             switch (choice) {
                 case "1" -> player.getPlayerCharacter().attack(enemy, player, state);
-                case "2" -> Choice2();
-                case "3" -> {
-                    if(Choice3(escapeCount)){
+                case "2" -> BlockAttack();
+                case "3" -> UsingItem();
+                case "4" -> {
+                    if (Fleeing(escapeCount)) {
                         return false;
                     }
-
                 }
 
                 default -> output.println(state.getMessages().getBundle().get("battle.invalidChoice"));
@@ -61,7 +60,17 @@ public class Battle {
 
     }
 
-    private void Choice2() {
+    private void BlockAttack() {
+        double roll = state.getGameServices().getRandom().randomDouble(1);
+        if (roll < 0.5) {
+            output.println(state.getMessages().getBundle().get("battle.block.success"));
+            player.getPlayerCharacter().block(enemy, player, state);
+        } else {
+            output.println(state.getMessages().getBundle().get("battle.block.fail"));
+        }
+    }
+
+    private void UsingItem() {
         player.openInventory(state);
         output.println(state.getMessages().getBundle().get("battle.enterItem"));
         String[] useCommand = new String[]{state.getGameServices().getInput().nextLine()};
@@ -76,7 +85,7 @@ public class Battle {
         }
     }
 
-    private boolean Choice3(int escapeCount) {
+    private boolean Fleeing(int escapeCount) {
         escapeCount++;
         double roll = state.getGameServices().getRandom().randomDouble(1);
         if (roll < 0.4 && escapeCount <= 1) {
@@ -90,15 +99,27 @@ public class Battle {
 
     private boolean handleDead() {
         if (player.getPlayerCharacter().isDead()) {
+            player.setDead();
             output.println(state.getMessages().getBundle().get("battle.player.defeated"));
             return false;
         } else {
             output.println(state.getMessages().getBundle().get("battle.enemy.defeated", enemy.getType()));
-            Tile curTile = state.getMap().curZone(player.getX(),player.getY());
-            if(curTile!=null){
-                curTile.addEnemyLoot(enemy,state);
-            }
+            handleRewards();
             return true;
+        }
+    }
+
+    private void handleRewards() {
+        player.addExp(enemy.getXpReward());
+        player.addMoney(enemy.getGoldReward(), state);
+        output.println(state.getMessages().getBundle().get("battle.enemy.defeated.rewards", enemy.getXpReward(), enemy.getGoldReward()));
+        for (Loot loot : enemy.getLoot()) {
+            int quantity = state.getGameServices().getRandom().randomInt(loot.min(), loot.max());
+            double roll = state.getGameServices().getRandom().randomDouble(1);
+            if (roll <= loot.chance()) {
+                output.println(state.getMessages().getBundle().get("battle.enemy.defeated.loot", enemy.getClass().getSimpleName(), loot.item(), quantity));
+                player.getInventory().addItem(loot.item(), quantity, state);
+            }
         }
     }
 }

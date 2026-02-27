@@ -4,8 +4,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.items.ItemRegistry;
-import com.questoftherealm.map.Map;
+import com.questoftherealm.map.WorldMap;
 import com.questoftherealm.map.Tile;
 
 
@@ -52,7 +51,7 @@ public class TakeCommand extends Command {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.itemUnknown"));
             return;
         }
-        Map map = state.getMap();
+        WorldMap map = state.getMap();
         if (map == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.mapNotLoaded"));
             return;
