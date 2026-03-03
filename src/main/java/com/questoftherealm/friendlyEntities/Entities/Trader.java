@@ -17,48 +17,50 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Trader extends Npc {
-    private Output output;
     private Map<Item, Integer> itemsForSale;
     private GameState state;
     private boolean isTrading;
 
     public Trader(String id, GameState state, MissionInteractions missionInteractions) {
         super(NpcType.TRADER, id, state, missionInteractions);
-        this.output = state.getGameServices().getOutput();
         this.state = state;
         itemsForSale = generateItemsForSale();
+    }
+
+    private Output output() {
+        return state.getGameServices().getOutput();
     }
 
     @Override
     public void talk(GameState state, Player player, boolean isSimulation) {
         isTrading = true;
         if (!(player.getPlayerCharacter() instanceof Warrior)) {
-            output.println(state.getMessages().getBundle().get("trader.refusesToTalk"));
+            output().println(state.getMessages().getBundle().get("trader.refusesToTalk"));
             return;
         }
-        output.println(state.getMessages().getBundle().get("trader.talks"));
+        output().println(state.getMessages().getBundle().get("trader.talks"));
         showItemsForSale();
-        output.println(state.getMessages().getBundle().get("trader.talks.how.to.buy"));
+        output().println(state.getMessages().getBundle().get("trader.talks.how.to.buy"));
         while (isTrading) {
             handleTrading(player);
         }
     }
 
-    private void handleTrading(Player player) {
+    private synchronized void handleTrading(Player player) {
         Warrior warrior = (Warrior) player.getPlayerCharacter();
         String input = state.getGameServices().getInput().nextLine();
         if (input == null) {
-            output.println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
+            output().println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
             return;
         }
         if (input.equalsIgnoreCase("stop")) {
             isTrading = false;
-            output.println(state.getMessages().getBundle().get("trader.talks.goodbye", player.getName()));
+            output().println(state.getMessages().getBundle().get("trader.talks.goodbye", player.getName()));
             return;
         }
         String[] parts = input.split(" ");
         if (parts.length < 3 || !parts[0].equalsIgnoreCase("buy")) {
-            output.println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
+            output().println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
             return;
         }
         String itemName = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length - 1));
@@ -67,13 +69,13 @@ public class Trader extends Npc {
         try {
             quantity = Integer.parseInt(Arrays.stream(parts).toList().getLast());
         } catch (NumberFormatException e) {
-            output.println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
+            output().println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
             return;
         }
         Item serachItem = state.getItemRegistry().getItem(itemName);
 
         if(serachItem!=null && !itemsForSale.containsKey(serachItem)){
-            output.println(state.getMessages().getBundle().get("trader.talks.item.not.for.sale", itemName));
+            output().println(state.getMessages().getBundle().get("trader.talks.item.not.for.sale", itemName));
             return;
         }
 
@@ -81,17 +83,17 @@ public class Trader extends Npc {
         if(quantity<=currentQuantity){
             itemsForSale.put(serachItem, currentQuantity - quantity);
         } else {
-            output.println(state.getMessages().getBundle().get("trader.talks.not.enough.stock", itemName));
+            output().println(state.getMessages().getBundle().get("trader.talks.not.enough.stock", itemName));
             return;
         }
 
         warrior.buyItem(this, player, serachItem, quantity, state);
     }
 
-    void showItemsForSale() {
-        output.println(state.getMessages().getBundle().get("trader.itemsForSale"));
+    synchronized void showItemsForSale() {
+        output().println(state.getMessages().getBundle().get("trader.itemsForSale"));
         for (Item item : itemsForSale.keySet()) {
-            output.println(state.getMessages().getBundle().get("trader.itemListing", item.getName(), itemsForSale.get(item), item.getPrice()));
+            output().println(state.getMessages().getBundle().get("trader.itemListing", item.getName(), itemsForSale.get(item), item.getPrice()));
         }
     }
 

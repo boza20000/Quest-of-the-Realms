@@ -20,7 +20,7 @@ public class ItemRegistry {
         allItems = loadAllItems();
     }
 
-   private List<Item> loadAllItems() {
+   private synchronized List<Item> loadAllItems() {
         if (allItems == null) {
             try (InputStream is = ItemRegistry.class.getResourceAsStream("/items.json")) {
                 if (is == null) {
@@ -37,7 +37,7 @@ public class ItemRegistry {
         return allItems;
     }
 
-    public Item getItem(String name) {
+    public synchronized Item getItem(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException(service.getBundle().get("itemRegistry.nullName"));
         }

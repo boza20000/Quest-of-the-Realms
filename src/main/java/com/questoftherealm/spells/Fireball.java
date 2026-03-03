@@ -11,12 +11,12 @@ public class Fireball extends DamageSpell {
         super(state.getMessages().getBundle().get("spells.fireball.name"), 25, state.getMessages().getBundle().get("spells.fireball.description"), 5);
     }
 
-    public synchronized void castFireball(Player player, Enemy enemy, GameState state) {
+    public void castFireball(Player player, Enemy enemy, GameState state) {
         this.damage(player, enemy, this, state);
     }
 
     @Override
-    public synchronized void cast(Player player, Enemy enemy, GameState state) {
+    public void cast(Player player, Enemy enemy, GameState state) {
         castFireball(player, enemy, state);
     }
 

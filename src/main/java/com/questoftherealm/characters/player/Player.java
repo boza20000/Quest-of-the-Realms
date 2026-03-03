@@ -120,13 +120,13 @@ public class Player implements InventoryHandler, Explorer {
         this.isDead = isDead;
     }
 
-    private synchronized void createArmor() {
+    private void createArmor() {
         if (!this.armor.containsKey(ItemEffect.HELMET)) this.armor.put(ItemEffect.HELMET, null);
         if (!this.armor.containsKey(ItemEffect.CHESTPLATE)) this.armor.put(ItemEffect.CHESTPLATE, null);
         if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
     }
 
-    private synchronized void initializeInventory(Inventory inventory) {
+    private void initializeInventory(Inventory inventory) {
         this.inventory = inventory != null ? inventory : new Inventory(MAX_ITEMS_IN_INVENTORY);
     }
 
@@ -155,7 +155,7 @@ public class Player implements InventoryHandler, Explorer {
         return false;
     }
 
-    public synchronized void loseMana(int mana) {
+    public void loseMana(int mana) {
         playerCharacter.useMana(mana);
     }
 
@@ -230,7 +230,7 @@ public class Player implements InventoryHandler, Explorer {
         return position;
     }
 
-    public synchronized void setPosition(Position position) {
+    public void setPosition(Position position) {
         this.position = position;
         this.x = position.x();
         this.y = position.y();
@@ -269,7 +269,7 @@ public class Player implements InventoryHandler, Explorer {
         return playTime;
     }
 
-    public synchronized void setPlayTime(long playTime) {
+    public void setPlayTime(long playTime) {
         PlayTime timePlayed = this.getPlayTime();
         int totalMinutes = (int) (((playTime / 1000) / 60) + timePlayed.minutes() + timePlayed.hours() * 60);
         int hours = totalMinutes / 60;
@@ -286,7 +286,7 @@ public class Player implements InventoryHandler, Explorer {
     }
 
     @Override
-    public synchronized void look(GameState state) {
+    public void look(GameState state) {
         Position pos = new Position(getX(), getY());
         for (LocationTrigger locTrigger : state.getTriggerRegister().getTriggers()) {
             if (locTrigger.isAtPosition(pos)) {
@@ -310,7 +310,7 @@ public class Player implements InventoryHandler, Explorer {
     }
 
     @Override
-    public synchronized void exploreStructure(String structure, GameState state) {
+    public void exploreStructure(String structure, GameState state) {
         Locations location = Locations.getStructure(structure);
         MessageBundle bundle = state.getMessages().getBundle();
         Output output = state.getGameServices().getOutput();
@@ -348,7 +348,7 @@ public class Player implements InventoryHandler, Explorer {
         recalculateStats();
     }
 
-    private synchronized void swapArmor(ItemEffect slot, Item armorPiece, GameState state) {
+    private void swapArmor(ItemEffect slot, Item armorPiece, GameState state) {
         if (armor.get(slot) != null) {
             getInventory().addItem(armor.get(slot), 1, state);
         }
@@ -381,24 +381,27 @@ public class Player implements InventoryHandler, Explorer {
     public synchronized void useItem(Item item) {
         playerCharacter.useMana(item.getMana());
         switch (item.getEffect()) {
-            case RESTORE_MANA -> playerCharacter.setMana(Math.min(item.getPower() + playerCharacter.getMana(), MAX_MANA));
-            case BUFF_STRENGTH -> playerCharacter.setAttack(Math.min(playerCharacter.getAttack() + item.getPower(), MAX_ATTACK / 2));
-            case RESTORE_HP -> playerCharacter.setHealth(Math.min(playerCharacter.getHealth() + item.getPower(), MAX_HEALTH));
+            case RESTORE_MANA ->
+                    playerCharacter.setMana(Math.min(item.getPower() + playerCharacter.getMana(), MAX_MANA));
+            case BUFF_STRENGTH ->
+                    playerCharacter.setAttack(Math.min(playerCharacter.getAttack() + item.getPower(), MAX_ATTACK / 2));
+            case RESTORE_HP ->
+                    playerCharacter.setHealth(Math.min(playerCharacter.getHealth() + item.getPower(), MAX_HEALTH));
         }
     }
 
-    public synchronized void openInventory(GameState state) {
+    public void openInventory(GameState state) {
         getInventory().listItems(state.getGameServices().getOutput(), state.getMessages().getBundle());
     }
 
-    public synchronized void equipItem(Item item, GameState state) {
+    public void equipItem(Item item, GameState state) {
         switch (item.getType()) {
             case ARMOR -> equipArmorPiece(item, state);
             case WEAPON -> equipWeapon(item, state);
         }
     }
 
-    public synchronized void updateQuestStatus(GameState state) {
+    public void updateQuestStatus(GameState state) {
         if (questFactory == null) return;
         Quest currentQuest = questFactory.getCurrentQuest();
         if (currentQuest == null) {
@@ -412,21 +415,21 @@ public class Player implements InventoryHandler, Explorer {
         this.curMission = questFactory.getCurrentMission();
     }
 
-    public synchronized void trackPlayTime(GameState state) {
+    public void trackPlayTime(GameState state) {
         long endTime = state.getClock().now();
         long duration = endTime - getStartTime();
         setPlayTime(duration);
     }
 
-    public synchronized boolean isDead() {
+    public boolean isDead() {
         return playerCharacter.isDead() || isDead;
     }
 
-    public synchronized void setDead() {
+    public void setDead() {
         isDead = true;
     }
 
-    public synchronized Tile curTile(GameState state) {
+    public Tile curTile(GameState state) {
         return state.getMap().curZone(getX(), getY());
     }
 }

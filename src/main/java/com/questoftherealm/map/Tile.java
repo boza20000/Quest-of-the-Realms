@@ -29,13 +29,12 @@ public class Tile {
     private final String description;
     private final boolean walkable;
     private Locations structure;
-    private boolean isStructureVisited = false;
     private List<Enemy> enemies = new ArrayList<>();
     private final List<ItemDrop> drops = new ArrayList<>();
-    private boolean contentGenerated = false;
+    private volatile boolean contentGenerated = false;
     private final Map<String, Npc> npcRegister = new HashMap<>();
     private TravelManger travelManger;
-    private Output output;
+    private GameState state;
 
     @JsonCreator
     public Tile(@JsonProperty("type") TileTypes type,
@@ -44,6 +43,10 @@ public class Tile {
         this.type = type;
         this.description = description;
         this.walkable = walkable;
+    }
+
+    private Output output() {
+        return state.getGameServices().getOutput();
     }
 
     public Locations getStructure() {
@@ -66,19 +69,11 @@ public class Tile {
         return walkable;
     }
 
-    public List<ItemDrop> getDrops() {
-        return drops;
+    public synchronized List<ItemDrop> getDrops() {
+        return new ArrayList<>(drops);
     }
 
-    public boolean isStructureVisited() {
-        return isStructureVisited;
-    }
-
-    public void setStructureVisited(boolean structureVisited) {
-        isStructureVisited = structureVisited;
-    }
-
-    public Enemy getEnemy(String name) {
+    public synchronized Enemy getEnemy(String name) {
         for (Enemy e : enemies) {
             if (e.getType().toString().equals(name.toUpperCase())) {
                 return e;
@@ -87,11 +82,11 @@ public class Tile {
         return null;
     }
 
-    public List<Enemy> getEnemies() {
-        return enemies;
+    public synchronized List<Enemy> getEnemies() {
+        return new ArrayList<>(enemies);
     }
 
-    public ItemDrop pickItem(String name) {
+    public synchronized ItemDrop pickItem(String name) {
         for (ItemDrop item : drops) {
             if (item.item().getName().equals(name)) {
                 drops.remove(item);
@@ -101,10 +96,10 @@ public class Tile {
         return null;
     }
 
-    void generateContent(GameState state) {
+    synchronized void generateContent(GameState state) {
         travelManger = new TravelManger(state);
         try {
-            output.println();
+            output().println();
             if (structure == null) {
                 this.structure = Locations.generateLocation(type);
             }
@@ -112,22 +107,22 @@ public class Tile {
             this.drops.clear();
             generateItems(state);
         } catch (RandomItemNotGenerated e) {
-            output.println(state.getMessages().getBundle().get("tile.error.items"));
+            output().println(state.getMessages().getBundle().get("tile.error.items"));
         } catch (StructureNotGenerated e) {
-            output.println(state.getMessages().getBundle().get("tile.error.structure"));
+            output().println(state.getMessages().getBundle().get("tile.error.structure"));
         } catch (Exception e) {
-            output.println(state.getMessages().getBundle().get("tile.error.general"));
+            output().println(state.getMessages().getBundle().get("tile.error.general"));
         }
         contentGenerated = true;
     }
 
-    public void onEnter(Player player, GameState state) {
-        this.output = state.getGameServices().getOutput();
+    public synchronized void onEnter(Player player, GameState state) {
+        this.state = state;
         generateContent(state);
         listContent(state);
     }
 
-    public void listContent(GameState state) {
+    public synchronized void listContent(GameState state) {
         displayItems(state);
         displayLocation(state);
         displayEnemies(state);
@@ -136,39 +131,39 @@ public class Tile {
 
     private void displayNpc(GameState state) {
         if (!this.npcRegister.isEmpty()) {
-            output.println(state.getMessages().getBundle().get("player.see.npc"));
+            output().println(state.getMessages().getBundle().get("player.see.npc"));
             for (Npc n : npcRegister.values()) {
-                output.println("-" + n.getType());
+                output().println("-" + n.getType());
             }
         }
     }
 
     private void displayLocation(GameState state) {
         if (structure == null) return;
-        output.println();
+        output().println();
         String structureName = state.getMessages().getBundle().get(structure.getName());
-        output.println(travelManger.getRandomSpotting(structureName));
-        output.println(structureName + " " + state.getMessages().getBundle().get(structure.getDescription()));
+        output().println(travelManger.getRandomSpotting(structureName));
+        output().println(structureName + " " + state.getMessages().getBundle().get(structure.getDescription()));
     }
 
     private void displayItems(GameState state) {
         if (!drops.isEmpty()) {
-            output.println(state.getMessages().getBundle().get("tile.items.found"));
+            output().println(state.getMessages().getBundle().get("tile.items.found"));
             printAvailableItems(state);
         }
     }
 
     private void displayEnemies(GameState state) {
         if (enemies.isEmpty()) {
-            output.println(state.getMessages().getBundle().get("tile.enemies.none"));
+            output().println(state.getMessages().getBundle().get("tile.enemies.none"));
             return;
         }
         for (Enemy e : enemies) {
-            output.println(state.getMessages().getBundle().get("tile.enemies.spotted", e.getClass().getSimpleName()));
+            output().println(state.getMessages().getBundle().get("tile.enemies.spotted", e.getClass().getSimpleName()));
         }
     }
 
-    public void generateItems(GameState state) {
+    public synchronized void generateItems(GameState state) {
         int itemCount = ThreadLocalRandom.current().nextInt(GameConstants.MAX_ITEM_DROPS + 1);
         Chest chest = new Chest(state);
         for (int i = 0; i < itemCount; i++) {
@@ -176,16 +171,16 @@ public class Tile {
         }
     }
 
-    public void printAvailableItems(GameState state) {
+    public synchronized void printAvailableItems(GameState state) {
         if (drops.isEmpty()) {
-            output.println(state.getMessages().getBundle().get("tile.items.none"));
+            output().println(state.getMessages().getBundle().get("tile.items.none"));
         }
         for (ItemDrop item : drops) {
-            output.println("-" + item.quantity() + "x " + item.item().getName());
+            output().println("-" + item.quantity() + "x " + item.item().getName());
         }
     }
 
-    public void removeDrop(Item drop, int quantity, GameState state) {
+    public synchronized void removeDrop(Item drop, int quantity, GameState state) {
         if (drop == null || quantity <= 0) {
             throw new IllegalArgumentException(state.getMessages().getBundle().get("tile.items.invalid"));
         }
@@ -203,23 +198,43 @@ public class Tile {
         }
     }
 
-    public void removeEnemy(Enemy enemy) {
+    public synchronized void removeEnemy(Enemy enemy,GameState state) {
+        addEnemyLoot(enemy, state);
         enemies.remove(enemy);
     }
 
-    public boolean isEmpty() {
+
+    public synchronized boolean takeItem(Item item, int quantity) {
+        if (item == null || quantity <= 0) return false;
+        for (int i = 0; i < drops.size(); i++) {
+            ItemDrop tileItem = drops.get(i);
+            if (tileItem.item().getName().equals(item.getName())) {
+                if (tileItem.quantity() < quantity) return false;
+                int newQty = tileItem.quantity() - quantity;
+                if (newQty <= 0) {
+                    drops.remove(i);
+                } else {
+                    drops.set(i, new ItemDrop(item, newQty));
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public synchronized boolean isEmpty() {
         return drops.isEmpty() && enemies.isEmpty();
     }
 
-    public void registerNpc(Npc npc) {
+    public synchronized void registerNpc(Npc npc) {
         npcRegister.put(npc.getId(), npc);
     }
 
-    public Npc getNpcById(String id) {
+    public synchronized Npc getNpcById(String id) {
         return npcRegister.get(id);
     }
 
-    public Npc getNpcByType(NpcType type) {
+    public synchronized Npc getNpcByType(NpcType type) {
         return npcRegister.values()
                 .stream()
                 .filter(n -> n.getType() == type)
@@ -227,7 +242,7 @@ public class Tile {
                 .orElse(null);
     }
 
-    public void addEnemyLoot(Enemy enemy, GameState state) {
+    public synchronized void addEnemyLoot(Enemy enemy, GameState state) {
         List<ItemDrop> enemyItems = new ArrayList<>();
         for (Loot l : enemy.getLoot()) {
             Random roll = state.getGameServices().getRandom().random();

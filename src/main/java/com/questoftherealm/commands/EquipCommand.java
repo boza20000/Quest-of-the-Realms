@@ -27,12 +27,14 @@ public class EquipCommand extends Command {
         try {
             Item item = state.getItemRegistry().getItem(itemName);
             Inventory inventory = player.getInventory();
-            if (!inventory.containsItem(item)) {
-                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.error.notInInventory", itemName));
-                return;
+            synchronized (inventory) {
+                if (!inventory.containsItem(item)) {
+                    state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.error.notInInventory", itemName));
+                    return;
+                }
+                player.equipItem(item, state);
+                inventory.removeItem(item, 1, state);
             }
-            player.equipItem(item,state);
-            inventory.removeItem(item,1,state);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.success", item.getName()));
         } catch (ItemNotFound e) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("equip.error.itemDoesNotExist"));

@@ -19,16 +19,20 @@ public class Game {
     private final int gameRules;
     private final PlayerTypes characterType;
     private final String characterName;
-    private final String serverRoom;
+    private final GameServices playerServices;
+    private volatile boolean isRunning = true;
+    private boolean isFirst;
 
-    public Game(Socket socket, GameState state, int rules, PlayerTypes characterType, String characterName,String serverRoom) {
+    public Game(Socket socket, GameState state, int rules, PlayerTypes characterType, String characterName, GameServices playerServices,boolean isFirst) {
         this.socket = socket;
         this.gameState = state;
         this.gameRules = rules;
         this.characterType = characterType;
         this.characterName = characterName;
-        this.output = state.getGameServices().getOutput();
-        this.serverRoom = serverRoom;
+        this.output = playerServices.getOutput();
+        this.playerServices = playerServices;
+        isRunning = true;
+        this.isFirst = isFirst;
     }
 
     public GameState getGameState() {
@@ -36,24 +40,24 @@ public class Game {
     }
 
     public void start() {
+
+        gameState.bindThreadServices(playerServices);
         Player curPlayer = new Player(characterName, characterType, gameState);
         displayChoice(curPlayer);
         gameState.addPlayer(curPlayer);
         console = new ConsoleController(gameState);
-        if (socket != null && socket.isConnected() && gameRules == 2) {
-            output.println("Connected to server. Starting multiplayer game...");
-            output.println("Player joined" + serverRoom + ": " + curPlayer.getName() + " the " + curPlayer.getPlayerType());
 
+        if (socket != null && socket.isConnected() && gameRules == 2) {
+            initializeMultiPlayerGame(curPlayer,isFirst);
         } else {
             try {
                 initializeSinglePlayerGame(curPlayer);
+
             } catch (FileNotLoaded | NpcInitializationFailed | IntroException e) {
                 output.println(e.getMessage());
                 return;
             }
         }
-
-        console.displayTitle();
 
         GameLoop loop = new GameLoop();
         loop.startLoop(this, characterName);
@@ -72,6 +76,29 @@ public class Game {
         }
         NpcInitializer npcInitializer = new NpcInitializer();
         npcInitializer.registerAll(gameState);
+
+        console.displayTitle();
+    }
+
+    private void initializeMultiPlayerGame(Player player, boolean isHost) {
+        output.println("Connected to server. Starting multiplayer game...");
+        output.println("Player joined " + gameState.getName() + ": " + player.getName() + " the " + player.getPlayerType());
+        console.displayTitle();
+        if (isHost) {
+            NpcInitializer npcInitializer = new NpcInitializer();
+            npcInitializer.registerAll(gameState);
+        }
+        printGameStart();
+
+    }
+
+    private void printGameStart() {
+        try {
+            console.showIntro();
+        } catch (IOException e) {
+            throw new IntroException(gameState.getMessages().getBundle().get("game.new.error.introCorrupted"));
+        }
+        console.worldIntro();
     }
 
     private int getGameMode() {
@@ -92,14 +119,7 @@ public class Game {
 
     public void newGame(Player player) {
         gameState.addPlayer(player);
-
-        try {
-            console.showIntro();
-        } catch (IOException e) {
-            throw new IntroException(gameState.getMessages().getBundle().get("game.new.error.introCorrupted"));
-        }
-        console.worldIntro();
-
+        printGameStart();
     }
 
     public void loadGame(Player player) {
@@ -113,6 +133,10 @@ public class Game {
         } catch (Exception e) {
             throw new FileNotLoaded(gameState.getMessages().getBundle().get("game.load.error"));
         }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     public ConsoleController getConsole() {

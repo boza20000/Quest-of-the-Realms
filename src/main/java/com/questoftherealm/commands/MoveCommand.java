@@ -141,7 +141,9 @@ public class MoveCommand extends Command {
 
     private void increasePlayerManaPerMove(Player player) {
         int manaPerMove = GameConstants.MANA_PER_MOVE;
-        player.getPlayerCharacter().setMana(player.getPlayerCharacter().getMana() + manaPerMove);
+        synchronized (player.getPlayerCharacter()) {
+            player.getPlayerCharacter().setMana(player.getPlayerCharacter().getMana() + manaPerMove);
+        }
     }
 
 }

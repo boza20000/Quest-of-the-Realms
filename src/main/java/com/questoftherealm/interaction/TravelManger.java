@@ -12,16 +12,17 @@ import java.util.Random;
 
 public class TravelManger {
     private GameState state;
-    private Output output;
     private SlowPrinter slowPrinter;
 
     private Random random() {
         return state.getGameServices().getRandom().random();
     }
+    private Output output() {
+        return state.getGameServices().getOutput();
+    }
 
     public TravelManger(GameState s) {
         state = s;
-        output = s.getGameServices().getOutput();
         this.slowPrinter = new SlowPrinter(s);
     }
 
@@ -68,12 +69,12 @@ public class TravelManger {
     private boolean promptYesNo(String question) {
         slowPrinter.slowPrint(question + " " + state.getMessages().getBundle().get("travel.prompt.yesno"));
         while (true) {
-            output.print(">");
-            output.flush();
+            output().print(">");
+            output().flush();
             String input = state.getGameServices().getInput().nextLine().trim().toLowerCase();
             if (input.equals("yes") || input.equals("y")) return true;
             if (input.equals("no") || input.equals("n")) return false;
-            output.println(state.getMessages().getBundle().get("travel.prompt.invalid"));
+            output().println(state.getMessages().getBundle().get("travel.prompt.invalid"));
         }
     }
 

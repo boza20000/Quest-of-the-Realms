@@ -14,13 +14,12 @@ import com.questoftherealm.map.Locations;
 
 public class ExploreManager {
     private GameState state;
-    private Output output;
     private SlowPrinter slowPrinter;
     private MessageBundle bundle;
 
+
     public void exploreStructure(Locations structure, Player player, GameState state) {
         this.state = state;
-        this.output = state.getGameServices().getOutput();
         this.slowPrinter = new SlowPrinter(state);
         this.bundle = state.getMessages().getBundle();
         slowPrinter.slowPrint("\n" + bundle.get("explore.arrive", bundle.get(structure.getName())));
@@ -37,6 +36,11 @@ public class ExploreManager {
             default -> slowPrinter.slowPrint(bundle.get("explore.leave"));
         }
     }
+
+    private Output output() {
+        return state.getGameServices().getOutput();
+    }
+
 
     private void enterStructure(Player player, Locations structure) {
         slowPrinter.slowPrint(bundle.get("explore.enter.start"));
@@ -97,7 +101,9 @@ public class ExploreManager {
             character.takeDamage(8, state,player);
         } else if (outcome < 55) {
             slowPrinter.slowPrint(bundle.get("explore.sacred.heal"));
-            character.setHealth(character.getHealth() + 10);
+            synchronized (character) {
+                character.setHealth(character.getHealth() + 10);
+            }
         } else {
             slowPrinter.slowPrint(bundle.get("explore.sacred.herb"));
             findLoot(player);
@@ -130,8 +136,8 @@ public class ExploreManager {
     }
 
     private int getChoice() {
-        output.print("> ");
-        output.flush();
+        output().print("> ");
+        output().flush();
         try {
             int choice = Integer.parseInt(state.getGameServices().getInput().nextLine());
             return Math.max(1, Math.min(choice, 3));
@@ -144,7 +150,7 @@ public class ExploreManager {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ignored) {
-            output.println("sleep failed");
+            output().println("sleep failed");
         }
     }
 }

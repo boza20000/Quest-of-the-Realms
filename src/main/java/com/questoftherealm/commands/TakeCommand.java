@@ -62,14 +62,10 @@ public class TakeCommand extends Command {
             return;
         }
 
-        ItemDrop drop = curZone.getDrops().stream()
-                .filter(d -> d.item().equals(newItem))
-                .findFirst()
-                .orElse(null);
-
-        if (drop != null && drop.quantity() >= quantity) {
-            player.getInventory().addItem(newItem, quantity,state);
-            curZone.removeDrop(newItem, quantity,state);
+        // Use synchronized takeFromTile which checks availability and removes atomically
+        boolean taken = curZone.takeItem(newItem, quantity);
+        if (taken) {
+            player.getInventory().addItem(newItem, quantity, state);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.success", quantity, newItem.getName()));
         } else {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.noItemOrQuantity"));

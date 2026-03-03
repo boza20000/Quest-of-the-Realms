@@ -45,9 +45,13 @@ public class UseCommand extends Command {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.error.itemNotFound"));
             return;
         }
-        if (player.getInventory().containsItem(item)) {
-            player.useItem(item);
-            player.getInventory().removeItem(item, 1,state);
+        synchronized (player.getInventory()) {
+            if (player.getInventory().containsItem(item)) {
+                player.useItem(item);
+                player.getInventory().removeItem(item, 1, state);
+            } else {
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.error.itemNotFound"));
+            }
         }
     }
 }

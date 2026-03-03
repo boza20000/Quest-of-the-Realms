@@ -37,15 +37,13 @@ public class ExitCommand extends Command {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.farewell"));
             player.trackPlayTime(state);
             Thread.sleep(800);
-            //to remove replace with server stop
-            //state.requestCloseGame();
-            System.exit(0);
+            state.removePlayer(player.getName());
+            state.setGameOver(state.getActivePlayers().isEmpty());
 
         } catch (Exception e) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.error.saving", e.getMessage()));
-            //to remove replace with server stop
-            //state.requestCloseGame();
-            System.exit(1);
+            state.removePlayer(player.getName());
+            state.setGameOver(state.getActivePlayers().isEmpty());
         }
     }
 

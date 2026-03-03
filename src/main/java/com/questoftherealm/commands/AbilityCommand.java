@@ -29,16 +29,16 @@ public class AbilityCommand extends Command {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.error.noEnemy", enemyName));
             return;
         }
-        synchronized (chosenEnemy) {
+
             try {
                 player.getPlayerCharacter().activateAbility(player, chosenEnemy, state);
                 if(chosenEnemy.isDead()){
-                    curTile.removeEnemy(chosenEnemy);
+                    curTile.removeEnemy(chosenEnemy,state);
                 }
             } catch (Exception e) {
                 throw new AbilityException(player.getPlayerCharacter() + state.getMessages().getBundle().get("ability.error.abilityFailed"));
             }
-        }
+
     }
 
     @Override

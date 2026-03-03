@@ -2,27 +2,28 @@ package com.questoftherealm.client;
 
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.game.Game;
+import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.ConsoleController;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//take client to the room and make character choices
 public class ClientRequestHandler implements Runnable {
 
     private final Socket socket;
     private AtomicInteger counter;
     private GameState masterState;
-    private int choice;
+    private int gameChoice;
     private String username;
     private PlayerTypes type;
     private String serverRoom;
     private Map<String, GameState> activeGames;
+    private boolean creatingNewRoom = false;
 
     public ClientRequestHandler(Socket socket, AtomicInteger counter, GameState masterState, Map<String, GameState> activeServers) {
         this.socket = socket;
@@ -36,9 +37,10 @@ public class ClientRequestHandler implements Runnable {
 
         Thread.currentThread().setName("Client Request Handler for " + socket.getRemoteSocketAddress());
         try {
+            GameServices playerServices = masterState.getGameServices();
             setRules();
             masterState = serverRoom != null ? activeGames.get(serverRoom) : masterState;
-            Game game = new Game(socket, masterState, choice, type, username, serverRoom);
+            Game game = new Game(socket, masterState, gameChoice, type, username, playerServices, creatingNewRoom);
             game.start();
 
         } catch (Exception e) {
@@ -62,49 +64,64 @@ public class ClientRequestHandler implements Runnable {
         try {
             out.print(masterState.getMessages().getBundle().get("console.menu.prompt"));
             out.flush();
-            this.choice = Integer.parseInt(masterState.getGameServices().getInput().nextLine());
+            this.gameChoice = Integer.parseInt(masterState.getGameServices().getInput().nextLine());
         } catch (NumberFormatException e) {
-            this.choice = 1;
+            this.gameChoice = 1;
         }
-        if (choice != 2) {
+        if (gameChoice != 2) {
             out.println("You have chosen singleplayer");
             masterState.setPrivate(true);
         } else {
-            //check for joining singleplayer rooms
+
             out.println("You have chosen multiplayer");
             out.println("Do you want to create a new room or join an existing one? (Type the name of the room you want to join or create.If you want to join singleplayer(type it))");
             String gameRoom = roomChoice(out);
             if (gameRoom == null) {
                 out.println("You have chosen singleplayer");
-                this.choice = 1;
+                this.gameChoice = 1;
                 masterState.setPrivate(true);
             }
         }
 
         this.username = console.characterCreationScreen();
         this.type = buildPlayerCharacter(out);
+        if (creatingNewRoom) {
+            activeGames.put(serverRoom, masterState);
+        }
 
     }
 
     private String roomChoice(Output out) {
         printRoomsOptions(out);
-        String room = masterState.getGameServices().getInput().nextLine();
-
-        if (activeGames.containsKey(room)) {
-            out.println("Joining room: " + room);
-            serverRoom = room;
-            return room;
-        } else if (room.equalsIgnoreCase("singleplayer")) {
-            out.println("Joining singleplayer instead.");
-            masterState.setPrivate(true);
-            return null;
-        } else {
-            out.println("Creating new room." + room);
-            return room;
+        while (true) {
+            String room = masterState.getGameServices().getInput().nextLine();
+            if (activeGames.containsKey(room)) {
+                if (activeGames.get(room).isPrivate()) {
+                    out.println("Room is private.Try again.");
+                    continue;
+                }
+                out.println("Joining room: " + room);
+                serverRoom = room;
+                return room;
+            } else if (room.equalsIgnoreCase("singleplayer")) {
+                out.println("Joining singleplayer instead.");
+                masterState.setPrivate(true);
+                return null;
+            } else {
+                creatingNewRoom = true;
+                out.println("Creating new room: " + room);
+                masterState = new GameState(room, masterState.getGameServices());
+                serverRoom = room;
+                return room;
+            }
         }
     }
 
     private void printRoomsOptions(Output out) {
+        if (activeGames.isEmpty()) {
+            out.println("No active rooms. Type the name of the room you want to create or type singleplayer to play alone.");
+            return;
+        }
         for (String roomName : activeGames.keySet().stream().toList()) {
             out.println("- " + roomName);
         }

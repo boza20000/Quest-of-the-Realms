@@ -22,17 +22,13 @@ public class AttackCommand extends Command {
             return;
         }
         Enemy chosenEnemy = curTile.getEnemy(enemyName);
-        if (chosenEnemy == null) {
+        if (chosenEnemy == null || chosenEnemy.isDead()) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.noEnemy", enemyName));
             return;
         }
         boolean isKilled = false;
-        if(chosenEnemy.isDead()){
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.enemyDead", enemyName));
-            return;
-        }
         try {
-            isKilled = chosenEnemy.interact(player,state);
+            isKilled = chosenEnemy.interact(player, state);
         } catch (Exception e) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable",enemyName));
         }
@@ -41,7 +37,7 @@ public class AttackCommand extends Command {
             int exp = 20;
             player.addMoney(gold,state);
             player.addExp(exp);
-            curTile.removeEnemy(chosenEnemy);
+            curTile.removeEnemy(chosenEnemy,state);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.success.reward", gold, exp));
         }
         // state.getGameServices().getOutput().println(player.getName() + " attacked " + enemyName + " at " + player.getPosition());

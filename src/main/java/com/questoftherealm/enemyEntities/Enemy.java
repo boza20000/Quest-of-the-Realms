@@ -41,7 +41,7 @@ public abstract class Enemy implements Fightable {
 
 
     @Override
-    public void attack(Player player, GameState state) {
+    public synchronized void attack(Player player, GameState state) {
         int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.attack.player",this.getClass().getSimpleName(),damage));
         player.getPlayerCharacter().takeDamage(damage, state,player);
@@ -52,7 +52,7 @@ public abstract class Enemy implements Fightable {
     }
 
     @Override
-    public void takeDamage(int damage, GameState state) {
+    public synchronized void takeDamage(int damage, GameState state) {
         int armorPower = armor.stream().mapToInt(Item::getPower).sum();
         int reducedDamageTaken = Math.max(0, damage - ((getBaseDefense() + armorPower) / 2));
         int newHealth = Math.max(0, getHealth() - reducedDamageTaken);
@@ -64,7 +64,7 @@ public abstract class Enemy implements Fightable {
     }
 
     @Override
-    public boolean isAlive() {
+    public synchronized boolean isAlive() {
         return !isDead;
     }
 
@@ -119,7 +119,7 @@ public abstract class Enemy implements Fightable {
         return type;
     }
 
-    public int getHealth() {
+    public synchronized int getHealth() {
         return health;
     }
 
@@ -140,7 +140,7 @@ public abstract class Enemy implements Fightable {
         this.armor = armor;
     }
 
-    public void setHealth(int health) {
+    public synchronized void setHealth(int health) {
         if (health == 0) {
             isDead = true;
         }
@@ -151,7 +151,7 @@ public abstract class Enemy implements Fightable {
         this.weapon = weapon;
     }
 
-    public boolean isDead() {
+    public synchronized boolean isDead() {
         return isDead;
     }
 
@@ -168,6 +168,7 @@ public abstract class Enemy implements Fightable {
     }
 
     public synchronized boolean interact(Player player, GameState state) {
+        if (isDead()) return false;
         Battle newBattle = BattleFactory.createBattle(player, this, state);
         return newBattle.simulate();
     }

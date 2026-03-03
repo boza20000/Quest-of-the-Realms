@@ -35,12 +35,12 @@ public class WorldMap {
         return gameMap;
     }
 
-    public void movePlayer(Player player, int x, int y) {
+    public synchronized void movePlayer(Player player, int x, int y) {
         player.setCurrentZone(gameMap[y][x].getDescription());
 
     }
 
-    public void print(GameState state) {
+    public synchronized void print(GameState state) {
         Output output = state.getGameServices().getOutput();
         mapFrameStart(output);
         for (int i = 0; i < gameMap.length; i++) {
@@ -58,7 +58,7 @@ public class WorldMap {
         mapFrameEnd(output);
     }
 
-    private synchronized boolean isPlayerHere(int i, int j,GameState state) {
+    private boolean isPlayerHere(int i, int j,GameState state) {
         List<Player> players =  state.getActivePlayers();
         for(Player player : players) {
             if (j == player.getX() && i == player.getY()){

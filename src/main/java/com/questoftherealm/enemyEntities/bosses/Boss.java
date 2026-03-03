@@ -15,7 +15,7 @@ public abstract class Boss extends Characters {
     protected HashMap<ItemEffect, Item> armor;
     protected Item weapon;
     protected List<ItemDrop> loot;
-    private boolean isDefeated;
+    private volatile boolean isDefeated;
 
 
     public Boss(

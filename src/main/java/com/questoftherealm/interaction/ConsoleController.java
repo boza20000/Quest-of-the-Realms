@@ -14,16 +14,12 @@ import static com.questoftherealm.game.GameConstants.RESET;
 
 public class ConsoleController {
     private final GameState state;
-    private final Output output;
-    private final Input input;
     private final SlowPrinter slowPrinter;
     private final ArtLocalization artLocalization;
     private final MessageBundle bundle;
 
     public ConsoleController(GameState state) {
         this.state = state;
-        this.output = state.getGameServices().getOutput();
-        this.input = state.getGameServices().getInput();
         this.slowPrinter = new SlowPrinter(state);
         this.bundle = state.getMessages().getBundle();
         try {
@@ -33,13 +29,21 @@ public class ConsoleController {
         }
     }
 
+    private Output output(){
+        return state.getGameServices().getOutput();
+    }
+
+    private Input input(){
+        return state.getGameServices().getInput();
+    }
+
     public void displayTitle() {
-        output.println();
-        output.println();
-        output.println();
-        output.println();
+        output().println();
+        output().println();
+        output().println();
+        output().println();
         try {
-            output.println(artLocalization.getArt("quest_of_the_realms"));
+            output().println(artLocalization.getArt("quest_of_the_realms"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +51,8 @@ public class ConsoleController {
 
     public void worldIntro() {
         slowPrinter.slowPrint(bundle.get("console.worldIntro"));
-        input.nextLine();
-        output.println();
+        input().nextLine();
+        output().println();
     }
 
     public void displayPlayTime(Player player) {
@@ -60,17 +64,17 @@ public class ConsoleController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        output.println(playTimeArt);
+        output().println(playTimeArt);
     }
 
 
     public void displayEnd(Player player) {
-        output.println();
-        output.println();
-        output.println();
-        output.println();
+        output().println();
+        output().println();
+        output().println();
+        output().println();
         try {
-            output.println(artLocalization.getArt("game_over"));
+            output().println(artLocalization.getArt("game_over"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -82,12 +86,12 @@ public class ConsoleController {
         Story story = new Story();
         final int delay = 30;
         int count = 0;
-        output.println();
-        output.println(bundle.get("console.intro.skip", RED, RESET));
+        output().println();
+        output().println(bundle.get("console.intro.skip", RED, RESET));
 
         for (char c : story.getStory(state).toCharArray()) {
-            output.print(String.valueOf(c));
-            output.flush();
+            output().print(String.valueOf(c));
+            output().flush();
             count++;
             try {
                 Thread.sleep(delay);
@@ -96,22 +100,22 @@ public class ConsoleController {
                 return;
             }
 
-            if (input.available() > 0) {
-                while (input.available() > 0) {
-                    input.read();
+            if (input().available() > 0) {
+                while (input().available() > 0) {
+                    input().read();
                 }
-                output.print(story.getStory(state).substring(count));
-                output.flush();
+                output().print(story.getStory(state).substring(count));
+                output().flush();
                 break;
             }
         }
-        input.read();
+        input().read();
     }
 
     public int showMainMenu(int count) {
         if (count <= 1) {
             try {
-                output.println(artLocalization.getArt("start_menu"));
+                output().println(artLocalization.getArt("start_menu"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -119,20 +123,20 @@ public class ConsoleController {
         } else {
             printSymbol();
         }
-        return Integer.parseInt(input.nextLine());
+        return Integer.parseInt(input().nextLine());
     }
 
     public String characterCreationScreen() {
-        output.println(bundle.get("console.charCreate.namePrompt"));
+        output().println(bundle.get("console.charCreate.namePrompt"));
         printSymbol();
-        String name = input.nextLine();
+        String name = input().nextLine();
         int count = 0;
         while (name.isBlank()) {
             if (count < 1) {
-                output.println(bundle.get("console.charCreate.nameEmptyError"));
+                output().println(bundle.get("console.charCreate.nameEmptyError"));
             }
             printSymbol();
-            name = input.nextLine();
+            name = input().nextLine();
             count++;
         }
         displayCharacterOptions();
@@ -140,15 +144,15 @@ public class ConsoleController {
     }
 
     private void displayCharacterOptions() {
-        output.println(bundle.get("console.charCreate.classPrompt"));
-        output.println(bundle.get("console.charCreate.class1"));
-        output.println(bundle.get("console.charCreate.class2"));
-        output.println(bundle.get("console.charCreate.class3"));
-        output.println(bundle.get("console.charCreate.class4"));
+        output().println(bundle.get("console.charCreate.classPrompt"));
+        output().println(bundle.get("console.charCreate.class1"));
+        output().println(bundle.get("console.charCreate.class2"));
+        output().println(bundle.get("console.charCreate.class3"));
+        output().println(bundle.get("console.charCreate.class4"));
     }
 
     private void printSymbol(){
-        output.print(bundle.get("console.menu.prompt"));
-        output.flush();
+        output().print(bundle.get("console.menu.prompt"));
+        output().flush();
     }
 }

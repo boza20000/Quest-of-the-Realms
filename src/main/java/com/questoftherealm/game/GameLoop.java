@@ -15,13 +15,13 @@ public class GameLoop {
         MissionInteractions m = new MissionInteractions(game.getGameState());
         Player curPlayer = game.getGameState().getPlayer(username);
 
-        displayGameIntro(m, game, curPlayer);
+        displayGameIntro(m, curPlayer);
         startClock(game, curPlayer);
 
         Output output = game.getGameState().getGameServices().getOutput();
         MessageBundle bundle = game.getGameState().getMessages().getBundle();
 
-        while (!game.getGameState().isGameOver()) {
+        while (!game.getGameState().isGameOver() && game.isRunning()) {
             printSymbol(output, bundle);
             String command = game.getGameState().getGameServices().getInput().nextLine().trim();
 
@@ -31,10 +31,8 @@ public class GameLoop {
 
             String[] parts = command.trim().split("\\s+");
             String commandName = parts[0];
+
             processCommand(parts, commandName, output, game.getGameState(), bundle, curPlayer);
-
-            //process map changes
-
         }
 
         endGame(game);
@@ -47,7 +45,7 @@ public class GameLoop {
         }
     }
 
-    private void displayGameIntro(MissionInteractions m, Game game, Player player) {
+    private void displayGameIntro(MissionInteractions m, Player player) {
         m.worldStart(player);
     }
 
@@ -95,7 +93,7 @@ public class GameLoop {
     }
 
     private void printSymbol(Output output, MessageBundle bundle) {
-      output.print(bundle.get("console.menu.prompt"));
+        output.print(bundle.get("console.menu.prompt"));
         output.flush();
     }
 

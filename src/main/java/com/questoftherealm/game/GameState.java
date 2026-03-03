@@ -18,11 +18,12 @@ public class GameState {
     private final Map<String, Player> activePlayers = new ConcurrentHashMap<>();
     private WorldMap gameMap;
     private final TriggerRegister triggerRegister;
-    private boolean gameOver;
+    private volatile boolean gameOver;
     private boolean isSimulation;
     private ServerClock clock;
     private final LocalizationService messages;
     private final ItemRegistry itemRegistry;
+    private final ThreadLocal<GameServices> threadServices = new ThreadLocal<>();
 
     public GameState(String name, GameServices services) {
         this.name = name;
@@ -34,6 +35,16 @@ public class GameState {
         this.gameOver = false;
         this.isSimulation = false;
         clock = new ServerClock();
+    }
+
+
+    public void bindThreadServices(GameServices services) {
+        threadServices.set(services);
+    }
+
+    public GameServices getGameServices() {
+        GameServices ts = threadServices.get();
+        return ts != null ? ts : gameServices;
     }
 
     public List<Player> getActivePlayers() {
@@ -48,9 +59,6 @@ public class GameState {
         return gameMap;
     }
 
-    public GameServices getGameServices() {
-        return gameServices;
-    }
 
     public TriggerRegister getTriggerRegister() {
         return triggerRegister;
@@ -116,5 +124,9 @@ public class GameState {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
     }
 }

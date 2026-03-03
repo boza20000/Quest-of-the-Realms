@@ -57,7 +57,7 @@ public class Rogue extends Characters implements Deceiver {
     }
 
     @Override
-    public  void activateAbility(Player player, Enemy enemy,GameState state) {
+    public void activateAbility(Player player, Enemy enemy,GameState state) {
         player.loseMana(GameConstants.ROUGE_ABILITY_MANA_COST);
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.ability.start", enemy.getClass().getSimpleName().toUpperCase()));
         if(enemy.isDead()){

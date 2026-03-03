@@ -14,22 +14,22 @@ public class ClientSocketOutput implements Output {
     }
 
     @Override
-    public void println(String msg) {
+    public synchronized void println(String msg) {
         printWriter.println(msg);
     }
 
     @Override
-    public void print(String msg) {
+    public synchronized void print(String msg) {
         printWriter.print(msg);
     }
 
     @Override
-    public void println() {
+    public synchronized void println() {
         printWriter.println();
     }
 
     @Override
-    public void flush() {
+    public synchronized void flush() {
         printWriter.flush();
     }
 

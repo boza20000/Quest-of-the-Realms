@@ -23,8 +23,6 @@ public class Server {
     private static final int SERVER_PORT = 2020;
     private static final int MAX_EXECUTOR_THREADS = 15;
     private static AtomicInteger counter = new AtomicInteger(0);
-    //private static ConcurrentHashMap<String, Player> activePlayers = new ConcurrentHashMap<>();
-    //private static ConcurrentHashMap<Integer, Player> activePlayersMode = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<String, GameState> activeGames = new ConcurrentHashMap<>();
     private static GameState masterState;
 
@@ -49,9 +47,7 @@ public class Server {
                 clientSocket = serverSocket.accept();
 
                 System.out.println("Accepted connection request from client " + clientSocket.getInetAddress() + ":" + clientSocket.getPort());
-                String serverName = "Server" + counter.get();
-                masterState = new GameState(serverName, new GameServices(new ClientSocketOutput(clientSocket), new ClientSocketInput(clientSocket)));
-                activeGames.put(serverName, masterState);
+                masterState = new GameState(null, new GameServices(new ClientSocketOutput(clientSocket), new ClientSocketInput(clientSocket)));
                 ClientRequestHandler clientHandler = new ClientRequestHandler(clientSocket, counter, masterState,activeGames);
                 executor.execute(clientHandler);
                 System.out.println("Players active: (" + counter.get() + "/" + MAX_EXECUTOR_THREADS + ")");

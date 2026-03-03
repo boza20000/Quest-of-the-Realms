@@ -44,7 +44,7 @@ public abstract class Characters implements Combatant {
     }
 
     @Override
-    public  void attack(Enemy target, Player player, GameState state) {
+    public synchronized void attack(Enemy target, Player player, GameState state) {
         if (target.isDead()) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.target.alreadyDead", target.getClass().getSimpleName()));
             return;
@@ -85,31 +85,31 @@ public abstract class Characters implements Combatant {
 
     public abstract int getMaxHealth();
 
-    public int getHealth() {
+    public synchronized int getHealth() {
         return health;
     }
 
-    public void setHealth(int health) {
+    public synchronized void setHealth(int health) {
         this.health = Math.max(0, Math.min(health, this.getMaxHealth()));
     }
 
-    public int getMana() {
+    public synchronized int getMana() {
         return mana;
     }
 
-    public void setMana(int mana) {
+    public synchronized void setMana(int mana) {
         this.mana = Math.max(0, Math.min(mana, MAX_MANA));
     }
 
-    public int getAttack() {
+    public synchronized int getAttack() {
         return attack;
     }
 
-    public void setAttack(int attack) {
+    public synchronized void setAttack(int attack) {
         this.attack = Math.max(0, Math.min(attack, MAX_ATTACK));
     }
 
-    public int getDefence() {
+    public synchronized int getDefence() {
         return defence;
     }
 
@@ -117,11 +117,11 @@ public abstract class Characters implements Combatant {
         this.defence = Math.max(0, Math.min(defence, MAX_DEFENCE));
     }
 
-    public int getArmor() {
+    public synchronized int getArmor() {
         return armor;
     }
 
-    public void setArmor(int armor) {
+    public synchronized void setArmor(int armor) {
         this.armor = Math.max(0, Math.min(armor, MAX_ARMOR));
     }
 
@@ -173,7 +173,7 @@ public abstract class Characters implements Combatant {
 
     public abstract void activateAbility(Player player, Enemy enemy, GameState state);
 
-    public void block( Enemy enemy, Player player, GameState state) {
+    public synchronized void block( Enemy enemy, Player player, GameState state) {
         useMana(player.getWeapon().getMana()/3);
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("character.block.start", enemy.getClass().getSimpleName()));
         int blockAmount = (int) (getDefence() * 1.5);

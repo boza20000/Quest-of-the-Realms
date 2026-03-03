@@ -6,13 +6,14 @@ import com.questoftherealm.game.interfaces.Output;
 import static com.questoftherealm.game.GameConstants.DELAY_MS;
 
 public class SlowPrinter {
-    private Output output;
+    private final GameState state;
 
     public SlowPrinter(GameState state) {
-        this.output = state.getGameServices().getOutput();
+        this.state = state;
     }
 
     public void slowPrint(String text) {
+        Output output = state.getGameServices().getOutput();
         for (char c : text.toCharArray()) {
             output.print(String.valueOf(c));
             output.flush();

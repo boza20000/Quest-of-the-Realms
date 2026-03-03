@@ -56,7 +56,7 @@ public class GoblinKing extends Boss {
     }
 
     @Override
-    public void superMove(Player player, GameState state) {
+    public synchronized void superMove(Player player, GameState state) {
         SlowPrinter slowPrinter = new SlowPrinter(state);
         Random random = new Random();
         int roll = random.nextInt(100);

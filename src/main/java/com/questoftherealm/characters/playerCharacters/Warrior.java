@@ -68,7 +68,7 @@ public class Warrior extends Characters implements Trading {
     }
 
     @Override
-    public synchronized void activateAbility(Player player, Enemy enemy, GameState state) {
+    public  void activateAbility(Player player, Enemy enemy, GameState state) {
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.ability.use", player.getWeapon().getName()));
         enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2, state);
     }
