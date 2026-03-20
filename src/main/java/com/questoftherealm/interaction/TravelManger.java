@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Random;
 
 public class TravelManger {
-    private GameState state;
-    private SlowPrinter slowPrinter;
+    private final GameState state;
+    private final SlowPrinter slowPrinter;
 
     private Random random() {
         return state.getGameServices().getRandom().random();
@@ -23,7 +23,11 @@ public class TravelManger {
 
     public TravelManger(GameState s) {
         state = s;
-        this.slowPrinter = new SlowPrinter(s);
+        this.slowPrinter = createSlowPrinter(s);
+    }
+
+    protected SlowPrinter createSlowPrinter(GameState s) {
+        return new SlowPrinter(s);
     }
 
     private final List<String> MOVE_CONNECTORS = List.of(
@@ -56,11 +60,20 @@ public class TravelManger {
         if (investigate) {
             slowPrinter.slowPrint("👉 " + state.getMessages().getBundle().get("travel.event.investigate.accept"));
             enemy.interact(player, state);
+            if (player.isDead()) {
+                return;
+            }
         }
-        int roll = random().nextInt(10);
-        if (roll < 6) {
-            slowPrinter.slowPrint("👻 " + state.getMessages().getBundle().get("travel.event.investigate.forced",enemy.getClass().getSimpleName()));
-            enemy.interact(player, state);
+
+        if (!enemy.isDead()) {
+            int roll = random().nextInt(10);
+            if (roll < 6) {
+                slowPrinter.slowPrint("👻 " + state.getMessages().getBundle().get("travel.event.investigate.forced", enemy.getClass().getSimpleName()));
+                enemy.interact(player, state);
+                if (player.isDead()) {
+                    return;
+                }
+            }
         }
         slowPrinter.slowPrint("➡️ " + state.getMessages().getBundle().get("travel.event.investigate.decline"));
 

@@ -24,10 +24,8 @@ import com.questoftherealm.map.Tile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.questoftherealm.game.GameConstants.*;
-
 
 public class Player implements InventoryHandler, Explorer {
     private final String name;
@@ -47,9 +45,12 @@ public class Player implements InventoryHandler, Explorer {
     @JsonIgnore
     private Mission curMission;
     private PlayTime playTime;
+    @JsonIgnore
     private long startTime;
     private QuestFactory questFactory;
     private volatile boolean isDead;
+    @JsonIgnore
+    private volatile boolean isActive;
 
     public Player(String name, PlayerTypes type, GameState state) {
         WeaponFactory weaponFactory = new WeaponFactory(state.getItemRegistry());
@@ -75,6 +76,7 @@ public class Player implements InventoryHandler, Explorer {
         this.curQuest = questFactory.getCurrentQuest();
         this.curMission = questFactory.getCurrentMission();
         this.isDead = false;
+        this.isActive = true;
     }
 
     @JsonCreator
@@ -91,7 +93,9 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("inventory") Inventory inventory,
                   @JsonProperty("playTime") PlayTime playTime,
                   @JsonProperty("questFactory") QuestFactory questFactory,
-                  @JsonProperty("dead") boolean isDead) {
+                  @JsonProperty("dead") boolean isDead,
+                  @JsonProperty("characterHealth") Integer characterHealth,
+                  @JsonProperty("characterMana") Integer characterMana) {
 
         this.name = name;
         this.playerType = playerType;
@@ -109,6 +113,13 @@ public class Player implements InventoryHandler, Explorer {
         initializeInventory(inventory);
         recalculateStats();
 
+        if (characterHealth != null) {
+            this.playerCharacter.setHealth(characterHealth);
+        }
+        if (characterMana != null) {
+            this.playerCharacter.setMana(characterMana);
+        }
+
         this.questFactory = questFactory;
         if (questFactory != null) {
             this.questFactory.setPlayer(this);
@@ -118,6 +129,7 @@ public class Player implements InventoryHandler, Explorer {
 
         this.playTime = playTime != null ? playTime : new PlayTime(0, 0);
         this.isDead = isDead;
+        this.isActive = true;
     }
 
     private void createArmor() {
@@ -174,31 +186,41 @@ public class Player implements InventoryHandler, Explorer {
         return playerCharacter;
     }
 
+    @JsonProperty("characterHealth")
+    public int getCharacterHealth() {
+        return playerCharacter.getHealth();
+    }
+
+    @JsonProperty("characterMana")
+    public int getCharacterMana() {
+        return playerCharacter.getMana();
+    }
+
     public PlayerTypes getPlayerType() {
         return playerType;
     }
 
-    public int getX() {
+    public synchronized int getX() {
         return x;
     }
 
-    public int getY() {
+    public synchronized int getY() {
         return y;
     }
 
-    public String getCurrentZone() {
+    public synchronized String getCurrentZone() {
         return currentZone;
     }
 
-    public int getLevel() {
+    public synchronized int getLevel() {
         return level;
     }
 
-    public int getGold() {
+    public synchronized int getGold() {
         return gold;
     }
 
-    public int getExperience() {
+    public synchronized int getExperience() {
         return experience;
     }
 
@@ -206,31 +228,31 @@ public class Player implements InventoryHandler, Explorer {
         return inventory;
     }
 
-    public void setCurrentZone(String s) {
+    public synchronized void setCurrentZone(String s) {
         currentZone = s;
     }
 
-    public Map<ItemEffect, Item> getArmor() {
+    public synchronized Map<ItemEffect, Item> getArmor() {
         return armor;
     }
 
-    public void setArmor(Map<ItemEffect, Item> armor) {
+    public synchronized void setArmor(Map<ItemEffect, Item> armor) {
         this.armor = armor;
     }
 
-    public void setWeapon(Item weapon) {
+    public synchronized void setWeapon(Item weapon) {
         this.weapon = weapon;
     }
 
-    public Item getWeapon() {
+    public synchronized Item getWeapon() {
         return weapon;
     }
 
-    public Position getPosition() {
+    public synchronized Position getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public synchronized void setPosition(Position position) {
         this.position = position;
         this.x = position.x();
         this.y = position.y();
@@ -276,11 +298,11 @@ public class Player implements InventoryHandler, Explorer {
         int minutes = totalMinutes % 60;
         this.playTime = new PlayTime(hours, minutes);
     }
-
+    @JsonIgnore
     public long getStartTime() {
         return startTime;
     }
-
+    @JsonIgnore
     public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
@@ -301,10 +323,9 @@ public class Player implements InventoryHandler, Explorer {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.tile.empty"));
             return;
         }
-        if (!curTile.isContentGenerated() && curTile.isEmpty()) {
+        if (!curTile.isContentGenerated()) {
             curTile.onEnter(this, state);
         } else {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.tile.empty"));
             curTile.listContent(state);
         }
     }
@@ -329,12 +350,8 @@ public class Player implements InventoryHandler, Explorer {
                 ExploreManager interaction = new ExploreManager();
                 interaction.exploreStructure(location, this, state);
             }
-            case "LEAVE" -> {
-                output.println(bundle.get("player.default.structure"));
-            }
-            default -> {
-                output.println(bundle.get("player.leave.structure"));
-            }
+            case "LEAVE" -> output.println(bundle.get("player.default.structure"));
+            default -> output.println(bundle.get("player.leave.structure"));
         }
 
     }
@@ -421,15 +438,38 @@ public class Player implements InventoryHandler, Explorer {
         setPlayTime(duration);
     }
 
-    public boolean isDead() {
+    public synchronized boolean isDead() {
         return playerCharacter.isDead() || isDead;
     }
 
-    public void setDead() {
+    public synchronized void setDead() {
         isDead = true;
     }
 
     public Tile curTile(GameState state) {
         return state.getMap().curZone(getX(), getY());
     }
+
+    public synchronized boolean isActive() {
+        return isActive;
+    }
+
+    @JsonIgnore
+    public synchronized void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void respawn(GameState state) {
+        int roll = state.getGameServices().getRandom().randomInt(1, 4);
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.respawn." + roll));
+        setPosition(GameConstants.PLAYER_START);
+        playerCharacter.setHealth(playerCharacter.getMaxHealth());
+        playerCharacter.setMana(playerCharacter.getMana() + 10);
+        setCurrentZone(GameConstants.PLAYER_SPAWN);
+        this.isDead = false;
+    }
+
+//    public boolean finishedGame() {
+//        if(curQuest == null) return false;
+//    }
 }

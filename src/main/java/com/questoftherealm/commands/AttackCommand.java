@@ -4,6 +4,7 @@ import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
+import com.questoftherealm.server.ServerLogger;
 
 public class AttackCommand extends Command {
     public AttackCommand() {
@@ -12,7 +13,7 @@ public class AttackCommand extends Command {
 
     @Override
     public void execute(String[] args, Player player, GameState state) {
-        if (!makeSafe(args, player,state)) {
+        if (!makeSafe(args, player, state)) {
             return;
         }
         String enemyName = args[1];
@@ -29,16 +30,17 @@ public class AttackCommand extends Command {
         boolean isKilled = false;
         try {
             isKilled = chosenEnemy.interact(player, state);
-        } catch (Exception e) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable",enemyName));
+        } catch (RuntimeException e) {
+            ServerLogger.get().error("AttackCommand: Failed to battle enemy " + enemyName + " for player " + player.getName(), e);
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable", enemyName));
         }
         if (isKilled) {
             int gold = 5;
             int exp = 20;
-            player.addMoney(gold,state);
+            player.addMoney(gold, state);
             player.addExp(exp);
-            curTile.removeEnemy(chosenEnemy,state);
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.success.reward", gold, exp));
+            curTile.removeEnemy(chosenEnemy, state);
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.success.reward", exp, gold));
         }
         // state.getGameServices().getOutput().println(player.getName() + " attacked " + enemyName + " at " + player.getPosition());
     }
@@ -49,11 +51,11 @@ public class AttackCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player,GameState state) {
+    public boolean makeSafe(String[] args, Player player, GameState state) {
         if (args.length != 2) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player,state);
+        return playerBaseCheck(player, state);
     }
 }

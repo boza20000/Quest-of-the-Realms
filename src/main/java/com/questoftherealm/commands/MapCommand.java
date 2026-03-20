@@ -1,7 +1,9 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.MapNotLoaded;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.server.ServerLogger;
 
 
 public class MapCommand extends Command {
@@ -23,7 +25,8 @@ public class MapCommand extends Command {
         try {
             state.getMap().print(state);
             state.getGameServices().getOutput().flush();
-        } catch (Exception e) {
+        } catch (MapNotLoaded e) {
+            ServerLogger.get().warn("MapCommand: Failed to print map", e);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("map.error.printingFailed"));
         }
 

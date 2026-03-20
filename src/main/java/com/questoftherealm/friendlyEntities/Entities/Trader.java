@@ -8,6 +8,8 @@ import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
+import com.questoftherealm.server.ServerLogger;
+import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -17,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Trader extends Npc {
-    private Map<Item, Integer> itemsForSale;
-    private GameState state;
+    private final Map<Item, Integer> itemsForSale;
+    private final GameState state;
     private boolean isTrading;
 
     public Trader(String id, GameState state, MissionInteractions missionInteractions) {
@@ -69,12 +71,20 @@ public class Trader extends Npc {
         try {
             quantity = Integer.parseInt(Arrays.stream(parts).toList().getLast());
         } catch (NumberFormatException e) {
+            ServerLogger.get().warn("Trader: Invalid quantity input - " + Arrays.stream(parts).toList().getLast(), e);
             output().println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
             return;
         }
-        Item serachItem = state.getItemRegistry().getItem(itemName);
+        Item serachItem;
+        try {
+            serachItem = state.getItemRegistry().getItem(itemName);
+        } catch (ItemNotFound e) {
+            ServerLogger.get().info("Trader: Item not found - " + itemName);
+            output().println(state.getMessages().getBundle().get("trader.talks.item.not.for.sale", itemName));
+            return;
+        }
 
-        if(serachItem!=null && !itemsForSale.containsKey(serachItem)){
+        if (!itemsForSale.containsKey(serachItem)) {
             output().println(state.getMessages().getBundle().get("trader.talks.item.not.for.sale", itemName));
             return;
         }

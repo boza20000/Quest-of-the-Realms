@@ -9,8 +9,12 @@ public class GameServices {
     private final Output output;
 
     public GameServices(Output output, Input input) {
+        this(output, input, new RandomService());
+    }
+
+    public GameServices(Output output, Input input, RandomService random) {
         this.input = input;
-        this.random = new RandomService();
+        this.random = random;
         this.output = output;
     }
 

@@ -1,13 +1,20 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.characters.player.PlayerTypes;
+import com.questoftherealm.exceptions.ArtException;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.ArtLocalization;
 import com.questoftherealm.localization.MessageBundle;
+import com.questoftherealm.server.ServerLogger;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import static com.questoftherealm.game.GameConstants.RED;
 import static com.questoftherealm.game.GameConstants.RESET;
 
@@ -25,15 +32,15 @@ public class ConsoleController {
         try {
             this.artLocalization = new ArtLocalization(state);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ArtException(e.getMessage());
         }
     }
 
-    private Output output(){
+    private Output output() {
         return state.getGameServices().getOutput();
     }
 
-    private Input input(){
+    private Input input() {
         return state.getGameServices().getInput();
     }
 
@@ -45,7 +52,7 @@ public class ConsoleController {
         try {
             output().println(artLocalization.getArt("quest_of_the_realms"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ArtException(e.getMessage());
         }
     }
 
@@ -62,7 +69,8 @@ public class ConsoleController {
         try {
             playTimeArt = String.format(artLocalization.getArt("time_played"), h, m);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            ServerLogger.get().error("ConsoleController: IOException displaying play time art", e);
+            throw new ArtException(e.getMessage());
         }
         output().println(playTimeArt);
     }
@@ -76,7 +84,7 @@ public class ConsoleController {
         try {
             output().println(artLocalization.getArt("game_over"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ArtException(e.getMessage());
         }
 
         displayPlayTime(player);
@@ -117,7 +125,7 @@ public class ConsoleController {
             try {
                 output().println(artLocalization.getArt("start_menu"));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new ArtException(e.getMessage());
             }
             printSymbol();
         } else {
@@ -126,24 +134,26 @@ public class ConsoleController {
         return Integer.parseInt(input().nextLine());
     }
 
-    public String characterCreationScreen() {
+    public String usernameCreationScreen(Map<String, Player> activePlayer) {
         output().println(bundle.get("console.charCreate.namePrompt"));
         printSymbol();
         String name = input().nextLine();
         int count = 0;
-        while (name.isBlank()) {
-            if (count < 1) {
+        while (name.isBlank() || activePlayer.containsKey(name)) {
+            if (activePlayer.containsKey(name)) {
+                output().println(bundle.get("console.charCreate.nameUsedError"));
+            }
+            if (count < 1 && name.isBlank()) {
                 output().println(bundle.get("console.charCreate.nameEmptyError"));
             }
             printSymbol();
             name = input().nextLine();
             count++;
         }
-        displayCharacterOptions();
         return name;
     }
 
-    private void displayCharacterOptions() {
+    public void displayCharacterOptions() {
         output().println(bundle.get("console.charCreate.classPrompt"));
         output().println(bundle.get("console.charCreate.class1"));
         output().println(bundle.get("console.charCreate.class2"));
@@ -151,8 +161,55 @@ public class ConsoleController {
         output().println(bundle.get("console.charCreate.class4"));
     }
 
-    private void printSymbol(){
+    private void printSymbol() {
         output().print(bundle.get("console.menu.prompt"));
         output().flush();
+    }
+
+    public PlayerTypes characterCreationScreen(Output output, ConsoleController console, GameState state) {
+        console.displayCharacterOptions();
+        int count = 0;
+        int typeChoice;
+
+        while (true) {
+            try {
+                output.print(state.getMessages().getBundle().get("console.menu.prompt"));
+                output.flush();
+                typeChoice = Integer.parseInt(state.getGameServices().getInput().nextLine());
+                if (typeChoice >= 1 && typeChoice <= 4) break;
+                else {
+                    count++;
+                    if (count <= 1)
+                        output.println(state.getMessages().getBundle().get("game.choice.invalidRange"));
+                }
+            } catch (NumberFormatException e) {
+                ServerLogger.get().warn("ConsoleController: Invalid character class selection input", e);
+                count++;
+                if (count <= 1) output.println(state.getMessages().getBundle().get("game.choice.invalidInput"));
+            }
+        }
+
+        return PlayerTypes.fromInt(typeChoice, state);
+    }
+
+    public void printRoomsOptions(Output out, Map<String, GameState> activeGames) {
+        List<String> liveRooms = activeGames.entrySet().stream()
+                .filter(e -> !e.getValue().isGameOver() && !e.getValue().getActivePlayers().isEmpty())
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if (liveRooms.isEmpty()) {
+            out.println(bundle.get("client.handler.room.noActive"));
+            out.print(bundle.get("client.handler.room.choice"));
+            out.flush();
+            return;
+        }
+        for (String roomName : liveRooms) {
+            int playerCount = activeGames.get(roomName).getActivePlayers().size();
+            out.println(bundle.get("client.handler.room.listEntry", roomName, playerCount, playerCount != 1 ? "s" : ""));
+        }
+        out.println(bundle.get("client.handler.room.prompt"));
+        out.print(bundle.get("client.handler.room.choice"));
+        out.flush();
     }
 }

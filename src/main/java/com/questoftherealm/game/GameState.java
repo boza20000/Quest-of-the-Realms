@@ -16,7 +16,7 @@ public class GameState {
     private boolean isPrivate = false;
     private final GameServices gameServices;
     private final Map<String, Player> activePlayers = new ConcurrentHashMap<>();
-    private WorldMap gameMap;
+    private volatile WorldMap gameMap;
     private final TriggerRegister triggerRegister;
     private volatile boolean gameOver;
     private boolean isSimulation;
@@ -64,11 +64,11 @@ public class GameState {
         return triggerRegister;
     }
 
-    public boolean isGameOver() {
+    public synchronized boolean isGameOver() {
         return gameOver;
     }
 
-    public void setGameOver(boolean gameOver) {
+    public synchronized void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
     }
 
@@ -84,12 +84,15 @@ public class GameState {
         return isSimulation;
     }
 
-    public void addPlayer(Player loaded) {
+    public synchronized void addPlayer(Player loaded) {
         if (loaded != null) {
             if (isPrivate && activePlayers.isEmpty()) {
                 activePlayers.put(loaded.getName(), loaded);
             } else if (!isPrivate) {
                 activePlayers.put(loaded.getName(), loaded);
+            }
+            if (!activePlayers.isEmpty()) {
+                gameOver = false;
             }
         }
     }
@@ -114,7 +117,7 @@ public class GameState {
         return itemRegistry;
     }
 
-    public void removePlayer(String username) {
+    public synchronized void removePlayer(String username) {
         activePlayers.remove(username);
     }
 
@@ -129,4 +132,5 @@ public class GameState {
     public boolean isPrivate() {
         return isPrivate;
     }
+
 }

@@ -31,11 +31,15 @@ public abstract class Boss extends Characters {
         this.isDefeated = false;
     }
 
-    public boolean isDefeated() {
+    public List<ItemDrop> getLoot() {
+        return loot;
+    }
+
+    public synchronized boolean isDefeated() {
         return isDefeated;
     }
 
-    public void setDefeated(boolean defeated) {
+    public synchronized void setDefeated(boolean defeated) {
         isDefeated = defeated;
     }
 
@@ -47,10 +51,22 @@ public abstract class Boss extends Characters {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("boss.already.defeated", this.name));
             return;
         }
+
+        int armor = getDefence();
+        if (this.armor != null) {
+            for (Item item : this.armor.values()) {
+                if (item != null) {
+                    armor += item.getPower();
+                }
+            }
+        }
+        int reduction = (int) (armor * 0.4);
+        int finalDamage = Math.max(0, damageToBoss - reduction);
+
         if (damageToBoss > 0) {
-            setHealth(Math.max(getHealth() - damageToBoss, 0));
+            setHealth(Math.max(getHealth() - finalDamage, 0));
             state.getGameServices().getOutput().println("💥 "
-                    + state.getMessages().getBundle().get("boss.take.damage", this.getClass().getSimpleName(), damageToBoss));
+                    + state.getMessages().getBundle().get("boss.take.damage", this.getClass().getSimpleName(), finalDamage));
         }
         if (getHealth() == 0) {
             setDefeated(true);

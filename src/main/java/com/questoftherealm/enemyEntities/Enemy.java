@@ -58,7 +58,7 @@ public abstract class Enemy implements Fightable {
         int newHealth = Math.max(0, getHealth() - reducedDamageTaken);
         setHealth(newHealth);
         isDead = newHealth == 0;
-        if (!isDead) {
+        if (isAlive()) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.armor.block", this.getClass().getSimpleName(), reducedDamageTaken));
         }
     }
@@ -123,12 +123,12 @@ public abstract class Enemy implements Fightable {
         return health;
     }
 
-    public Item getWeapon() {
+    public synchronized Item getWeapon() {
         return weapon;
     }
 
-    public List<Item> getArmor() {
-        return armor;
+    public synchronized List<Item> getArmor() {
+        return new ArrayList<>(armor);
     }
 
     public String getDescription() {
@@ -136,7 +136,7 @@ public abstract class Enemy implements Fightable {
         return description;
     }
 
-    public void setArmor(List<Item> armor) {
+    public synchronized void setArmor(List<Item> armor) {
         this.armor = armor;
     }
 
@@ -147,7 +147,7 @@ public abstract class Enemy implements Fightable {
         this.health = health;
     }
 
-    public void setWeapon(Item weapon) {
+    public synchronized void setWeapon(Item weapon) {
         this.weapon = weapon;
     }
 
@@ -155,8 +155,8 @@ public abstract class Enemy implements Fightable {
         return isDead;
     }
 
-    public List<Loot> getLoot() {
-        return loot;
+    public synchronized List<Loot> getLoot() {
+        return new ArrayList<>(loot);
     }
 
     public int getBaseDefense() {

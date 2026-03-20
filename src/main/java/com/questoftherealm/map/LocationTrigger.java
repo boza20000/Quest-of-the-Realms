@@ -29,7 +29,7 @@ public class LocationTrigger{
         return isExecuted;
     }
 
-    public void setExecuted(boolean executed) {
+    public synchronized void setExecuted(boolean executed) {
         isExecuted = executed;
     }
 

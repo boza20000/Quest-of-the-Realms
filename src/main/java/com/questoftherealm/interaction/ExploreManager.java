@@ -11,6 +11,7 @@ import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Locations;
+import com.questoftherealm.server.ServerLogger;
 
 public class ExploreManager {
     private GameState state;
@@ -20,7 +21,7 @@ public class ExploreManager {
 
     public void exploreStructure(Locations structure, Player player, GameState state) {
         this.state = state;
-        this.slowPrinter = new SlowPrinter(state);
+        this.slowPrinter = createSlowPrinter(state);
         this.bundle = state.getMessages().getBundle();
         slowPrinter.slowPrint("\n" + bundle.get("explore.arrive", bundle.get(structure.getName())));
         slowPrinter.slowPrint(bundle.get("explore.description", bundle.get(structure.getDescription())));
@@ -35,6 +36,10 @@ public class ExploreManager {
             case 2 -> observeStructure();
             default -> slowPrinter.slowPrint(bundle.get("explore.leave"));
         }
+    }
+
+    protected SlowPrinter createSlowPrinter(GameState state) {
+        return new SlowPrinter(state);
     }
 
     private Output output() {
@@ -59,7 +64,7 @@ public class ExploreManager {
     private void exploreTower(Player player, int outcome) {
         if (outcome < 30) {
             slowPrinter.slowPrint(bundle.get("explore.tower.ghost"));
-            Enemy spirit = EnemyFactory.createEnemy(EnemyType.LOST_SPIRIT, state);
+            Enemy spirit = createEnemy(EnemyType.LOST_SPIRIT, state);
             spirit.interact(player, state);
         } else if (outcome < 60) {
             slowPrinter.slowPrint(bundle.get("explore.tower.chest"));
@@ -72,8 +77,9 @@ public class ExploreManager {
     private void exploreCave(Player player, int outcome) {
         if (outcome < 40) {
             slowPrinter.slowPrint(bundle.get("explore.cave.beast"));
-            Enemy beast = EnemyFactory.createEnemy(EnemyType.WOLF, state);
+            Enemy beast = createEnemy(EnemyType.WOLF, state);
             beast.interact(player, state);
+            if (player.isDead()) return;
         } else if (outcome < 70) {
             slowPrinter.slowPrint(bundle.get("explore.cave.crystal"));
             findLoot(player);
@@ -129,28 +135,38 @@ public class ExploreManager {
     }
 
     private void findLoot(Player player) {
-        Chest chest = new Chest(state);
+        Chest chest = createChest(state);
         ItemDrop loot = chest.generateRandomItem();
         player.getInventory().addItem(loot.item(), loot.quantity(), state);
         slowPrinter.slowPrint(bundle.get("explore.loot", loot.item().getName()));
     }
 
+    protected Chest createChest(GameState state) {
+        return new Chest(state);
+    }
+
+    protected Enemy createEnemy(EnemyType type, GameState state) {
+        return EnemyFactory.createEnemy(type, state);
+    }
+
     private int getChoice() {
-        output().print("> ");
+        output().print(bundle.get("prompt.arrow"));
         output().flush();
         try {
             int choice = Integer.parseInt(state.getGameServices().getInput().nextLine());
             return Math.max(1, Math.min(choice, 3));
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return 3;
         }
     }
 
-    private void pause() {
+    protected void pause() {
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-            output().println("sleep failed");
+        } catch (InterruptedException e) {
+            ServerLogger.get().warn("ExploreManager: Pause thread interrupted", e);
+            Thread.currentThread().interrupt();
+            output().println(bundle.get("explore.sleep.failed"));
         }
     }
 }

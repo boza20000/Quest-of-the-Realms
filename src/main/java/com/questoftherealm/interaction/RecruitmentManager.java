@@ -43,7 +43,7 @@ public class RecruitmentManager {
             output().println("1️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.1"));
             output().println("2️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.2"));
             output().println("3️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.3"));
-            output().print("> ");
+            output().print(state.getMessages().getBundle().get("prompt.arrow"));
             output().flush();
             String choice = state.getGameServices().getInput().nextLine();
 
@@ -69,7 +69,7 @@ public class RecruitmentManager {
         } else {
             output().println(state.getMessages().getBundle().get("recruit.knights.persuade.fail"));
             output().println(state.getMessages().getBundle().get("recruit.knights.persuade.options"));
-            output().print("> ");
+            output().print(state.getMessages().getBundle().get("prompt.arrow"));
             output().flush();
             String choice = state.getGameServices().getInput().nextLine();
             switch (choice) {
@@ -95,7 +95,7 @@ public class RecruitmentManager {
         } else {
             output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.fail"));
             output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.options"));
-            output().print("> ");
+            output().print(state.getMessages().getBundle().get("prompt.arrow"));
             output().flush();
             String choice = state.getGameServices().getInput().nextLine();
             switch (choice) {
@@ -153,7 +153,8 @@ public class RecruitmentManager {
     }
 
     private void handleArcherChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print("Choose: ");
+        output().print(state.getMessages().getBundle().get("prompt.choose"));
+        output().flush();
         String input = state.getGameServices().getInput().nextLine();
         switch (input) {
             case "1" -> output().println(state.getMessages().getBundle().get("recruit.archers.promise"));
@@ -178,7 +179,8 @@ public class RecruitmentManager {
     }
 
     private void handleArcherRefusalChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print("Choose: ");
+        output().print(state.getMessages().getBundle().get("prompt.choose"));
+        output().flush();
         String input = state.getGameServices().getInput().nextLine();
         if (roll(state) < 50 && (input.equals("1") || input.equals("2"))) {
             output().println(state.getMessages().getBundle().get("recruit.archers.courage.success"));
@@ -219,7 +221,8 @@ public class RecruitmentManager {
     }
 
     private void handleMageChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print("Choose: ");
+        output().print(state.getMessages().getBundle().get("prompt.choose"));
+        output().flush();
         String input = state.getGameServices().getInput().nextLine();
         switch (input) {
             case "1" -> {
@@ -243,7 +246,8 @@ public class RecruitmentManager {
     }
 
     private void handleMageRefusalChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print("Choose: ");
+        output().print(state.getMessages().getBundle().get("prompt.choose"));
+        output().flush();
         String input = state.getGameServices().getInput().nextLine();
         if (roll(state) < 40 && (input.equals("1") || input.equals("2"))) {
             output().println(state.getMessages().getBundle().get("recruit.mages.convince.success"));

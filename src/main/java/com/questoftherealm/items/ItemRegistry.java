@@ -1,6 +1,7 @@
 package com.questoftherealm.items;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.exceptions.ItemRegistryError;
 import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.server.ServerLogger;
 
 public class ItemRegistry {
     private List<Item> allItems;
@@ -29,7 +31,8 @@ public class ItemRegistry {
                 ObjectMapper mapper = new ObjectMapper();
                 allItems = mapper.readValue(is, new TypeReference<>() {
                 });
-            } catch (Exception e) {
+            } catch (IOException e) {
+                ServerLogger.get().error("Failed to load items from items.json: " + e.getMessage(), e);
                 allItems = Collections.emptyList();
                 throw new ItemRegistryError(service.getBundle().get("itemRegistry.loadError", e.getMessage()));
             }
@@ -49,7 +52,7 @@ public class ItemRegistry {
         throw new ItemNotFound(service.getBundle().get("itemRegistry.notFound", name));
     }
 
-    public List<Item> getAllItems(){
+    public synchronized List<Item> getAllItems(){
         return allItems;
     }
 }

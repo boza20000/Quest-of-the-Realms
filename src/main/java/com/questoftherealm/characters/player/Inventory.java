@@ -74,7 +74,7 @@ public class Inventory {
     }
 
 
-    public void clear() {
+    public synchronized void clear() {
         items.clear();
     }
 

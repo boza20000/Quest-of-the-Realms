@@ -5,11 +5,14 @@ import com.questoftherealm.characters.playerCharacters.CharacterConstants;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.bosses.GoblinKing;
 import com.questoftherealm.expeditions.quest.quests.FinalBattle;
+import com.questoftherealm.exceptions.ItemNotFound;
+import com.questoftherealm.exceptions.NotEnoughManaException;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.MessageBundle;
+import com.questoftherealm.server.ServerLogger;
 
 
 public class GoblinKingManager {
@@ -44,7 +47,8 @@ public class GoblinKingManager {
     private int getChoice() {
         try {
             return state.getGameServices().getInput().nextInt();
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
+            ServerLogger.get().warn("GoblinKingManager: Invalid choice input for assault/stealth", e);
             return state.getGameServices().getRandom().random().nextInt(1, 3);
         }
     }
@@ -90,7 +94,8 @@ public class GoblinKingManager {
     private int getSubChoice() {
         try {
             return state.getGameServices().getInput().nextInt();
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
+            ServerLogger.get().warn("GoblinKingManager: Invalid sub-choice input for stealth action", e);
             return state.getGameServices().getRandom().random().nextInt(1, 3);
         }
     }
@@ -108,7 +113,7 @@ public class GoblinKingManager {
         slowPrinter().slowPrint("👑 " + bundle.get("goblinking.boss.intro"));
 
         while (!character.isDead() && !king.isDead()) {
-            output().println("\n🔥 ROUND " + round++ + " 🔥");
+            output().println(bundle.get("battle.round.display", round++));
             printKingBattleIntro(character, king);
 
             int bossMove = getBossMove(state.getGameServices().getRandom().randomInt(5));
@@ -165,7 +170,8 @@ public class GoblinKingManager {
             Item i = itemRegistry.getItem(item);
             player.useItem(i);
             player.getPlayerCharacter().useMana(i.getMana());
-        } catch (Exception e) {
+        } catch (ItemNotFound | NotEnoughManaException e) {
+            ServerLogger.get().warn("GoblinKingManager: Player failed to use item - " + e.getClass().getSimpleName(), e);
             output().println("⚠️ " + bundle.get("goblinking.player.itemfail"));
         }
         output().println("💥 " + bundle.get("goblinking.player.attack"));
@@ -241,7 +247,7 @@ public class GoblinKingManager {
 
     private void printPlayerMenu() {
         output().println(bundle.get("goblinking.player.menu"));
-        output().print("> ");
+        output().print(bundle.get("prompt.arrow"));
         output().flush();
     }
 
@@ -265,7 +271,9 @@ public class GoblinKingManager {
     private void pause() {
         try {
             Thread.sleep(800);
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException e) {
+            ServerLogger.get().warn("GoblinKingManager: Pause thread interrupted", e);
+            Thread.currentThread().interrupt();
         }
     }
 }

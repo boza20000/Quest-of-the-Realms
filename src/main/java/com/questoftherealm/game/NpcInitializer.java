@@ -8,6 +8,7 @@ import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.Tile;
+import com.questoftherealm.server.ServerLogger;
 
 public class NpcInitializer {
     public void registerAll(GameState state) {
@@ -32,7 +33,8 @@ public class NpcInitializer {
             Tile randomTile = state.getMap().curZone(randomService.randomInt(GameConstants.MAP_END), randomService.randomInt(GameConstants.MAP_END));
             registerTrader(state, interactions, randomTile, bundle.get("npc.trader"));
         }
-        catch (Exception e){
+        catch (NullPointerException | IllegalArgumentException e){
+            ServerLogger.get().error("NpcInitializer: Error registering NPCs, null pointer or invalid argument during NPC registration", e);
             throw new NpcInitializationFailed(bundle.get("game.npc.init.error"));
         }
     }

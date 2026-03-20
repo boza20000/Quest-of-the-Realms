@@ -1,5 +1,6 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.exceptions.CorruptedFileException;
 import com.questoftherealm.exceptions.FileNotLoaded;
 import com.questoftherealm.exceptions.IntroException;
 import com.questoftherealm.exceptions.NpcInitializationFailed;
@@ -7,9 +8,11 @@ import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.ConsoleController;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
+import com.questoftherealm.server.ServerLogger;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 
 public class Game {
     private final GameState gameState;
@@ -22,8 +25,9 @@ public class Game {
     private final GameServices playerServices;
     private volatile boolean isRunning = true;
     private boolean isFirst;
+    private Map<String, Player> activePlayer;
 
-    public Game(Socket socket, GameState state, int rules, PlayerTypes characterType, String characterName, GameServices playerServices,boolean isFirst) {
+    public Game(Socket socket, GameState state, int rules, PlayerTypes characterType, String characterName, GameServices playerServices, boolean isFirst, Map<String, Player> activePlayer) {
         this.socket = socket;
         this.gameState = state;
         this.gameRules = rules;
@@ -33,6 +37,7 @@ public class Game {
         this.playerServices = playerServices;
         isRunning = true;
         this.isFirst = isFirst;
+        this.activePlayer = activePlayer;
     }
 
     public GameState getGameState() {
@@ -43,12 +48,10 @@ public class Game {
 
         gameState.bindThreadServices(playerServices);
         Player curPlayer = new Player(characterName, characterType, gameState);
-        displayChoice(curPlayer);
-        gameState.addPlayer(curPlayer);
-        console = new ConsoleController(gameState);
+        prepareGame(curPlayer);
 
         if (socket != null && socket.isConnected() && gameRules == 2) {
-            initializeMultiPlayerGame(curPlayer,isFirst);
+            initializeMultiPlayerGame(curPlayer, isFirst);
         } else {
             try {
                 initializeSinglePlayerGame(curPlayer);
@@ -61,6 +64,13 @@ public class Game {
 
         GameLoop loop = new GameLoop();
         loop.startLoop(this, characterName);
+    }
+
+    private void prepareGame(Player curPlayer) {
+        activePlayer.put(characterName, curPlayer);
+        displayChoice(curPlayer);
+        gameState.addPlayer(curPlayer);
+        console = new ConsoleController(gameState);
     }
 
     private void displayChoice(Player currentPlayer) {
@@ -81,15 +91,22 @@ public class Game {
     }
 
     private void initializeMultiPlayerGame(Player player, boolean isHost) {
-        output.println("Connected to server. Starting multiplayer game...");
-        output.println("Player joined " + gameState.getName() + ": " + player.getName() + " the " + player.getPlayerType());
-        console.displayTitle();
+        output.println(gameState.getMessages().getBundle().get("game.multiplayer.connected"));
+        output.println(gameState.getMessages().getBundle().get("game.multiplayer.playerJoined", gameState.getName(), player.getName(), player.getPlayerType()));
+        LoadGame loadGame = new LoadGame();
+        try {
+            loadGame.loadServerSave(gameState, player);
+            console.displayTitle();
+        } catch (FileNotLoaded e) {
+            output.println(gameState.getMessages().getBundle().get("game.multiplayer.saveNotFound"));
+            console.displayTitle();
+            printGameStart();
+        }
+
         if (isHost) {
             NpcInitializer npcInitializer = new NpcInitializer();
             npcInitializer.registerAll(gameState);
         }
-        printGameStart();
-
     }
 
     private void printGameStart() {
@@ -118,7 +135,6 @@ public class Game {
     }
 
     public void newGame(Player player) {
-        gameState.addPlayer(player);
         printGameStart();
     }
 
@@ -130,7 +146,8 @@ public class Game {
         output.println(gameState.getMessages().getBundle().get("game.load.loading"));
         try {
             loadGame.loadGameSave(save, gameState);
-        } catch (Exception e) {
+        } catch (FileNotLoaded | CorruptedFileException e) {
+            ServerLogger.get().error("Game: Failed to load game save: " + save, e);
             throw new FileNotLoaded(gameState.getMessages().getBundle().get("game.load.error"));
         }
     }

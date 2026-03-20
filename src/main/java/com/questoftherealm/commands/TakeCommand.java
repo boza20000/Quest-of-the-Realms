@@ -2,10 +2,12 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.map.WorldMap;
 import com.questoftherealm.map.Tile;
+import com.questoftherealm.server.ServerLogger;
+
 
 
 public class TakeCommand extends Command {
@@ -41,13 +43,15 @@ public class TakeCommand extends Command {
         try {
             quantity = Integer.parseInt(rest.substring(lastSpace + 1));
         } catch (NumberFormatException e) {
+            ServerLogger.get().warn("TakeCommand: Invalid quantity input - " + rest.substring(lastSpace + 1), e);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.quantityNotNumber"));
             return;
         }
         Item newItem;
         try {
             newItem = state.getItemRegistry().getItem(itemName);
-        } catch (Exception e) {
+        } catch (ItemNotFound | IllegalArgumentException e) {
+            ServerLogger.get().info("TakeCommand: Item not found or invalid - " + itemName);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.itemUnknown"));
             return;
         }

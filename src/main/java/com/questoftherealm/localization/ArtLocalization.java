@@ -1,6 +1,8 @@
 package com.questoftherealm.localization;
 
+import com.questoftherealm.exceptions.ArtException;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.server.ServerLogger;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -13,9 +15,15 @@ import java.util.function.Supplier;
 public class ArtLocalization {
     private final HashMap<String, Supplier<String>> asciArt;
     private GameState state;
+    private final String resourceName;
 
     public ArtLocalization(GameState state) throws FileNotFoundException {
+        this(state, "art.txt");
+    }
+
+    public ArtLocalization(GameState state, String resourceName) throws FileNotFoundException {
         this.state = state;
+        this.resourceName = resourceName;
         asciArt = new HashMap<>();
         registerArt();
     }
@@ -33,7 +41,8 @@ public class ArtLocalization {
             try {
                 return readArtFromFile(key);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                ServerLogger.get().error("Failed to load ASCII art for key: " + key, e);
+                throw new ArtException(e.getMessage());
             }
         });
     }
@@ -44,7 +53,8 @@ public class ArtLocalization {
             try {
                 return readArtFromFile(key);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                ServerLogger.get().error("Failed to load ASCII art for key: " + key, e);
+                throw new ArtException(e.getMessage());
             }
         });
     }
@@ -55,7 +65,8 @@ public class ArtLocalization {
             try {
                 return readArtFromFile(key);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                ServerLogger.get().error("Failed to load ASCII art for key: " + key, e);
+                throw new ArtException(e.getMessage());
             }
         });
     }
@@ -66,15 +77,16 @@ public class ArtLocalization {
             try {
                 return readArtFromFile(key);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                ServerLogger.get().error("Failed to load ASCII art for key: " + key, e);
+                throw new ArtException(e.getMessage());
             }
         });
     }
 
-    private String readArtFromFile(String key) throws IOException {
-        InputStream input = getClass().getClassLoader().getResourceAsStream("art.txt");
+    private synchronized String readArtFromFile(String key) throws IOException {
+        InputStream input = getClass().getClassLoader().getResourceAsStream(resourceName);
         if (input == null) {
-            throw new FileNotFoundException("art.txt not found");
+            throw new FileNotFoundException(resourceName + " not found");
         }
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             StringBuilder artBuilder = new StringBuilder();
@@ -97,16 +109,16 @@ public class ArtLocalization {
             }
 
             if (artBuilder.isEmpty()) {
-                return "ART NOT FOUND FOR KEY: " + key;
+                return state.getMessages().getBundle().get("art.notFound", key);
             }
             return artBuilder.toString();
         }
     }
 
-    public String getArt(String artName) throws IOException {
+    public synchronized String getArt(String artName) throws IOException {
         Supplier<String> action = asciArt.get(artName);
         if (action == null) {
-            state.getGameServices().getOutput().println("No ASCII art found for key: " + artName);
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("art.notFound", artName));
             return null;
         }
         return action.get();

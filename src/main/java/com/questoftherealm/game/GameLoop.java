@@ -1,15 +1,25 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.exceptions.AbilityException;
 import com.questoftherealm.exceptions.InvalidCommand;
+import com.questoftherealm.exceptions.SaveError;
 import com.questoftherealm.commands.Command;
 import com.questoftherealm.commands.CommandFactory;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.localization.MessageBundle;
+import com.questoftherealm.server.ServerLogger;
 
 public class GameLoop {
-    private final CommandFactory factory = new CommandFactory();
+    private final CommandFactory factory;
+
+    public GameLoop (){
+        factory = new CommandFactory();
+    }
+    public GameLoop (CommandFactory factory){
+        this.factory = factory;
+    }
 
     public void startLoop(Game game, String username) {
         MissionInteractions m = new MissionInteractions(game.getGameState());
@@ -21,7 +31,7 @@ public class GameLoop {
         Output output = game.getGameState().getGameServices().getOutput();
         MessageBundle bundle = game.getGameState().getMessages().getBundle();
 
-        while (!game.getGameState().isGameOver() && game.isRunning()) {
+        while (!game.getGameState().isGameOver() && game.isRunning() && curPlayer.isActive()) {
             printSymbol(output, bundle);
             String command = game.getGameState().getGameServices().getInput().nextLine().trim();
 
@@ -33,16 +43,22 @@ public class GameLoop {
             String commandName = parts[0];
 
             processCommand(parts, commandName, output, game.getGameState(), bundle, curPlayer);
+
+            if(curPlayer.isDead()){
+                curPlayer.respawn(game.getGameState());
+            }
         }
 
-        endGame(game);
+        endGame(game, curPlayer);
     }
 
-    private void endGame(Game game) {
-        for (Player player : game.getGameState().getActivePlayers()) {
-            player.trackPlayTime(game.getGameState());
-            game.getConsole().displayEnd(player);
-        }
+    private void endGame(Game game, Player curPlayer) {
+        curPlayer.trackPlayTime(game.getGameState());
+      //  if(curPlayer.finishedGame()){
+            game.getConsole().displayEnd(curPlayer);
+      //  }
+
+        game.getGameState().removePlayer(curPlayer.getName());
     }
 
     private void displayGameIntro(MissionInteractions m, Player player) {
@@ -68,7 +84,9 @@ public class GameLoop {
             cmd.execute(parts, player, state);
             output.println(bundle.get("gameLoop.command.success"));
             player.updateQuestStatus(state);
-        } catch (Exception e) {
+        } catch (SaveError | AbilityException e) {
+            output.println(e.getMessage());
+        } catch (IllegalArgumentException e) {
             output.println(bundle.get("gameLoop.command.syntax"));
             output.print(cmd.getDescription(state));
             output.flush();
@@ -88,6 +106,8 @@ public class GameLoop {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
+            ServerLogger.get().warn("GameLoop: Game loop sleep interrupted", e);
+            Thread.currentThread().interrupt();
             output.println(bundle.get("error.command.sleepFail"));
         }
     }

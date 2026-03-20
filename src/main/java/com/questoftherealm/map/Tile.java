@@ -13,6 +13,7 @@ import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.TravelManger;
+import com.questoftherealm.server.ServerLogger;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
@@ -49,7 +50,7 @@ public class Tile {
         return state.getGameServices().getOutput();
     }
 
-    public Locations getStructure() {
+    public synchronized Locations getStructure() {
         return structure;
     }
 
@@ -86,6 +87,19 @@ public class Tile {
         return new ArrayList<>(enemies);
     }
 
+
+    public synchronized void addDrop(ItemDrop drop) {
+        if (drop != null) {
+            drops.add(drop);
+        }
+    }
+
+    public synchronized void addEnemy(Enemy enemy) {
+        if (enemy != null) {
+            enemies.add(enemy);
+        }
+    }
+
     public synchronized ItemDrop pickItem(String name) {
         for (ItemDrop item : drops) {
             if (item.item().getName().equals(name)) {
@@ -107,10 +121,13 @@ public class Tile {
             this.drops.clear();
             generateItems(state);
         } catch (RandomItemNotGenerated e) {
+            ServerLogger.get().warn("Failed to generate items for tile type: " + type, e);
             output().println(state.getMessages().getBundle().get("tile.error.items"));
         } catch (StructureNotGenerated e) {
+            ServerLogger.get().warn("Failed to generate structure for tile type: " + type, e);
             output().println(state.getMessages().getBundle().get("tile.error.structure"));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            ServerLogger.get().error("Unexpected error generating tile content for type: " + type, e);
             output().println(state.getMessages().getBundle().get("tile.error.general"));
         }
         contentGenerated = true;
@@ -133,7 +150,7 @@ public class Tile {
         if (!this.npcRegister.isEmpty()) {
             output().println(state.getMessages().getBundle().get("player.see.npc"));
             for (Npc n : npcRegister.values()) {
-                output().println("-" + n.getType());
+                output().println(state.getMessages().getBundle().get("tile.npc.entry", n.getType()));
             }
         }
     }
@@ -246,8 +263,8 @@ public class Tile {
         List<ItemDrop> enemyItems = new ArrayList<>();
         for (Loot l : enemy.getLoot()) {
             Random roll = state.getGameServices().getRandom().random();
-            if (roll.nextDouble() > l.chance()) {
-                int quantity = roll.nextInt(l.min(), l.max());
+            if (roll.nextDouble() <= l.chance()) {
+                int quantity = roll.nextInt(l.min(), l.max() + 1);
                 enemyItems.add(new ItemDrop(l.item(), quantity));
             }
         }

@@ -14,8 +14,12 @@ public class MissionInteractions {
     private final SlowPrinter slowPrinter;
 
     public MissionInteractions(GameState state) {
+        this(state, new SlowPrinter(state));
+    }
+
+    public MissionInteractions(GameState state, SlowPrinter slowPrinter) {
         this.state = state;
-        this.slowPrinter = new SlowPrinter(state);
+        this.slowPrinter = slowPrinter;
     }
 
     private Output output() {
@@ -23,7 +27,9 @@ public class MissionInteractions {
     }
 
     public void worldStart(Player player) {
-        if (player.getCurMission().getMissionType().equals(Missions.MEET_ELDER) && !player.getCurMission().isCompleted()) {
+        if (player.getCurMission() != null
+                && player.getCurMission().getMissionType().equals(Missions.MEET_ELDER)
+                && !player.getCurMission().isCompleted()) {
             slowPrinter.slowPrint(state.getMessages().getBundle().get("mission.start.elder"));
         } else {
             output().println(state.getMessages().getBundle().get("mission.start.generic", player.getCurrentZone()));
@@ -65,12 +71,12 @@ public class MissionInteractions {
         output().println(state.getMessages().getBundle().get("mission.goblin.encounter"));
         output().println(state.getMessages().getBundle().get("mission.goblin.choices"));
 
-        output().print("> ");
+        output().print(state.getMessages().getBundle().get("prompt.arrow"));
+        output().flush();
         int choice = state.getGameServices().getInput().nextInt();
-        if (!(player.getCurQuest() instanceof GoblinAmbush)) {
+        if (!(player.getCurQuest() instanceof GoblinAmbush q)) {
             return;
         }
-        GoblinAmbush q = (GoblinAmbush) player.getCurQuest();
         switch (choice) {
             case 1 -> resolveEscape(player, q, state);
             case 2 -> resolveFight(player, q, state);

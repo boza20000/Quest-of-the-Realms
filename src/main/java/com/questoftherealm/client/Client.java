@@ -1,19 +1,13 @@
 package com.questoftherealm.client;
 
-import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.characters.player.PlayerTypes;
-import com.questoftherealm.game.ConsoleInput;
-import com.questoftherealm.game.ConsoleOutput;
-import com.questoftherealm.game.GameServices;
-import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.interaction.ConsoleController;
 import com.questoftherealm.localization.MessageBundle;
-
+import com.questoftherealm.server.ServerLogger;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -24,22 +18,22 @@ public class Client {
     private static final int SERVER_PORT = 2020;
     private static MessageBundle bundle;
 
-    static void main() {
+    public void handleConnection(Socket socket, InputStream consoleIn, PrintStream consoleOut) {
+        bundle = new MessageBundle();
 
-        try (Socket socket = new Socket("localhost", SERVER_PORT);
-             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-             Scanner scanner = new Scanner(System.in)) {
-             bundle = new  MessageBundle();
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+             Scanner scanner = new Scanner(consoleIn)) {
 
             Thread listener = new Thread(() -> {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
                     int serverCharacter;
                     while ((serverCharacter = in.read()) != -1) {
-                        System.out.print((char)serverCharacter);
-                        System.out.flush();
+                        consoleOut.print((char) serverCharacter);
+                        consoleOut.flush();
                     }
                 } catch (IOException e) {
-                    System.out.println("Disconnected from server.");
+                    ServerLogger.get().warn("Client: IOException in listener thread, connection closed", e);
+                    consoleOut.println(bundle.get("client.disconnected"));
                 }
             });
             listener.start();
@@ -51,9 +45,18 @@ public class Client {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("There is a problem with the network communication", e);
+            ServerLogger.get().error("Client: IOException in handleConnection", e);
+            throw new RuntimeException(bundle.get("client.error.network"), e);
+        }
+    }
+
+    static void main() {
+        try (Socket socket = new Socket("localhost", SERVER_PORT)) {
+            new Client().handleConnection(socket, System.in, System.out);
+        } catch (IOException e) {
+            bundle = new MessageBundle();
+            ServerLogger.get().error("Client: Failed to connect to server at localhost:" + 2020, e);
+            throw new RuntimeException(bundle.get("client.error.network"), e);
         }
     }
 }
-
-

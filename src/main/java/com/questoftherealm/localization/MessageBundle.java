@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import com.questoftherealm.server.ServerLogger;
 
 public final class MessageBundle {
     private static final String BASE_NAME = "messages";
@@ -27,6 +28,7 @@ public final class MessageBundle {
                     ? message
                     : MessageFormat.format(message, args);
         } catch (MissingResourceException e) {
+            ServerLogger.get().warn("Missing translation key: " + key, e);
             return "???" + key + "???";
         }
     }

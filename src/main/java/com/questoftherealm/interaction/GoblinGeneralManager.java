@@ -9,6 +9,7 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.RandomService;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.MessageBundle;
+import com.questoftherealm.server.ServerLogger;
 
 
 public class GoblinGeneralManager {
@@ -112,7 +113,9 @@ public class GoblinGeneralManager {
     private void pause() {
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException e) {
+            ServerLogger.get().warn("GoblinGeneralManager: Pause thread interrupted", e);
+            Thread.currentThread().interrupt();
             output().println(bundle.get("goblinGeneral.error.sleep"));
         }
     }

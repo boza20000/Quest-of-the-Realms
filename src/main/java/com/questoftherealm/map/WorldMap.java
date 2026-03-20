@@ -6,7 +6,9 @@ import com.questoftherealm.exceptions.MapNotLoaded;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.server.ServerLogger;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -26,7 +28,8 @@ public class WorldMap {
             }
             ObjectMapper mapper = new ObjectMapper();
             gameMap = mapper.readValue(is, Tile[][].class);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            ServerLogger.get().error("Failed to load map from map.json: " + e.getMessage(), e);
             throw new MapNotLoaded(state.getMessages().getBundle().get("map.load.error"));
         }
     }
@@ -98,7 +101,7 @@ public class WorldMap {
         };
     }
 
-    public Tile curZone(int x, int y) {
+    public synchronized Tile curZone(int x, int y) {
         return gameMap[y][x];
     }
 }

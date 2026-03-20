@@ -2,6 +2,7 @@ package com.questoftherealm.interaction;
 
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
+import com.questoftherealm.server.ServerLogger;
 
 import static com.questoftherealm.game.GameConstants.DELAY_MS;
 
@@ -20,6 +21,7 @@ public class SlowPrinter {
             try {
                 Thread.sleep(DELAY_MS);
             } catch (InterruptedException e) {
+                ServerLogger.get().warn("SlowPrinter thread interrupted while sleeping", e);
                 Thread.currentThread().interrupt();
             }
         }
