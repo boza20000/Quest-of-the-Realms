@@ -5,9 +5,11 @@ import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.exceptions.ArmorPieceNotGenerated;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.exceptions.RandomWeaponNotGenerated;
+import com.questoftherealm.game.ConsoleInput;
 import com.questoftherealm.game.ConsoleOutput;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 class ChestTest {
 
     private GameState state;
@@ -24,15 +25,17 @@ class ChestTest {
     private Chest chest;
     private Player player;
     private ItemRegistry itemRegistry;
+    private Input input;
 
     @BeforeEach
     void setup() throws Exception {
         Output output = new ConsoleOutput();
-        services = new GameServices(output);
-        state = new GameState(player, services);
+        input = new ConsoleInput();
+        services = new GameServices(output,input);
+        state = new GameState("test-room", services);
+        player = new Player("Test", PlayerTypes.Warrior, state);
         chest = new Chest(state);
         itemRegistry = new ItemRegistry(new LocalizationService());
-        player = new Player("Test", PlayerTypes.Warrior, state);
         Field f = Chest.class.getDeclaredField("itemRegistry");
         f.setAccessible(true);
         f.set(chest,itemRegistry);
@@ -40,7 +43,7 @@ class ChestTest {
 
 
     @Test
-    void generateRandomItem_NormalCase() {
+    void givenAvailableRegistryItems_whenGenerateRandomItem_thenReturnsValidDrop() {
         ItemDrop drop = chest.generateRandomItem();
         assertNotNull(drop.item(), "Item should be generated");
         assertTrue(drop.quantity() > 0, "Quantity should be more than 0");
@@ -49,7 +52,7 @@ class ChestTest {
     }
 
     @Test
-    void generateRandomWeapon_Warrior() {
+    void givenWarriorPlayer_whenGenerateRandomWeapon_thenReturnsSwordWeaponDrop() {
         ItemDrop weapon = chest.generateRandomWeapon(player);
         assertNotNull(weapon.item());
         assertEquals(ItemType.WEAPON, weapon.item().getType());
@@ -58,60 +61,60 @@ class ChestTest {
     }
 
     @Test
-    void generateRandomHelmet() {
+    void givenHelmetRequest_whenGenerateArmorPiece_thenReturnsHelmet() {
         ItemDrop helmet = chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.HELMET);
         assertEquals(ItemEffect.HELMET, helmet.item().getEffect());
     }
 
     @Test
-    void generateRandomChestplate() {
+    void givenChestplateRequest_whenGenerateArmorPiece_thenReturnsChestplate() {
         ItemDrop chestplate = chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.CHESTPLATE);
         assertEquals(ItemEffect.CHESTPLATE, chestplate.item().getEffect());
     }
 
     @Test
-    void generateRandomBoots() {
+    void givenBootsRequest_whenGenerateArmorPiece_thenReturnsBoots() {
         ItemDrop boots = chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.BOOTS);
         assertEquals(ItemEffect.BOOTS, boots.item().getEffect());
     }
 
     @Test
-    void generateRandomItem_NoItems_Throws() throws Exception {
-        var backup = itemRegistry.getAllItems().stream().toList();
+    void givenEmptyRegistry_whenGenerateRandomItem_thenThrowsRandomItemNotGenerated() {
         itemRegistry.getAllItems().clear();
         assertThrows(RandomItemNotGenerated.class, () -> chest.generateRandomItem());
-        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
-    void generateRandomWeapon_NoWeapon_Throws() {
-        var backup = itemRegistry.getAllItems().stream().toList();
+    void givenNoWeaponsInRegistry_whenGenerateRandomWeapon_thenThrowsRandomWeaponNotGenerated() {
         itemRegistry.getAllItems().removeIf(i -> i.getType() == ItemType.WEAPON);
         assertThrows(RandomWeaponNotGenerated.class, () -> chest.generateRandomWeapon(player));
-        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
-    void generateRandomHelmet_NoHelmet_Throws() {
-        var backup = itemRegistry.getAllItems().stream().toList();
+    void givenNoHelmetInRegistry_whenGenerateArmorPiece_thenThrowsArmorPieceNotGenerated() {
         itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.HELMET);
         assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.HELMET));
-        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
-    void generateRandomChestplate_NoChestplate_Throws() {
-        var backup = itemRegistry.getAllItems().stream().toList();
+    void givenNoChestplateInRegistry_whenGenerateArmorPiece_thenThrowsArmorPieceNotGenerated() {
         itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.CHESTPLATE);
         assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.CHESTPLATE));
-        itemRegistry.getAllItems().addAll(backup);
     }
 
     @Test
-    void generateRandomBoots_NoBoots_Throws() {
-        var backup = itemRegistry.getAllItems().stream().toList();
+    void givenNoBootsInRegistry_whenGenerateArmorPiece_thenThrowsArmorPieceNotGenerated() {
         itemRegistry.getAllItems().removeIf(i -> i.getEffect() == ItemEffect.BOOTS);
         assertThrows(ArmorPieceNotGenerated.class, () -> chest.generateArmorPiece(ItemType.ARMOR,ItemEffect.BOOTS));
-        itemRegistry.getAllItems().addAll(backup);
+
+    }
+    @Test
+    void givenManyGenerations_whenGenerateRandomItem_thenAlwaysReturnsValidItem() {
+        for (int i = 0; i < 1000000; i++) {
+            ItemDrop drop = chest.generateRandomItem();
+            assertNotNull(drop, "Item drop should not be null on iteration " + i);
+            assertNotNull(drop.item(), "Item inside drop should not be null on iteration " + i);
+            assertTrue(drop.quantity() > 0, "Quantity should be positive on iteration " + i);
+        }
     }
 }

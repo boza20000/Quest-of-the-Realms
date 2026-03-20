@@ -7,6 +7,7 @@ import com.questoftherealm.expeditions.quest.quests.StartQuest;
 import com.questoftherealm.friendlyEntities.Entities.Elder;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.GameServices;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 
@@ -23,21 +24,23 @@ class ElderTest {
     private Output output;
     private MissionInteractions interactions;
     private GameServices services;
+    private Input input;
 
     @BeforeEach
     void setup() {
 
         output = mock(Output.class);
+        input = mock(Input.class);
         interactions = mock(MissionInteractions.class);
-        services = new GameServices(output);
-        state = new GameState(player, services);
+        services = new GameServices(output,input);
+        state = new GameState("Test", services);
         Player realPlayer = new Player("Test", PlayerTypes.Mage, state);
         player = spy(realPlayer);
         elder = new Elder("elder1", state, interactions);
     }
 
     @Test
-    void talkingWithElderFirstTimeGivesRewards() {
+    void givenFirstConversationWithElder_whenTalk_thenMarksElderAsTalked() {
         StartQuest quest = mock(StartQuest.class);
         when(player.getCurQuest()).thenReturn(quest);
         when(quest.isElderHasTalked()).thenReturn(false);
@@ -49,7 +52,7 @@ class ElderTest {
     }
 
     @Test
-    void talkingWithElderSecondTimePrintsAlreadyTalked() {
+    void givenElderAlreadyTalked_whenTalk_thenPrintsNoMoreDialogue() {
         StartQuest quest = mock(StartQuest.class);
         when(player.getCurQuest()).thenReturn(quest);
         when(quest.isElderHasTalked()).thenReturn(true);

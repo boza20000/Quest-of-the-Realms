@@ -9,8 +9,9 @@ import com.questoftherealm.expeditions.quest.quests.NorthExploration;
 import com.questoftherealm.friendlyEntities.Entities.Villager;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.game.*;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.map.Map;
+import com.questoftherealm.map.WorldMap;
 import com.questoftherealm.map.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,8 @@ public class VillagerTest {
     private Player player;
     private Output output;
     private GameServices services;
-    private Map gameMap;
+    private WorldMap gameMap;
+    private Input input;
 
     private static final String VILLAGER_SEARCH_FIRST = "We're too scared to talk! Search the area for signs of danger first!";
     private static final String VILLAGER_DEFEAT_ENEMIES = "Clear the area to talk to the villager.";
@@ -35,11 +37,11 @@ public class VillagerTest {
 
     @BeforeEach
     void setup() {
-
-        output = mock(ConsoleOutput.class);
-        services = new GameServices(output);
-        state = new GameState(player, services);
-        gameMap = new Map(state);
+        output = mock(Output.class);
+        input = mock(Input.class);
+        services = new GameServices(output,input);
+        state = new GameState("Test", services);
+        gameMap = new WorldMap(state);
         state.setMap(gameMap);
         NpcInitializer initializer = new NpcInitializer();
         initializer.registerAll(state);
@@ -48,7 +50,7 @@ public class VillagerTest {
     }
 
     @Test
-    void talkingWithVillagerProperQuestNotCurrent() {
+    void givenQuestNotKnownToVillager_whenTalk_thenPrintsNotKnownMessage() {
         player.setPosition(GameConstants.NorthVillage_1);
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         villager = (Villager) curTile.getNpcByType(NpcType.VILLAGER);
@@ -57,7 +59,8 @@ public class VillagerTest {
     }
 
     @Test
-    void talkingWithVillagerOutsideOfVillage() {
+    void
+    givenWrongMissionContext_whenTalk_thenPrintsNoDialogueMessage() {
         player.setPosition(GameConstants.NorthVillage_1);
         when(player.getCurQuest()).thenReturn(new NorthExploration());
         when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.TRAVEL_NORTH,player,state));
@@ -68,7 +71,7 @@ public class VillagerTest {
     }
 
     @Test
-    void talkingWithNorthVillager1Valid() {
+    void givenVillageOneSearched_whenTalk_thenPrintsVillageOneIntel() {
         player.setPosition(GameConstants.NorthVillage_1);
         NorthExploration q = new NorthExploration();
         when(player.getCurQuest()).thenReturn(q);
@@ -82,7 +85,7 @@ public class VillagerTest {
     }
 
     @Test
-    void talkingWithNorthVillager2NotSearched() {
+    void givenVillageTwoNotSearched_whenTalk_thenPrintsSearchFirstWarning() {
         player.setPosition(GameConstants.NorthVillage_2);
         NorthExploration quest = new NorthExploration();
         when(player.getCurQuest()).thenReturn(quest);
@@ -98,7 +101,7 @@ public class VillagerTest {
     }
 
     @Test
-    void talkingWithNorthVillager2EnemiesPresent() {
+    void givenVillageTwoHasEnemies_whenTalk_thenPrintsDefeatEnemiesWarning() {
         player.setPosition(GameConstants.NorthVillage_2);
         NorthExploration quest = new NorthExploration();
         when(player.getCurQuest()).thenReturn(quest);
@@ -106,7 +109,8 @@ public class VillagerTest {
         quest.setSearchedVillage2(true);
 
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
-        curTile.getEnemies().add(mock(Enemy.class));
+        Enemy mockEnemy = mock(Enemy.class);
+        curTile.addEnemy(mockEnemy);
 
         villager = (Villager) curTile.getNpcByType(NpcType.VILLAGER);
         villager.talk(state, player, true);
@@ -115,14 +119,13 @@ public class VillagerTest {
     }
 
     @Test
-    void talkingWithNorthVillager2ValidFirstTime() {
+    void givenVillageTwoClearedFirstConversation_whenTalk_thenPrintsVillageTwoIntel() {
         player.setPosition(GameConstants.NorthVillage_2);
         NorthExploration quest = new NorthExploration();
         when(player.getCurQuest()).thenReturn(quest);
         when(player.getCurMission()).thenReturn(MissionFactory.createMission(Missions.INVESTIGATE_VILLAGES,player,state));
         quest.setSearchedVillage2(true);
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
-        curTile.getEnemies().clear();
 
         villager = (Villager) curTile.getNpcByType(NpcType.VILLAGER);
         villager.talk(state, player, true);
@@ -131,7 +134,7 @@ public class VillagerTest {
     }
 
     @Test
-    void talkingWithNorthVillager2AlreadyTalked() {
+    void givenVillageTwoAlreadyTalked_whenTalk_thenPrintsAvoidanceLine() {
         player.setPosition(GameConstants.NorthVillage_2);
 
         NorthExploration q = new NorthExploration();
@@ -149,3 +152,4 @@ public class VillagerTest {
         verify(output).println(VILLAGER_AVOIDS);
     }
 }
+

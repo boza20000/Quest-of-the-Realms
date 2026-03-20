@@ -1,6 +1,5 @@
 package com.questoftherealm.expeditions.missions;
 
-import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.expeditions.quest.QuestFactory;
@@ -8,6 +7,7 @@ import com.questoftherealm.expeditions.quest.quests.NorthExploration;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import org.junit.jupiter.api.*;
 
@@ -21,28 +21,17 @@ class NorthExplorationTest {
     private NorthExploration quest;
     private GameState state;
     private Output output;
+    private Input input;
 
     @BeforeEach
     void setup() {
         output = mock(Output.class);
-        GameServices services = new GameServices(output);
+        input = mock(Input.class);
+        GameServices services = new GameServices(output,input);
 
-        player = new Player(
-                "TestHero",
-                PlayerTypes.Warrior,
-                1, 0, 0,
-                GameConstants.PLAYER_START.x(),
-                GameConstants.PLAYER_START.y(),
-                "Spawn",
-                null,
-                null,
-                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null,
-                null,
-                false
-        );
-
-        state = new GameState(player, services);
+        state = new GameState("test-room", services);
+        player = new Player("TestHero", PlayerTypes.Warrior, state);
+        state.addPlayer(player);
         quest = new NorthExploration(player, state);
         player.setCurQuest(quest);
         player.setCurMission(quest.getMissions().get(0));
@@ -53,7 +42,7 @@ class NorthExplorationTest {
 
     @Test
     @DisplayName("Travel_North completes when player reaches northern boundary")
-    void travelNorthMissionCompletesProperly() {
+    void givenPlayerYPositions_whenCheckCompletion_thenTravelNorthCompletesAtBoundary() {
         var mission = player.getCurMission();
 
         // Player not yet at northern boundary
@@ -69,7 +58,7 @@ class NorthExplorationTest {
 
     @Test
     @DisplayName("Investigate_Northern_Villages completes only when all villages searched and villagers talked to")
-    void investigateVillagesMissionCompletesProperly() {
+    void givenVillageProgressFlags_whenCheckCompletion_thenInvestigateMissionCompletesOnlyWhenAllTrue() {
         var mission = quest.getMissions().get(1);
 
         mission.checkCompletion();
@@ -89,7 +78,7 @@ class NorthExplorationTest {
 
     @Test
     @DisplayName("NorthExploration quest completes only after all missions done")
-    void questCompletesOnlyWhenAllMissionsCompleted() {
+    void givenMissionCompletionStates_whenUpdateStatus_thenNorthExplorationCompletionMatchesAllMissionsState() {
         QuestFactory q = new QuestFactory(player, state);
 
         for (var m : quest.getMissions()) {

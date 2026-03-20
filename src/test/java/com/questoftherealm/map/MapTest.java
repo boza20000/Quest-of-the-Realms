@@ -7,12 +7,14 @@ import com.questoftherealm.game.interfaces.Output;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MapTest {
 
-    private Map map;
+    private WorldMap map;
     private Player mockPlayer;
     private GameState mockState;
     private Output mockOutput;
@@ -23,19 +25,20 @@ class MapTest {
         mockPlayer = mock(Player.class);
         mockState = mock(GameState.class);
         mockOutput = mock(Output.class);
-        map = new Map(mockState);
+        map = new WorldMap(mockState);
         when(mockState.getGameServices()).thenReturn(mock(GameServices.class));
         when(mockState.getGameServices().getOutput()).thenReturn(mockOutput);
+        when(mockState.getActivePlayers()).thenReturn(List.of(mockPlayer));
     }
 
     @Test
-    void testGetGameMapNotNull() {
+    void givenWorldMap_whenGetGameMap_thenReturnsNonEmptyMatrix() {
         assertNotNull(map.getGameMap());
         assertTrue(map.getGameMap().length > 0);
     }
 
     @Test
-    void testMovePlayerUpdatesCurrentZone() {
+    void givenPlayerCoordinates_whenMovePlayer_thenUpdatesCurrentZoneDescription() {
         when(mockPlayer.getX()).thenReturn(0);
         when(mockPlayer.getY()).thenReturn(0);
 
@@ -44,17 +47,16 @@ class MapTest {
     }
 
     @Test
-    void testPrintCallsOutput() {
+    void givenPlayerPosition_whenPrint_thenWritesToOutput() {
         when(mockPlayer.getX()).thenReturn(0);
         when(mockPlayer.getY()).thenReturn(0);
 
-        map.print(mockPlayer, mockState);
+        map.print(mockState);
         verify(mockOutput, atLeastOnce()).print(anyString());
-        verify(mockOutput, atLeastOnce()).println();
     }
 
     @Test
-    void testCurZoneReturnsCorrectTile() {
+    void givenCoordinates_whenCurZone_thenReturnsExpectedTile() {
         assertEquals(map.getGameMap()[0][0], map.curZone(0,0));
     }
 }

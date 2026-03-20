@@ -1,19 +1,17 @@
 package com.questoftherealm.commands;
 
-import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.exceptions.AbilityException;
-import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.localization.LocalizationService;
-import com.questoftherealm.localization.MessageBundle;
-import com.questoftherealm.map.Map;
+
 import com.questoftherealm.map.Tile;
+import com.questoftherealm.map.WorldMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,70 +24,57 @@ class AbilityCommandTest {
     private Player player;
     private GameState state;
     private Output output;
-    private Map gameMap;
+    private WorldMap gameMap;
     private Tile curTile;
 
     @BeforeEach
     void setup() {
-        command = spy(new AbilityCommand());
-
-        player = spy(new Player(
-                "TestHero",
-                PlayerTypes.Warrior,
-                1, 0, 0,
-                GameConstants.Castle.x(),
-                GameConstants.Castle.y(),
-                "Castle",
-                null,
-                null,
-                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
-                null,
-                null,
-                false
-        ));
-
         output = mock(Output.class);
-        var services = mock(GameServices.class);
+        GameServices services = mock(GameServices.class);
         when(services.getOutput()).thenReturn(output);
-        state = new GameState(player, services);
-        state.setPlayer(player);
-        gameMap = mock(Map.class);
-        state.setMap(gameMap);
 
+        state = new GameState("test-room", services);
+        player = spy(new Player("TestHero", PlayerTypes.Warrior, state));
+        state.addPlayer(player);
+        command = spy(new AbilityCommand());
+        gameMap = mock(WorldMap.class);
+        state.setMap(gameMap);
         curTile = mock(Tile.class);
+
         when(gameMap.curZone(player.getX(), player.getY())).thenReturn(curTile);
         when(curTile.getEnemy(anyString())).thenReturn(null);
         doReturn(true).when(command).playerBaseCheck(player, state);
+
     }
 
 
     @Test
-    void makeSafe_Fails_WhenIncorrectArgLength() {
+    void givenInvalidArgLength_whenMakeSafe_thenReturnsFalse() {
         String[] args = {"super"};
         assertFalse(command.makeSafe(args, player, state));
         verify(output).println(anyString());
     }
 
     @Test
-    void makeSafe_Passes_WithTwoArgs() {
+    void givenTwoArgs_whenMakeSafe_thenReturnsTrue() {
         assertTrue(command.makeSafe(new String[]{"super", "goblin"}, player, state));
     }
 
     @Test
-    void makeSafe_Fails_WhenPlayerCheckFails() {
+    void givenPlayerCheckFails_whenMakeSafe_thenReturnsFalse() {
         when(command.playerBaseCheck(player, state)).thenReturn(false);
         assertFalse(command.makeSafe(new String[]{"super", "goblin"}, player, state));
     }
 
     @Test
-    void execute_Stops_WhenMakeSafeFails() {
+    void givenUnsafeInput_whenExecute_thenStopsBeforeMapLookup() {
         doReturn(false).when(command).makeSafe(any(), eq(player), eq(state));
         command.execute(new String[]{"super", "enemy"}, player, state);
         verify(state.getMap(), never()).curZone(anyInt(), anyInt());
     }
 
     @Test
-    void execute_PrintsMessage_WhenTileIsNull() {
+    void givenNullTile_whenExecute_thenPrintsUndefinedArea() {
         doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
         when(state.getMap().curZone(player.getX(), player.getY())).thenReturn(null);
         command.execute(new String[]{"super", "enemy"}, player, state);
@@ -97,18 +82,18 @@ class AbilityCommandTest {
     }
 
     @Test
-    void execute_PrintsMessage_WhenEnemyNotFound() {
+    void givenEnemyMissing_whenExecute_thenPrintsMissingEnemyMessage() {
         doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
-        when(state.getMap().curZone(5, 7)).thenReturn(curTile);
+        when(state.getMap().curZone(anyInt(), anyInt())).thenReturn(curTile);
         when(curTile.getEnemy("goblin")).thenReturn(null);
         command.execute(new String[]{"super", "goblin"}, player, state);
         verify(output).println("No enemy named goblin here!");
     }
 
     @Test
-    void execute_ActivatesAbility_WhenEnemyFound() {
+    void givenEnemyFound_whenExecute_thenActivatesAbility() {
         doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
-        when(state.getMap().curZone(5, 7)).thenReturn(curTile);
+        when(state.getMap().curZone(anyInt(), anyInt())).thenReturn(curTile);
 
         Enemy enemy = mock(Enemy.class);
         when(curTile.getEnemy("goblin")).thenReturn(enemy);
@@ -121,22 +106,30 @@ class AbilityCommandTest {
     }
 
     @Test
-    void execute_WrapsExceptions_InAbilityException() {
-        doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
+    void givenAbilityThrows_whenExecute_thenWrapsInAbilityException() {
+        AbilityCommand realCommand = new AbilityCommand();
 
-        when(state.getMap().curZone(5, 7)).thenReturn(curTile);
+        Output testOutput = mock(Output.class);
+        Input testInput = mock(Input.class);
+        when(testInput.nextLine()).thenReturn("not-a-real-spell");
 
+        GameServices testServices = mock(GameServices.class);
+        when(testServices.getOutput()).thenReturn(testOutput);
+        when(testServices.getInput()).thenReturn(testInput);
+
+        GameState testState = new GameState("test-room", testServices);
+        Player mage = new Player("MageHero", PlayerTypes.Mage, testState);
+        testState.addPlayer(mage);
+
+        WorldMap testMap = mock(WorldMap.class);
+        Tile testTile = mock(Tile.class);
         Enemy enemy = mock(Enemy.class);
-        when(curTile.getEnemy("goblin")).thenReturn(enemy);
 
-        Characters character = mock(Characters.class);
-        doReturn(character).when(player).getPlayerCharacter();
+        when(testMap.curZone(anyInt(), anyInt())).thenReturn(testTile);
+        when(testTile.getEnemy("goblin")).thenReturn(enemy);
+        testState.setMap(testMap);
 
-        doThrow(new RuntimeException("boom"))
-                .when(character)
-                .activateAbility(player, enemy, state);
-
-        assertThrows(AbilityException.class,
-                () -> command.execute(new String[]{"super", "goblin"}, player, state));
+        assertThrows(AbilityException.class, () -> realCommand.execute(new String[]{"super", "goblin"}, mage, testState));
+        verify(testInput).nextLine();
     }
 }
