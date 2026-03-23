@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.questoftherealm.characters.characterInterfaces.Explorer;
 import com.questoftherealm.characters.characterInterfaces.InventoryHandler;
 import com.questoftherealm.characters.playerCharacters.Characters;
-import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.expeditions.missions.Mission;
 import com.questoftherealm.expeditions.quest.Quest;
 import com.questoftherealm.expeditions.quest.QuestFactory;
@@ -15,17 +14,18 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.Position;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.ExploreManager;
-import com.questoftherealm.items.*;
+import com.questoftherealm.items.Item;
+import com.questoftherealm.items.ItemEffect;
 import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.LocationTrigger;
 import com.questoftherealm.map.Locations;
 import com.questoftherealm.map.Tile;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.questoftherealm.game.GameConstants.*;
-
 
 public class Player implements InventoryHandler, Explorer {
     private final String name;
@@ -38,16 +38,19 @@ public class Player implements InventoryHandler, Explorer {
     private Position position;
     private int x, y;
     private String currentZone;
-    private HashMap<ItemEffect, Item> armor;
+    private Map<ItemEffect, Item> armor;
     private Item weapon;
     @JsonIgnore
     private Quest curQuest;
     @JsonIgnore
     private Mission curMission;
     private PlayTime playTime;
+    @JsonIgnore
     private long startTime;
     private QuestFactory questFactory;
-    private boolean isDead;
+    private volatile boolean isDead;
+    @JsonIgnore
+    private volatile boolean isActive;
 
     public Player(String name, PlayerTypes type, GameState state) {
         WeaponFactory weaponFactory = new WeaponFactory(state.getItemRegistry());
@@ -69,10 +72,11 @@ public class Player implements InventoryHandler, Explorer {
         this.position = PLAYER_START;
         this.playTime = new PlayTime(0, 0);
         this.startTime = 0;
-        this.questFactory = new QuestFactory(this,state);
+        this.questFactory = new QuestFactory(this, state);
         this.curQuest = questFactory.getCurrentQuest();
         this.curMission = questFactory.getCurrentMission();
         this.isDead = false;
+        this.isActive = true;
     }
 
     @JsonCreator
@@ -89,7 +93,9 @@ public class Player implements InventoryHandler, Explorer {
                   @JsonProperty("inventory") Inventory inventory,
                   @JsonProperty("playTime") PlayTime playTime,
                   @JsonProperty("questFactory") QuestFactory questFactory,
-                  @JsonProperty("dead") boolean isDead) {
+                  @JsonProperty("dead") boolean isDead,
+                  @JsonProperty("characterHealth") Integer characterHealth,
+                  @JsonProperty("characterMana") Integer characterMana) {
 
         this.name = name;
         this.playerType = playerType;
@@ -107,6 +113,13 @@ public class Player implements InventoryHandler, Explorer {
         initializeInventory(inventory);
         recalculateStats();
 
+        if (characterHealth != null) {
+            this.playerCharacter.setHealth(characterHealth);
+        }
+        if (characterMana != null) {
+            this.playerCharacter.setMana(characterMana);
+        }
+
         this.questFactory = questFactory;
         if (questFactory != null) {
             this.questFactory.setPlayer(this);
@@ -116,20 +129,20 @@ public class Player implements InventoryHandler, Explorer {
 
         this.playTime = playTime != null ? playTime : new PlayTime(0, 0);
         this.isDead = isDead;
+        this.isActive = true;
     }
 
     private void createArmor() {
         if (!this.armor.containsKey(ItemEffect.HELMET)) this.armor.put(ItemEffect.HELMET, null);
         if (!this.armor.containsKey(ItemEffect.CHESTPLATE)) this.armor.put(ItemEffect.CHESTPLATE, null);
         if (!this.armor.containsKey(ItemEffect.BOOTS)) this.armor.put(ItemEffect.BOOTS, null);
-
     }
 
     private void initializeInventory(Inventory inventory) {
         this.inventory = inventory != null ? inventory : new Inventory(MAX_ITEMS_IN_INVENTORY);
     }
 
-    public void addExp(int exp) {
+    public synchronized void addExp(int exp) {
         experience += exp;
         while (experience >= level * MAX_EXP_PER_LEVEL) {
             experience -= level * MAX_EXP_PER_LEVEL;
@@ -137,7 +150,7 @@ public class Player implements InventoryHandler, Explorer {
         }
     }
 
-    public void addMoney(int amount, GameState state) {
+    public synchronized void addMoney(int amount, GameState state) {
         gold += amount;
         if (gold >= GameConstants.MAX_GOLD) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.reached.maxGold"));
@@ -145,7 +158,7 @@ public class Player implements InventoryHandler, Explorer {
         }
     }
 
-    public boolean payMoney(int amount, GameState state) {
+    public synchronized boolean payMoney(int amount, GameState state) {
         if (gold - amount >= 0) {
             gold -= amount;
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.use.gold"));
@@ -158,7 +171,7 @@ public class Player implements InventoryHandler, Explorer {
         playerCharacter.useMana(mana);
     }
 
-    public void move(int x, int y) {
+    public synchronized void move(int x, int y) {
         this.x = x;
         this.y = y;
         this.position = new Position(x, y);
@@ -173,31 +186,41 @@ public class Player implements InventoryHandler, Explorer {
         return playerCharacter;
     }
 
+    @JsonProperty("characterHealth")
+    public int getCharacterHealth() {
+        return playerCharacter.getHealth();
+    }
+
+    @JsonProperty("characterMana")
+    public int getCharacterMana() {
+        return playerCharacter.getMana();
+    }
+
     public PlayerTypes getPlayerType() {
         return playerType;
     }
 
-    public int getX() {
+    public synchronized int getX() {
         return x;
     }
 
-    public int getY() {
+    public synchronized int getY() {
         return y;
     }
 
-    public String getCurrentZone() {
+    public synchronized String getCurrentZone() {
         return currentZone;
     }
 
-    public int getLevel() {
+    public synchronized int getLevel() {
         return level;
     }
 
-    public int getGold() {
+    public synchronized int getGold() {
         return gold;
     }
 
-    public int getExperience() {
+    public synchronized int getExperience() {
         return experience;
     }
 
@@ -205,31 +228,31 @@ public class Player implements InventoryHandler, Explorer {
         return inventory;
     }
 
-    public void setCurrentZone(String s) {
+    public synchronized void setCurrentZone(String s) {
         currentZone = s;
     }
 
-    public HashMap<ItemEffect, Item> getArmor() {
+    public synchronized Map<ItemEffect, Item> getArmor() {
         return armor;
     }
 
-    public void setArmor(HashMap<ItemEffect, Item> armor) {
+    public synchronized void setArmor(Map<ItemEffect, Item> armor) {
         this.armor = armor;
     }
 
-    public void setWeapon(Item weapon) {
+    public synchronized void setWeapon(Item weapon) {
         this.weapon = weapon;
     }
 
-    public Item getWeapon() {
+    public synchronized Item getWeapon() {
         return weapon;
     }
 
-    public Position getPosition() {
+    public synchronized Position getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public synchronized void setPosition(Position position) {
         this.position = position;
         this.x = position.x();
         this.y = position.y();
@@ -275,11 +298,11 @@ public class Player implements InventoryHandler, Explorer {
         int minutes = totalMinutes % 60;
         this.playTime = new PlayTime(hours, minutes);
     }
-
+    @JsonIgnore
     public long getStartTime() {
         return startTime;
     }
-
+    @JsonIgnore
     public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
@@ -290,7 +313,7 @@ public class Player implements InventoryHandler, Explorer {
         for (LocationTrigger locTrigger : state.getTriggerRegister().getTriggers()) {
             if (locTrigger.isAtPosition(pos)) {
                 locTrigger.trigger(this);
-                if(locTrigger.isExecuted()){
+                if (locTrigger.isExecuted()) {
                     return;
                 }
             }
@@ -300,27 +323,26 @@ public class Player implements InventoryHandler, Explorer {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.tile.empty"));
             return;
         }
-        if (!curTile.isContentGenerated() && curTile.isEmpty()) {
+        if (!curTile.isContentGenerated()) {
             curTile.onEnter(this, state);
         } else {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.tile.empty"));
             curTile.listContent(state);
         }
-
     }
 
     @Override
     public void exploreStructure(String structure, GameState state) {
         Locations location = Locations.getStructure(structure);
         MessageBundle bundle = state.getMessages().getBundle();
-        Output output =  state.getGameServices().getOutput();
+        Output output = state.getGameServices().getOutput();
         if (location == null) {
             output.println(bundle.get("structure.no.exist"));
             return;
         }
-        output.println(bundle.get("player.approach.structure",bundle.get(location.getName())));
+        output.println(bundle.get("player.approach.structure", bundle.get(location.getName())));
         output.println(bundle.get("player.decision.structure"));
-        output.print(bundle.get("console.enter.command.symbol"));
+        output.print(bundle.get("console.menu.prompt"));
+        output.flush();
         String line = state.getGameServices().getInput().nextLine().toUpperCase();
         switch (line.toUpperCase()) {
             case "ENTER" -> {
@@ -328,30 +350,13 @@ public class Player implements InventoryHandler, Explorer {
                 ExploreManager interaction = new ExploreManager();
                 interaction.exploreStructure(location, this, state);
             }
-            case "LEAVE" -> {
-                output.println(bundle.get("player.default.structure"));
-            }
-            default -> {
-                output.println(bundle.get("player.leave.structure"));
-            }
+            case "LEAVE" -> output.println(bundle.get("player.default.structure"));
+            default -> output.println(bundle.get("player.leave.structure"));
         }
 
     }
 
-    public void openChest(GameState state) {
-        try {
-            Chest chest = new Chest(state);
-            ItemDrop drop = chest.generateRandomItem();
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.open.chest"));
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.random.item", drop.item(), drop.quantity()));
-            this.inventory.addItem(drop.item(), drop.quantity(), state);
-        } catch (RandomItemNotGenerated e) {
-            state.getGameServices().getOutput().println(e.getMessage());
-        }
-    }
-
-
-    public void equipArmorPiece(Item armorEquipment, GameState state) {
+    public synchronized void equipArmorPiece(Item armorEquipment, GameState state) {
         switch (armorEquipment.getEffect()) {
             case HELMET -> swapArmor(ItemEffect.HELMET, armorEquipment, state);
             case CHESTPLATE -> swapArmor(ItemEffect.CHESTPLATE, armorEquipment, state);
@@ -367,8 +372,7 @@ public class Player implements InventoryHandler, Explorer {
         armor.put(slot, armorPiece);
     }
 
-
-    public void equipWeapon(Item weaponEquipment, GameState state) {
+    public synchronized void equipWeapon(Item weaponEquipment, GameState state) {
         if (getWeapon() != null) {
             getInventory().addItem(getWeapon(), 1, state);
         }
@@ -376,7 +380,7 @@ public class Player implements InventoryHandler, Explorer {
         recalculateStats();
     }
 
-    public void recalculateStats() {
+    public synchronized void recalculateStats() {
         int weaponAttack = (getWeapon() != null ? getWeapon().getPower() : 0);
         playerCharacter.setAttack(playerCharacter.getBaseAttack() + weaponAttack);
         if (armor == null) {
@@ -391,40 +395,26 @@ public class Player implements InventoryHandler, Explorer {
         }
     }
 
-    //use consumables
-    public void useItem(Item item) {
-        // playerCharacter.useMana(item);
+    public synchronized void useItem(Item item) {
+        playerCharacter.useMana(item.getMana());
         switch (item.getEffect()) {
             case RESTORE_MANA ->
                     playerCharacter.setMana(Math.min(item.getPower() + playerCharacter.getMana(), MAX_MANA));
             case BUFF_STRENGTH ->
-                    playerCharacter.setAttack(Math.min(playerCharacter.getAttack() + item.getPower(), MAX_ATTACK/2));
+                    playerCharacter.setAttack(Math.min(playerCharacter.getAttack() + item.getPower(), MAX_ATTACK / 2));
             case RESTORE_HP ->
                     playerCharacter.setHealth(Math.min(playerCharacter.getHealth() + item.getPower(), MAX_HEALTH));
-//                case SPELL_FIRE -> curCharacter.castSpell("fireball", item.getPower());
-//                case SPELL_ICE -> curCharacter.castSpell("iceSpike", item.getPower());
-//                case SPELL_HEAL -> curCharacter.castSpell("heal", item.getPower());
-//                case SPELL_SHIELD -> curCharacter.castSpell("shield", item.getPower());
-//                case SPELL_LIGHTNING -> curCharacter.castSpell("lightning", item.getPower());
-//                case BUFF_CHARISMA -> curCharacter.addBuff("charisma", item.getPower());
-//              case BUFF_INTELLIGENCE -> curCharacter.addBuff("intelligence", item.getPower());
-//                case QUEST_ITEM -> Game.getQuestManager().collectItem(item);
-//                case FRAGMENT -> Game.getFragmentManager().collectFragment(item);
         }
     }
 
     public void openInventory(GameState state) {
-        getInventory().listItems(state.getGameServices().getOutput(),state.getMessages().getBundle());
+        getInventory().listItems(state.getGameServices().getOutput(), state.getMessages().getBundle());
     }
 
     public void equipItem(Item item, GameState state) {
         switch (item.getType()) {
-            case ARMOR -> {
-                equipArmorPiece(item, state);
-            }
-            case WEAPON -> {
-                equipWeapon(item, state);
-            }
+            case ARMOR -> equipArmorPiece(item, state);
+            case WEAPON -> equipWeapon(item, state);
         }
     }
 
@@ -448,11 +438,38 @@ public class Player implements InventoryHandler, Explorer {
         setPlayTime(duration);
     }
 
-    public boolean isDead() {
-        return playerCharacter.isDead();
+    public synchronized boolean isDead() {
+        return playerCharacter.isDead() || isDead;
     }
 
-    public void setDead() {
-        isDead = isDead();
+    public synchronized void setDead() {
+        isDead = true;
     }
+
+    public Tile curTile(GameState state) {
+        return state.getMap().curZone(getX(), getY());
+    }
+
+    public synchronized boolean isActive() {
+        return isActive;
+    }
+
+    @JsonIgnore
+    public synchronized void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void respawn(GameState state) {
+        int roll = state.getGameServices().getRandom().randomInt(1, 4);
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.respawn." + roll));
+        setPosition(GameConstants.PLAYER_START);
+        playerCharacter.setHealth(playerCharacter.getMaxHealth());
+        playerCharacter.setMana(playerCharacter.getMana() + 10);
+        setCurrentZone(GameConstants.PLAYER_SPAWN);
+        this.isDead = false;
+    }
+
+//    public boolean finishedGame() {
+//        if(curQuest == null) return false;
+//    }
 }

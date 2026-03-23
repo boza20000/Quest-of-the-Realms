@@ -5,6 +5,7 @@ import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.server.ServerLogger;
 
 import java.util.Arrays;
 
@@ -39,15 +40,21 @@ public class UseCommand extends Command {
         try {
             item = state.getItemRegistry().getItem(nameItem);
         } catch (IllegalArgumentException e) {
+            ServerLogger.get().warn("UseCommand: Invalid item argument - " + nameItem, e);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.error.notItem"));
             return;
         } catch (ItemNotFound ex) {
+            ServerLogger.get().info("UseCommand: Item not found - " + nameItem);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.error.itemNotFound"));
             return;
         }
-        if (player.getInventory().containsItem(item)) {
-            player.useItem(item);
-            player.getInventory().removeItem(item, 1,state);
+        synchronized (player.getInventory()) {
+            if (player.getInventory().containsItem(item)) {
+                player.useItem(item);
+                player.getInventory().removeItem(item, 1, state);
+            } else {
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("use.error.itemNotFound"));
+            }
         }
     }
 }

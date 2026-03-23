@@ -4,14 +4,13 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 
 import com.questoftherealm.expeditions.quest.quests.StartQuest;
-import com.questoftherealm.game.ConsoleOutput;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.GameServices;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -24,13 +23,15 @@ class QuestProgressTest {
     private CompleteQuestCommand questProgressCommand;
     private GameState state;
     private Output output;
+    private Input input;
 
 
     @BeforeEach
     void setup() {
 
         output = mock(Output.class);
-        GameServices services = new GameServices(output);
+        input = mock(Input.class);
+        GameServices services = new GameServices(output,input);
         state = mock(GameState.class);
         when(state.getGameServices()).thenReturn(services);
         questProgressCommand = new CompleteQuestCommand();
@@ -39,13 +40,12 @@ class QuestProgressTest {
         when(state.getMessages()).thenReturn(localizationService);
         when(state.getItemRegistry()).thenReturn(itemRegistry);
         player = spy(new Player("TestHero", PlayerTypes.Warrior, state));
-        when(state.getPlayer()).thenReturn(player);
 
     }
 
 
     @Test
-    void testMissionCompletion() {
+    void givenStartQuestMission_whenQuestStatusUpdated_thenMissionCanProgress() {
         assertInstanceOf(StartQuest.class, player.getCurQuest(), "Should be Start quest instance");
         StartQuest quest = (StartQuest) player.getCurQuest();
         quest.setElderHasTalked(true);
@@ -58,7 +58,7 @@ class QuestProgressTest {
     }
 
     @Test
-    void testQuestCompletion() {
+    void givenRequiredItemsAndFlags_whenQuestStatusUpdated_thenQuestCanProgress() {
         ItemRegistry itemRegistry = new ItemRegistry(new LocalizationService());
         assertInstanceOf(StartQuest.class, player.getCurQuest(), "Should be Start quest instance");
         StartQuest quest = (StartQuest) player.getCurQuest();
@@ -75,7 +75,7 @@ class QuestProgressTest {
 
 
     @Test
-    void testNoQuestActive() {
+    void givenNoActiveQuest_whenExecute_thenPrintsNoQuestError() {
 
         player.setCurQuest(null);
         player.setCurMission(null);
@@ -86,7 +86,7 @@ class QuestProgressTest {
     }
 
     @Test
-    void testNoMissionActive() {
+    void givenNoActiveMission_whenExecute_thenPrintsNoMissionError() {
 
         player.setCurQuest(new StartQuest());
         player.setCurMission(null);

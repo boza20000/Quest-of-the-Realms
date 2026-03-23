@@ -26,15 +26,13 @@ class QuestCommandTest {
 
     @BeforeEach
     void setup() {
-        player = spy(new Player("TestHero", PlayerTypes.Warrior, 1,0,0,0,0,
-                "Spawn", null,null,null,null,null,false));
-
-
         services = mock(GameServices.class);
         output = mock(Output.class);
 
-        GameState s = new GameState(player,services);
+        GameState s = new GameState("test-room",services);
         state = spy(s);
+        player = spy(new Player("TestHero", PlayerTypes.Warrior, state));
+        state.addPlayer(player);
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
 
@@ -43,7 +41,7 @@ class QuestCommandTest {
     }
 
     @Test
-    void testQuestCommandPrintsTasks() {
+    void givenActiveQuestAndMission_whenExecute_thenPrintsMissionTasks() {
         Quest quest = mock(Quest.class);
         Mission mission = mock(Mission.class);
 
@@ -62,7 +60,7 @@ class QuestCommandTest {
     }
 
     @Test
-    void testQuestCommandNoQuestLoaded() {
+    void givenNoQuest_whenExecute_thenPrintsNoQuestError() {
         when(questFactory.getCurrentQuest()).thenReturn(null);
 
         QuestCommand cmd = new QuestCommand();
@@ -72,7 +70,7 @@ class QuestCommandTest {
     }
 
     @Test
-    void testQuestCommandNoMissionLoaded() {
+    void givenNoMission_whenExecute_thenPrintsNoMissionError() {
         Quest quest = mock(Quest.class);
         when(quest.getMissions()).thenReturn(java.util.List.of());
         when(questFactory.getCurrentQuest()).thenReturn(quest);
@@ -87,7 +85,7 @@ class QuestCommandTest {
     }
 
     @Test
-    void testQuestCommandMissingArgs() {
+    void givenExtraArguments_whenExecute_thenPrintsUsage() {
         QuestCommand cmd = new QuestCommand();
         cmd.execute(new String[]{"quest", "extra"}, player, state);
         verify(output).println(contains("Usage"));

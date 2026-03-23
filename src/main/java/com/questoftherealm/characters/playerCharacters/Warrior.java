@@ -23,20 +23,22 @@ public class Warrior extends Characters implements Trading {
 
     @Override
     public void buyItem(Trader trader, Player player, Item item, int quantity, GameState state) {
-        if (player.getInventory().getItems().size() == GameConstants.MAX_ITEMS_IN_INVENTORY) {
-            if (hasSpace(player, item, quantity)) {
-                state.getGameServices().getOutput().println("Not enough space in inventory");
+        synchronized (player.getInventory()) {
+            if (player.getInventory().getItems().size() == GameConstants.MAX_ITEMS_IN_INVENTORY) {
+                if (!hasSpace(player, item, quantity)) {
+                    state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.buy.noSpace"));
+                    return;
+                }
+            }
+
+            if (player.getGold() < (item.getPrice() * quantity)) {
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.buy.noMoney"));
                 return;
             }
-        }
 
-        if (!(player.getGold() < (item.getPrice() * quantity))) {
-            state.getGameServices().getOutput().println("Not enough money");
-            return;
+            player.payMoney(item.getPrice() * quantity, state);
+            player.getInventory().addItem(item, quantity, state);
         }
-
-        player.payMoney(item.getPrice() * quantity, state);
-        player.getInventory().addItem(item, quantity, state);
     }
 
     private boolean hasSpace(Player player, Item item, int quantity) {
@@ -45,12 +47,6 @@ public class Warrior extends Characters implements Trading {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void sellItem(Player player, Trader trader, Item item, int quantity, GameState state) {
-        player.addMoney(item.getPrice() * quantity, state);
-        player.getInventory().removeItem(item, quantity, state);
     }
 
     @Override
@@ -75,7 +71,14 @@ public class Warrior extends Characters implements Trading {
 
     @Override
     public void activateAbility(Player player, Enemy enemy, GameState state) {
+        if (enemy.isDead()) {
+            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.ability.alreadyDead"));
+            return;
+        }
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("warrior.ability.use", player.getWeapon().getName()));
         enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2, state);
+        if (enemy.isDead()) {
+            player.curTile(state).removeEnemy(enemy, state);
+        }
     }
 }

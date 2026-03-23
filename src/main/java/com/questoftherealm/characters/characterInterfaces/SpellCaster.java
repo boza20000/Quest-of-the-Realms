@@ -6,5 +6,5 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.spells.Spell;
 
 public interface SpellCaster {
-    void castSpell(Player player, Spell spell, Enemy target, GameState state);
+     void castSpell(Player player, Spell spell, Enemy target, GameState state);
 }
