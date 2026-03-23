@@ -3,13 +3,14 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.Deceiver;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.exceptions.NotEnoughManaException;
-import com.questoftherealm.game.GameConstants;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.items.Chest;
+import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
-import com.questoftherealm.server.ServerLogger;
-
+import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.localization.MessageBundle;
+import java.util.Random;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Rogue extends Characters implements Deceiver {
@@ -23,8 +24,8 @@ public class Rogue extends Characters implements Deceiver {
     }
 
     @Override
-    public  void pickpocket(Player player, Enemy enemy, GameState state) {
-        int roll = state.getGameServices().getRandom().randomInt(10);
+    public void pickpocket(Player player, Enemy enemy, GameState state) {
+        int roll = new Random().nextInt(10);
         if (roll < 6) {
             Chest chest = new Chest(state);
             ItemDrop loot = chest.generateRandomItem();
@@ -32,7 +33,6 @@ public class Rogue extends Characters implements Deceiver {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.pickpocket.successful",enemy.getClass().getSimpleName()));
         } else {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.pickpocket.fail"));
-            enemy.interact(player,state);
         }
     }
 
@@ -57,21 +57,11 @@ public class Rogue extends Characters implements Deceiver {
     }
 
     @Override
-    public void activateAbility(Player player, Enemy enemy, GameState state) {
-        try {
-            player.loseMana(GameConstants.ROUGE_ABILITY_MANA_COST);
-        } catch (NotEnoughManaException e) {
-            ServerLogger.get().warn("Rogue: Player " + player.getName() + " attempted ability with insufficient mana", e);
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.ability.noMana"));
-            return;
-        }
+    public void activateAbility(Player player, Enemy enemy,GameState state) {
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("rogue.ability.start", enemy.getClass().getSimpleName().toUpperCase()));
-        if (enemy.isDead()) {
+        if(enemy.isDead() ){//check if enemy can be pick-pocketed
             return;
         }
-        pickpocket(player, enemy, state);
-        if (enemy.isDead()) {
-            player.curTile(state).removeEnemy(enemy, state);
-        }
+        pickpocket(player,enemy,state);
     }
 }

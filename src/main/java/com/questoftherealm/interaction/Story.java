@@ -13,7 +13,7 @@ public class Story {
                 YELLOW, RESET,   // Eldoria again
                 BLUE, RESET,     // Humans
                 RED, RESET,      // Orcs
-                BROWN, RESET,  // Mages
+                MAGENTA, RESET,  // Mages
                 GREEN, RESET     // Enter
         );
     }

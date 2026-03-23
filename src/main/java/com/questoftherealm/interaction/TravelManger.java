@@ -1,7 +1,6 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.map.Event;
@@ -11,23 +10,18 @@ import java.util.List;
 import java.util.Random;
 
 public class TravelManger {
-    private final GameState state;
-    private final SlowPrinter slowPrinter;
+    private GameState state;
+    private Output output;
+    private SlowPrinter slowPrinter;
 
     private Random random() {
         return state.getGameServices().getRandom().random();
     }
-    private Output output() {
-        return state.getGameServices().getOutput();
-    }
 
     public TravelManger(GameState s) {
         state = s;
-        this.slowPrinter = createSlowPrinter(s);
-    }
-
-    protected SlowPrinter createSlowPrinter(GameState s) {
-        return new SlowPrinter(s);
+        output = s.getGameServices().getOutput();
+        this.slowPrinter = new SlowPrinter(s);
     }
 
     private final List<String> MOVE_CONNECTORS = List.of(
@@ -56,38 +50,22 @@ public class TravelManger {
         slowPrinter.slowPrint("⚠️ " + state.getMessages().getBundle().get("travel.event.encounter", name));
         slowPrinter.slowPrint(description);
         boolean investigate = promptYesNo(state.getMessages().getBundle().get("travel.event.investigate.question"));
-        Enemy enemy = event.createEnemy(event, state);
         if (investigate) {
             slowPrinter.slowPrint("👉 " + state.getMessages().getBundle().get("travel.event.investigate.accept"));
-            enemy.interact(player, state);
-            if (player.isDead()) {
-                return;
-            }
+            event.createEnemy(event,state).interact(player, state);
+        } else {
+            slowPrinter.slowPrint("➡️ " + state.getMessages().getBundle().get("travel.event.investigate.decline"));
         }
-
-        if (!enemy.isDead()) {
-            int roll = random().nextInt(10);
-            if (roll < 6) {
-                slowPrinter.slowPrint("👻 " + state.getMessages().getBundle().get("travel.event.investigate.forced", enemy.getClass().getSimpleName()));
-                enemy.interact(player, state);
-                if (player.isDead()) {
-                    return;
-                }
-            }
-        }
-        slowPrinter.slowPrint("➡️ " + state.getMessages().getBundle().get("travel.event.investigate.decline"));
-
     }
 
     private boolean promptYesNo(String question) {
         slowPrinter.slowPrint(question + " " + state.getMessages().getBundle().get("travel.prompt.yesno"));
         while (true) {
-            output().print(">");
-            output().flush();
+            output.print(">");
             String input = state.getGameServices().getInput().nextLine().trim().toLowerCase();
             if (input.equals("yes") || input.equals("y")) return true;
             if (input.equals("no") || input.equals("n")) return false;
-            output().println(state.getMessages().getBundle().get("travel.prompt.invalid"));
+            output.println(state.getMessages().getBundle().get("travel.prompt.invalid"));
         }
     }
 

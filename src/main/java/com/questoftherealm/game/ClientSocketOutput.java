@@ -1,7 +1,6 @@
 package com.questoftherealm.game;
 
 import com.questoftherealm.game.interfaces.Output;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -14,24 +13,17 @@ public class ClientSocketOutput implements Output {
     }
 
     @Override
-    public synchronized void println(String msg) {
+    public void println(String msg) {
         printWriter.println(msg);
     }
 
     @Override
-    public synchronized void print(String msg) {
-        printWriter.print(msg);
+    public void print(String msg) {
+
     }
 
     @Override
-    public synchronized void println() {
-        printWriter.println();
+    public void println() {
+
     }
-
-    @Override
-    public synchronized void flush() {
-        printWriter.flush();
-    }
-
-
 }

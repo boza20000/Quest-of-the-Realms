@@ -17,9 +17,4 @@ public class ConsoleOutput implements Output {
     public void println() {
         System.out.println();
     }
-
-    @Override
-    public void flush() {
-        System.out.flush();
-    }
 }

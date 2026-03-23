@@ -5,6 +5,7 @@ import com.questoftherealm.expeditions.quest.quests.StartQuest;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.interaction.MissionInteractions;
 import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.ItemDrop;
@@ -13,22 +14,24 @@ import com.questoftherealm.items.ItemType;
 
 public class Elder extends Npc {
     private final String name = "Evary";
+    private Output output;
 
     public Elder(String id, GameState state, MissionInteractions missionInteractions) {
         super(NpcType.ELDER, id, state, missionInteractions);
+        this.output = state.getGameServices().getOutput();
     }
 
     @Override
     public void talk(GameState state, Player player, boolean isSimulation) {
         if (!(player.getCurQuest() instanceof StartQuest q)) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("elder.confused"));
+            output.println(state.getMessages().getBundle().get("elder.confused"));
             return;
         }
         if (!q.isElderHasTalked()) {
             q.setElderHasTalked(true);
             giveRewards(player, isSimulation, state);
         } else {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("elder.has.talked"));
+            output.println(state.getMessages().getBundle().get("elder.has.talked"));
         }
     }
 

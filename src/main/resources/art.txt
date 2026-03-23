@@ -20,7 +20,7 @@
 
 
 #end#
-#time_played#
+#play_time#
 
                                                                                                     ┏━┓╻  ┏━┓╻ ╻   ╺┳╸╻┏┳┓┏━╸   \s
                                                                                                     ┣━┛┃  ┣━┫┗┳┛    ┃ ┃┃┃┃┣╸  ╺━╸  %02d hours %02d minutes

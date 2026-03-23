@@ -3,14 +3,14 @@ package com.questoftherealm.characters.playerCharacters;
 import com.questoftherealm.characters.characterInterfaces.SpellCaster;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
-import com.questoftherealm.exceptions.InvalidCommand;
-import com.questoftherealm.exceptions.InvalidSpellCommand;
 import com.questoftherealm.exceptions.NoSuchSpell;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.server.ServerLogger;
+import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.spells.Spell;
+import com.questoftherealm.items.Item;
 import com.questoftherealm.spells.SpellRegister;
+import com.questoftherealm.localization.MessageBundle;
 
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
@@ -54,22 +54,15 @@ public class Mage extends Characters implements SpellCaster {
         Output output = state.getGameServices().getOutput();
         SpellRegister spellRegister = new SpellRegister(state);
         spellRegister.listSpells();
-        printMessage(output,state.getMessages().getBundle().get("mage.spell.choose"));
+        output.println(state.getMessages().getBundle().get("mage.spell.choose"));
+        output.print(">");
         String line = state.getGameServices().getInput().nextLine();
         Spell choice;
         try {
             choice = spellRegister.getSpell(line);
-        } catch (InvalidSpellCommand e) {
-            ServerLogger.get().warn("Mage: Invalid spell command - " + line, e);
+        } catch (Exception e) {
             throw new NoSuchSpell(state.getMessages().getBundle().get("mage.spell.notFound"));
         }
         castSpell(player, choice, enemy, state);
     }
-
-    private void printMessage(Output output,String message) {
-        output.println(message);
-        output.print(">");
-        output.flush();
-    }
-
 }

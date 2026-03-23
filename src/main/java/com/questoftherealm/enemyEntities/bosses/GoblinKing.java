@@ -18,7 +18,7 @@ import static com.questoftherealm.characters.playerCharacters.CharacterConstants
 
 public class GoblinKing extends Boss {
     private ItemRegistry itemRegistry;
-    private final String NAME = "Goben";
+    private final String NAME = "Azok";
 
     public GoblinKing(GameState state) {
         super(GoblinKing_HEALTH,
@@ -38,7 +38,6 @@ public class GoblinKing extends Boss {
         this.armor = createArmor();
         this.loot = createLoot();
         this.weapon = itemRegistry.getItem("Goblin King Sword");
-        this.name = NAME;
     }
 
     private HashMap<ItemEffect, Item> createArmor() {
@@ -57,7 +56,7 @@ public class GoblinKing extends Boss {
     }
 
     @Override
-    public synchronized void superMove(Player player, GameState state) {
+    public void superMove(Player player, GameState state) {
         SlowPrinter slowPrinter = new SlowPrinter(state);
         Random random = new Random();
         int roll = random.nextInt(100);

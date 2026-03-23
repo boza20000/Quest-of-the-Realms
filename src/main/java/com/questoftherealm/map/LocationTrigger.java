@@ -7,7 +7,7 @@ import com.questoftherealm.map.interfaces.TriggerAction;
 public class LocationTrigger{
     private final Position position;
     private final TriggerAction action;
-    private volatile boolean isExecuted;
+    private boolean isExecuted;
 
     public LocationTrigger(Position position, TriggerAction action) {
         this.position = position;
@@ -19,7 +19,7 @@ public class LocationTrigger{
         return this.position.equals(p);
     }
 
-    public synchronized void trigger(Player player){
+    public void trigger(Player player){
         if(action.execute(player)){
             setExecuted(true);
         }
@@ -29,7 +29,7 @@ public class LocationTrigger{
         return isExecuted;
     }
 
-    public synchronized void setExecuted(boolean executed) {
+    public void setExecuted(boolean executed) {
         isExecuted = executed;
     }
 
