@@ -1,9 +1,12 @@
 package com.questoftherealm.game;
 
+import com.questoftherealm.game.interfaces.Input;
+import com.questoftherealm.server.ServerLogger;
+
 import java.io.IOException;
 import java.util.Scanner;
 
-public class InputService  {
+public class ConsoleInput implements Input {
     private final Scanner scanner = new Scanner(System.in);
 
 
@@ -19,6 +22,7 @@ public class InputService  {
         try {
             return System.in.available();
         } catch (IOException e) {
+            ServerLogger.get().warn("ConsoleInput: IOException checking available input", e);
             return 0;
         }
     }
@@ -27,6 +31,7 @@ public class InputService  {
         try {
             return System.in.read();
         } catch (IOException e) {
+            ServerLogger.get().warn("ConsoleInput: IOException reading input", e);
             return -1;
         }
     }

@@ -1,17 +1,12 @@
 package com.questoftherealm;
 
-import com.questoftherealm.characters.player.Inventory;
-import com.questoftherealm.characters.player.PlayTime;
-import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.game.Game;
-import com.questoftherealm.game.GameConstants;
-import com.questoftherealm.interaction.Console;
+import com.questoftherealm.server.Server;
 
 public class Main {
     public static void main(String[] args) {
-      Game game = new Game();
-      game.start();
+//      Game game = new Game();
+//      game.start();
 
 //        Player player = new Player(
 //                "TestHero",
@@ -29,6 +24,9 @@ public class Main {
 //        );
 //        Console console = new Console();
 //        console.displayEnd(player);
+
+      //  Server server = new Server();
+        //server.startGameServer();
 
     }
 }

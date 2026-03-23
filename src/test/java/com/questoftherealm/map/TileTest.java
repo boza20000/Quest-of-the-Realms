@@ -2,12 +2,12 @@ package com.questoftherealm.map;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
+import com.questoftherealm.enemyEntities.Loot;
 import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.RandomService;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.items.Chest;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemDrop;
 import com.questoftherealm.localization.LocalizationService;
@@ -15,6 +15,7 @@ import com.questoftherealm.localization.MessageBundle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.mockito.Mockito.*;
@@ -34,8 +35,6 @@ class TileTest {
         mockPlayer = mock(Player.class);
         mockOutput = mock(Output.class);
 
-
-
         GameServices mockServices = mock(GameServices.class);
         when(mockState.getGameServices()).thenReturn(mockServices);
         when(mockServices.getOutput()).thenReturn(mockOutput);
@@ -47,7 +46,7 @@ class TileTest {
     }
 
     @Test
-    void testGenerateContentMarksContentGenerated() {
+    void givenPlayerEntersTile_whenOnEnter_thenContentIsGenerated() {
        LocalizationService mockL =  mock(LocalizationService.class);
        when(mockState.getMessages()).thenReturn(mockL);
        when(mockL.getBundle()).thenReturn(new MessageBundle());
@@ -57,48 +56,60 @@ class TileTest {
     }
 
     @Test
-    void testTileBasicProperties() {
+    void givenNewTile_whenReadingProperties_thenReturnsConfiguredValues() {
         assertEquals(TileTypes.GRASS, tile.getType());
         assertEquals("Grassland", tile.getDescription());
         assertTrue(tile.isWalkable());
     }
 
     @Test
-    void testPickItemReturnsItemAndRemovesIt() {
-        // Mock an item
+    void givenDropExists_whenPickItem_thenReturnsAndRemovesDrop() {
+
         Item mockItem = mock(Item.class);
         when(mockItem.getName()).thenReturn("Potion");
 
-        // Add drop to tile
         ItemDrop dropToAdd = new ItemDrop(mockItem, 1);
-        tile.getDrops().add(dropToAdd);
+        tile.addDrop(dropToAdd);
 
         assertFalse(tile.getDrops().isEmpty());
 
-        // Pick the item
         ItemDrop picked = tile.pickItem("Potion");
 
-        // Verify it returns the correct drop
         assertNotNull(picked);
         assertEquals(mockItem, picked.item());
         assertEquals(1, picked.quantity());
-
-        // Verify it was removed from the tile
         assertTrue(tile.getDrops().isEmpty());
     }
 
     @Test
-    void testRemoveEnemy() {
+    void givenEnemyPresent_whenRemoveEnemy_thenEnemyListBecomesEmpty() {
         Enemy enemy = mock(Enemy.class);
-        tile.getEnemies().add(enemy);
+        when(enemy.getLoot()).thenReturn(List.of());
+        
+        tile.addEnemy(enemy);
         assertFalse(tile.getEnemies().isEmpty());
 
-        tile.removeEnemy(enemy);
+        tile.removeEnemy(enemy,mockState);
         assertTrue(tile.getEnemies().isEmpty());
     }
 
     @Test
-    void testRegisterAndRetrieveNpc() {
+    void givenEnemyWithGuaranteedLoot_whenRemoveEnemy_thenLootIsAddedToTile() {
+        Enemy enemy = mock(Enemy.class);
+        Item lootItem = mock(Item.class);
+        when(enemy.getLoot()).thenReturn(List.of(new Loot(lootItem, 1.0, 1, 1)));
+
+        tile.addEnemy(enemy);
+        tile.removeEnemy(enemy, mockState);
+
+        List<ItemDrop> drops = tile.getDrops();
+        assertEquals(1, drops.size());
+        assertSame(lootItem, drops.getFirst().item());
+        assertEquals(1, drops.getFirst().quantity());
+    }
+
+    @Test
+    void givenNpcRegistered_whenGetNpcById_thenReturnsNpc() {
         var npc = mock(Npc.class);
         when(npc.getId()).thenReturn("npc1");
 
@@ -107,7 +118,7 @@ class TileTest {
     }
 
     @Test
-    void testIsEmptyReturnsTrueWhenNoDropsOrEnemies() {
+    void givenNoDropsOrEnemies_whenIsEmpty_thenReturnsTrue() {
         tile.getDrops().clear();
         tile.getEnemies().clear();
         assertTrue(tile.isEmpty());

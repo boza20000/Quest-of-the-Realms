@@ -1,24 +1,22 @@
 package com.questoftherealm.enemyEntities;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.characters.player.PlayerFactory;
-import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.characters.playerCharacters.Characters;
-import com.questoftherealm.characters.playerCharacters.Warrior;
 import com.questoftherealm.enemyEntities.entities.Goblin;
+import com.questoftherealm.game.ConsoleInput;
 import com.questoftherealm.game.ConsoleOutput;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Input;
+import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.localization.LocalizationService;
-import com.questoftherealm.localization.MessageBundle;
 import com.questoftherealm.map.TileTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.questoftherealm.characters.player.PlayerTypes.Warrior;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,14 +30,15 @@ class EnemyTest {
     @BeforeEach
     void setup() {
         player = mock(Player.class);
-        ConsoleOutput output = new ConsoleOutput();
-        state = new GameState(player, new GameServices(output));
+        Output output = new ConsoleOutput();
+        Input input = new ConsoleInput();
+        state = new GameState("test-room", new GameServices(output,input));
         enemy = new Goblin(state,new EnemyConstants());
         localizationService = new LocalizationService();
     }
 
     @Test
-    void testConstructorAndGetters() {
+    void givenNewGoblin_whenConstructed_thenDefaultStatsAndLootAreInitialized() {
         assertEquals(localizationService.getBundle().get("enemy.goblin.desc"), enemy.getDescription());
         assertEquals(EnemyType.GOBLIN, enemy.getType());
         assertEquals(30, enemy.getHealth());
@@ -52,7 +51,7 @@ class EnemyTest {
     }
 
     @Test
-    void testSetters() {
+    void givenUpdatedFields_whenSettersCalled_thenValuesAreApplied() {
         enemy.setHealth(20);
         assertEquals(20, enemy.getHealth());
 
@@ -66,7 +65,7 @@ class EnemyTest {
     }
 
     @Test
-    void testTakeDamage() {
+    void givenIncomingDamage_whenTakeDamage_thenHealthDropsAndDeathStateUpdates() {
         int startHealth = enemy.getHealth();
         int damage = 10;
         enemy.takeDamage(damage, state);
@@ -81,22 +80,22 @@ class EnemyTest {
     }
 
     @Test
-    void testIsAlive() {
+    void givenHealthChanges_whenIsAliveChecked_thenReflectsHealthState() {
         assertTrue(enemy.isAlive());
         enemy.setHealth(0);
         assertFalse(enemy.isAlive());
     }
 
     @Test
-    void testAttack() {
+    void givenTargetPlayer_whenAttack_thenDealsDamageToCharacter() {
         var mockCharacter = mock(Characters.class);
         when(player.getPlayerCharacter()).thenReturn(mockCharacter);
         enemy.attack(player, state);
-        verify(mockCharacter, atLeastOnce()).takeDamage(anyInt(), eq(state));
+        verify(mockCharacter, atLeastOnce()).takeDamage(anyInt(), eq(state), eq(player));
     }
 
     @Test
-    void testGenerateEnemies() {
+    void givenGrassTileType_whenGenerateEnemies_thenCreatesBoundedEnemyList() {
         List<Enemy> enemies = Enemy.generateEnemies(TileTypes.GRASS,state);
         assertNotNull(enemies);
         for (Enemy e : enemies) {

@@ -1,7 +1,5 @@
 package com.questoftherealm.map;
 
-import com.questoftherealm.game.GameState;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 public enum Locations {

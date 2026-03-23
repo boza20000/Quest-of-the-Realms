@@ -1,9 +1,9 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
-import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
+import com.questoftherealm.server.ServerLogger;
 
 import java.util.Arrays;
 
@@ -27,6 +27,12 @@ public class ExploreCommand extends Command {
                     .skip(1)
                     .toArray(String[]::new);
             String structureInput = String.join(" ",input);
+
+            if (curTile.getStructure() == null) {
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("explore.error.unavailable"));
+                return;
+            }
+
             String nameStructure = state.getMessages().getBundle().get(curTile.getStructure().getName());
 
             if (nameStructure.equalsIgnoreCase(structureInput)) {
@@ -34,7 +40,8 @@ public class ExploreCommand extends Command {
             } else {
                 state.getGameServices().getOutput().println(state.getMessages().getBundle().get("explore.error.nameMismatch"));
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            ServerLogger.get().warn("ExploreCommand: Unable to explore structure for player " + player.getName(), e);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("explore.error.unavailable"));
         }
     }

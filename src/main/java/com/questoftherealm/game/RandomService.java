@@ -3,7 +3,7 @@ package com.questoftherealm.game;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class RandomService {
+public class RandomService {
     public Random random() {
         return ThreadLocalRandom.current();
     }
@@ -26,4 +26,3 @@ public final class RandomService {
 
 
 }
-

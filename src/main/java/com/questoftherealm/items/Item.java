@@ -2,6 +2,7 @@ package com.questoftherealm.items;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+//make record
 public class Item {
     private final String name;
     private final ItemType type;

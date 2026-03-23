@@ -4,9 +4,11 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
+import com.questoftherealm.map.TriggerRegister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,38 +23,32 @@ class LookCommandTest {
 
     @BeforeEach
     void setup() {
-
-        state = mock(GameState.class);
-        output = mock(Output.class);
-        GameServices services = mock(GameServices.class);
-        when(state.getGameServices()).thenReturn(services);
-        when(services.getOutput()).thenReturn(output);
         lookCommand = new LookCommand();
+        output = mock(Output.class);
+        Input input = mock(Input.class);
+        GameServices gameServices = new GameServices(output, input);
+        state = new GameState("test", gameServices);
+        player = spy(new Player("TestHero", PlayerTypes.Warrior, state));
+        state.addPlayer(player);
         state.setSimulation(true);
-        LocalizationService localizationService = new LocalizationService();
-        ItemRegistry itemRegistry =new ItemRegistry(localizationService);
-        when(state.getMessages()).thenReturn(localizationService);
-        when(state.getItemRegistry()).thenReturn(itemRegistry);
-
-        player = spy(new Player("TestHero", PlayerTypes.Warrior,state));
 
     }
 
     @Test
-    void execute_PrintsLookingAndCallsPlayerLook() throws InterruptedException {
+    void givenValidLookCommand_whenExecute_thenPrintsLookingAndDelegatesToPlayer() {
         lookCommand.execute(new String[]{"look"}, player, state);
         verify(output).print("Looking");
         verify(player).look(state);
     }
 
     @Test
-    void execute_PrintsUsage_WhenExtraArgumentsProvided() {
+    void givenExtraArguments_whenExecute_thenPrintsUsage() {
         lookCommand.execute(new String[]{"look", "extra"}, player, state);
         verify(output).println("Usage: " + lookCommand.getDescription(state));
     }
 
     @Test
-    void execute_PrintsError_WhenPlayerIsNull() {
+    void givenNullPlayer_whenExecute_thenPrintsNoPlayerError() {
         lookCommand.execute(new String[]{"look"}, null, state);
         verify(output).println("Error: No player loaded.");
     }
