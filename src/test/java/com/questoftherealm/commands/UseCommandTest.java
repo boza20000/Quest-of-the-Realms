@@ -1,5 +1,6 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.exceptions.ItemNotFound;
@@ -24,6 +25,9 @@ class UseCommandTest {
 
     @BeforeEach
     void setup() {
+        player = new Player("TestHero", PlayerTypes.Warrior, 1, 0,0,0,0,
+                "Spawn", null,null,new Inventory(10),null,null,false);
+
         state = mock(GameState.class);
         services = mock(GameServices.class);
         output = mock(Output.class);
@@ -33,15 +37,14 @@ class UseCommandTest {
         ItemRegistry registry = new ItemRegistry(localizationService);
         when(state.getItemRegistry()).thenReturn(registry);
         when(state.getMessages()).thenReturn(localizationService);
-        player = new Player("TestHero", PlayerTypes.Warrior, state);
     }
 
     @Test
-    void givenValidItemInInventory_whenExecute_thenConsumesAndAppliesItem() throws ItemNotFound {
+    void testUseCommandValidItem() throws ItemNotFound {
         UseCommand cmd = new UseCommand();
         Item potion = state.getItemRegistry().getItem("Health Potion");
         player.getInventory().addItem(potion, 1,state);
-        player.getPlayerCharacter().takeDamage(10,state,player);
+        player.getPlayerCharacter().takeDamage(10,state);
 
         cmd.execute(new String[]{"use", "Health", "Potion"}, player, state);
 
@@ -50,14 +53,14 @@ class UseCommandTest {
     }
 
     @Test
-    void givenUnknownItem_whenExecute_thenPrintsItemNotFound() {
+    void testUseCommandInvalidItem() {
         UseCommand cmd = new UseCommand();
         cmd.execute(new String[]{"use", "Nonexistent"}, player, state);
         verify(output).println(contains("Item not found"));
     }
 
     @Test
-    void givenMissingArguments_whenExecute_thenPrintsUsage() {
+    void testUseCommandMissingArgs() {
         UseCommand cmd = new UseCommand();
         cmd.execute(new String[]{"use"}, player, state);
         verify(output).println(contains("Usage"));

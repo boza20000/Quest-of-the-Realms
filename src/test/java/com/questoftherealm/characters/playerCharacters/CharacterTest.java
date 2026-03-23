@@ -4,12 +4,10 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.exceptions.NotEnoughManaException;
-import com.questoftherealm.game.ConsoleInput;
 import com.questoftherealm.game.ConsoleOutput;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
@@ -62,6 +60,11 @@ class CharacterTest {
             }
         };
 
+
+
+        // --- Refactored GameState Setup ---
+
+        // 2. MOCK Localization and ItemRegistry (to satisfy GameState usage)
         mockMessages = mock(LocalizationService.class);
         mockItemRegistry = mock(ItemRegistry.class);
         mockBundle = mock(MessageBundle.class);
@@ -70,10 +73,12 @@ class CharacterTest {
         when(mockBundle.get(anyString(), any())).thenReturn("TEST MESSAGE");
         when(mockBundle.get(anyString())).thenReturn("TEST MESSAGE");
 
+        // 3. MOCK Output and Services
         mockOutput = mock(Output.class);
         mockServices = mock(GameServices.class);
         when(mockServices.getOutput()).thenReturn(mockOutput);
 
+        // 4. MOCK GameState (to be used in test methods)
         state = mock(GameState.class);
         when(state.getGameServices()).thenReturn(mockServices);
         when(state.getMessages()).thenReturn(mockMessages);
@@ -82,12 +87,12 @@ class CharacterTest {
 
         player = new Player("Test", PlayerTypes.Warrior, state);
         mockEnemy = mock(Enemy.class);
-        state.addPlayer(player);
+        state.setPlayer(player);
 
     }
 
     @Test
-    void givenCharacterInstance_whenConstructed_thenGettersReturnExpectedDefaults() {
+    void testConstructorAndGetters() {
         assertEquals(100, testCharacter.getHealth());
         assertEquals(50, testCharacter.getMana());
         assertEquals(20, testCharacter.getAttack());
@@ -99,7 +104,7 @@ class CharacterTest {
     }
 
     @Test
-    void givenOutOfRangeStats_whenSettersCalled_thenValuesAreClamped() {
+    void testSettersClampValues() {
         testCharacter.setHealth(200);
         assertEquals(100, testCharacter.getHealth()); // maxHealth = 100
 
@@ -111,14 +116,16 @@ class CharacterTest {
     }
 
     @Test
-    void givenIncomingDamage_whenTakeDamage_thenHealthIsReduced() {
+    void testTakeDamageReducesHealth() {
         int initialHealth = testCharacter.getHealth();
-        testCharacter.takeDamage(50, state, player);
+        // Since testCharacter.takeDamage(damage, state) calls state.getGameServices().getOutput(),
+        // we use the 'state' mock set up in the @BeforeEach.
+        testCharacter.takeDamage(50, state);
         assertTrue(testCharacter.getHealth() < initialHealth);
     }
 
     @Test
-    void givenHealthChanges_whenIsDead_thenReflectsState() {
+    void testIsDead() {
         testCharacter.setHealth(0);
         assertTrue(testCharacter.isDead());
 
@@ -127,34 +134,36 @@ class CharacterTest {
     }
 
     @Test
-    void givenManaUsage_whenUseMana_thenManaDropsOrThrowsWhenInsufficient() {
+    void testUseManaReducesMana() {
         int initialMana = testCharacter.getMana();
         testCharacter.useMana(10);
-
         assertEquals(initialMana - 10, testCharacter.getMana());
         assertThrows(NotEnoughManaException.class,()->testCharacter.useMana(999));
     }
 
     @Test
-    void givenDeadEnemyTarget_whenAttack_thenPrintsAlreadyDeadMessage() {
+    void testAttackAlreadyDeadTarget() {
         when(mockBundle.get(anyString(), any())).thenReturn("already dead");
         when(mockBundle.get(anyString())).thenReturn("already dead");
+
+        // We use the mock objects established in @BeforeEach: state, mockServices, and mockOutput
         when(mockEnemy.isDead()).thenReturn(true);
 
+        // Call the method using the mocked 'state'
         testCharacter.attack(mockEnemy, player, state);
+
+        // Verify output using the mockOutput configured in the setup
         verify(mockOutput).println(contains("already dead"));
     }
 
     @Test
-    void givenCharacterStats_whenStatsCalled_thenOutputContainsCoreValues() {
-        Input input = new ConsoleInput();
+    void testToStringContainsStats() {
         Output output1 = new ConsoleOutput();
-        GameServices gameServices1 = new GameServices(output1,input);
-        GameState state1 = new GameState("test-room",gameServices1);
-
+        GameServices gameServices1 = new GameServices(output1);
+        GameState state1 = new GameState(player,gameServices1);
         String output = testCharacter.stats(state1);
-        assertTrue(output.contains("100"));
-        assertTrue(output.contains("50"));
-        assertTrue(output.contains("20"));
+        assertTrue(output.contains("100")); // health
+        assertTrue(output.contains("50"));  // mana
+        assertTrue(output.contains("20"));  // attack
     }
 }

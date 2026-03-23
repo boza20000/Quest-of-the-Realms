@@ -1,5 +1,6 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.expeditions.quest.QuestFactory;
@@ -7,7 +8,6 @@ import com.questoftherealm.expeditions.quest.quests.GoblinAmbush;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import org.junit.jupiter.api.*;
 
@@ -21,17 +21,26 @@ class GoblinAmbushTest {
     private GoblinAmbush quest;
     private GameState state;
     private Output output;
-    private Input input;
 
     @BeforeEach
     void setup() {
         output = mock(Output.class);
-        input = mock(Input.class);
-        GameServices services = new GameServices(output,input);
+        GameServices services = new GameServices(output);
 
-        state = new GameState("test-room", services);
-        player = new Player("TestHero", PlayerTypes.Warrior, state);
-        state.addPlayer(player);
+        player = new Player(
+                "TestHero",
+                PlayerTypes.Warrior,
+                1, 0, 0,
+                GameConstants.PLAYER_START.x(),
+                GameConstants.PLAYER_START.y(),
+                "Spawn",
+                null, null,
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null, null,
+                false
+        );
+
+        state = new GameState(player, services);
 
         quest = new GoblinAmbush(player,state);
         player.setCurQuest(quest);
@@ -45,7 +54,7 @@ class GoblinAmbushTest {
 
     @Test
     @DisplayName("Explore_Nearby_Forests completes only at Goblin Camp")
-    void givenDifferentPlayerPositions_whenCheckCompletion_thenExploreNearbyForestsCompletesOnlyAtCamp() {
+    void exploreNearbyForestsMissionCompletesProperly() {
         var mission = player.getCurMission();
 
         // Wrong positions
@@ -64,7 +73,7 @@ class GoblinAmbushTest {
 
     @Test
     @DisplayName("Infiltrate_the_Camp completes only after camp found")
-    void givenCampFoundFlag_whenCheckCompletion_thenInfiltrateCampCompletesOnlyWhenTrue() {
+    void infiltrateCampMissionCompletesProperly() {
         var mission = quest.getMissions().get(1);
 
         // Camp not found yet
@@ -81,7 +90,7 @@ class GoblinAmbushTest {
 
     @Test
     @DisplayName("Ambushed completes only when playerAmbushed true and prior missions done")
-    void givenAmbushAndPositionConditions_whenCheckCompletion_thenAmbushedMissionCompletes() {
+    void ambushedMissionCompletesProperly() {
         var mission = quest.getMissions().get(2);
         mission.setCompleted(false);
 
@@ -96,7 +105,7 @@ class GoblinAmbushTest {
 
     @Test
     @DisplayName("Escape_to_Safety completes only after ambush and playerEscapedAmbush true")
-    void givenEscapedAmbushFlag_whenCheckCompletion_thenEscapeToSafetyCompletesOnlyWhenTrue() {
+    void escapeToSafetyMissionCompletesProperly() {
         var mission = quest.getMissions().get(3);
 
         quest.setPlayerEscapedAmbush(false);
@@ -111,7 +120,7 @@ class GoblinAmbushTest {
 
     @Test
     @DisplayName("GoblinAmbush quest completes only after all missions done")
-    void givenMissionCompletionStates_whenUpdateStatus_thenGoblinAmbushCompletionMatchesAllMissionsState() {
+    void questCompletesOnlyAfterAllMissionsDone() {
         QuestFactory q = new QuestFactory(player, state);
         player.setQuestFactory(q);
 

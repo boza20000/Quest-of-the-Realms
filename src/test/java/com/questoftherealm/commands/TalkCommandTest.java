@@ -9,10 +9,13 @@ import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
-import com.questoftherealm.map.WorldMap;
+import com.questoftherealm.localization.MessageBundle;
+import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Locale;
 
 import static org.mockito.Mockito.*;
 
@@ -22,7 +25,7 @@ class TalkCommandTest {
     private GameState state;
     private GameServices services;
     private Output output;
-    private WorldMap map;
+    private Map map;
     private Tile tile;
 
     @BeforeEach
@@ -37,18 +40,18 @@ class TalkCommandTest {
         when(state.getMessages()).thenReturn(l);
         ItemRegistry registry = new ItemRegistry(l);
         when(state.getItemRegistry()).thenReturn(registry);
-        map = mock(WorldMap.class);
+        map = mock(Map.class);
         tile = mock(Tile.class);
         when(state.getMap()).thenReturn(map);
         when(map.curZone(anyInt(), anyInt())).thenReturn(tile);
         player = new Player("TestHero", PlayerTypes.Warrior, state);
 
-        state.addPlayer(player);
+        state.setPlayer(player);
 
     }
 
     @Test
-    void givenNearbyNpc_whenExecute_thenNpcTalkIsInvoked() {
+    void testTalkNpcNearby() {
         TalkCommand cmd = new TalkCommand();
         Npc npc = mock(Npc.class);
         when(tile.getNpcByType(NpcType.ELDER)).thenReturn(npc);
@@ -59,14 +62,14 @@ class TalkCommandTest {
     }
 
     @Test
-    void givenUnknownNpcType_whenExecute_thenPrintsUnknownNpcError() {
+    void testTalkUnknownNpc() {
         TalkCommand cmd = new TalkCommand();
         cmd.execute(new String[]{"talk", "ghost"}, player, state);
         verify(output).println(contains("Unknown NPC"));
     }
 
     @Test
-    void givenMissingNpcInTile_whenExecute_thenPrintsNotNearbyError() {
+    void testTalkNpcNotNearby() {
         TalkCommand cmd = new TalkCommand();
         when(tile.getNpcByType(NpcType.ELDER)).thenReturn(null);
 
@@ -75,7 +78,7 @@ class TalkCommandTest {
     }
 
     @Test
-    void givenMissingArguments_whenExecute_thenPrintsUsage() {
+    void testTalkCommandMissingArgs() {
         TalkCommand cmd = new TalkCommand();
         cmd.execute(new String[]{"talk"}, player, state);
         verify(output).println(contains("Usage"));

@@ -4,7 +4,7 @@ import com.questoftherealm.characters.characterInterfaces.MonsterBehavior;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.GameState;
-
+import java.util.Random;
 import static com.questoftherealm.characters.playerCharacters.CharacterConstants.*;
 
 public class Orc extends Characters implements MonsterBehavior {
@@ -23,7 +23,7 @@ public class Orc extends Characters implements MonsterBehavior {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.call"));
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.spiritsSummoned"));
 
-            int roll = state.getGameServices().getRandom().randomInt(10);
+            int roll = new Random().nextInt(10);
             if (roll < 4) {
                 setHealth(getMaxHealth());
                 state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.resurrect.success"));
@@ -57,14 +57,7 @@ public class Orc extends Characters implements MonsterBehavior {
 
     @Override
     public void activateAbility(Player player, Enemy enemy, GameState state) {
-        if (enemy.isDead()) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.ability.alreadyDead"));
-            return;
-        }
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("orc.ability.attack", player.getWeapon().getName()));
-        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2, state);
-        if (enemy.isDead()) {
-            player.curTile(state).removeEnemy(enemy, state);
-        }
+        enemy.takeDamage(player.getPlayerCharacter().getAttack() * 2,state);
     }
 }

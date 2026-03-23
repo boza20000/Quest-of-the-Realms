@@ -1,5 +1,6 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.expeditions.quest.QuestFactory;
@@ -7,7 +8,6 @@ import com.questoftherealm.expeditions.quest.quests.RiseOfTheGoblinThreat;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import org.junit.jupiter.api.*;
 
@@ -21,17 +21,26 @@ class RiseOfTheGoblinThreatTest {
     private RiseOfTheGoblinThreat quest;
     private GameState state;
     private Output output;
-    private Input input;
 
     @BeforeEach
     void setup() {
         output = mock(Output.class);
-        input = mock(Input.class);
-        GameServices services = new GameServices(output,input);
+        GameServices services = new GameServices(output);
 
-        state = new GameState("test-room", services);
-        player = new Player("TestHero", PlayerTypes.Warrior, state);
-        state.addPlayer(player);
+        player = new Player(
+                "TestHero",
+                PlayerTypes.Warrior,
+                1, 0, 0,
+                GameConstants.PLAYER_START.x(),
+                GameConstants.PLAYER_START.y(),
+                "Spawn",
+                null, null,
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null, null,
+                false
+        );
+
+        state = new GameState(player, services);
 
         quest = new RiseOfTheGoblinThreat(player, state);
         player.setCurQuest(quest);
@@ -44,7 +53,7 @@ class RiseOfTheGoblinThreatTest {
 
     @Test
     @DisplayName("Warn_the_Castle completes only when player reports to king at castle")
-    void givenCastleReportConditions_whenCheckCompletion_thenWarnCastleCompletesOnlyWhenAllMet() {
+    void warnCastleMissionCompletesProperly() {
         var mission = player.getCurMission();
 
         // Not reported yet
@@ -67,7 +76,7 @@ class RiseOfTheGoblinThreatTest {
 
     @Test
     @DisplayName("Assemble_an_Army completes only after trying all recruitments and reporting to king")
-    void givenRecruitmentAndReportFlags_whenCheckCompletion_thenAssembleArmyCompletesAndAddsPower() {
+    void assembleArmyMissionCompletesProperly() {
         var mission = quest.getMissions().get(1);
 
         // Not yet tried recruitments
@@ -98,7 +107,7 @@ class RiseOfTheGoblinThreatTest {
 
     @Test
     @DisplayName("Defeat_the_Goblin_General completes only after isDefeated true")
-    void givenDefeatedFlagChanges_whenCheckCompletion_thenDefeatGeneralMissionCompletesOnlyWhenTrue() {
+    void defeatGoblinGeneralMissionCompletesProperly() {
         var mission = quest.getMissions().get(2);
 
         quest.setDefeated(false);
@@ -112,7 +121,7 @@ class RiseOfTheGoblinThreatTest {
 
     @Test
     @DisplayName("RiseOfTheGoblinThreat quest completes only after all missions done")
-    void givenMissionCompletionStates_whenUpdateStatus_thenQuestCompletionMatchesAllMissionsState() {
+    void questCompletesOnlyAfterAllMissionsDone() {
         QuestFactory q = new QuestFactory(player, state);
         player.setQuestFactory(q);
 

@@ -32,18 +32,18 @@ class StatsCommandTest {
         when(state.getMessages()).thenReturn(localizationService);
         when(state.getItemRegistry()).thenReturn(itemRegistry);
         player = new Player("TestHero", PlayerTypes.Warrior,state);
-        state.addPlayer(player);
+        state.setPlayer(player);
     }
 
     @Test
-    void givenValidStatsCommand_whenExecute_thenPrintsStatsHeader() {
+    void testStatsCommandValid() {
         StatsCommand cmd = new StatsCommand();
         cmd.execute(new String[]{"stats"}, player, state);
         verify(output).println(contains("Player current stats"));
     }
 
     @Test
-    void givenExtraArguments_whenExecute_thenPrintsUsage() {
+    void testStatsCommandInvalidArgs() {
         StatsCommand cmd = new StatsCommand();
         cmd.execute(new String[]{"stats", "extra"}, player, state);
         verify(output).println(contains("Usage"));

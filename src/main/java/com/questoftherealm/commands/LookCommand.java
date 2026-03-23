@@ -1,8 +1,8 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.server.ServerLogger;
 
 public class LookCommand extends Command {
 
@@ -31,18 +31,14 @@ public class LookCommand extends Command {
         }
         try {
             state.getGameServices().getOutput().print(state.getMessages().getBundle().get("look.info.looking"));
-            state.getGameServices().getOutput().flush();
             for (int i = 0; i < 3; i++) {
                 if(!state.isSimulation()) {
                     Thread.sleep(1000);
                 }
                 state.getGameServices().getOutput().print(state.getMessages().getBundle().get("look.info.dot"));
-                state.getGameServices().getOutput().flush();
             }
             player.look(state);
-        } catch (InterruptedException e) {
-            ServerLogger.get().warn("LookCommand: Look operation interrupted for player " + player.getName(), e);
-            Thread.currentThread().interrupt();
+        } catch (Exception e) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("look.error.failed"));
         }
     }

@@ -30,7 +30,16 @@ public class CompleteQuestCommand extends Command {
         }
         List<Mission> missions = List.of();
         if (player.getCurQuest() != null) {
-            missions = player.getCurQuest().getMissions();
+            try {
+                if (player.getCurQuest() != null) {
+                    missions = player.getCurQuest().getMissions();
+                } else {
+                    output.println(bundle.get("progress.info.allQuestsDone"));
+                }
+            } catch (NullPointerException e) {
+                e.getSuppressed();
+                output.println(bundle.get("progress.error.missionsUnavailable"));
+            }
         }
         if (!missions.isEmpty()) {
             String completedSymbol = "✔";

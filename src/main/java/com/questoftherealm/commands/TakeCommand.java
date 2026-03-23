@@ -2,12 +2,11 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.exceptions.ItemNotFound;
 import com.questoftherealm.items.Item;
-import com.questoftherealm.map.WorldMap;
+import com.questoftherealm.items.ItemDrop;
+import com.questoftherealm.items.ItemRegistry;
+import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
-import com.questoftherealm.server.ServerLogger;
-
 
 
 public class TakeCommand extends Command {
@@ -43,19 +42,17 @@ public class TakeCommand extends Command {
         try {
             quantity = Integer.parseInt(rest.substring(lastSpace + 1));
         } catch (NumberFormatException e) {
-            ServerLogger.get().warn("TakeCommand: Invalid quantity input - " + rest.substring(lastSpace + 1), e);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.quantityNotNumber"));
             return;
         }
         Item newItem;
         try {
             newItem = state.getItemRegistry().getItem(itemName);
-        } catch (ItemNotFound | IllegalArgumentException e) {
-            ServerLogger.get().info("TakeCommand: Item not found or invalid - " + itemName);
+        } catch (Exception e) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.itemUnknown"));
             return;
         }
-        WorldMap map = state.getMap();
+        Map map = state.getMap();
         if (map == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.mapNotLoaded"));
             return;
@@ -66,10 +63,14 @@ public class TakeCommand extends Command {
             return;
         }
 
-        // Use synchronized takeFromTile which checks availability and removes atomically
-        boolean taken = curZone.takeItem(newItem, quantity);
-        if (taken) {
-            player.getInventory().addItem(newItem, quantity, state);
+        ItemDrop drop = curZone.getDrops().stream()
+                .filter(d -> d.item().equals(newItem))
+                .findFirst()
+                .orElse(null);
+
+        if (drop != null && drop.quantity() >= quantity) {
+            player.getInventory().addItem(newItem, quantity,state);
+            curZone.removeDrop(newItem, quantity,state);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.success", quantity, newItem.getName()));
         } else {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("take.error.noItemOrQuantity"));

@@ -10,20 +10,20 @@ import com.questoftherealm.items.Item;
 import com.questoftherealm.map.TileTypes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 import static com.questoftherealm.enemyEntities.EnemyFactory.createEnemy;
 
 public abstract class Enemy implements Fightable {
     private final String description;
     private final EnemyType type;
-    private volatile int health;
+    private int health;
     private final int baseAttack;
     private final int baseDefense;
     private List<Item> armor;
     private Item weapon;
-    private volatile boolean isDead;
+    private boolean isDead;
     private List<Loot> loot;
-    private int xpReward;
-    private int goldReward;
 
     public Enemy(EnemyData data) {
         this.description = data.description();
@@ -35,16 +35,14 @@ public abstract class Enemy implements Fightable {
         this.weapon = data.weapon();
         this.loot = new ArrayList<>(data.loot());
         this.isDead = data.isDead();
-        this.xpReward = data.xpReward();
-        this.goldReward = data.goldReward();
     }
 
 
     @Override
-    public synchronized void attack(Player player, GameState state) {
+    public void attack(Player player, GameState state) {
         int damage = this.getBaseAttack() + (getWeapon() != null ? getWeapon().getPower() : 0);
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.attack.player",this.getClass().getSimpleName(),damage));
-        player.getPlayerCharacter().takeDamage(damage, state,player);
+        player.getPlayerCharacter().takeDamage(damage, state);
     }
 
     public int getBaseAttack() {
@@ -52,29 +50,30 @@ public abstract class Enemy implements Fightable {
     }
 
     @Override
-    public synchronized void takeDamage(int damage, GameState state) {
+    public void takeDamage(int damage, GameState state) {
         int armorPower = armor.stream().mapToInt(Item::getPower).sum();
         int reducedDamageTaken = Math.max(0, damage - ((getBaseDefense() + armorPower) / 2));
         int newHealth = Math.max(0, getHealth() - reducedDamageTaken);
         setHealth(newHealth);
         isDead = newHealth == 0;
-        if (isAlive()) {
+        if (!isDead) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("enemy.armor.block", this.getClass().getSimpleName(), reducedDamageTaken));
         }
     }
 
     @Override
-    public synchronized boolean isAlive() {
+    public boolean isAlive() {
         return !isDead;
     }
 
     public static List<Enemy> generateEnemies(TileTypes type, GameState state) {
         List<EnemyType> chosenEnemies = new ArrayList<>();
-
         RandomService rand = state.getGameServices().getRandom();
-        int spawnChance = rand.randomInt(100);
-        if (spawnChance > 80) {
-            return toEnemyObj(chosenEnemies, state);
+
+        // Chance of enemies appearing at all
+        int spawnChance = rand.randomInt(100); // 0–99
+        if (spawnChance > 80) { // 20% chance no enemies
+            return toEnemyObj(chosenEnemies, state); // empty list
         }
         int countRoll = rand.randomInt(100);
         int enemyCount = 0;
@@ -119,16 +118,16 @@ public abstract class Enemy implements Fightable {
         return type;
     }
 
-    public synchronized int getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    public synchronized Item getWeapon() {
+    public Item getWeapon() {
         return weapon;
     }
 
-    public synchronized List<Item> getArmor() {
-        return new ArrayList<>(armor);
+    public List<Item> getArmor() {
+        return armor;
     }
 
     public String getDescription() {
@@ -136,44 +135,39 @@ public abstract class Enemy implements Fightable {
         return description;
     }
 
-    public synchronized void setArmor(List<Item> armor) {
+    public void setArmor(List<Item> armor) {
         this.armor = armor;
     }
 
-    public synchronized void setHealth(int health) {
+    public void setHealth(int health) {
         if (health == 0) {
             isDead = true;
         }
         this.health = health;
     }
 
-    public synchronized void setWeapon(Item weapon) {
+    public void setWeapon(Item weapon) {
         this.weapon = weapon;
     }
 
-    public synchronized boolean isDead() {
+    public boolean isDead() {
         return isDead;
     }
 
-    public synchronized List<Loot> getLoot() {
-        return new ArrayList<>(loot);
+    public static Item getDefaultWeapon() {
+        return null;
+    }
+
+    public List<Loot> getLoot() {
+        return loot;
     }
 
     public int getBaseDefense() {
         return baseDefense;
     }
 
-    public int getXpReward() {
-        return xpReward;
-    }
-
-    public synchronized boolean interact(Player player, GameState state) {
-        if (isDead()) return false;
+    public boolean interact(Player player, GameState state) {
         Battle newBattle = BattleFactory.createBattle(player, this, state);
         return newBattle.simulate();
-    }
-
-    public int getGoldReward() {
-        return goldReward;
     }
 }

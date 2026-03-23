@@ -1,38 +1,31 @@
 package com.questoftherealm.interaction;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.enemyEntities.BattleFactory;
 import com.questoftherealm.enemyEntities.EnemyFactory;
 import com.questoftherealm.enemyEntities.EnemyType;
-import com.questoftherealm.expeditions.missions.Missions;
+import com.questoftherealm.expeditions.missions.*;
 import com.questoftherealm.expeditions.quest.quests.GoblinAmbush;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemDrop;
 
 public class MissionInteractions {
-    private final GameState state;
-    private final SlowPrinter slowPrinter;
+    private GameState state;
+    private Output output;
+    private SlowPrinter slowPrinter;
 
     public MissionInteractions(GameState state) {
-        this(state, new SlowPrinter(state));
-    }
-
-    public MissionInteractions(GameState state, SlowPrinter slowPrinter) {
         this.state = state;
-        this.slowPrinter = slowPrinter;
-    }
-
-    private Output output() {
-        return state.getGameServices().getOutput();
+        this.output = state.getGameServices().getOutput();
+        this.slowPrinter = new SlowPrinter(state);
     }
 
     public void worldStart(Player player) {
-        if (player.getCurMission() != null
-                && player.getCurMission().getMissionType().equals(Missions.MEET_ELDER)
-                && !player.getCurMission().isCompleted()) {
+        if (player.getCurMission().getMissionType().equals(Missions.MEET_ELDER) && !player.getCurMission().isCompleted()) {
             slowPrinter.slowPrint(state.getMessages().getBundle().get("mission.start.elder"));
         } else {
-            output().println(state.getMessages().getBundle().get("mission.start.generic", player.getCurrentZone()));
+            output.println(state.getMessages().getBundle().get("mission.start.generic", player.getCurrentZone()));
         }
     }
 
@@ -68,21 +61,21 @@ public class MissionInteractions {
     }
 
     public void makeDecision(Player player) {
-        output().println(state.getMessages().getBundle().get("mission.goblin.encounter"));
-        output().println(state.getMessages().getBundle().get("mission.goblin.choices"));
+        output.println(state.getMessages().getBundle().get("mission.goblin.encounter"));
+        output.println(state.getMessages().getBundle().get("mission.goblin.choices"));
 
-        output().print(state.getMessages().getBundle().get("prompt.arrow"));
-        output().flush();
+        output.print("> ");
         int choice = state.getGameServices().getInput().nextInt();
-        if (!(player.getCurQuest() instanceof GoblinAmbush q)) {
+        if (!(player.getCurQuest() instanceof GoblinAmbush)) {
             return;
         }
+        GoblinAmbush q = (GoblinAmbush) player.getCurQuest();
         switch (choice) {
             case 1 -> resolveEscape(player, q, state);
             case 2 -> resolveFight(player, q, state);
             case 3 -> resolveTalk(player, q, state);
             default -> {
-                output().println(state.getMessages().getBundle().get("mission.goblin.freeze"));
+                output.println(state.getMessages().getBundle().get("mission.goblin.freeze"));
                 resolveFight(player, q, state);
             }
         }
@@ -92,17 +85,17 @@ public class MissionInteractions {
         int outcome = state.getGameServices().getRandom().randomInt(3);
         switch (outcome) {
             case 0 -> {
-                output().println(state.getMessages().getBundle().get("mission.escape.success"));
+                output.println(state.getMessages().getBundle().get("mission.escape.success"));
                 q.setPlayerEscapedAmbush(true);
             }
             case 1 -> {
-                output().println(state.getMessages().getBundle().get("mission.escape.partial"));
-                player.getPlayerCharacter().takeDamage(10, state,player);
+                output.println(state.getMessages().getBundle().get("mission.escape.partial"));
+                player.getPlayerCharacter().takeDamage(10, state);
                 q.setPlayerEscapedAmbush(true);
             }
             case 2 -> {
-                output().println(state.getMessages().getBundle().get("mission.escape.fail"));
-                EnemyFactory.createEnemy(EnemyType.GOBLIN, state).interact(player,state);
+                output.println(state.getMessages().getBundle().get("mission.escape.fail"));
+                BattleFactory.createBattle(player, EnemyFactory.createEnemy(EnemyType.GOBLIN, state), state).simulate();
             }
         }
     }
@@ -111,17 +104,17 @@ public class MissionInteractions {
         int outcome = state.getGameServices().getRandom().randomInt(3);
         switch (outcome) {
             case 0 -> {
-                output().println(state.getMessages().getBundle().get("mission.fight.success"));
+                output.println(state.getMessages().getBundle().get("mission.fight.success"));
                 q.setPlayerEscapedAmbush(true);
             }
             case 1 -> {
-                output().println(state.getMessages().getBundle().get("mission.fight.partial"));
-                player.getPlayerCharacter().takeDamage(15, state,player);
+                output.println(state.getMessages().getBundle().get("mission.fight.partial"));
+                player.getPlayerCharacter().takeDamage(15, state);
                 q.setPlayerEscapedAmbush(true);
             }
             case 2 -> {
-                output().println(state.getMessages().getBundle().get("mission.fight.fail"));
-                EnemyFactory.createEnemy(EnemyType.GOBLIN, state).interact(player,state);
+                output.println(state.getMessages().getBundle().get("mission.fight.fail"));
+                BattleFactory.createBattle(player, EnemyFactory.createEnemy(EnemyType.GOBLIN, state), state).simulate();
             }
         }
     }
@@ -130,16 +123,16 @@ public class MissionInteractions {
         int outcome = state.getGameServices().getRandom().randomInt(3);
         switch (outcome) {
             case 0 -> {
-                output().println(state.getMessages().getBundle().get("mission.talk.success"));
+                output.println(state.getMessages().getBundle().get("mission.talk.success"));
                 q.setPlayerEscapedAmbush(true);
             }
             case 1 -> {
-                output().println(state.getMessages().getBundle().get("mission.talk.partial"));
+                output.println(state.getMessages().getBundle().get("mission.talk.partial"));
                 q.setPlayerEscapedAmbush(true);
             }
             case 2 -> {
-                output().println(state.getMessages().getBundle().get("mission.talk.fail"));
-                EnemyFactory.createEnemy(EnemyType.GOBLIN, state).interact(player,state);
+                output.println(state.getMessages().getBundle().get("mission.talk.fail"));
+                BattleFactory.createBattle(player, EnemyFactory.createEnemy(EnemyType.GOBLIN, state), state).simulate();
             }
         }
     }

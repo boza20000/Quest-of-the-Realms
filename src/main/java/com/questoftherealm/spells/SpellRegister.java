@@ -1,7 +1,6 @@
 package com.questoftherealm.spells;
 
 import com.questoftherealm.exceptions.InvalidCommand;
-import com.questoftherealm.exceptions.InvalidSpellCommand;
 import com.questoftherealm.game.GameState;
 
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class SpellRegister {
 
     public Spell getSpell(String name) {
         if (spells.get(name) == null) {
-            throw new InvalidSpellCommand(state.getMessages().getBundle().get("error.command.InvalidCommand"));
+            throw new InvalidCommand(state.getMessages().getBundle().get("error.command.InvalidCommand"));
         }
         return spells.get(name);
     }
