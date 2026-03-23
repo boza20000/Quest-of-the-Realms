@@ -1,12 +1,12 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.characters.playerCharacters.Characters;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.exceptions.AbilityException;
-import com.questoftherealm.exceptions.NoSuchSpell;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
-import com.questoftherealm.server.ServerLogger;
 
 public class AbilityCommand extends Command {
     public AbilityCommand() {
@@ -15,11 +15,11 @@ public class AbilityCommand extends Command {
 
     @Override
     public void execute(String[] args, Player player, GameState state) {
-        if (!makeSafe(args, player, state)) {
+        if (!makeSafe(args, player,state)) {
             return;
         }
         String enemyName = args[1];
-        Tile curTile = player.curTile(state);
+        Tile curTile = state.getMap().curZone(player.getX(), player.getY());
         if (curTile == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.error.undefinedArea"));
             return;
@@ -29,17 +29,11 @@ public class AbilityCommand extends Command {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.error.noEnemy", enemyName));
             return;
         }
-
         try {
-            player.getPlayerCharacter().activateAbility(player, chosenEnemy, state);
-            if (chosenEnemy.isDead()) {
-                curTile.removeEnemy(chosenEnemy, state);
-            }
-        } catch (NoSuchSpell | AbilityException e) {
-            ServerLogger.get().error("AbilityCommand: Failed to activate ability for player " + player.getName() + " against enemy " + enemyName, e);
+            player.getPlayerCharacter().activateAbility(player, chosenEnemy,state);
+        } catch (Exception e) {
             throw new AbilityException(player.getPlayerCharacter() + state.getMessages().getBundle().get("ability.error.abilityFailed"));
         }
-
     }
 
     @Override
@@ -48,11 +42,11 @@ public class AbilityCommand extends Command {
     }
 
     @Override
-    public boolean makeSafe(String[] args, Player player, GameState state) {
+    public boolean makeSafe(String[] args, Player player,GameState state) {
         if (args.length != 2) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("ability.usage", getDescription(state)));
             return false;
         }
-        return playerBaseCheck(player, state);
+        return playerBaseCheck(player,state);
     }
 }

@@ -1,5 +1,6 @@
 package com.questoftherealm.enemyEntities.bosses;
 
+import com.questoftherealm.characters.characterInterfaces.Combatant;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.enemyEntities.Enemy;
 import com.questoftherealm.game.GameState;
@@ -56,7 +57,7 @@ public class GoblinGeneral extends Boss  {
     }
 
     @Override
-    public synchronized void superMove(Player player, GameState state) {
+    public void superMove(Player player, GameState state) {
         int newHealth = getHealth() * 2;
         setHealth(newHealth);
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("boss.goblinGeneral.superMove", NAME));

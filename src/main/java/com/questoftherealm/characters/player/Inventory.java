@@ -12,13 +12,12 @@ import com.questoftherealm.localization.MessageBundle;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Inventory {
     @JsonSerialize(keyUsing = ItemKeySerializer.class)
     @JsonDeserialize(keyUsing = ItemKeyDeserializer.class)
-    private Map<Item, Integer> items = new ConcurrentHashMap<>();
+    private Map<Item, Integer> items = new HashMap<>();
     private final int capacity;
 
     public Inventory() {
@@ -29,7 +28,7 @@ public class Inventory {
         this.capacity = capacity;
     }
 
-    public synchronized void addItem(Item item, int quantity, GameState state) {
+    public void addItem(Item item, int quantity, GameState state) {
         if (item.isStackable()) {
             handleStackableItems(item, quantity, state.getGameServices().getOutput(), state.getMessages().getBundle());
         } else {
@@ -37,7 +36,7 @@ public class Inventory {
         }
     }
 
-    public synchronized void removeItem(Item item, int quantity, GameState state) {
+    public void removeItem(Item item, int quantity, GameState state) {
         if (items.containsKey(item)) {
             int current = items.get(item);
             if (current <= quantity) {
@@ -51,7 +50,7 @@ public class Inventory {
         }
     }
 
-    public synchronized void listItems(Output output, MessageBundle bundle) {
+    public void listItems(Output output, MessageBundle bundle) {
         if (items.isEmpty()) {
             output.println(bundle.get("inventory.isEmpty"));
         } else {
@@ -61,24 +60,24 @@ public class Inventory {
         }
     }
 
-    public synchronized Map<Item, Integer> getItems() {
+    public Map<Item, Integer> getItems() {
         return new HashMap<>(items);
     }
 
-    public synchronized int getQuantity(Item item) {
+    public int getQuantity(Item item) {
         return items.getOrDefault(item, 0);
     }
 
-    public synchronized boolean containsItem(Item item) {
+    public boolean containsItem(Item item) {
         return items.containsKey(item);
     }
 
 
-    public synchronized void clear() {
+    public void clear() {
         items.clear();
     }
 
-    private  void handleStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
+    private void handleStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
         int curItemQuantity = items.getOrDefault(item, 0);
         int sum = curItemQuantity + quantity;
         if (sum <= GameConstants.MAX_ITEMS_IN_STACK) {
@@ -90,7 +89,7 @@ public class Inventory {
         }
     }
 
-    private  void handleNotStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
+    private void handleNotStackableItems(Item item, int quantity, Output output, MessageBundle bundle) {
         int curItemQuantity = items.getOrDefault(item, 0);
         int newTotal = curItemQuantity + quantity;
 

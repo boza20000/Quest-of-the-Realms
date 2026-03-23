@@ -1,13 +1,15 @@
 package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
+import com.questoftherealm.game.Game;
 import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.Position;
 import com.questoftherealm.interaction.SlowPrinter;
 import com.questoftherealm.interaction.TravelManger;
 import com.questoftherealm.map.TileTypes;
-import com.questoftherealm.server.ServerLogger;
+
+import java.util.Arrays;
 
 public class MoveCommand extends Command {
 
@@ -59,10 +61,6 @@ public class MoveCommand extends Command {
 
         TileTypes start = state.getMap().curZone(player.getX(), player.getY()).getType();
         handleStartTile(player, state, direction, next.x(), next.y(), travelManger);
-
-        if(player.isDead()){
-            return;
-        }
 
         if (state.getMap().curZone(player.getX(), player.getY()) == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.info.undefinedDestination"));
@@ -131,16 +129,12 @@ public class MoveCommand extends Command {
     private void pathToDestination(String direction, Player player, GameState state, TravelManger travelManger) {
         try {
             state.getGameServices().getOutput().print(state.getMessages().getBundle().get("move.info.walking"));
-            state.getGameServices().getOutput().flush();
             for (int i = 0; i < 3; i++) {
                 Thread.sleep(600);
                 state.getGameServices().getOutput().print(state.getMessages().getBundle().get("move.info.dot"));
-                state.getGameServices().getOutput().flush();
             }
             travelManger.pathInteraction(state.getMap().curZone(player.getX(), player.getY()).getType(), direction, player, state);
-        } catch (InterruptedException e) {
-            ServerLogger.get().warn("MoveCommand: Movement thread interrupted for player " + player.getName(), e);
-            Thread.currentThread().interrupt();
+        } catch (Exception e) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("move.error.walkingFailed"));
         }
 
@@ -148,9 +142,7 @@ public class MoveCommand extends Command {
 
     private void increasePlayerManaPerMove(Player player) {
         int manaPerMove = GameConstants.MANA_PER_MOVE;
-        synchronized (player.getPlayerCharacter()) {
-            player.getPlayerCharacter().setMana(player.getPlayerCharacter().getMana() + manaPerMove);
-        }
+        player.getPlayerCharacter().setMana(player.getPlayerCharacter().getMana() + manaPerMove);
     }
 
 }

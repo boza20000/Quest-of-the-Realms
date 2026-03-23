@@ -5,7 +5,6 @@ import com.questoftherealm.friendlyEntities.Npc;
 import com.questoftherealm.friendlyEntities.NpcType;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.map.Tile;
-import com.questoftherealm.server.ServerLogger;
 
 import java.util.Locale;
 
@@ -50,7 +49,6 @@ public class TalkCommand extends Command {
         try {
             return NpcType.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
-            ServerLogger.get().warn("TalkCommand: Invalid NPC type - " + name, e);
             return null;
         }
     }

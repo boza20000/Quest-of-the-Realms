@@ -40,7 +40,6 @@ public class QuestCommand extends Command {
         }
         if (player.getQuestFactory().getCurrentQuest() == null) {
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("quest.error.noQuestLoaded"));
-            return;
         }
 
         for (Mission m : player.getQuestFactory().getCurrentQuest().getMissions()) {

@@ -5,26 +5,16 @@ import com.questoftherealm.exceptions.ArmorPieceNotGenerated;
 import com.questoftherealm.exceptions.RandomItemNotGenerated;
 import com.questoftherealm.exceptions.RandomWeaponNotGenerated;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.server.ServerLogger;
 
 import java.util.List;
 import java.util.Random;
 
-import static com.questoftherealm.items.Rarity.COMMON;
-import static com.questoftherealm.items.Rarity.UNCOMMON;
-import static com.questoftherealm.items.Rarity.RARE;
-
 public class Chest {
     private final GameState state;
     private final ItemRegistry itemRegistry;
-    private final int MAX_TRIES = 10;
 
-    private int randomInt(int bound) {
-        return state.getGameServices().getRandom().randomInt(bound);
-    }
-
-    private int randomInt(int start, int end) {
-        return state.getGameServices().getRandom().randomInt(start, end);
+    private Random random() {
+        return state.getGameServices().getRandom().random();
     }
 
     public Chest(GameState state) {
@@ -34,28 +24,17 @@ public class Chest {
 
     public ItemDrop generateRandomItem() {
         try {
-            ItemDrop drop = null;
-            int count = 0;
-            while (drop == null && count < MAX_TRIES) {
-                ItemType type = randomType();
-                Rarity rarity = randomRarity();
-                drop = randomItemFrom(type, rarity);
-                count++;
-            }
-            if (drop == null) {
-                throw new RandomItemNotGenerated(state.getMessages().getBundle().get("error.message.itemNotGenerated"));
-            }
-            return drop;
-
-        } catch (RuntimeException e) {
-            ServerLogger.get().error("Chest: Unexpected error during item generation: " + e.getMessage(), e);
+            ItemType type = randomType();
+            Rarity rarity = randomRarity();
+            return randomItemFrom(type, rarity);
+        } catch (Exception e) {
             throw new RandomItemNotGenerated(state.getMessages().getBundle().get("error.message.itemNotGenerated"));
         }
     }
 
     private ItemType randomType() {
         ItemType[] category = {ItemType.ARMOR, ItemType.WEAPON, ItemType.POTION, ItemType.CONSUMABLES};
-        return category[randomInt(category.length)];
+        return category[random().nextInt(category.length)];
     }
 
     private int randomQuantity(Item item) {
@@ -63,13 +42,13 @@ public class Chest {
 
         switch (item.getRarity()) {
             case COMMON -> {
-                return randomInt(1, 6);
+                return random().nextInt(1, 6);
             }
             case UNCOMMON -> {
-                return randomInt(1, 4);
+                return random().nextInt(1, 4);
             }
             case RARE, EPIC -> {
-                return randomInt(1, 3);
+                return random().nextInt(1, 3);
             }
             default -> {
                 return 1;
@@ -78,10 +57,10 @@ public class Chest {
     }
 
     private Rarity randomRarity() {
-        int rand = randomInt(100) + 1;
-        if (rand <= 50) return COMMON;
-        if (rand <= 75) return UNCOMMON;
-        if (rand <= 90) return RARE;
+        int rand = random().nextInt(100) + 1;
+        if (rand <= 50) return Rarity.COMMON;
+        if (rand <= 75) return Rarity.UNCOMMON;
+        if (rand <= 90) return Rarity.RARE;
         if (rand <= 98) return Rarity.EPIC;
         return Rarity.LEGENDARY;
     }
@@ -94,18 +73,15 @@ public class Chest {
         if (possibleItems.isEmpty()) {
             Rarity fallback = switch (rarity) {
                 case LEGENDARY -> Rarity.EPIC;
-                case EPIC -> RARE;
-                case RARE -> UNCOMMON;
-                default -> COMMON;
+                case EPIC -> Rarity.RARE;
+                case RARE -> Rarity.UNCOMMON;
+                default -> Rarity.COMMON;
             };
             possibleItems = itemRegistry.getAllItems().stream()
                     .filter(i -> i.getType() == type && i.getRarity() == fallback)
                     .toList();
         }
-        if (possibleItems.isEmpty()) {
-            return null;
-        }
-        Item selectedItem = possibleItems.get(randomInt(possibleItems.size()));
+        Item selectedItem = possibleItems.get(random().nextInt(possibleItems.size()));
         int quantity = randomQuantity(selectedItem);
         return new ItemDrop(selectedItem, quantity);
     }
@@ -114,7 +90,7 @@ public class Chest {
 
         ItemEffect effect = getWeaponType(player);
         ItemType type = ItemType.WEAPON;
-        Rarity rarity = COMMON;
+        Rarity rarity = Rarity.COMMON;
         int quantity = 1;
         List<Item> possibleWeapons = itemRegistry.getAllItems().stream()
                 .filter(i -> i.getType() == type && i.getRarity() == rarity && i.getEffect() == effect)
@@ -122,7 +98,7 @@ public class Chest {
         if (possibleWeapons.isEmpty()) {
             throw new RandomWeaponNotGenerated(state.getMessages().getBundle().get("error.message.weaponNotGenerated"));
         }
-        Item weapon = possibleWeapons.get(randomInt(possibleWeapons.size()));
+        Item weapon = possibleWeapons.get(random().nextInt(possibleWeapons.size()));
         return new ItemDrop(weapon, quantity);
     }
 
@@ -138,14 +114,16 @@ public class Chest {
     public ItemDrop generateArmorPiece(ItemType type, ItemEffect effect) {
 
         List<Item> possibleArmor = itemRegistry.getAllItems().stream()
-                .filter(i -> i.getType() == type && i.getRarity() == COMMON && i.getEffect() == effect)
+                .filter(i -> i.getType() == type && i.getRarity() == Rarity.COMMON && i.getEffect() == effect)
                 .toList();
         if (possibleArmor.isEmpty()) {
             throw new ArmorPieceNotGenerated(state.getMessages().getBundle().get("error.message.armorPieceNotGenerated", effect));
         }
 
-        return new ItemDrop(possibleArmor.get(randomInt(possibleArmor.size())), 1);
+        return new ItemDrop(possibleArmor.get(random().nextInt(possibleArmor.size())),1);
     }
 
 
+
 }
+

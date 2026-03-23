@@ -1,11 +1,13 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
+import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
-import com.questoftherealm.map.WorldMap;
+import com.questoftherealm.map.Map;
 import com.questoftherealm.map.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,22 +21,35 @@ class MoveCommandTest {
     private MoveCommand moveCommand;
     private GameState state;
     private Output output;
-    private WorldMap map;
+    private Map map;
     private Tile currentTile;
 
     @BeforeEach
     void setup() {
+        player =   player = spy(new Player(
+                "TestHero",
+                PlayerTypes.Warrior,
+                1, 0, 0,
+                GameConstants.Castle.x(),
+                GameConstants.Castle.y(),
+                "Castle",
+                null,
+                null,
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null,
+                null,
+                false
+        ));
+
         output = mock(Output.class);
         GameServices services = mock(GameServices.class);
         when(services.getOutput()).thenReturn(output);
 
-        GameState s = new GameState("test-room",services);
+        GameState s = new GameState(player,services);
         state = spy(s);
-        player = spy(new Player("TestHero", PlayerTypes.Warrior, state));
-        state.addPlayer(player);
         when(state.getGameServices()).thenReturn(services);
 
-        map = mock(WorldMap.class);
+        map = mock(Map.class);
         currentTile = mock(Tile.class);
         when(map.curZone(anyInt(), anyInt())).thenReturn(currentTile);
         when(state.getMap()).thenReturn(map);
@@ -44,41 +59,41 @@ class MoveCommandTest {
     }
 
     @Test
-    void givenNorthDirection_whenExecute_thenDecrementsY() {
+    void execute_MoveNorth_UpdatesPlayerY() {
         int startY = player.getY();
         moveCommand.execute(new String[]{"move", "north"}, player, state);
         assertEquals(startY - 1, player.getY());
     }
 
     @Test
-    void givenSouthDirection_whenExecute_thenIncrementsY() {
+    void execute_MoveSouth_UpdatesPlayerY() {
         int startY = player.getY();
         moveCommand.execute(new String[]{"move", "south"}, player, state);
         assertEquals(startY + 1, player.getY());
     }
 
     @Test
-    void givenEastDirection_whenExecute_thenIncrementsX() {
+    void execute_MoveEast_UpdatesPlayerX() {
         int startX = player.getX();
         moveCommand.execute(new String[]{"move", "east"}, player, state);
         assertEquals(startX + 1, player.getX());
     }
 
     @Test
-    void givenWestDirection_whenExecute_thenDecrementsX() {
+    void execute_MoveWest_UpdatesPlayerX() {
         int startX = player.getX();
         moveCommand.execute(new String[]{"move", "west"}, player, state);
         assertEquals(startX - 1, player.getX());
     }
 
     @Test
-    void givenInvalidDirection_whenExecute_thenPrintsError() {
+    void execute_InvalidDirection_PrintsError() {
         moveCommand.execute(new String[]{"move", "up"}, player, state);
         verify(output,atLeastOnce()).print(anyString());
     }
 
     @Test
-    void givenMissingArguments_whenExecute_thenPrintsUsage() {
+    void execute_MissingArguments_PrintsUsage() {
         moveCommand.execute(new String[]{"move"}, player, state);
         verify(output).println("Usage: " + moveCommand.getDescription(state));
     }

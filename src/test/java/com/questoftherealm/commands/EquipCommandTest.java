@@ -1,8 +1,10 @@
 package com.questoftherealm.commands;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.exceptions.ItemNotFound;
+import com.questoftherealm.game.GameConstants;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.interfaces.Output;
@@ -25,14 +27,27 @@ class EquipCommandTest {
 
     @BeforeEach
     void setup() {
-        services = mock(GameServices.class);
-        output = mock(Output.class);
-        GameState s = new GameState("test-room",services);
-        state = spy(s);
-        player = spy(new Player("TestHero", PlayerTypes.Warrior, state));
-        state.addPlayer(player);
+        player = spy(new Player(
+                "TestHero",
+                PlayerTypes.Warrior,
+                1, 0, 0,
+                GameConstants.Castle.x(),
+                GameConstants.Castle.y(),
+                "Castle",
+                null,
+                null,
+                new Inventory(GameConstants.MAX_ITEMS_IN_INVENTORY),
+                null,
+                null,
+                false
+        ));
         player.getInventory().clear();
         player.setWeapon(null);
+
+        services = mock(GameServices.class);
+        output = mock(Output.class);
+        GameState s = new GameState(player,services);
+        state = spy(s);
 
         when(state.getGameServices()).thenReturn(services);
         when(services.getOutput()).thenReturn(output);
@@ -42,7 +57,7 @@ class EquipCommandTest {
     }
 
     @Test
-    void givenItemInInventory_whenExecute_thenEquipsSuccessfully() throws ItemNotFound {
+    void equipsItemSuccessfully_WhenItemExistsInInventory() throws ItemNotFound {
 
         Item sword = registry.getItem("Bronze Sword");
         player.getInventory().addItem(sword, 1, state);
@@ -53,7 +68,7 @@ class EquipCommandTest {
     }
 
     @Test
-    void givenItemMissingFromInventory_whenExecute_thenPrintsNotInInventoryError() throws ItemNotFound {
+    void printsError_WhenItemExistsButNotInInventory() throws ItemNotFound {
         assertNotNull(state.getMessages().getBundle());
 
         Item sword = registry.getItem("Bronze Sword");
@@ -66,19 +81,19 @@ class EquipCommandTest {
     }
 
     @Test
-    void givenUnknownItem_whenExecute_thenPrintsItemDoesNotExistError() {
+    void printsError_WhenItemDoesNotExist() {
         command.execute(new String[]{"equip", "Fake Sword"}, player, state);
         verify(output).println("This item doesn't exist.");
     }
 
     @Test
-    void givenMissingArguments_whenExecute_thenPrintsUsage() {
+    void printsUsage_WhenMissingArguments() {
         command.execute(new String[]{"equip"}, player, state);
         verify(output).println("Usage: " + command.getDescription(state));
     }
 
     @Test
-    void givenNullPlayer_whenExecute_thenPrintsNoPlayerError() {
+    void printsError_WhenPlayerIsNull() {
         command.execute(new String[]{"equip", "Bronze Sword"}, null, state);
         verify(output).println("Error: No player loaded.");
     }

@@ -1,5 +1,6 @@
 package com.questoftherealm.expeditions.missions;
 
+import com.questoftherealm.characters.player.Inventory;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.characters.player.PlayerTypes;
 import com.questoftherealm.expeditions.quest.QuestFactory;
@@ -7,7 +8,6 @@ import com.questoftherealm.expeditions.quest.quests.NorthExploration;
 import com.questoftherealm.expeditions.quest.quests.StartQuest;
 import com.questoftherealm.game.GameServices;
 import com.questoftherealm.game.GameState;
-import com.questoftherealm.game.interfaces.Input;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
@@ -22,17 +22,25 @@ class StartQuestTest {
     private StartQuest startQuest;
     private GameState state;
     private Output output;
-    private Input input;
 
     @BeforeEach
     void setup() {
         output = mock(Output.class);
-        input = mock(Input.class);
-        GameServices services = new GameServices(output,input);
+        GameServices services = new GameServices(output);
 
-        state = new GameState("test-room", services);
-        player = new Player("Hero", PlayerTypes.Warrior, state);
-        state.addPlayer(player);
+        player = new Player(
+                "Hero",
+                PlayerTypes.Warrior,
+                1, 0, 0,
+                0, 0, "Zone",
+                null, null,
+                new Inventory(50),
+                null,
+                null,
+                false
+        );
+
+        state = new GameState(player, services);
 
         startQuest = new StartQuest(player, state);
         player.setCurQuest(startQuest);
@@ -46,7 +54,7 @@ class StartQuestTest {
 
     @Test
     @DisplayName("Meet_the_Elder completes ONLY after ElderHasTalked is true")
-    void givenElderNotTalkedAndThenTalked_whenCheckCompletion_thenMissionCompletesOnlyAfterFlag() {
+    void meetTheElderCompletion() {
         Mission mission = startQuest.getMissions().stream().filter(m -> m.getMissionType() == Missions.MEET_ELDER).toList().getFirst();
         mission.checkCompletion();
         assertFalse(mission.isCompleted());
@@ -58,7 +66,7 @@ class StartQuestTest {
 
     @Test
     @DisplayName("Meet_the_Elder does not complete when player is not on StartQuest")
-    void givenWrongQuestType_whenCheckCompletion_thenMeetElderMissionStaysIncomplete() {
+    void elderMissionFailsIfWrongQuest() {
         Mission mission = startQuest.getMissions().stream().filter(m -> m.getMissionType() == Missions.MEET_ELDER).toList().getFirst();
         startQuest.setElderHasTalked(true);
         player.setCurQuest(mock(NorthExploration.class));
@@ -69,7 +77,7 @@ class StartQuestTest {
 
     @Test
     @DisplayName("Gather Supplies requires >=1 potion AND >=5 food")
-    void givenDifferentInventoryStates_whenCheckCompletion_thenGatherSuppliesCompletesOnlyWithRequirements() {
+    void gatherSuppliesLogic() {
         ItemRegistry itemRegistry = new ItemRegistry(new LocalizationService());
         Mission mission = startQuest.getMissions().stream().filter(m -> m.getMissionType() == Missions.GATHER_SUPPLIES).toList().getFirst();
         var inv = player.getInventory();
@@ -97,7 +105,7 @@ class StartQuestTest {
 
     @Test
     @DisplayName("StartQuest completes when ALL missions completed and updateStatus is called")
-    void givenAllMissionsCompleted_whenUpdateStatus_thenStartQuestIsCompleted() {
+    void questCompletesWhenAllMissionsDone() {
         QuestFactory q = new QuestFactory(player, state);
         player.setQuestFactory(q);
         startQuest =(StartQuest) q.getQuests().peek();

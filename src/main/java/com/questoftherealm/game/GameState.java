@@ -3,32 +3,25 @@ package com.questoftherealm.game;
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.items.ItemRegistry;
 import com.questoftherealm.localization.LocalizationService;
-import com.questoftherealm.map.WorldMap;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.questoftherealm.map.Map;
 import com.questoftherealm.map.TriggerRegister;
 
 public class GameState {
-    private final String name;
-    private boolean isPrivate = false;
     private final GameServices gameServices;
-    private final Map<String, Player> activePlayers = new ConcurrentHashMap<>();
-    private volatile WorldMap gameMap;
+    private Player player;
+    private Map gameMap;
     private final TriggerRegister triggerRegister;
-    private volatile boolean gameOver;
+    private boolean gameOver;
     private boolean isSimulation;
     private ServerClock clock;
     private final LocalizationService messages;
     private final ItemRegistry itemRegistry;
-    private final ThreadLocal<GameServices> threadServices = new ThreadLocal<>();
 
-    public GameState(String name, GameServices services) {
-        this.name = name;
+    public GameState(Player player, GameServices services) {
+        this.player = player;
         this.gameServices = services;
-        this.gameMap = new WorldMap(this);
+        this.gameMap = new Map(this);
+        //here can be added language in the LocalizationService constructor
         this.messages = new LocalizationService();
         this.itemRegistry = new ItemRegistry(messages);
         this.triggerRegister = new TriggerRegister(this);
@@ -37,42 +30,31 @@ public class GameState {
         clock = new ServerClock();
     }
 
-
-    public void bindThreadServices(GameServices services) {
-        threadServices.set(services);
+    public Player getPlayer() {
+        return player;
     }
 
-    public GameServices getGameServices() {
-        GameServices ts = threadServices.get();
-        return ts != null ? ts : gameServices;
-    }
-
-    public List<Player> getActivePlayers() {
-        return activePlayers.values().stream().toList();
-    }
-
-    public Player getPlayer(String username) {
-        return activePlayers.get(username);
-    }
-
-    public WorldMap getMap() {
+    public Map getMap() {
         return gameMap;
     }
 
+    public GameServices getGameServices() {
+        return gameServices;
+    }
 
     public TriggerRegister getTriggerRegister() {
         return triggerRegister;
     }
 
-    public synchronized boolean isGameOver() {
+    public boolean isGameOver() {
         return gameOver;
     }
 
-    public synchronized void setGameOver(boolean gameOver) {
+    public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
     }
 
-    public void setMap(WorldMap gameMap) {
+    public void setMap(Map gameMap){
         this.gameMap = gameMap;
     }
 
@@ -84,17 +66,8 @@ public class GameState {
         return isSimulation;
     }
 
-    public synchronized void addPlayer(Player loaded) {
-        if (loaded != null) {
-            if (isPrivate && activePlayers.isEmpty()) {
-                activePlayers.put(loaded.getName(), loaded);
-            } else if (!isPrivate) {
-                activePlayers.put(loaded.getName(), loaded);
-            }
-            if (!activePlayers.isEmpty()) {
-                gameOver = false;
-            }
-        }
+    public void setPlayer(Player loaded) {
+        this.player = loaded;
     }
 
     public ServerClock getClock() {
@@ -109,28 +82,11 @@ public class GameState {
         return messages;
     }
 
-    public void setGameMap(WorldMap gameMap) {
+    public void setGameMap(Map gameMap) {
         this.gameMap = gameMap;
     }
 
     public ItemRegistry getItemRegistry() {
         return itemRegistry;
     }
-
-    public synchronized void removePlayer(String username) {
-        activePlayers.remove(username);
-    }
-
-    public void setPrivate(boolean prv) {
-        isPrivate = prv;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isPrivate() {
-        return isPrivate;
-    }
-
 }
