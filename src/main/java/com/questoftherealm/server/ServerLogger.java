@@ -72,11 +72,6 @@ public class ServerLogger {
         } finally {
             lock.unlock();
         }
-
-        System.err.println(sb);
-        if (t != null) {
-            t.printStackTrace(System.err);
-        }
     }
 }
 

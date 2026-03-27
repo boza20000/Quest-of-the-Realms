@@ -29,10 +29,16 @@ public class ExitCommand extends Command {
                 if (response.startsWith("Y")) {
                     state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.prompt.saveName"));
                     String fileName = state.getGameServices().getInput().nextLine().trim();
-                    state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.saving"));
-                    SaveGame saveGame = new SaveGame();
-                    saveGame.createSave(fileName, player, state);
-                    state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.success.saved"));
+
+                    if (fileName.isEmpty()) {
+                        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("save.error.emptyName"));
+                        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.notSaved"));
+                    } else {
+                        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.saving"));
+                        SaveGame saveGame = new SaveGame();
+                        saveGame.createSave(fileName, player, state);
+                        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.success.saved"));
+                    }
                 } else {
                     state.getGameServices().getOutput().println(state.getMessages().getBundle().get("exit.info.notSaved"));
                 }

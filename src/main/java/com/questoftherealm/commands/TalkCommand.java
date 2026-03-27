@@ -29,28 +29,41 @@ public class TalkCommand extends Command {
         if (!makeSafe(args, player, state)) {
             return;
         }
+        
         String target = args[1].toLowerCase(Locale.ROOT);
         Tile curTile = state.getMap().curZone(player.getX(), player.getY());
-        NpcType npcType = parseNpcType(target);
+        
+        try {
+            NpcType npcType = parseNpcType(target);
+            if (npcType == null) {
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.unknownNpc", target));
+                return;
+            }
 
-        if (npcType == null) {
+            Npc npc = curTile.getNpcByType(npcType);
+            if (npc == null) {
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.noNpcNearby", npcType.name().toLowerCase(Locale.ROOT)));
+                return;
+            }
+            npc.talk(state, player, false);
+        } catch (RuntimeException e) {
+            ServerLogger.get().error("TalkCommand: Error during NPC interaction", e);
             state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.unknownNpc", target));
-            return;
         }
-        Npc npc = curTile.getNpcByType(npcType);
-
-        if (npc == null) {
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("talk.error.noNpcNearby", npcType.name().toLowerCase(Locale.ROOT)));
-            return;
-        }
-        npc.talk(state, player, false);
     }
 
     private NpcType parseNpcType(String name) {
         try {
-            return NpcType.valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            ServerLogger.get().warn("TalkCommand: Invalid NPC type - " + name, e);
+            String upperName = name.toUpperCase();
+            NpcType npcType = null;
+            try {
+                npcType = NpcType.valueOf(upperName);
+            } catch (IllegalArgumentException e) {
+                ServerLogger.get().warn("TalkCommand: Invalid NPC type attempted - '" + name + "'. Valid types are: ELDER, KING, TRADER, VILLAGER", e);
+            }
+            return npcType;
+        } catch (Exception e) {
+            ServerLogger.get().error("TalkCommand: Unexpected error parsing NPC type - " + name, e);
             return null;
         }
     }

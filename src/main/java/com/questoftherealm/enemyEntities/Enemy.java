@@ -108,7 +108,7 @@ public abstract class Enemy implements Fightable {
             case GRASS -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.BANDIT);
             case FOREST -> List.of(EnemyType.GOBLIN, EnemyType.WOLF, EnemyType.GIANT_SPIDER, EnemyType.LOST_SPIRIT);
             case SWAMP -> List.of(EnemyType.GOBLIN, EnemyType.LOST_SPIRIT, EnemyType.GIANT_SPIDER, EnemyType.SKELETON);
-            case MOUNTAIN -> List.of(EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF);
+            case MOUNTAIN -> List.of(EnemyType.BANDIT, EnemyType.GIANT_SPIDER, EnemyType.WOLF,EnemyType.DARK_MAGE);
             case WATER -> List.of(EnemyType.LOST_SPIRIT, EnemyType.SKELETON, EnemyType.GOBLIN);
             case VILLAGE -> List.of(EnemyType.BANDIT, EnemyType.WOLF);
             case CASTLE -> List.of(EnemyType.DARK_MAGE, EnemyType.SKELETON);

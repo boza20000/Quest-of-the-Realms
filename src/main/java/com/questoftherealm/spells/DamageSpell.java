@@ -28,6 +28,10 @@ public abstract class DamageSpell extends Spell {
             return;
         }
         enemy.takeDamage(spell.takePower(), state);
+
+        if (enemy.isDead()) {
+            player.curTile(state).removeEnemy(enemy, state);
+        }
         output.println(state.getMessages().getBundle().get("spells.damageSpell.castSpell", spell.getSpellName(), spell.getSymbol()));
         output.println("💥 " + spell.getDescription());
 

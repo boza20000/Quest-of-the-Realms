@@ -116,7 +116,7 @@ class AttackCommandTest {
     }
 
     @Test
-    void givenEnemyDies_whenExecute_thenRewardsAndRemovalAreApplied() throws Exception {
+    void givenEnemyDies_whenExecute_thenEnemyIsRemoved() throws Exception {
         doReturn(true).when(command).makeSafe(any(), eq(player), eq(state));
 
         Enemy enemy = mock(Enemy.class);
@@ -126,10 +126,7 @@ class AttackCommandTest {
 
         command.execute(new String[]{"attack", "goblin"}, player, state);
 
-        verify(player).addMoney(5, state);
-        verify(player).addExp(20);
-        verify(curTile).removeEnemy(enemy,state);
-        verify(output).println(anyString());
+        verify(curTile).removeEnemy(enemy, state);
     }
 }
 

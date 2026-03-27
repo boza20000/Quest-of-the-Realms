@@ -51,53 +51,85 @@ public class Trader extends Npc {
     private synchronized void handleTrading(Player player) {
         Warrior warrior = (Warrior) player.getPlayerCharacter();
         String input = state.getGameServices().getInput().nextLine();
-        if (input == null) {
+        
+        if (input == null || input.isBlank()) {
             output().println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
             return;
         }
+        
         if (input.equalsIgnoreCase("stop")) {
             isTrading = false;
             output().println(state.getMessages().getBundle().get("trader.talks.goodbye", player.getName()));
             return;
         }
+        
         String[] parts = input.split(" ");
+        if (!validatePurchaseCommand(parts)) {
+            return;
+        }
+        
+        PurchaseDetails details = parseItemAndQuantity(parts);
+        if (details == null) {
+            return;
+        }
+        
+        processPurchase(player, warrior, details.itemName(), details.quantity());
+    }
+
+    private boolean validatePurchaseCommand(String[] parts) {
         if (parts.length < 3 || !parts[0].equalsIgnoreCase("buy")) {
             output().println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
-            return;
+            return false;
         }
-        String itemName = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length - 1));
+        return true;
+    }
 
+    private PurchaseDetails parseItemAndQuantity(String[] parts) {
+        String itemName = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length - 1));
+        
         int quantity;
         try {
-            quantity = Integer.parseInt(Arrays.stream(parts).toList().getLast());
+            quantity = Integer.parseInt(parts[parts.length - 1]);
         } catch (NumberFormatException e) {
-            ServerLogger.get().warn("Trader: Invalid quantity input - " + Arrays.stream(parts).toList().getLast(), e);
+            ServerLogger.get().warn("Trader: Invalid quantity input - " + parts[parts.length - 1], e);
             output().println(state.getMessages().getBundle().get("trader.talks.invalid.buy.command"));
-            return;
+            return null;
         }
-        Item serachItem;
+        
+        return new PurchaseDetails(itemName, quantity);
+    }
+
+    private void processPurchase(Player player, Warrior warrior, String itemName, int quantity) {
+        Item searchItem;
         try {
-            serachItem = state.getItemRegistry().getItem(itemName);
+            searchItem = state.getItemRegistry().getItem(itemName);
         } catch (ItemNotFound e) {
             ServerLogger.get().info("Trader: Item not found - " + itemName);
             output().println(state.getMessages().getBundle().get("trader.talks.item.not.for.sale", itemName));
             return;
         }
 
-        if (!itemsForSale.containsKey(serachItem)) {
+        if (!itemsForSale.containsKey(searchItem)) {
             output().println(state.getMessages().getBundle().get("trader.talks.item.not.for.sale", itemName));
             return;
         }
 
-        int currentQuantity = itemsForSale.get(serachItem);
-        if(quantity<=currentQuantity){
-            itemsForSale.put(serachItem, currentQuantity - quantity);
-        } else {
+        if (!hasEnoughStock(searchItem, quantity)) {
             output().println(state.getMessages().getBundle().get("trader.talks.not.enough.stock", itemName));
             return;
         }
 
-        warrior.buyItem(this, player, serachItem, quantity, state);
+        updateStock(searchItem, quantity);
+        warrior.buyItem(this, player, searchItem, quantity, state);
+    }
+
+    private boolean hasEnoughStock(Item item, int requestedQuantity) {
+        int currentQuantity = itemsForSale.get(item);
+        return requestedQuantity <= currentQuantity;
+    }
+
+    private void updateStock(Item item, int quantitySold) {
+        itemsForSale.put(item, itemsForSale.get(item) - quantitySold);
     }
 
     synchronized void showItemsForSale() {

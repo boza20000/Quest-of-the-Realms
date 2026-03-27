@@ -101,6 +101,10 @@ public class Game {
             output.println(gameState.getMessages().getBundle().get("game.multiplayer.saveNotFound"));
             console.displayTitle();
             printGameStart();
+        }  catch (CorruptedFileException e) {
+            output.println(gameState.getMessages().getBundle().get("game.multiplayer.saveCorrupted"));
+            console.displayTitle();
+            printGameStart();
         }
 
         if (isHost) {
@@ -140,9 +144,37 @@ public class Game {
 
     public void loadGame(Player player) {
         LoadGame loadGame = new LoadGame();
+
+        if (!loadGame.hasSaves()) {
+            output.println(gameState.getMessages().getBundle().get("game.load.noSaves"));
+            newGame(player);
+            return;
+        }
+        
         output.println(gameState.getMessages().getBundle().get("game.load.ask"));
         loadGame.printSaves(gameState);
-        String save = gameState.getGameServices().getInput().nextLine();
+        
+        String save;
+        int attempts = 0;
+        while (true) {
+            output.print(gameState.getMessages().getBundle().get("console.menu.prompt"));
+            output.flush();
+            save = gameState.getGameServices().getInput().nextLine().trim();
+
+            if (save.isBlank()) {
+                if (attempts < 1) {
+                    output.println(gameState.getMessages().getBundle().get("game.load.emptyInput"));
+                }
+                attempts++;
+                continue;
+            }
+            break;
+        }
+
+        if (save.equalsIgnoreCase("back")) {
+            return;
+        }
+        
         output.println(gameState.getMessages().getBundle().get("game.load.loading"));
         try {
             loadGame.loadGameSave(save, gameState);

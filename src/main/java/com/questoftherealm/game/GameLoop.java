@@ -54,10 +54,7 @@ public class GameLoop {
 
     private void endGame(Game game, Player curPlayer) {
         curPlayer.trackPlayTime(game.getGameState());
-      //  if(curPlayer.finishedGame()){
-            game.getConsole().displayEnd(curPlayer);
-      //  }
-
+        game.getConsole().displayEnd(curPlayer);
         game.getGameState().removePlayer(curPlayer.getName());
     }
 
@@ -87,6 +84,11 @@ public class GameLoop {
         } catch (SaveError | AbilityException e) {
             output.println(e.getMessage());
         } catch (IllegalArgumentException e) {
+            output.println(bundle.get("gameLoop.command.syntax"));
+            output.print(cmd.getDescription(state));
+            output.flush();
+        } catch (Exception e) {
+            ServerLogger.get().warn("GameLoop: Unexpected error executing command: " + parts[0], e);
             output.println(bundle.get("gameLoop.command.syntax"));
             output.print(cmd.getDescription(state));
             output.flush();

@@ -61,7 +61,6 @@ public class Battle {
                 }
             }
 
-            // Enemy attacks after every player action (except flee success)
             if (enemy.isAlive() && !player.getPlayerCharacter().isDead()) {
                 performEnemyAttack();
             }
@@ -223,8 +222,6 @@ public class Battle {
         }
     }
 
-    // --- UI ---
-
     private void printIntro() {
         output.println();
         output.println(state.getMessages().getBundle().get("battle.status",
@@ -233,8 +230,6 @@ public class Battle {
 
         output.println(state.getMessages().getBundle().get("battle.chooseAction"));
     }
-
-    // --- Outcome ---
 
     private boolean handleDead() {
         if (player.getPlayerCharacter().isDead()) {

@@ -22,238 +22,248 @@ public class RecruitmentManager {
         return state.getGameServices().getOutput();
     }
 
+    // ========== UTILITY FUNCTIONS ==========
+    
+    private String promptAndGetInput(String promptKey) {
+        output().print(state.getMessages().getBundle().get(promptKey));
+        output().flush();
+        return state.getGameServices().getInput().nextLine().trim();
+    }
+
+    private void printMessage(String messageKey) {
+        output().println(state.getMessages().getBundle().get(messageKey));
+    }
+
+    private void printWithEmoji(String emoji, String messageKey) {
+        output().println(emoji + " " + state.getMessages().getBundle().get(messageKey));
+    }
+
+    private void checkAlreadyRecruited(boolean isRecruited, String emoji, String messageKey) {
+        if (isRecruited) {
+            printWithEmoji(emoji, messageKey);
+        }
+    }
+
+    private boolean attemptPayment(Player player, int cost, String successKey, String failKey) {
+        if (player.payMoney(cost, state)) {
+            printWithEmoji("💰", successKey);
+            return true;
+        } else {
+            printMessage(failKey);
+            return false;
+        }
+    }
+
+    private boolean handleRollBasedSuccess(int threshold, String successKey, String failKey) {
+        if (roll(state) < threshold) {
+            printMessage(successKey);
+            return true;
+        } else {
+            printMessage(failKey);
+            return false;
+        }
+    }
+
+    private String displayChoicesAndGetInput(String... choiceKeys) {
+        output().println();
+        for (String choiceKey : choiceKeys) {
+            output().println(state.getMessages().getBundle().get(choiceKey));
+        }
+        return promptAndGetInput("prompt.arrow");
+    }
+
     // === KNIGHTS ===
     public void talkToTheKnights(Player player, GameState state) {
         RiseOfTheGoblinThreat q = checkSafe(player);
-        if (q == null) {
-            return;
-        }
+        if (q == null) return;
+        
         q.setKnightsTriedToRecruit(true);
+        
         if (q.isKnightsRecruited()) {
-            output().println("⚔️ " + state.getMessages().getBundle().get("recruit.knights.already"));
+            printWithEmoji("⚔️", "recruit.knights.already");
             return;
         }
 
-        output().println();
-        output().println("🏰 " + state.getMessages().getBundle().get("recruit.knights.enter"));
-        output().println(state.getMessages().getBundle().get("recruit.knights.commander.greet"));
+        printWithEmoji("🏰", "recruit.knights.enter");
+        printMessage("recruit.knights.commander.greet");
 
-        while (true) {
-            output().println();
-            output().println("1️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.1"));
-            output().println("2️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.2"));
-            output().println("3️⃣ " + state.getMessages().getBundle().get("recruit.knights.choice.3"));
-            output().print(state.getMessages().getBundle().get("prompt.arrow"));
-            output().flush();
-            String choice = state.getGameServices().getInput().nextLine();
+        while (!q.isKnightsRecruited()) {
+            String choice = displayChoicesAndGetInput(
+                "1️⃣ recruit.knights.choice.1",
+                "2️⃣ recruit.knights.choice.2",
+                "3️⃣ recruit.knights.choice.3"
+            );
 
             switch (choice) {
                 case "1" -> persuasionBranch(player, q, state);
                 case "2" -> intimidationBranch(player, q, state);
                 case "3" -> {
-                    output().println(state.getMessages().getBundle().get("recruit.knights.leave"));
+                    printMessage("recruit.knights.leave");
                     return;
                 }
-                default -> output().println(state.getMessages().getBundle().get("recruit.knights.invalid"));
+                default -> printMessage("recruit.knights.invalid");
             }
-
-            if (q.isKnightsRecruited()) return;
         }
     }
 
     private void persuasionBranch(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().println(state.getMessages().getBundle().get("recruit.knights.persuade.start"));
-        if (roll(state) < 50) {
-            output().println(state.getMessages().getBundle().get("recruit.knights.persuade.success"));
+        printMessage("recruit.knights.persuade.start");
+        
+        if (handleRollBasedSuccess(50, "recruit.knights.persuade.success", "recruit.knights.persuade.fail")) {
             q.setKnightsRecruited(true);
-        } else {
-            output().println(state.getMessages().getBundle().get("recruit.knights.persuade.fail"));
-            output().println(state.getMessages().getBundle().get("recruit.knights.persuade.options"));
-            output().print(state.getMessages().getBundle().get("prompt.arrow"));
-            output().flush();
-            String choice = state.getGameServices().getInput().nextLine();
-            switch (choice) {
-                case "1" -> payForKnights(player, q, state);
-                case "2" -> {
-                    if (roll(state) < 40) {
-                        output().println(state.getMessages().getBundle().get("recruit.knights.persuade.reason.success"));
-                        q.setKnightsRecruited(true);
-                    } else {
-                        output().println(state.getMessages().getBundle().get("recruit.knights.persuade.reason.fail"));
-                    }
+            return;
+        }
+
+        printMessage("recruit.knights.persuade.options");
+        String choice = promptAndGetInput("prompt.arrow");
+        
+        switch (choice) {
+            case "1" -> {
+                if (attemptPayment(player, 50, "recruit.knights.pay.success", "recruit.knights.pay.fail")) {
+                    q.setKnightsRecruited(true);
                 }
-                case "3" -> output().println(state.getMessages().getBundle().get("recruit.knights.persuade.refuse"));
             }
+            case "2" -> {
+                if (handleRollBasedSuccess(40, "recruit.knights.persuade.reason.success", "recruit.knights.persuade.reason.fail")) {
+                    q.setKnightsRecruited(true);
+                }
+            }
+            case "3" -> printMessage("recruit.knights.persuade.refuse");
         }
     }
 
     private void intimidationBranch(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.start"));
-        if (roll(state) < 45) {
-            output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.success"));
+        printMessage("recruit.knights.intimidate.start");
+        
+        if (handleRollBasedSuccess(45, "recruit.knights.intimidate.success", "recruit.knights.intimidate.fail")) {
             q.setKnightsRecruited(true);
-        } else {
-            output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.fail"));
-            output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.options"));
-            output().print(state.getMessages().getBundle().get("prompt.arrow"));
-            output().flush();
-            String choice = state.getGameServices().getInput().nextLine();
-            switch (choice) {
-                case "1" -> persuasionBranch(player, q, state);
-                case "2" -> {
-                    if (roll(state) < 30) {
-                        output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.double.success"));
-                        q.setKnightsRecruited(true);
-                    } else {
-                        output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.double.fail"));
-                    }
-                }
-                case "3" -> output().println(state.getMessages().getBundle().get("recruit.knights.intimidate.leave"));
-            }
+            return;
         }
-    }
 
-    private void payForKnights(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        if (player.payMoney(50, state)) {
-            output().println("💰 " + state.getMessages().getBundle().get("recruit.knights.pay.success"));
-            q.setKnightsRecruited(true);
-        } else {
-            output().println(state.getMessages().getBundle().get("recruit.knights.pay.fail"));
+        printMessage("recruit.knights.intimidate.options");
+        String choice = promptAndGetInput("prompt.arrow");
+        
+        switch (choice) {
+            case "1" -> persuasionBranch(player, q, state);
+            case "2" -> {
+                if (handleRollBasedSuccess(30, "recruit.knights.intimidate.double.success", "recruit.knights.intimidate.double.fail")) {
+                    q.setKnightsRecruited(true);
+                }
+            }
+            case "3" -> printMessage("recruit.knights.intimidate.leave");
         }
     }
 
     // === ARCHERS ===
     public void talkToTheArchers(Player player, GameState state) {
         RiseOfTheGoblinThreat q = checkSafe(player);
-        if (q == null) {
-            return;
-        }
+        if (q == null) return;
+        
         q.setArchersTriedToRecruit(true);
+        
         if (q.isArchersRecruited()) {
-            output().println("🏹 " + state.getMessages().getBundle().get("recruit.archers.already"));
+            printWithEmoji("🏹", "recruit.archers.already");
             return;
         }
 
-        output().println();
-        output().println("🌲 " + state.getMessages().getBundle().get("recruit.archers.find"));
+        printWithEmoji("🌲", "recruit.archers.find");
 
-        int roll = roll(state);
-        if (roll < 35) {
-            output().println(state.getMessages().getBundle().get("recruit.archers.eager"));
+        int rollValue = roll(state);
+        if (rollValue < 35) {
+            printMessage("recruit.archers.eager");
             q.setArchersRecruited(true);
-        } else if (roll < 80) {
-            output().println(state.getMessages().getBundle().get("recruit.archers.resource"));
-            output().println(state.getMessages().getBundle().get("recruit.archers.resource.options"));
+        } else if (rollValue < 80) {
+            printMessage("recruit.archers.resource");
+            printMessage("recruit.archers.resource.options");
             handleArcherChoice(player, q, state);
         } else {
-            output().println(state.getMessages().getBundle().get("recruit.archers.refuse"));
-            output().println(state.getMessages().getBundle().get("recruit.archers.refuse.options"));
+            printMessage("recruit.archers.refuse");
+            printMessage("recruit.archers.refuse.options");
             handleArcherRefusalChoice(player, q, state);
         }
     }
 
     private void handleArcherChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print(state.getMessages().getBundle().get("prompt.choose"));
-        output().flush();
-        String input = state.getGameServices().getInput().nextLine();
+        String input = promptAndGetInput("prompt.choose");
         switch (input) {
-            case "1" -> output().println(state.getMessages().getBundle().get("recruit.archers.promise"));
+            case "1" -> printMessage("recruit.archers.promise");
             case "2" -> {
-                if (player.payMoney(30, state)) {
-                    output().println("💰 " + state.getMessages().getBundle().get("recruit.archers.gold.success"));
+                if (attemptPayment(player, 30, "recruit.archers.gold.success", "recruit.archers.gold.fail")) {
                     q.setArchersRecruited(true);
-                } else {
-                    output().println(state.getMessages().getBundle().get("recruit.archers.gold.fail"));
                 }
             }
             case "3" -> {
-                if (roll(state) < 40) {
-                    output().println(state.getMessages().getBundle().get("recruit.archers.threat.success"));
+                if (handleRollBasedSuccess(40, "recruit.archers.threat.success", "recruit.archers.threat.fail")) {
                     q.setArchersRecruited(true);
-                } else {
-                    output().println(state.getMessages().getBundle().get("recruit.archers.threat.fail"));
                 }
             }
-            default -> output().println(state.getMessages().getBundle().get("recruit.archers.ignore"));
+            default -> printMessage("recruit.archers.ignore");
         }
     }
 
     private void handleArcherRefusalChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print(state.getMessages().getBundle().get("prompt.choose"));
-        output().flush();
-        String input = state.getGameServices().getInput().nextLine();
+        String input = promptAndGetInput("prompt.choose");
         if (roll(state) < 50 && (input.equals("1") || input.equals("2"))) {
-            output().println(state.getMessages().getBundle().get("recruit.archers.courage.success"));
+            printMessage("recruit.archers.courage.success");
             q.setArchersRecruited(true);
         } else {
-            output().println(state.getMessages().getBundle().get("recruit.archers.courage.fail"));
+            printMessage("recruit.archers.courage.fail");
         }
     }
 
     // === MAGES ===
     public void talkToTheMages(Player player, GameState state) {
         RiseOfTheGoblinThreat q = checkSafe(player);
-        if (q == null) {
-            return;
-        }
+        if (q == null) return;
+        
         q.setMagesTriedToRecruit(true);
+        
         if (q.isMagesRecruited()) {
-            output().println("🪄 " + state.getMessages().getBundle().get("recruit.mages.already"));
+            printWithEmoji("🪄", "recruit.mages.already");
             return;
         }
 
-        output().println();
-        output().println("🔮 " + state.getMessages().getBundle().get("recruit.mages.enter"));
+        printWithEmoji("🔮", "recruit.mages.enter");
 
-        int roll = roll(state);
-        if (roll < 30) {
-            output().println(state.getMessages().getBundle().get("recruit.mages.prophecy"));
+        int rollValue = roll(state);
+        if (rollValue < 30) {
+            printMessage("recruit.mages.prophecy");
             q.setMagesRecruited(true);
-        } else if (roll < 75) {
-            output().println(state.getMessages().getBundle().get("recruit.mages.price"));
-            output().println(state.getMessages().getBundle().get("recruit.mages.price.options"));
+        } else if (rollValue < 75) {
+            printMessage("recruit.mages.price");
+            printMessage("recruit.mages.price.options");
             handleMageChoice(player, q, state);
         } else {
-            output().println(state.getMessages().getBundle().get("recruit.mages.refuse"));
-            output().println(state.getMessages().getBundle().get("recruit.mages.refuse.options"));
+            printMessage("recruit.mages.refuse");
+            printMessage("recruit.mages.refuse.options");
             handleMageRefusalChoice(player, q, state);
         }
     }
 
     private void handleMageChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print(state.getMessages().getBundle().get("prompt.choose"));
-        output().flush();
-        String input = state.getGameServices().getInput().nextLine();
+        String input = promptAndGetInput("prompt.choose");
         switch (input) {
             case "1" -> {
-                if (player.payMoney(70, state)) {
-                    output().println("💰 " + state.getMessages().getBundle().get("recruit.mages.gold.success"));
+                if (attemptPayment(player, 70, "recruit.mages.gold.success", "recruit.mages.gold.fail")) {
                     q.setMagesRecruited(true);
-                } else {
-                    output().println(state.getMessages().getBundle().get("recruit.mages.gold.fail"));
                 }
             }
             case "2" -> {
-                if (roll(state) < 50) {
-                    output().println(state.getMessages().getBundle().get("recruit.mages.reason.success"));
+                if (handleRollBasedSuccess(50, "recruit.mages.reason.success", "recruit.mages.reason.fail")) {
                     q.setMagesRecruited(true);
-                } else {
-                    output().println(state.getMessages().getBundle().get("recruit.mages.reason.fail"));
                 }
             }
-            default -> output().println(state.getMessages().getBundle().get("recruit.mages.crystals"));
+            default -> printMessage("recruit.mages.crystals");
         }
     }
 
     private void handleMageRefusalChoice(Player player, RiseOfTheGoblinThreat q, GameState state) {
-        output().print(state.getMessages().getBundle().get("prompt.choose"));
-        output().flush();
-        String input = state.getGameServices().getInput().nextLine();
+        String input = promptAndGetInput("prompt.choose");
         if (roll(state) < 40 && (input.equals("1") || input.equals("2"))) {
-            output().println(state.getMessages().getBundle().get("recruit.mages.convince.success"));
+            printMessage("recruit.mages.convince.success");
             q.setMagesRecruited(true);
         } else {
-            output().println(state.getMessages().getBundle().get("recruit.mages.convince.fail"));
+            printMessage("recruit.mages.convince.fail");
         }
     }
 
@@ -264,3 +274,6 @@ public class RecruitmentManager {
         return null;
     }
 }
+
+
+

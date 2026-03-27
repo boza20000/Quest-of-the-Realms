@@ -131,7 +131,29 @@ public class ConsoleController {
         } else {
             printSymbol();
         }
-        return Integer.parseInt(input().nextLine());
+        
+        while (true) {
+            String input = input().nextLine().trim();
+
+            if (input.isBlank()) {
+                if (count <= 1) {
+                    output().println(bundle.get("game.choice.invalidInput.menu.blank"));
+                }
+                printSymbol();
+                count++;
+                continue;
+            }
+            
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                if (count <= 1) {
+                    output().println(bundle.get("game.choice.invalidInput.menu"));
+                }
+                printSymbol();
+                count++;
+            }
+        }
     }
 
     public String usernameCreationScreen(Map<String, Player> activePlayer) {
@@ -175,7 +197,17 @@ public class ConsoleController {
             try {
                 output.print(state.getMessages().getBundle().get("console.menu.prompt"));
                 output.flush();
-                typeChoice = Integer.parseInt(state.getGameServices().getInput().nextLine());
+                String inputLine = state.getGameServices().getInput().nextLine().trim();
+
+                if (inputLine.isBlank()) {
+                    count++;
+                    if (count <= 1) {
+                        output.println(state.getMessages().getBundle().get("game.choice.invalidInput"));
+                    }
+                    continue;
+                }
+                
+                typeChoice = Integer.parseInt(inputLine);
                 if (typeChoice >= 1 && typeChoice <= 4) break;
                 else {
                     count++;

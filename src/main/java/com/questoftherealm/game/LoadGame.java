@@ -7,6 +7,7 @@ import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.exceptions.CorruptedFileException;
 import com.questoftherealm.exceptions.FileNotLoaded;
 import com.questoftherealm.exceptions.SavesNotFound;
+import com.questoftherealm.expeditions.quest.QuestFactory;
 import com.questoftherealm.game.interfaces.Output;
 import com.questoftherealm.items.Item;
 import com.questoftherealm.items.ItemKeyDeserializer;
@@ -79,26 +80,49 @@ public class LoadGame {
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setInjectableValues(new InjectableValues.Std().addValue(ItemRegistry.class.getName(), state.getItemRegistry()));
+            Player loaded = deserializePlayer(savedFile, state);
+            restorePlayerState(loaded, state);
+            reinitializePlayer(state, filename);
+        } catch (IOException e) {
+            ServerLogger.get().error("LoadGame: IOException loading game: " + filename, e);
+            throw new CorruptedFileException(state.getMessages().getBundle().get("loadGame.file.corrupted"));
+        } catch (Exception e) {
+            ServerLogger.get().error("LoadGame: Unexpected error loading game: " + filename, e);
+            throw new FileNotLoaded(state.getMessages().getBundle().get("game.load.error"));
+        }
+    }
 
-            SimpleModule module = new SimpleModule();
-            module.addKeyDeserializer(Item.class, new ItemKeyDeserializer());
-            mapper.registerModule(module);
+    private Player deserializePlayer(File savedFile, GameState state) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setInjectableValues(new InjectableValues.Std().addValue(ItemRegistry.class.getName(), state.getItemRegistry()));
 
-            Player loaded = mapper.readValue(savedFile, Player.class);
-            if (loaded.getQuestFactory() != null) {
-                loaded.getQuestFactory().restoreAfterLoad(loaded, state);
-            }
-            for (Player existing : state.getActivePlayers()) {
-                state.removePlayer(existing.getName());
-            }
-            state.addPlayer(loaded);
+        SimpleModule module = new SimpleModule();
+        module.addKeyDeserializer(Item.class, new ItemKeyDeserializer());
+        mapper.registerModule(module);
+
+        return mapper.readValue(savedFile, Player.class);
+    }
+
+    private void restorePlayerState(Player loaded, GameState state) {
+        if (loaded.getQuestFactory() != null) {
+            loaded.getQuestFactory().restoreAfterLoad(loaded, state);
+        } else {
+            loaded.setQuestFactory(new QuestFactory(loaded, state));
+        }
+
+        for (Player existing : state.getActivePlayers()) {
+            state.removePlayer(existing.getName());
+        }
+        state.addPlayer(loaded);
+    }
+
+    private void reinitializePlayer(GameState state, String filename) {
+        try {
             for (Player player : state.getActivePlayers()) {
                 player.move(player.getX(), player.getY());
             }
-        } catch (IOException e) {
-            throw new CorruptedFileException(state.getMessages().getBundle().get("loadGame.file.corrupted"));
+        } catch (Exception e) {
+            ServerLogger.get().warn("LoadGame: Error during player initialization after load: " + filename, e);
         }
     }
 
@@ -132,4 +156,20 @@ public class LoadGame {
             throw new SavesNotFound(state.getMessages().getBundle().get("loadGame.saves.unavailable"));
         }
     }
+
+    public boolean hasSaves() {
+        try {
+            File saveDir = new File(LOAD_DIRECTORY);
+            if (saveDir.exists() && saveDir.isDirectory()) {
+                File[] files = saveDir.listFiles((dir, name) -> name.endsWith(".json"));
+                return files != null && files.length > 0;
+            }
+            return false;
+        } catch (SecurityException e) {
+            ServerLogger.get().error("LoadGame: Security exception checking saves", e);
+            return false;
+        }
+    }
 }
+
+

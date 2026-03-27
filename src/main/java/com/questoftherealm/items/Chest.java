@@ -8,7 +8,6 @@ import com.questoftherealm.game.GameState;
 import com.questoftherealm.server.ServerLogger;
 
 import java.util.List;
-import java.util.Random;
 
 import static com.questoftherealm.items.Rarity.COMMON;
 import static com.questoftherealm.items.Rarity.UNCOMMON;
@@ -17,7 +16,7 @@ import static com.questoftherealm.items.Rarity.RARE;
 public class Chest {
     private final GameState state;
     private final ItemRegistry itemRegistry;
-    private final int MAX_TRIES = 10;
+    private static final int MAX_TRIES = 10;
 
     private int randomInt(int bound) {
         return state.getGameServices().getRandom().randomInt(bound);
@@ -34,6 +33,11 @@ public class Chest {
 
     public ItemDrop generateRandomItem() {
         try {
+            if (itemRegistry.getAllItems() == null || itemRegistry.getAllItems().isEmpty()) {
+                ServerLogger.get().error("Chest: Item registry is empty or null - cannot generate items");
+                throw new RandomItemNotGenerated(state.getMessages().getBundle().get("error.message.itemNotGenerated"));
+            }
+            
             ItemDrop drop = null;
             int count = 0;
             while (drop == null && count < MAX_TRIES) {
@@ -43,6 +47,7 @@ public class Chest {
                 count++;
             }
             if (drop == null) {
+                ServerLogger.get().warn("Chest: Failed to generate item after " + MAX_TRIES + " attempts");
                 throw new RandomItemNotGenerated(state.getMessages().getBundle().get("error.message.itemNotGenerated"));
             }
             return drop;

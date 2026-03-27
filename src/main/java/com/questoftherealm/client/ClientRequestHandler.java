@@ -63,11 +63,19 @@ public class ClientRequestHandler implements Runnable {
             String msg = masterState.getMessages().getBundle().get("client.handler.gameError");
             System.out.println(msg);
             log.error(msg + " | Player: " + username + " | Room: " + serverRoom, e);
+        } catch (Exception e) {
+            String msg = masterState.getMessages().getBundle().get("client.handler.unknownError");
+            System.out.println(msg);
+            log.error(msg + " | Player: " + username + " | Room: " + serverRoom, e);
         } finally {
             try {
                 handleLeavingPlayer();
             } catch (IOException e) {
                 log.error("Error while handling leaving player: " + username, e);
+            } catch (Exception e) {
+                String msg = masterState.getMessages().getBundle().get("client.handler.unknownError");
+                System.out.println(msg);
+                log.error(msg + " | Player: " + username + " | Room: " + serverRoom, e);
             }
             String leftMsg = masterState.getMessages().getBundle().get("client.handler.playerLeft", counter.decrementAndGet());
             System.out.println(leftMsg);
@@ -89,11 +97,11 @@ public class ClientRequestHandler implements Runnable {
         }
 
         if (masterState.getActivePlayers().isEmpty()) {
-            if (serverRoom != null && activeGames.containsKey(serverRoom)) {
-                activeGames.remove(serverRoom);
-                System.out.println(masterState.getMessages().getBundle().get("client.handler.roomRemoved", serverRoom));
-            }
             if (masterState.isPrivate()) {
+                if (serverRoom != null && activeGames.containsKey(serverRoom)) {
+                    activeGames.remove(serverRoom);
+                    System.out.println(masterState.getMessages().getBundle().get("client.handler.roomRemoved", serverRoom));
+                }
                 masterState.setGameOver(true);
             }
         }
@@ -153,11 +161,12 @@ public class ClientRequestHandler implements Runnable {
             if (creatingNewRoom) {
                 activeGames.put(serverRoom, masterState);
             }
-        }
-        catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
             String msg = masterState.getMessages().getBundle().get("client.handler.creation.screen.error");
-            System.out.println(msg);
-            log.error(msg, e);
+            log.error(msg + " | Player: " + username + " | Error: Invalid argument", e);
+        } catch (NullPointerException e) {
+            String msg = masterState.getMessages().getBundle().get("client.handler.creation.screen.error");
+            log.error(msg + " | Player: " + username + " | Error: Null pointer", e);
         }
     }
 
@@ -172,6 +181,12 @@ public class ClientRequestHandler implements Runnable {
             console.printRoomsOptions(out, activeGames);
             while (true) {
                 String room = masterState.getGameServices().getInput().nextLine().trim();
+
+                // Validate room name is not blank
+                if (room.isBlank()) {
+                    out.println(masterState.getMessages().getBundle().get("client.handler.room.emptyError"));
+                    continue;
+                }
 
                 if (activeGames.containsKey(room)) {
                     if (activeGames.get(room).isPrivate()) {

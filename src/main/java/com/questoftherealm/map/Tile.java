@@ -75,8 +75,12 @@ public class Tile {
     }
 
     public synchronized Enemy getEnemy(String name) {
+        String normalizedInput = name.toUpperCase().replaceAll("\\s+", "_");
         for (Enemy e : enemies) {
-            if (e.getType().toString().equals(name.toUpperCase())) {
+            if (e.getType().toString().equals(normalizedInput)) {
+                return e;
+            }
+            if (e.getClass().getSimpleName().toUpperCase().equals(normalizedInput.replaceAll("_", ""))) {
                 return e;
             }
         }
@@ -135,7 +139,10 @@ public class Tile {
 
     public synchronized void onEnter(Player player, GameState state) {
         this.state = state;
-        generateContent(state);
+
+        if (!contentGenerated) {
+            generateContent(state);
+        }
         listContent(state);
     }
 
@@ -175,8 +182,19 @@ public class Tile {
             output().println(state.getMessages().getBundle().get("tile.enemies.none"));
             return;
         }
+
+        Map<String, Integer> enemyCounts = new HashMap<>();
         for (Enemy e : enemies) {
-            output().println(state.getMessages().getBundle().get("tile.enemies.spotted", e.getClass().getSimpleName()));
+            String enemyType = e.getClass().getSimpleName();
+            enemyCounts.put(enemyType, enemyCounts.getOrDefault(enemyType, 0) + 1);
+        }
+
+        output().println(state.getMessages().getBundle().get("tile.enemies.spotted.header"));
+        for (Map.Entry<String, Integer> entry : enemyCounts.entrySet()) {
+            String displayText = entry.getValue() > 1
+                ? entry.getKey() + " (x" + entry.getValue() + ")"
+                : entry.getKey();
+            output().println("- " + displayText);
         }
     }
 

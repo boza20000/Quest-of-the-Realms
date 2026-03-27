@@ -2,6 +2,7 @@ package com.questoftherealm.commands;
 
 import com.questoftherealm.characters.player.Player;
 import com.questoftherealm.game.GameState;
+import com.questoftherealm.game.GameConstants;
 
 public class StatsCommand extends Command {
 
@@ -25,6 +26,11 @@ public class StatsCommand extends Command {
         }
         state.getGameServices().getOutput().println(state.getMessages().getBundle().get("stats.info.header"));
         state.getGameServices().getOutput().println(player.getPlayerCharacter().stats(state));
+        
+        int expRequiredForNextLevel = player.getLevel() * GameConstants.MAX_EXP_PER_LEVEL;
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.stats.level", player.getLevel()));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.stats.gold", player.getGold()));
+        state.getGameServices().getOutput().println(state.getMessages().getBundle().get("player.stats.experience", player.getExperience(), expRequiredForNextLevel));
     }
 
     @Override

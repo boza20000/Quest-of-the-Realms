@@ -31,18 +31,16 @@ public class AttackCommand extends Command {
         try {
             isKilled = chosenEnemy.interact(player, state);
         } catch (RuntimeException e) {
-            ServerLogger.get().error("AttackCommand: Failed to battle enemy " + enemyName + " for player " + player.getName(), e);
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable", enemyName));
+            ServerLogger.get().warn("AttackCommand: Failed to battle enemy " + enemyName + " for player " + player.getName(), e);
+            if (!isKilled) {
+                state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.error.battleUnavailable", enemyName));
+            }
+            return;
         }
         if (isKilled) {
-            int gold = 5;
-            int exp = 20;
-            player.addMoney(gold, state);
-            player.addExp(exp);
             curTile.removeEnemy(chosenEnemy, state);
-            state.getGameServices().getOutput().println(state.getMessages().getBundle().get("attack.success.reward", exp, gold));
         }
-        // state.getGameServices().getOutput().println(player.getName() + " attacked " + enemyName + " at " + player.getPosition());
+
     }
 
     @Override

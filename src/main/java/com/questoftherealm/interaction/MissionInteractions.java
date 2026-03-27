@@ -73,7 +73,15 @@ public class MissionInteractions {
 
         output().print(state.getMessages().getBundle().get("prompt.arrow"));
         output().flush();
-        int choice = state.getGameServices().getInput().nextInt();
+        int choice;
+        try {
+            String input = state.getGameServices().getInput().nextLine();
+            choice = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            output().println(state.getMessages().getBundle().get("mission.goblin.freeze"));
+            choice = 2;
+        }
+        
         if (!(player.getCurQuest() instanceof GoblinAmbush q)) {
             return;
         }

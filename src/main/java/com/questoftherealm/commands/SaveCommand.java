@@ -5,7 +5,6 @@ import com.questoftherealm.exceptions.SaveError;
 import com.questoftherealm.game.GameState;
 import com.questoftherealm.game.SaveGame;
 import com.questoftherealm.server.ServerLogger;
-import com.questoftherealm.server.ServerLogger;
 
 public class SaveCommand extends Command {
     private SaveGame game;

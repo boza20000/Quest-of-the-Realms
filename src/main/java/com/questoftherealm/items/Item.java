@@ -2,34 +2,16 @@ package com.questoftherealm.items;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-//make record
-public class Item {
-    private final String name;
-    private final ItemType type;
-    private final boolean stackable;
-    private final int power;
-    private final int price;
-    private final int mana;
-    private final Rarity rarity;
-    private final ItemEffect effect;
-
-    public Item( @JsonProperty("name") String name,
-                 @JsonProperty("type") ItemType type,
-                 @JsonProperty("stackable") boolean stackable,
-                 @JsonProperty("power") int power,
-                 @JsonProperty("cost") int price,
-                 @JsonProperty("manaCost") int mana,
-                 @JsonProperty("rarity") Rarity rarity,
-                 @JsonProperty("effect") ItemEffect effect) {
-        this.name = name;
-        this.type = type;
-        this.stackable = stackable;
-        this.power = power;
-        this.price = price;
-        this.mana = mana;
-        this.rarity = rarity;
-        this.effect = effect;
-    }
+public record Item(
+    @JsonProperty("name") String name,
+    @JsonProperty("type") ItemType type,
+    @JsonProperty("stackable") boolean stackable,
+    @JsonProperty("power") int power,
+    @JsonProperty("cost") int price,
+    @JsonProperty("manaCost") int mana,
+    @JsonProperty("rarity") Rarity rarity,
+    @JsonProperty("effect") ItemEffect effect
+) {
 
     public String getName() {
         return name;
