@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class LoadTestCommand {
+class LoadCommandTest {
 
     private LoadCommand command;
     private GameState state;
@@ -30,7 +30,6 @@ class LoadTestCommand {
 
     @BeforeEach
     void setUp() {
-        // Mocks setup
         state = mock(GameState.class);
         services = mock(GameServices.class);
         player = mock(Player.class);
@@ -64,7 +63,7 @@ class LoadTestCommand {
     @Test
     void givenMultiplayerGame_whenExecute_thenFails() {
         String[] args = {"load", "savefile"};
-        when(state.isPrivate()).thenReturn(false); // Multiplayer/Public
+        when(state.isPrivate()).thenReturn(false);
 
         command.execute(args, player, state);
         verify(output).println(contains("load.error.notPrivate"));
@@ -93,7 +92,7 @@ class LoadTestCommand {
 
         verify(loadGameMock).loadGameSave("mySave", state);
         verify(state).removePlayer("TestPlayer");
-        verify(missionInteractionsMock).worldStart(any()); 
+        verify(missionInteractionsMock).worldStart(any());
     }
 }
 
